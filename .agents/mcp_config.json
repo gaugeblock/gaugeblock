@@ -1,0 +1,33 @@
+{
+  "mcpServers": {
+    "miter": {
+      "command": "miter",
+      "args": ["mcp"]
+    },
+    "storypole": {
+      "command": "storypole",
+      "args": ["mcp"]
+    },
+    "chalkline": {
+      "command": "chalkline",
+      "args": ["mcp"]
+    },
+    "dado": {
+      "command": "dado",
+      "args": ["mcp"]
+    },
+    "batten": {
+      "command": "batten",
+      "args": ["mcp"]
+    },
+    "joiner": {
+      "command": "joiner",
+      "args": ["mcp"]
+    },
+    "benchwork": {
+      "command": "benchwork",
+      "args": ["mcp"]
+    }
+  }
+}
+
