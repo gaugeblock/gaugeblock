@@ -28,9 +28,10 @@ chalkline-cli  = { path = "./chalkline/crates/chalkline-cli" }
 chalkline-mcp  = { path = "./chalkline/crates/chalkline-mcp" }
 
 # --- 5. dado (Deterministic AST Patterns & Typed Holes) ---
-# dado           = { path = "./dado" }
-# dado-core      = { path = "./dado/crates/dado-core" }
-# dado-cli       = { path = "./dado/crates/dado-cli" }
+dado           = { path = "./dado" }
+dado-core      = { path = "./dado/crates/dado-core" }
+dado-cli       = { path = "./dado/crates/dado-cli" }
+dado-mcp       = { path = "./dado/crates/dado-mcp" }
 
 # --- 6. batten (Scope-to-CFG Grammar Compiler) ---
 # batten         = { path = "./batten" }

@@ -63,17 +63,19 @@
 
 ---
 
-## Phase 4: `gaugeblock/dado` — Deterministic AST Pattern & Typed Hole Engine (`ACTIVE / READY`)
+## Phase 4: `gaugeblock/dado` — Deterministic AST Pattern & Typed Hole Engine (`DONE`)
 * **Dependencies:** `miter-engine`.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `dado-core`:
-    - `hole.rs`: Parser and validator for `?[hole_id: ExpectedType]` markers inside templates.
-    - `pattern.rs`: `DadoPattern` registry, TOML/JSON loader, and structural mixin composer (`with_tracing`, `with_retry`, `with_sqlx_tx`).
-    - `splice.rs`: Deterministic AST splicer that substitutes filled hole expressions and injects `required_imports` using `miter-engine` tree-sitter nodes.
-    - `polyglot.rs`: Deterministic Rust <-> TypeScript contract codegen from `chalkline`'s `SharedTypeContract`.
+    - [x] `hole.rs`: Parser and validator for `?[hole_id: ExpectedType]` markers inside templates.
+    - [x] `pattern.rs` / `registry`: `DadoPattern` registry, embedded TOML loader, and structural mixin composer.
+    - [x] `splice.rs`: Deterministic AST splicer that substitutes filled hole expressions and injects `required_imports` using Tree-sitter zero-ERROR nodes.
+    - [x] `polyglot.rs`: Deterministic Rust <-> TypeScript contract codegen from `chalkline`'s `SharedTypeContract`.
+  - `dado-mcp`:
+    - [x] `server.rs`: JSON-RPC 2.0 stdio server exposing `dado_list_patterns`, `dado_inspect_pattern`, `dado_render`, `dado_emit_contract`, and `dado_verify_pack`.
   - `dado-cli`:
-    - `dado list`, `dado inspect <pattern_id>`, `dado render <pattern_id> --holes <json>`, `dado verify-pack`.
-* **Exit Criteria:** Ships with a core pack of 15 verified Rust + TypeScript patterns; `dado render` deterministically emits compilable ASTs when provided hole values.
+    - [x] `main.rs` & `handlers.rs`: `dado list`, `dado inspect`, `dado render`, `dado contract`, `dado verify-pack`, `dado init`, `dado mcp`.
+* **Exit Criteria:** Ships with a core pack of 15 verified Rust + TypeScript patterns; `dado render` deterministically emits compilable ASTs when provided hole values. (`VERIFIED`)
 
 ---
 
