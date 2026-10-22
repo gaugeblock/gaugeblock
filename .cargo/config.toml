@@ -1,0 +1,54 @@
+# .cargo/config.toml — Local multi-repo development overrides for gaugeblock
+# Uncomment any entry below while actively developing across local sibling checkouts:
+
+[patch.crates-io]
+# --- 1. miter (AST Slicer, Dependency Grapher & Verification Engine) ---
+# miter-cli      = { path = "./miter" }
+# miter-engine   = { path = "./miter/crates/engine" }
+# miter-ast      = { path = "./miter/crates/ast_indexer" }
+# miter-storage  = { path = "./miter/crates/storage" }
+# miter-mcp      = { path = "./miter/crates/mcp" }
+# miter-harness  = { path = "./miter/crates/harness" }
+
+# --- 2. storypole (Backlog, Task DAG & Memory Store) ---
+# storypole      = { path = "./storypole" }
+# storypole-core = { path = "./storypole/crates/storypole-core" }
+# storypole-cli  = { path = "./storypole/crates/storypole-cli" }
+# storypole-mcp  = { path = "./storypole/crates/storypole-mcp" }
+
+# --- 3. sawhorse (Provider-Agnostic 3-Mode LLM Runtime) ---
+# sawhorse       = { path = "./sawhorse" }
+# sawhorse-core  = { path = "./sawhorse/crates/sawhorse-core" }
+# sawhorse-cli   = { path = "./sawhorse/crates/sawhorse-cli" }
+
+# --- 4. chalkline (Interactive Spec & DAG Planner) ---
+# chalkline      = { path = "./chalkline" }
+# chalkline-core = { path = "./chalkline/crates/chalkline-core" }
+# chalkline-cli  = { path = "./chalkline/crates/chalkline-cli" }
+# chalkline-mcp  = { path = "./chalkline/crates/chalkline-mcp" }
+
+# --- 5. dado (Deterministic AST Patterns & Typed Holes) ---
+# dado           = { path = "./dado" }
+# dado-core      = { path = "./dado/crates/dado-core" }
+# dado-cli       = { path = "./dado/crates/dado-cli" }
+
+# --- 6. batten (Scope-to-CFG Grammar Compiler) ---
+# batten         = { path = "./batten" }
+# batten-core    = { path = "./batten/crates/batten-core" }
+# batten-cli     = { path = "./batten/crates/batten-cli" }
+
+# --- 7. joiner (Master Neurosymbolic Orchestrator) ---
+# joiner         = { path = "./joiner" }
+# joiner-core    = { path = "./joiner/crates/joiner-core" }
+# joiner-cli     = { path = "./joiner/crates/joiner-cli" }
+# joiner-mcp     = { path = "./joiner/crates/joiner-mcp" }
+
+# --- 8. benchwork (Modular Visual Workbench UI & Local Daemon) ---
+# benchwork      = { path = "./benchwork" }
+# benchwork-core = { path = "./benchwork/crates/benchwork-core" }
+# benchwork-cli  = { path = "./benchwork/crates/benchwork-cli" }
+
+# --- 9. rabbet (Telemetry Corpus Hub & Open-Weight Foundry) ---
+# rabbet         = { path = "./rabbet" }
+# rabbet-core    = { path = "./rabbet/crates/rabbet-core" }
+# rabbet-cli     = { path = "./rabbet/crates/rabbet-cli" }
