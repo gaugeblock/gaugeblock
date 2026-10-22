@@ -19,15 +19,34 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
 3. **Zero Inline Scope Creep (Asynchronous Deferral via `storypole`):**
    * While executing a task, if you discover an unrelated bug, edge case, missing AST pattern, or refactoring opportunity outside your immediate file scope, **DO NOT fix it inline**.
    * Once `storypole` is online, record the item immediately via `storypole defer --kind <tech-debt|bug|enhancement> --symbol "<crate::path>" --title "..."` (or append to `.storypole/ledger.jsonl`) and stay locked on your active task.
-4. **Deterministic Verification Before Completion:**
-   * No task is complete until all of the following pass with zero warnings inside the target repository's workspace (`cd <repo>`):
-     * `cargo fmt --all -- --check`
-     * `cargo clippy --workspace --all-targets -- -D warnings`
-     * `cargo test --workspace`
+4. **Tiered Verification Matrix:**
+   * To sustain high inner-loop velocity without compromising reliability, verifications are strictly tiered:
+     * **Tier 1 (Inner Loop — Rapid Iteration):** Run targeted checks on the active crate/module during development:
+       `cargo check -p <crate>` or `cargo test -p <crate> --lib <submodule_or_test>`
+     * **Tier 2 (Atomic Commit Gate):** Run on the affected crate before finalizing an atomic commit:
+       `cargo fmt --check -p <crate>`, `cargo clippy -p <crate> --all-targets -- -D warnings`, and `cargo test -p <crate>`
+     * **Tier 3 (Task Completion Gate):** Full workspace verification before closing a task or marking `Verified` in `storypole`:
+       `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, and `cargo test --workspace`
+     * **Tier 4 (Release & Wire Gate):** Full cross-repo suite, integration tests, and wire contract validation before bumping versions or pushing release tags.
 5. **Strict Error Handling & Observability:**
    * Library crates (`*-core`, `*-engine`) MUST use `thiserror` with strongly typed error enums. `.unwrap()` and `.expect()` are forbidden in production library paths (allowed only in tests or provably infallible static initializers with a `// SAFETY:` or `// INVARIANT:` comment). Enforced at compile time via `[workspace.lints.clippy]` (`unwrap_used = "deny"`, `expect_used = "deny"`).
    * Binary/CLI crates (`*-cli`, `*-mcp`) may use `anyhow::Result` at the top-level command boundary.
    * Use `tracing` for structured instrumentation; never pollute `stdout` when running in `--mcp` (JSON-RPC over stdio) or `--json` mode—all logs must route to `stderr` or a file sink.
+6. **Atomic Commits & Bisect Invariance:**
+   * Every commit MUST represent a single logical unit of work (one bug fix, one discrete refactoring, or one sub-crate capability). Never bundle unrelated edits across disparate domains.
+   * Every commit MUST pass Tier 2 verification. Never commit broken intermediate states that break `git bisect`.
+   * Staging hygiene: Never use `git add .` blindly. Inspect `git diff --staged` before creating a commit.
+7. **Conventional Commits Specification:**
+   * Commit messages MUST follow Conventional Commits v1.0.0: `<type>(<scope>): <summary>`
+   * Allowed types: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `style`, `chore`, `ci`, `build`.
+   * Scopes MUST specify the affected crate (e.g., `storypole-core`, `storypole-cli`) or harness domain (e.g., `workspace`, `contracts`, `roadmap`, `deps`).
+   * Subject line: imperative mood ("add", "fix", not "added", "fixes"), lowercase start, no trailing period, maximum 72 characters.
+   * Footers: Reference task keys when applicable (e.g., `Task: SP-14`, `Closes: SP-14`). Breaking changes require `BREAKING CHANGE: <description>`.
+8. **Semantic Versioning & Git Tagging:**
+   * Versioning strictly follows SemVer 2.0.0 (`MAJOR.MINOR.PATCH[-PRERELEASE]`).
+   * The root workspace defines `[workspace.package] version = "0.0.1-alpha.1"`. Member crates MUST inherit via `version.workspace = true`.
+   * Git release tags MUST follow `v<version>` (e.g., `v0.0.1-alpha.1`).
+   * Increments: `PATCH` for backward-compatible fixes; `MINOR` for backward-compatible features or additive contracts; `MAJOR` for breaking schema/trait changes defined in `CONTRACTS.md`.
 
 ---
 
@@ -127,5 +146,6 @@ During multi-repo development inside the root meta-harness, root `.cargo/config.
 For every assigned task:
 1. **Read Context First:** Inspect `CONTRACTS.md`, the active phase in `ROADMAP.md`, and the target repository's `Cargo.toml`.
 2. **Slice Minimal Context:** Use `miter` (when inspecting existing modules) to extract signatures and AST slices rather than dumping entire repositories into context.
-3. **Implement Modularly:** Write small, single-purpose files (under 250 LOC) with explicit doc comments (`///`) on every public struct, enum, and trait method.
-4. **Verify & Record:** Run fmt, clippy, and tests. Update the task status in `storypole` (`ROADMAP.md` during Phase 1 bootstrap).
+3. **Implement Modularly (Tier 1 Iteration):** Write small, single-purpose files (under 250 LOC) with explicit doc comments (`///`) on every public struct, enum, and trait method. Use Tier 1 checks (`cargo check -p <crate>`) for rapid iteration.
+4. **Commit Atomically (Tier 2 Gate):** Once a discrete change is complete, verify the affected crate (`cargo fmt --check -p <crate>`, `cargo clippy -p <crate>`, `cargo test -p <crate>`). Create an atomic commit following Conventional Commits (`<type>(<scope>): <summary>`).
+5. **Verify Workspace & Close Task (Tier 3 Gate):** Run full workspace verification (`cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`). Mark the task `Verified` in `storypole` (or `ROADMAP.md` during Phase 1 bootstrap).
