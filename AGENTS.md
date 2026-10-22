@@ -16,9 +16,9 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
 2. **Unix Philosophy & Standalone Value:**
    * Each of the 9 repositories MUST compile, pass tests, and provide a genuinely useful CLI/MCP/library experience completely on its own without requiring the entire stack to be running.
    * Cross-project coupling happens strictly through the shared schemas and traits defined in `CONTRACTS.md`.
-3. **Zero Inline Scope Creep (Asynchronous Deferral via `storypole`):**
+3. **Zero Inline Scope Creep (Mandatory Deferral to `storypole`):**
    * While executing a task, if you discover an unrelated bug, edge case, missing AST pattern, or refactoring opportunity outside your immediate file scope, **DO NOT fix it inline**.
-   * Once `storypole` is online, record the item immediately via `storypole defer --kind <tech-debt|bug|enhancement> --symbol "<crate::path>" --title "..."` (or append to `.storypole/ledger.jsonl`) and stay locked on your active task.
+   * You MUST record the item immediately via `storypole defer --kind <tech-debt|bug|enhancement> --symbol "<crate::path>" --title "..."` (or the `storypole_defer` MCP tool). Stay locked on your active task. Every discovered defect or out-of-scope requirement must be captured in `storypole` to ensure complete traceability.
 4. **Tiered Verification Matrix:**
    * To sustain high inner-loop velocity without compromising reliability, verifications are strictly tiered:
      * **Tier 1 (Inner Loop — Rapid Iteration):** Run targeted checks on the active crate/module during development:
@@ -47,6 +47,10 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * The root workspace defines `[workspace.package] version = "0.0.1-alpha.1"`. Member crates MUST inherit via `version.workspace = true`.
    * Git release tags MUST follow `v<version>` (e.g., `v0.0.1-alpha.1`).
    * Increments: `PATCH` for backward-compatible fixes; `MINOR` for backward-compatible features or additive contracts; `MAJOR` for breaking schema/trait changes defined in `CONTRACTS.md`.
+9. **Mandatory Dogfooding & Target Directory Prohibition:**
+   * All agent workflows and operations MUST utilize the globally installed CLI suite (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`) from `PATH` or their registered MCP servers.
+   * Agents are strictly forbidden from executing binaries directly from local `target/debug/` or `target/release/` directories for operational workflows.
+   * The `target/` directories are reserved exclusively for automated testing (`cargo test`) and compiler checks during active crate development. Use `scripts/install-suite.sh` to compile and install updated binaries into `~/.cargo/bin`.
 
 ---
 
@@ -141,11 +145,14 @@ During multi-repo development inside the root meta-harness, root `.cargo/config.
 
 ---
 
-## 3. Agent Execution Loop
+## 3. Agent Execution Loop & Dogfooding Workflow
 
 For every assigned task:
-1. **Read Context First:** Inspect `CONTRACTS.md`, the active phase in `ROADMAP.md`, and the target repository's `Cargo.toml`.
-2. **Slice Minimal Context:** Use `miter` (when inspecting existing modules) to extract signatures and AST slices rather than dumping entire repositories into context.
-3. **Implement Modularly (Tier 1 Iteration):** Write small, single-purpose files (under 250 LOC) with explicit doc comments (`///`) on every public struct, enum, and trait method. Use Tier 1 checks (`cargo check -p <crate>`) for rapid iteration.
-4. **Commit Atomically (Tier 2 Gate):** Once a discrete change is complete, verify the affected crate (`cargo fmt --check -p <crate>`, `cargo clippy -p <crate>`, `cargo test -p <crate>`). Create an atomic commit following Conventional Commits (`<type>(<scope>): <summary>`).
-5. **Verify Workspace & Close Task (Tier 3 Gate):** Run full workspace verification (`cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`). Mark the task `Verified` in `storypole` (or `ROADMAP.md` during Phase 1 bootstrap).
+1. **Task Briefing & Lease:** Use `storypole list` and `storypole claim <KEY> <AGENT_ID>` (or MCP `storypole_claim`) to lease the task.
+2. **Context Slicing with `miter`:** Use installed `miter lookup`, `miter skeleton`, and `miter impact` to inspect AST signatures and blast radii rather than dumping entire repositories into context.
+3. **Plan & Spec with `chalkline`:** Use installed `chalkline recon` and `chalkline grill` to auto-resolve conventions and identify decision boundaries.
+4. **Synthesize & Patch with `dado` & `batten`:** Compose deterministic AST patterns with `dado render` and validate grammatical constraints with `batten validate`.
+5. **Implement Modularly (Tier 1 Iteration):** Write small, single-purpose files (strictly under 250 LOC) with explicit doc comments (`///`). Use Tier 1 checks (`cargo check -p <crate>`) for rapid iteration.
+6. **Capture Unrelated Findings in `storypole`:** If you uncover an out-of-scope bug, edge case, or debt, defer it immediately via `storypole defer`.
+7. **Commit Atomically (Tier 2 Gate):** Verify affected crate (`cargo fmt --check -p <crate>`, `cargo clippy -p <crate>`, `cargo test -p <crate>`). Commit with Conventional Commits (`<type>(<scope>): <summary>`).
+8. **Verify & Close Task (Tier 3 Gate):** Run full workspace verification. Release lease and certify completion with `storypole verify <KEY>` or `storypole handoff`.

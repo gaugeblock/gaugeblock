@@ -32,6 +32,61 @@ The `gaugeblock` suite consists of 9 standalone, highly focused tools that conne
 
 ---
 
+## Installation & Dogfooding Workflow
+
+The entire `gaugeblock` suite is designed to be built, installed, and dogfooded directly from `PATH` rather than executing ad-hoc build artifacts from repository `target/` directories.
+
+### 1. Build and Install the Suite
+
+The install script automatically installs chosen binaries to `~/.cargo/bin` and synchronizes active MCP endpoints to Antigravity's `mcp_config.json`:
+
+```bash
+# Full suite (all 9 tools, release build)
+./scripts/install-suite.sh
+
+# Profile presets:
+./scripts/install-suite.sh --profile minimal   # miter + storypole (fast bootstrap)
+./scripts/install-suite.sh --profile core      # 7 core coding & synthesis tools
+./scripts/install-suite.sh --profile all       # full 9-tool suite (default)
+
+# Install specific tools by name:
+./scripts/install-suite.sh miter storypole dado
+
+# Add --debug for faster inner-loop compilation:
+./scripts/install-suite.sh --debug --profile core
+```
+
+Installed binaries:
+`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`.
+
+### 2. Antigravity MCP Server Configuration
+
+To empower AI coding agents with the suite's toolset, register the MCP stdio servers in Antigravity (`~/.gemini/antigravity/mcp_config.json` or `.agents/mcp_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "miter": { "command": "miter", "args": ["mcp"] },
+    "storypole": { "command": "storypole", "args": ["mcp"] },
+    "chalkline": { "command": "chalkline", "args": ["mcp"] },
+    "dado": { "command": "dado", "args": ["mcp"] },
+    "batten": { "command": "batten", "args": ["mcp"] },
+    "joiner": { "command": "joiner", "args": ["mcp"] },
+    "benchwork": { "command": "benchwork", "args": ["mcp"] }
+  }
+}
+```
+
+### 3. Asynchronous Defect Tracking with `storypole`
+
+When executing any task, agents must never fix out-of-scope defects inline. Record unexpected bugs, edge cases, or missing AST patterns immediately into `storypole`:
+
+```bash
+storypole defer --kind bug --symbol "<crate::path>" --title "Unexpected parser panic on malformed macro"
+```
+
+---
+
 ## Development & Verification Standards
 
 All repositories in this workspace adhere to strict quality invariants:

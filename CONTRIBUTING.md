@@ -4,7 +4,23 @@
 
 ---
 
-## 1. Tiered Verification Matrix
+## 1. Environment Setup & Dogfooding Workflow
+
+The `gaugeblock` suite is designed to be dogfooded end-to-end using the installed CLI binaries and MCP servers.
+
+1. **Install the Suite (or Profile):**
+   Run `./scripts/install-suite.sh` (or with `--profile minimal` / `--profile core`) from the repository root to compile and install binaries into `~/.cargo/bin`. The script automatically detects installed tools and updates Antigravity's `mcp_config.json`.
+2. **Prohibition on Target Directory Execution:**
+   Do **not** invoke binaries directly from local `target/debug/` or `target/release/` paths during operational workflows or agent interactions. Binaries must be run from `PATH` or MCP. The local `target/` directory is strictly reserved for `cargo test` and compiler checks during active development.
+3. **Out-of-Scope Defect Registration:**
+   Never fix unrelated bugs or issues inline during an active task. Always defer them immediately into `storypole`:
+   ```bash
+   storypole defer --kind bug --symbol "<crate::path>" --title "<summary>"
+   ```
+
+---
+
+## 2. Tiered Verification Matrix
 
 To keep developer and agent velocity high while preventing build breakages, all code changes follow a 4-tier verification matrix. Run only the tier required for your current workflow stage.
 
@@ -17,7 +33,7 @@ To keep developer and agent velocity high while preventing build breakages, all 
 
 ---
 
-## 2. Atomic Commits & Bisect Invariance
+## 3. Atomic Commits & Bisect Invariance
 
 A healthy git history enables reliable automated bisecting, clean reverts, and readable reviews.
 
@@ -34,7 +50,7 @@ A healthy git history enables reliable automated bisecting, clean reverts, and r
 
 ---
 
-## 3. Conventional Commit Specification
+## 4. Conventional Commit Specification
 
 All commit messages in `gaugeblock` must adhere strictly to [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/).
 
@@ -98,7 +114,7 @@ BREAKING CHANGE: TaskNode wire contract now requires ticket_key string.
 
 ---
 
-## 4. Semantic Versioning & Release Tagging
+## 5. Semantic Versioning & Release Tagging
 
 `gaugeblock` repositories adhere to [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH[-PRERELEASE]`).
 
