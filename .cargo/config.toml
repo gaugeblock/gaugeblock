@@ -17,9 +17,9 @@
 # storypole-mcp  = { path = "./storypole/crates/storypole-mcp" }
 
 # --- 3. sawhorse (Provider-Agnostic 3-Mode LLM Runtime) ---
-# sawhorse       = { path = "./sawhorse" }
-# sawhorse-core  = { path = "./sawhorse/crates/sawhorse-core" }
-# sawhorse-cli   = { path = "./sawhorse/crates/sawhorse-cli" }
+sawhorse       = { path = "./sawhorse" }
+sawhorse-core  = { path = "./sawhorse/crates/sawhorse-core" }
+sawhorse-cli   = { path = "./sawhorse/crates/sawhorse-cli" }
 
 # --- 4. chalkline (Interactive Spec & DAG Planner) ---
 # chalkline      = { path = "./chalkline" }

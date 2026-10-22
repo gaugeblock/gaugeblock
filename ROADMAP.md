@@ -31,19 +31,19 @@
 
 ---
 
-## Phase 2: `gaugeblock/sawhorse` — Provider-Agnostic 3-Mode LLM Runtime
+## Phase 2: `gaugeblock/sawhorse` — Provider-Agnostic 3-Mode LLM Runtime (`DONE`)
 * **Dependencies:** None (Standalone Rust runtime).
 * **Why Second:** Gives `chalkline` (Phase 3) and `joiner` (Phase 6) immediate, unified access to local, in-house, and OpenAI-compatible (`jev`/`vLLM`/cloud) models.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `sawhorse-core`:
-    - `config.rs`: Role-based routing table (`Planner`, `System1Router`, `HoleFiller`, `Oracle`) loaded from `sawhorse.toml`.
-    - `traits.rs`: `ModelProvider` async trait + `InferenceRequest` / `InferenceResponse`.
-    - `providers/openai_compat.rs`: Mode 3 HTTP client supporting `jev`, `vLLM`, OpenRouter, and standard OpenAI endpoints (including grammar/schema pass-through).
-    - `providers/local_gguf.rs`: Mode 2 local inference adapter (`llama.cpp` / `mistral.rs` server or subprocess).
-    - `providers/candle_native.rs`: Mode 1 native Rust `candle` weight loader for specialized `gaugeblock` micro-models.
+    - [x] `config.rs`: Role-based routing table (`Planner`, `System1Router`, `HoleFiller`, `Oracle`) loaded from `sawhorse.toml`.
+    - [x] `traits.rs`: `ModelProvider` async trait + `InferenceRequest` / `InferenceResponse`.
+    - [x] `providers/openai_compat.rs`: Mode 3 HTTP client supporting `jev`, `vLLM`, OpenRouter, and standard OpenAI endpoints (including grammar/schema pass-through).
+    - [x] `providers/local_gguf.rs`: Mode 2 local inference adapter (`llama.cpp` / `mistral.rs` server or subprocess).
+    - [x] `providers/candle_native.rs`: Mode 1 native Rust `candle` weight loader for specialized `gaugeblock` micro-models.
   - `sawhorse-cli`:
-    - `main.rs`: `sawhorse ping`, `sawhorse bench`, `sawhorse complete --role hole_filler --grammar <file>`.
-* **Exit Criteria:** Can execute a single prompt across Mode 3 (OpenAI/Jev) and Mode 2 (Local) through the exact same Rust trait call.
+    - [x] `main.rs`: `sawhorse ping`, `sawhorse bench`, `sawhorse complete --role hole_filler --grammar <file>`, `sawhorse init`.
+* **Exit Criteria:** Can execute a single prompt across Mode 3 (OpenAI/Jev) and Mode 2 (Local) through the exact same Rust trait call. (`VERIFIED`)
 
 ---
 
