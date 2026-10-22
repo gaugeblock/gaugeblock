@@ -22,10 +22,10 @@
 # sawhorse-cli   = { path = "./sawhorse/crates/sawhorse-cli" }
 
 # --- 4. chalkline (Interactive Spec & DAG Planner) ---
-# chalkline      = { path = "./chalkline" }
-# chalkline-core = { path = "./chalkline/crates/chalkline-core" }
-# chalkline-cli  = { path = "./chalkline/crates/chalkline-cli" }
-# chalkline-mcp  = { path = "./chalkline/crates/chalkline-mcp" }
+chalkline      = { path = "./chalkline" }
+chalkline-core = { path = "./chalkline/crates/chalkline-core" }
+chalkline-cli  = { path = "./chalkline/crates/chalkline-cli" }
+chalkline-mcp  = { path = "./chalkline/crates/chalkline-mcp" }
 
 # --- 5. dado (Deterministic AST Patterns & Typed Holes) ---
 # dado           = { path = "./dado" }

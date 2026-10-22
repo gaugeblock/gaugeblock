@@ -47,19 +47,19 @@
 
 ---
 
-## Phase 3: `gaugeblock/chalkline` — `/grill-me` Spec Planner & DAG Compiler
+## Phase 3: `gaugeblock/chalkline` — `/grill-me` Spec Planner & DAG Compiler (`DONE`)
 * **Dependencies:** `miter-engine`, `storypole-core`, `sawhorse-core`.
 * **Why Third:** Unlocks interactive spec generation and automatic `storypole` task DAG population for the remaining repositories.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `chalkline-core`:
-    - `spec_parser.rs`: Parses and updates `PRODUCT.md` and `DESIGN.md` AST sections.
-    - `recon.rs`: Queries `miter-engine` on the target repo to auto-resolve known conventions (error crates, async runtime, naming) without bothering the human.
-    - `griller.rs`: Identifies true `DecisionHole` ambiguities and conducts the structured `/grill-me` Q&A loop via `sawhorse`.
-    - `contracts_gen.rs`: Locks `SharedTypeContract` schemas for cross-language boundaries.
-    - `dag_compiler.rs`: Compiles approved specs into `TaskNode` graphs and writes them directly to `storypole`.
+    - [x] `spec_parser.rs`: Parses and updates `PRODUCT.md` and `DESIGN.md` AST sections.
+    - [x] `recon.rs`: Queries `miter-engine` on the target repo to auto-resolve known conventions (error crates, async runtime, naming) without bothering the human.
+    - [x] `griller.rs`: Identifies true `DecisionHole` ambiguities and conducts the structured `/grill-me` Q&A loop via `sawhorse`.
+    - [x] `contracts_gen.rs`: Locks `SharedTypeContract` schemas for cross-language boundaries.
+    - [x] `dag_compiler.rs`: Compiles approved specs into `TaskNode` graphs and writes them directly to `storypole`.
   - `chalkline-cli` & `chalkline-mcp`:
-    - `chalkline grill`, `chalkline compile-dag`, `chalkline sync`.
-* **Exit Criteria:** Running `chalkline grill` on a feature prompt updates `DESIGN.md` and emits a verified topological task DAG into `storypole`.
+    - [x] `chalkline grill`, `chalkline compile-dag`, `chalkline sync`, `chalkline recon`, `chalkline mcp`.
+* **Exit Criteria:** Running `chalkline grill` on a feature prompt updates `DESIGN.md` and emits a verified topological task DAG into `storypole`. (`VERIFIED`)
 
 ---
 
