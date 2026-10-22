@@ -18,7 +18,7 @@ PROJECTS=(
   "rabbet|AST-anonymized telemetry corpus hub and open-weight micro-model training foundry."
 )
 
-SUFFIXES=("" "-core" "-cli")
+SUFFIXES=("" "-core" "-cli" "-mcp")
 cmd="${1:-check}"
 extra_flag="${2:-}"
 
@@ -130,6 +130,7 @@ elif [[ "$cmd" == "scaffold" ]]; then
     echo "📦 Scaffolding ${base} (${base}, ${base}-core, ${base}-cli)..."
 
     mkdir -p "${repo_dir}/crates/${base}-core/src"
+    mkdir -p "${repo_dir}/crates/${base}-mcp/src"
     mkdir -p "${repo_dir}/crates/${base}-cli/src"
     mkdir -p "${repo_dir}/src"
 
@@ -244,7 +245,31 @@ EOF
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 EOF
 
-    # 5. -cli crate Cargo.toml
+    # 5. -mcp crate Cargo.toml
+    cat << EOF > "${repo_dir}/crates/${base}-mcp/Cargo.toml"
+[package]
+name = "${base}-mcp"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+description = "Model Context Protocol (MCP) stdio server for ${base}"
+readme = "../../README.md"
+
+[lints]
+workspace = true
+EOF
+
+    cat << EOF > "${repo_dir}/crates/${base}-mcp/src/lib.rs"
+//! Model Context Protocol (MCP) server for \`${base}\`.
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+EOF
+
+    # 6. -cli crate Cargo.toml
     cat << EOF > "${repo_dir}/crates/${base}-cli/Cargo.toml"
 [package]
 name = "${base}-cli"
@@ -370,8 +395,9 @@ elif [[ "$cmd" == "publish" ]]; then
       return 1
     }
 
-    # Publish in dependency order: -core first, -cli second, root last
+    # Publish in dependency order: -core first, -mcp second, -cli third, root last
     publish_crate "crates/${base}-core/Cargo.toml" "${base}-core"
+    publish_crate "crates/${base}-mcp/Cargo.toml" "${base}-mcp"
     publish_crate "crates/${base}-cli/Cargo.toml" "${base}-cli"
     publish_crate "Cargo.toml" "${base}"
 
