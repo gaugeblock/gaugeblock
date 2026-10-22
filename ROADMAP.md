@@ -83,13 +83,19 @@
 * **Dependencies:** `miter-engine`, `dado-core` (optional `llguidance` integration).
 * **Sub-Crates & Modules (<250 LOC each):**
   - `batten-core`:
-    - `scope_filter.rs`: Filters `miter::LexicalScope` bindings down to variables, fields, and functions type-compatible with a `dado::TypedHole`.
-    - `gbnf_emitter.rs`: Compiles allowed identifiers, operators, and target AST expression rules into a strict GBNF grammar string.
-    - `lark_emitter.rs`: Compiles the same constraint into Lark format for `llguidance` / `outlines` engines.
-    - `validator.rs`: Fast pre-flight parser that verifies whether a candidate token string satisfies the compiled grammar.
+    - [x] `type_norm.rs` & `scope_filter.rs`: Two-tier normalized type matching, unwraps/conversions, and safe fallback widening.
+    - [x] `grammar/gbnf.rs`: Depth-bounded GBNF grammar emitter for llama.cpp and mistral.rs.
+    - [x] `grammar/lark.rs`: EBNF Lark emitter for llguidance, outlines, and vLLM.
+    - [x] `grammar/regex.rs`: Bounded PCRE regular expression emitter.
+    - [x] `validator/`: Microsecond-fast zero-LLM validator checking 100% identifier membership, delimiter balancing, and literal policies.
   - `batten-cli`:
-    - `batten compile --scope scope.json --hole hole.json --format gbnf`.
-* **Exit Criteria:** Given a sample `miter` scope and a `Result<User, AppError>` hole, `batten` emits a GBNF grammar that permits only in-scope identifiers and valid Rust expression syntax.
+    - [x] `batten compile --scope scope.json --hole hole.json --format <gbnf|lark|regex>`.
+    - [x] `batten validate --constraint constraint.json --candidate "<expr>"`.
+    - [x] `batten inspect --scope scope.json --hole hole.json`.
+    - [x] `batten mcp`: Stdio JSON-RPC 2.0 Model Context Protocol server.
+  - `batten-mcp`:
+    - [x] Standalone MCP server exposing `batten_compile` and `batten_validate`.
+* **Exit Criteria:** Given a sample `miter` scope and a `Result<User, AppError>` hole, `batten` emits a GBNF grammar that permits only in-scope identifiers and valid Rust expression syntax. (`VERIFIED`)
 
 ---
 

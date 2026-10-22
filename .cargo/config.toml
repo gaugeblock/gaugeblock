@@ -34,9 +34,10 @@ dado-cli       = { path = "./dado/crates/dado-cli" }
 dado-mcp       = { path = "./dado/crates/dado-mcp" }
 
 # --- 6. batten (Scope-to-CFG Grammar Compiler) ---
-# batten         = { path = "./batten" }
-# batten-core    = { path = "./batten/crates/batten-core" }
-# batten-cli     = { path = "./batten/crates/batten-cli" }
+batten         = { path = "./batten" }
+batten-core    = { path = "./batten/crates/batten-core" }
+batten-cli     = { path = "./batten/crates/batten-cli" }
+batten-mcp     = { path = "./batten/crates/batten-mcp" }
 
 # --- 7. joiner (Master Neurosymbolic Orchestrator) ---
 # joiner         = { path = "./joiner" }
