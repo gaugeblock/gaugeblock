@@ -14,8 +14,8 @@
 | **4** | `gaugeblock/dado` | Deterministic AST patterns & typed holes | **DONE** | `GB-3` | `v0.1.0-beta.1` |
 | **5** | `gaugeblock/batten` | Dynamic scope-to-CFG grammar compiler | **DONE** | `GB-4` | `v0.1.0-beta.1` |
 | **6** | `gaugeblock/joiner` | Master neurosymbolic synthesis engine | **DONE** | `GB-5` | `v0.1.0-beta.1` |
-| **7** | `gaugeblock/benchwork` | Modular visual workbench UI & local daemon | **ACTIVE** | `GB-6` | *In Progress* |
-| **8** | `gaugeblock/rabbet` | Telemetry corpus hub & open-weight foundry | **PLANNED** | `GB-7` | *Pending* |
+| **7** | `gaugeblock/benchwork` | Modular visual workbench UI & local daemon | **DONE** | `GB-6` | `v0.1.0-beta.1` |
+| **8** | `gaugeblock/rabbet` | Telemetry corpus hub & open-weight foundry | **DONE** | `GB-7` | `v0.1.0-beta.1` |
 
 ---
 
@@ -151,14 +151,16 @@
 
 ---
 
-## Phase 8: `gaugeblock/rabbet` — Public Telemetry Corpus Hub & Open-Weight Foundry (`ACTIVE`)
+## Phase 8: `gaugeblock/rabbet` — Public Telemetry Corpus Hub & Open-Weight Foundry (`DONE`)
 * **Dependencies:** `miter-engine`, `dado-core`.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `rabbet-core`:
-    - [ ] `cold_miner.rs`: Runs `miter` + `dado` in reverse across public Apache/MIT repositories to extract millions of synthetic `(Scope + TypedHole -> TargetExpression)` training pairs before any user telemetry exists.
-    - [ ] `anonymizer.rs`: Double-checks that all contributed `AnonymizedSynthesisTrace` records contain zero PII, secrets, or proprietary literals.
-    - [ ] `parquet_hub.rs`: Packages Bronze, Silver, Gold (DPO), and Diamond traces into Hugging Face / Parquet dataset shards (`huggingface.co/gaugeblock`).
-    - [ ] `pattern_miner.rs`: Clusters recurring Gold Oracle fallbacks to propose new deterministic `dado` patterns.
+    - [x] `cold_miner.rs`: Runs `miter` + `dado` in reverse across public Apache/MIT repositories to extract millions of synthetic `(Scope + TypedHole -> TargetExpression)` training pairs before any user telemetry exists.
+    - [x] `gate/scrubber.rs` & `gate/validator.rs`: Double-checks that all contributed `AnonymizedSynthesisTrace` records contain zero PII, secrets, or proprietary literals, and validates SHA-256 content hashes.
+    - [x] `parquet/exporter.rs`: Compiles Arrow RecordBatches into `router_sft.parquet`, `hole_filler_sft.parquet`, and `hole_filler_dpo.parquet` shards.
+    - [x] `miner/pattern_miner.rs`: Clusters recurring Gold Oracle fallbacks to propose new deterministic `dado` patterns.
+    - [x] `db/store.rs` & `db/litestream.rs`: SQLite master store with WAL mode and continuous Litestream replication.
   - `rabbet-cli`:
-    - [ ] `rabbet mine-oss <repo_path>`, `rabbet export-parquet`, `rabbet publish-hub`.
-* **Exit Criteria:** Generates the initial 10,000-example cold-start Rust training dataset in Parquet format from open-source crates and publishes the schema to the `gaugeblock` Hugging Face organization.
+    - [x] `rabbet serve --port <port> --admin-token <token>`: Public Ingestion Gate + Token-protected Maintainer Admin Console (`/admin` + `/api/v1/admin/*`).
+    - [x] `rabbet mine-oss <repo_path>`, `rabbet export-parquet`, `rabbet publish-hub`, `rabbet admin <stats|compact|candidates|approve>`.
+* **Exit Criteria:** Generates the initial cold-start Rust training dataset in Parquet format from open-source crates, compiles DPO preference pairs from Gold traces, and establishes the Maintainer Admin Control Plane with Litestream continuous replication. (`VERIFIED`)

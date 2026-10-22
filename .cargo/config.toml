@@ -52,6 +52,6 @@ benchwork-cli  = { path = "./benchwork/crates/benchwork-cli" }
 benchwork-mcp  = { path = "./benchwork/crates/benchwork-mcp" }
 
 # --- 9. rabbet (Telemetry Corpus Hub & Open-Weight Foundry) ---
-# rabbet         = { path = "./rabbet" }
-# rabbet-core    = { path = "./rabbet/crates/rabbet-core" }
-# rabbet-cli     = { path = "./rabbet/crates/rabbet-cli" }
+rabbet         = { path = "./rabbet" }
+rabbet-core    = { path = "./rabbet/crates/rabbet-core" }
+rabbet-cli     = { path = "./rabbet/crates/rabbet-cli" }
