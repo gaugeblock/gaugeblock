@@ -3,9 +3,23 @@
 > **Strategy:** Each phase unlocks a dogfooding capability used to accelerate the next phase.  
 > **Rule:** Every source file across every phase must remain strictly **under 250 lines**.
 
+### Suite Implementation Status
+
+| Phase | Repository | Capability | Status | Ticket | Version / Release |
+| :---: | :--- | :--- | :---: | :---: | :---: |
+| **0** | `gaugeblock` (meta-harness) | Multi-repo orchestration & contracts | **DONE** | — | `v0.0.1-alpha.1` |
+| **1** | `gaugeblock/storypole` | Git-native backlog, task DAG & memory | **DONE** | Bootstrap | `v0.1.0-beta.1` |
+| **2** | `gaugeblock/sawhorse` | 3-mode provider-agnostic LLM runtime | **DONE** | `GB-1` | `v0.1.0-beta.1` |
+| **3** | `gaugeblock/chalkline` | Spec planner, `/grill-me` & DAG compiler | **DONE** | `GB-2` | `v0.1.0-beta.1` |
+| **4** | `gaugeblock/dado` | Deterministic AST patterns & typed holes | **DONE** | `GB-3` | `v0.1.0-beta.1` |
+| **5** | `gaugeblock/batten` | Dynamic scope-to-CFG grammar compiler | **DONE** | `GB-4` | `v0.1.0-beta.1` |
+| **6** | `gaugeblock/joiner` | Master neurosymbolic synthesis engine | **DONE** | `GB-5` | `v0.1.0-beta.1` |
+| **7** | `gaugeblock/benchwork` | Modular visual workbench UI & local daemon | **ACTIVE** | `GB-6` | *In Progress* |
+| **8** | `gaugeblock/rabbet` | Telemetry corpus hub & open-weight foundry | **PLANNED** | `GB-7` | *Pending* |
+
 ---
 
-## Phase 0: Meta-Harness & Namespace Foundation (`DONE / ACTIVE`)
+## Phase 0: Meta-Harness & Namespace Foundation (`DONE`)
 * **Target:** Root `neurosymbolic-suite/` workspace + `gaugeblock` GitHub org + `crates.io` (`0.0.1-alpha.1` reservations) + `gaugeblock.dev`.
 * **Deliverables:**
   - [x] Verify and reserve all 9 repository families under `gaugeblock` (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`).
@@ -79,7 +93,7 @@
 
 ---
 
-## Phase 5: `gaugeblock/batten` — Dynamic Scope-to-CFG Grammar Compiler
+## Phase 5: `gaugeblock/batten` — Dynamic Scope-to-CFG Grammar Compiler (`DONE`)
 * **Dependencies:** `miter-engine`, `dado-core` (optional `llguidance` integration).
 * **Sub-Crates & Modules (<250 LOC each):**
   - `batten-core`:
@@ -99,7 +113,7 @@
 
 ---
 
-## Phase 6: `gaugeblock/joiner` — Master Neurosymbolic Synthesis Orchestrator
+## Phase 6: `gaugeblock/joiner` — Master Neurosymbolic Synthesis Orchestrator (`DONE`)
 * **Dependencies:** `miter-engine`, `storypole-core`, `sawhorse-core`, `chalkline-core`, `dado-core`, `batten-core`.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `joiner-core`:
@@ -115,28 +129,28 @@
 
 ---
 
-## Phase 7: `gaugeblock/benchwork` — Modular Visual Workbench UI
+## Phase 7: `gaugeblock/benchwork` — Modular Visual Workbench UI (`ACTIVE`)
 * **Dependencies:** Connects over HTTP/WebSocket to `storypole`, `chalkline`, `joiner`, `miter`, and `sawhorse` (with a lightweight Rust local daemon `benchwork-cli`).
 * **Architecture (<250 LOC per component/module):**
   - `benchwork-cli` (Rust): Single binary (`benchwork up`) that serves the static frontend bundle and proxies local daemon endpoints.
   - `web/` (Vite + TypeScript + Tailwind):
-    - **Plugin Shell:** Automatically detects which `gaugeblock` backends are active and enables corresponding panels (works standalone with just `storypole`!).
-    - **Panel 1 — Spec & `/grill-me` Studio (`chalkline`):** Interactive option cards for resolving `DecisionHole` items alongside live `PRODUCT.md`/`DESIGN.md` preview.
-    - **Panel 2 — Backlog & Live DAG Board (`storypole`):** Topological task graph visualizer + Kanban + deferred agent tech-debt queue.
-    - **Panel 3 — AST & Synthesis Inspector (`miter` + `dado` + `joiner`):** Visualizes extracted AST slices, `dado` typed holes, `batten` grammars, and live token fills.
-    - **Panel 4 — Model & Corpus Hub (`sawhorse` + `rabbet`):** Configure 3-mode model slots and pull updated open-weight micro-models from `rabbet`.
+    - [ ] **Plugin Shell:** Automatically detects which `gaugeblock` backends are active and enables corresponding panels (works standalone with just `storypole`!).
+    - [ ] **Panel 1 — Spec & `/grill-me` Studio (`chalkline`):** Interactive option cards for resolving `DecisionHole` items alongside live `PRODUCT.md`/`DESIGN.md` preview.
+    - [ ] **Panel 2 — Backlog & Live DAG Board (`storypole`):** Topological task graph visualizer + Kanban + deferred agent tech-debt queue.
+    - [ ] **Panel 3 — AST & Synthesis Inspector (`miter` + `dado` + `joiner`):** Visualizes extracted AST slices, `dado` typed holes, `batten` grammars, and live token fills.
+    - [ ] **Panel 4 — Model & Corpus Hub (`sawhorse` + `rabbet`):** Configure 3-mode model slots and pull updated open-weight micro-models from `rabbet`.
 * **Exit Criteria:** `benchwork up` launches the web UI, renders the live `storypole` DAG, and lets the user step through a `chalkline` `/grill-me` session and watch a `joiner` synthesis trace in real time.
 
 ---
 
-## Phase 8: `gaugeblock/rabbet` — Public Telemetry Corpus Hub & Open-Weight Foundry
+## Phase 8: `gaugeblock/rabbet` — Public Telemetry Corpus Hub & Open-Weight Foundry (`PLANNED`)
 * **Dependencies:** `miter-engine`, `dado-core`.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `rabbet-core`:
-    - `cold_miner.rs`: Runs `miter` + `dado` in reverse across public Apache/MIT repositories to extract millions of synthetic `(Scope + TypedHole -> TargetExpression)` training pairs before any user telemetry exists.
-    - `anonymizer.rs`: Double-checks that all contributed `AnonymizedSynthesisTrace` records contain zero PII, secrets, or proprietary literals.
-    - `parquet_hub.rs`: Packages Bronze, Silver, Gold (DPO), and Diamond traces into Hugging Face / Parquet dataset shards (`huggingface.co/gaugeblock`).
-    - `pattern_miner.rs`: Clusters recurring Gold Oracle fallbacks to propose new deterministic `dado` patterns.
+    - [ ] `cold_miner.rs`: Runs `miter` + `dado` in reverse across public Apache/MIT repositories to extract millions of synthetic `(Scope + TypedHole -> TargetExpression)` training pairs before any user telemetry exists.
+    - [ ] `anonymizer.rs`: Double-checks that all contributed `AnonymizedSynthesisTrace` records contain zero PII, secrets, or proprietary literals.
+    - [ ] `parquet_hub.rs`: Packages Bronze, Silver, Gold (DPO), and Diamond traces into Hugging Face / Parquet dataset shards (`huggingface.co/gaugeblock`).
+    - [ ] `pattern_miner.rs`: Clusters recurring Gold Oracle fallbacks to propose new deterministic `dado` patterns.
   - `rabbet-cli`:
-    - `rabbet mine-oss <repo_path>`, `rabbet export-parquet`, `rabbet publish-hub`.
+    - [ ] `rabbet mine-oss <repo_path>`, `rabbet export-parquet`, `rabbet publish-hub`.
 * **Exit Criteria:** Generates the initial 10,000-example cold-start Rust training dataset in Parquet format from open-source crates and publishes the schema to the `gaugeblock` Hugging Face organization.
