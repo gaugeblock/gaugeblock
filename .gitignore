@@ -19,3 +19,20 @@ Thumbs.db
 .env.*
 *.log
 *.rs.bk
+
+# reserve-namespaces.sh
+reserve-staging/
+
+# gaugeblock suite
+miter/
+storypole/
+sawhorse/
+chalkline/
+dado/
+batten/
+joiner/
+benchwork/
+rabbet/
+
+# storypole ephemeral index
+.storypole/index.sqlite*

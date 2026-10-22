@@ -74,17 +74,33 @@ pub struct CompilerDiagnostic {
 
 ---
 
-## 2. `storypole` Contracts (Backlog, Task DAG & Ledger Events)
+## 2. `storypole` Contracts (Backlog, Task DAG, Decisions & Agent Continuity)
 
-Exported by `storypole-core` and persisted in `.storypole/ledger.jsonl` (git-tracked) + `.storypole/index.sqlite` (local cache). Consumed by `chalkline`, `joiner`, `benchwork`, and external MCP agents.
+Exported by `storypole-core` and persisted in `.storypole/config.toml` (repo config), `.storypole/ledger.jsonl` (git-tracked append-only event log), and `.storypole/index.sqlite` (ephemeral derived relational index). Consumed by `chalkline`, `joiner`, `benchwork`, and external MCP agents.
 
 ```rust
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+/// Per-repository or meta-harness configuration loaded from `.storypole/config.toml`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct StorypoleConfig {
+    /// Human-readable ticket prefix (e.g., "GB", "SP", "MTR"). Generates IDs like `SP-14`.
+    pub ticket_prefix: String,
+    /// Optional allow-list of valid repository names (enforced when non-empty).
+    pub allowed_repos: Vec<String>,
+    /// Optional allow-list of valid crate/package names (enforced when non-empty).
+    pub allowed_crates: Vec<String>,
+    /// Default lease time-to-live in minutes before an `InProgress` agent claim expires.
+    pub claim_ttl_minutes: u32,
+    /// Optional map of `(crate_or_repo_name, verification_command)`.
+    pub verification_commands: Vec<(String, String)>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TaskKind {
+    Epic,
     Feature,
     Refactor,
     Bug,
@@ -96,46 +112,226 @@ pub enum TaskKind {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TaskStatus {
+    /// Captured via `storypole defer`; awaits human or `chalkline` triage before entering `Ready`.
+    Triage,
+    /// Blocked by unverified `blocked_by` tasks or unresolved `Pending` decisions.
     Blocked,
+    /// All hard dependencies verified and zero pending decisions; eligible for `storypole next`.
     Ready,
+    /// Actively claimed by an agent or human under an active lease.
     InProgress,
+    /// Active AST pattern/hole synthesis in progress via `joiner`.
     Synthesizing,
+    /// Running compiler / test verification via `miter`.
     Verifying,
+    /// Passed verification with a recorded `VerificationReceipt`.
     Verified,
+    /// Intentionally parked for future milestones.
     Deferred,
+    /// Exhausted retry budget or failed verification; requires handoff inspection or split.
     Failed,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum EdgeKind {
+    /// Hard topological execution lock: target cannot enter `Ready` until source is `Verified`.
+    BlockedBy,
+    /// Soft bi-directional link: surfaces sibling summary & decisions in context briefings.
+    RelatedTo,
+    /// Provenance link: created automatically when an agent defers an issue during an active task.
+    DiscoveredFrom,
+    /// Hierarchical grouping under a parent Epic or split task.
+    ParentEpic,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskEdge {
+    pub kind: EdgeKind,
+    pub target_id: Uuid,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DecisionStatus {
+    Pending,
+    Resolved,
+    Superseded,
+}
+
+/// A decision node attached to a task, supporting chained follow-up decisions and reversal.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskDecision {
+    pub decision_id: Uuid,
+    pub parent_decision_id: Option<Uuid>,
+    pub status: DecisionStatus,
+    pub category: String,
+    pub question: String,
+    pub proposed_options: Vec<String>,
+    pub chosen_option: Option<String>,
+    pub rationale: Option<String>,
+    pub resolved_by: Option<String>,
+    pub updated_at_epoch_ms: u64,
+}
+
+/// Structured continuity checkpoint recorded when an agent pauses, yields, or fails mid-task.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct HandoffPacket {
+    pub recorded_by_agent: String,
+    pub timestamp_ms: u64,
+    pub completed_items: Vec<String>,
+    pub remaining_items: Vec<String>,
+    pub last_error_or_blocker: Option<String>,
+    pub git_ref: Option<String>,
+    pub dirty_files: Vec<String>,
+}
+
+/// Active agent claim lock with lease expiration to prevent parallel agent collisions.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AgentClaim {
+    pub agent_id: String,
+    pub claimed_at_epoch_ms: u64,
+    pub lease_expires_at_epoch_ms: u64,
+}
+
+/// Evidence required to transition a task into `TaskStatus::Verified`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct VerificationReceipt {
+    pub command_executed: String,
+    pub exit_code: i32,
+    pub passed_tests_count: Option<u32>,
+    pub summary: String,
+    pub verified_at_epoch_ms: u64,
+}
+
+/// Multi-dimensional scope coordinates for filtering across repos, crates, and AST symbols.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskScope {
+    pub repo: Option<String>,
+    pub crate_name: Option<String>,
+    pub module_path: Option<String>,
+    pub target_files: Vec<String>,
+    pub target_symbols: Vec<String>,
+    pub labels: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TaskNode {
     pub id: Uuid,
+    /// Human-friendly sequential key (e.g., `SP-14`, `GB-3`).
+    pub ticket_key: String,
     pub slug: String,
     pub title: String,
     pub description: String,
     pub kind: TaskKind,
     pub status: TaskStatus,
     pub priority: u8, // 1 (highest) to 5 (lowest)
-    pub depends_on: Vec<Uuid>,
-    pub target_files: Vec<String>,
-    pub target_symbols: Vec<String>,
+    pub scope: TaskScope,
+    pub edges: Vec<TaskEdge>,
+    pub decisions: Vec<TaskDecision>,
     pub acceptance_criteria: Vec<String>,
+    pub active_claim: Option<AgentClaim>,
+    pub latest_handoff: Option<HandoffPacket>,
+    pub verification_receipt: Option<VerificationReceipt>,
     pub created_at_epoch_ms: u64,
     pub updated_at_epoch_ms: u64,
+}
+
+/// Assembled context payload returned by `storypole next` / `storypole claim` / MCP tools.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskContextBriefing {
+    pub task: TaskNode,
+    pub verification_command: Option<String>,
+    pub related_tasks_summary: Vec<(String, String, TaskStatus)>,
+    pub inherited_decisions: Vec<TaskDecision>,
+    pub file_collision_warnings: Vec<String>,
+    pub known_deferred_issues_in_scope: Vec<(String, String)>,
 }
 
 /// Immutable append-only event written to `.storypole/ledger.jsonl`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "event", rename_all = "snake_case")]
 pub enum LedgerEvent {
-    TaskCreated { task: TaskNode },
-    StatusChanged { task_id: Uuid, from: TaskStatus, to: TaskStatus, reason: Option<String> },
-    DependencyAdded { task_id: Uuid, depends_on_id: Uuid },
-    DecisionResolved { decision_id: Uuid, question: String, chosen_option: String, rationale: String },
-    DeferredItemCaptured { task: TaskNode, captured_by_agent: String, active_task_id: Option<Uuid> },
+    TaskCreated {
+        task: TaskNode,
+    },
+    TaskUpdated {
+        task_id: Uuid,
+        title: Option<String>,
+        description: Option<String>,
+        priority: Option<u8>,
+        scope: Option<TaskScope>,
+        acceptance_criteria: Option<Vec<String>>,
+        timestamp_ms: u64,
+    },
+    StatusChanged {
+        task_id: Uuid,
+        from: TaskStatus,
+        to: TaskStatus,
+        reason: Option<String>,
+        timestamp_ms: u64,
+    },
+    EdgeAdded {
+        task_id: Uuid,
+        edge: TaskEdge,
+        timestamp_ms: u64,
+    },
+    EdgeRemoved {
+        task_id: Uuid,
+        edge: TaskEdge,
+        timestamp_ms: u64,
+    },
+    DecisionRaised {
+        task_id: Uuid,
+        decision: TaskDecision,
+        timestamp_ms: u64,
+    },
+    DecisionResolved {
+        task_id: Uuid,
+        decision_id: Uuid,
+        chosen_option: String,
+        rationale: String,
+        resolved_by: String,
+        spawned_followup: Option<TaskDecision>,
+        appended_criterion: Option<String>,
+        timestamp_ms: u64,
+    },
+    DecisionSuperseded {
+        task_id: Uuid,
+        decision_id: Uuid,
+        reason: String,
+        timestamp_ms: u64,
+    },
+    TaskClaimed {
+        task_id: Uuid,
+        claim: AgentClaim,
+    },
+    TaskReleased {
+        task_id: Uuid,
+        agent_id: String,
+        timestamp_ms: u64,
+    },
+    HandoffRecorded {
+        task_id: Uuid,
+        handoff: HandoffPacket,
+        new_status: TaskStatus,
+    },
+    TaskSplit {
+        parent_task_id: Uuid,
+        spawned_children: Vec<TaskNode>,
+        timestamp_ms: u64,
+    },
+    TaskVerified {
+        task_id: Uuid,
+        receipt: VerificationReceipt,
+    },
+    DeferredItemCaptured {
+        task: TaskNode,
+        captured_by_agent: String,
+        discovered_from_task_id: Option<Uuid>,
+    },
 }
 ```
-
----
 
 ## 3. `chalkline` Contracts (Spec Graph, `/grill-me` Decisions & Cross-Language Contracts)
 
