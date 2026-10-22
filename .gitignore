@@ -36,3 +36,9 @@ rabbet/
 
 # storypole ephemeral index
 .storypole/index.sqlite*
+
+# miter redb database and local cache
+.miter/*
+!.miter/config.toml
+*.redb
+*.redb.lock

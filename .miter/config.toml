@@ -1,0 +1,9 @@
+[audit]
+threshold = 250
+
+[indexer]
+exclude = [
+    "target/**",
+    "**/target/**",
+    "**/*.redb*",
+]
