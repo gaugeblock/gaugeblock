@@ -129,21 +129,29 @@
 
 ---
 
-## Phase 7: `gaugeblock/benchwork` — Modular Visual Workbench UI (`ACTIVE`)
-* **Dependencies:** Connects over HTTP/WebSocket to `storypole`, `chalkline`, `joiner`, `miter`, and `sawhorse` (with a lightweight Rust local daemon `benchwork-cli`).
+## Phase 7: `gaugeblock/benchwork` — Modular Visual Workbench UI (`DONE`)
+* **Dependencies:** Connects directly via Rust library linkage and over HTTP/WebSocket to `storypole`, `chalkline`, `joiner`, `dado`, `batten`, and `sawhorse` (with a lightweight Axum local daemon `benchwork-cli` and stdio `benchwork-mcp`).
 * **Architecture (<250 LOC per component/module):**
-  - `benchwork-cli` (Rust): Single binary (`benchwork up`) that serves the static frontend bundle and proxies local daemon endpoints.
-  - `web/` (Vite + TypeScript + Tailwind):
-    - [ ] **Plugin Shell:** Automatically detects which `gaugeblock` backends are active and enables corresponding panels (works standalone with just `storypole`!).
-    - [ ] **Panel 1 — Spec & `/grill-me` Studio (`chalkline`):** Interactive option cards for resolving `DecisionHole` items alongside live `PRODUCT.md`/`DESIGN.md` preview.
-    - [ ] **Panel 2 — Backlog & Live DAG Board (`storypole`):** Topological task graph visualizer + Kanban + deferred agent tech-debt queue.
-    - [ ] **Panel 3 — AST & Synthesis Inspector (`miter` + `dado` + `joiner`):** Visualizes extracted AST slices, `dado` typed holes, `batten` grammars, and live token fills.
-    - [ ] **Panel 4 — Model & Corpus Hub (`sawhorse` + `rabbet`):** Configure 3-mode model slots and pull updated open-weight micro-models from `rabbet`.
-* **Exit Criteria:** `benchwork up` launches the web UI, renders the live `storypole` DAG, and lets the user step through a `chalkline` `/grill-me` session and watch a `joiner` synthesis trace in real time.
+  - `benchwork-core`:
+    - [x] `capabilities.rs`: Scans workspace for `SPEC.md`, `PRODUCT.md`, `.storypole`, `.dado`, `sawhorse.toml`, and `.rabbet` spool.
+    - [x] `spec_studio.rs`: `SPEC.md` and Markdown parser, `chalkline` decision resolver, and polyglot contract preview.
+    - [x] `dag_service.rs`: Storypole task graph queries, topological sorting, bottleneck detection, agent claims & handoffs.
+    - [x] `xray_service.rs`: Dado pattern definitions, Batten grammar compilation, and in-process/daemon Joiner synthesis triggers.
+    - [x] `hub_service.rs`: Sawhorse 3-mode provider status, health pings, and Rabbet DPO telemetry trace inspector.
+  - `benchwork-cli` & `benchwork-mcp`:
+    - [x] `benchwork-cli` (Rust): Single binary (`benchwork up`) that serves the static frontend bundle (`rust-embed`), WebSocket/SSE streams, and REST API.
+    - [x] `benchwork-mcp`: Stdio JSON-RPC 2.0 Model Context Protocol server exposing `benchwork_capabilities`, `benchwork_snapshot`, `benchwork_resolve_decision`, and `benchwork_trigger_synthesis`.
+  - `web/` (Vite + React 19 + TypeScript + Tailwind):
+    - [x] **Plugin Shell:** Automatically detects which `gaugeblock` backends are active and enables corresponding panels (works standalone with just `SPEC.md` or `storypole`!).
+    - [x] **Panel 1 — Spec & `/grill-me` Studio (`chalkline`):** Interactive option cards for resolving `DecisionHole` items alongside live `SPEC.md`/`PRODUCT.md` preview and polyglot contract generator preview.
+    - [x] **Panel 2 — Backlog & Live DAG Board (`storypole`):** Topological task graph CAD SVG visualizer + multi-filter bar + agent claim/handoff briefing drawer.
+    - [x] **Panel 3 — AST & Synthesis Inspector (`dado` + `batten` + `joiner`):** Visualizes Dado patterns and typed holes, Batten CFG rules, and live Joiner synthesis token fills.
+    - [x] **Panel 4 — Model & Telemetry Hub (`sawhorse` + `rabbet`):** Configure 3-mode model slots, run ping diagnostics, and inspect/purge Rabbet DPO training telemetry outbox traces.
+* **Exit Criteria:** `benchwork up` launches the web UI, renders the live `storypole` DAG, and lets the user step through a `chalkline` `/grill-me` session and watch a `joiner` synthesis trace in real time. (`VERIFIED`)
 
 ---
 
-## Phase 8: `gaugeblock/rabbet` — Public Telemetry Corpus Hub & Open-Weight Foundry (`PLANNED`)
+## Phase 8: `gaugeblock/rabbet` — Public Telemetry Corpus Hub & Open-Weight Foundry (`ACTIVE`)
 * **Dependencies:** `miter-engine`, `dado-core`.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `rabbet-core`:

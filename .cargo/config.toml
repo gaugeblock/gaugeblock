@@ -46,9 +46,10 @@ joiner-cli     = { path = "./joiner/crates/joiner-cli" }
 joiner-mcp     = { path = "./joiner/crates/joiner-mcp" }
 
 # --- 8. benchwork (Modular Visual Workbench UI & Local Daemon) ---
-# benchwork      = { path = "./benchwork" }
-# benchwork-core = { path = "./benchwork/crates/benchwork-core" }
-# benchwork-cli  = { path = "./benchwork/crates/benchwork-cli" }
+benchwork      = { path = "./benchwork" }
+benchwork-core = { path = "./benchwork/crates/benchwork-core" }
+benchwork-cli  = { path = "./benchwork/crates/benchwork-cli" }
+benchwork-mcp  = { path = "./benchwork/crates/benchwork-mcp" }
 
 # --- 9. rabbet (Telemetry Corpus Hub & Open-Weight Foundry) ---
 # rabbet         = { path = "./rabbet" }
