@@ -3,23 +3,23 @@
 
 [patch.crates-io]
 # --- 1. miter (AST Slicer, Dependency Grapher & Verification Engine) ---
-# miter-cli      = { path = "./miter" }
-# miter-engine   = { path = "./miter/crates/engine" }
-# miter-ast      = { path = "./miter/crates/ast_indexer" }
-# miter-storage  = { path = "./miter/crates/storage" }
-# miter-mcp      = { path = "./miter/crates/mcp" }
-# miter-harness  = { path = "./miter/crates/harness" }
+miter-cli      = { path = "./miter" }
+miter-engine   = { path = "./miter/crates/engine" }
+miter-ast      = { path = "./miter/crates/ast_indexer" }
+miter-storage  = { path = "./miter/crates/storage" }
+miter-mcp      = { path = "./miter/crates/mcp" }
+miter-harness  = { path = "./miter/crates/harness" }
 
 # --- 2. storypole (Backlog, Task DAG & Memory Store) ---
-# storypole      = { path = "./storypole" }
-# storypole-core = { path = "./storypole/crates/storypole-core" }
-# storypole-cli  = { path = "./storypole/crates/storypole-cli" }
-# storypole-mcp  = { path = "./storypole/crates/storypole-mcp" }
+storypole      = { path = "./storypole" }
+storypole-core = { path = "./storypole/crates/storypole-core" }
+storypole-cli  = { path = "./storypole/crates/storypole-cli" }
+storypole-mcp  = { path = "./storypole/crates/storypole-mcp" }
 
 # --- 3. sawhorse (Provider-Agnostic 3-Mode LLM Runtime) ---
-# sawhorse       = { path = "./sawhorse" }
-# sawhorse-core  = { path = "./sawhorse/crates/sawhorse-core" }
-# sawhorse-cli   = { path = "./sawhorse/crates/sawhorse-cli" }
+sawhorse       = { path = "./sawhorse" }
+sawhorse-core  = { path = "./sawhorse/crates/sawhorse-core" }
+sawhorse-cli   = { path = "./sawhorse/crates/sawhorse-cli" }
 
 # --- 4. chalkline (Interactive Spec & DAG Planner) ---
 chalkline      = { path = "./chalkline" }
@@ -40,10 +40,10 @@ batten-cli     = { path = "./batten/crates/batten-cli" }
 batten-mcp     = { path = "./batten/crates/batten-mcp" }
 
 # --- 7. joiner (Master Neurosymbolic Orchestrator) ---
-# joiner         = { path = "./joiner" }
-# joiner-core    = { path = "./joiner/crates/joiner-core" }
-# joiner-cli     = { path = "./joiner/crates/joiner-cli" }
-# joiner-mcp     = { path = "./joiner/crates/joiner-mcp" }
+joiner         = { path = "./joiner" }
+joiner-core    = { path = "./joiner/crates/joiner-core" }
+joiner-cli     = { path = "./joiner/crates/joiner-cli" }
+joiner-mcp     = { path = "./joiner/crates/joiner-mcp" }
 
 # --- 8. benchwork (Modular Visual Workbench UI & Local Daemon) ---
 # benchwork      = { path = "./benchwork" }

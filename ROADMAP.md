@@ -103,14 +103,15 @@
 * **Dependencies:** `miter-engine`, `storypole-core`, `sawhorse-core`, `chalkline-core`, `dado-core`, `batten-core`.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `joiner-core`:
-    - `router.rs`: System 1 classifier that maps `(TaskNode + LexicalScope)` to either a `DadoPattern`, an AST Surgical Edit, or Oracle escalation.
-    - `filler.rs`: Iterates over each `TypedHole` in a `DadoPattern`, compiles its grammar via `batten`, and calls `sawhorse` (`ModelRole::HoleFiller`).
-    - `verifier.rs`: Calls `miter` to splice the result and run `cargo check` / `tsc` / unit tests; feeds exact compiler diagnostics back on retry.
-    - `oracle.rs`: Escalation handler when no `dado` pattern matches; tags novel solutions as candidates for `rabbet` pattern extraction.
-    - `telemetry.rs`: AST-anonymizes verified runs via `miter` and writes local `AnonymizedSynthesisTrace` records (Bronze/Silver/Gold).
+    - [x] `router.rs`: System 1 classifier that maps `(TaskNode + LexicalScope)` to either a `DadoPattern`, an AST Surgical Edit, or Oracle escalation.
+    - [x] `filler.rs`: Iterates over each `TypedHole` in a `DadoPattern`, compiles its grammar via `batten`, and calls `sawhorse` (`ModelRole::HoleFiller`).
+    - [x] `verifier.rs`: Calls `miter` to splice the result and run `cargo check` / `tsc` / unit tests; feeds exact compiler diagnostics back on retry.
+    - [x] `oracle.rs`: Escalation handler when no `dado` pattern matches; tags novel solutions as candidates for `rabbet` pattern extraction.
+    - [x] `telemetry.rs`: AST-anonymizes verified runs via `miter` and writes local `AnonymizedSynthesisTrace` records (Bronze/Silver/Gold).
   - `joiner-cli` & `joiner-mcp`:
-    - `joiner run-next` (pulls from `storypole`), `joiner synthesize <task_id>`, `joiner daemon` (HTTP/WS API for `benchwork`).
-* **Exit Criteria:** `joiner run-next` pulls a ready Rust task from `storypole`, selects a `dado` pattern, fills its holes using a `batten`-constrained model via `sawhorse`, verifies compilation via `miter`, and marks the task `Verified` in `storypole`.
+    - [x] `joiner run-next` (pulls from `storypole`), `joiner synthesize <task_id>`, `joiner daemon` (HTTP/WS API for `benchwork`).
+    - [x] `joiner mcp`: Stdio JSON-RPC 2.0 Model Context Protocol server exposing `joiner_run_next` and `joiner_synthesize`.
+* **Exit Criteria:** `joiner run-next` pulls a ready Rust task from `storypole`, selects a `dado` pattern, fills its holes using a `batten`-constrained model via `sawhorse`, verifies compilation via `miter`, and marks the task `Verified` in `storypole`. (`VERIFIED`)
 
 ---
 
