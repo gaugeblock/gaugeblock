@@ -14,20 +14,20 @@
 
 ---
 
-## Phase 1: `gaugeblock/storypole` — Git-Native Backlog, Task DAG & MCP Memory Store
+## Phase 1: `gaugeblock/storypole` — Git-Native Backlog, Task DAG & MCP Memory Store (`DONE`)
 * **Dependencies:** None (Pure Rust + `rusqlite` + `serde_json` + `clap`).
 * **Why First:** Once `storypole` is built, your AI coding agents immediately use `storypole` via CLI and MCP to track tasks, dependencies, and deferred tech debt for Phases 2 through 8.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `storypole-core`:
-    - `model.rs`: `TaskNode`, `TaskStatus`, `TaskKind`, `LedgerEvent` (from `CONTRACTS.md`).
-    - `ledger.rs`: Append-only `.storypole/ledger.jsonl` reader/writer with deterministic git-merge conflict resilience.
-    - `index.rs`: Ephemeral `.storypole/index.sqlite` builder and sync engine.
-    - `dag.rs`: Topological sort, cycle detection, and `next_ready_tasks()` query engine.
+    - [x] `model.rs`: `TaskNode`, `TaskStatus`, `TaskKind`, `LedgerEvent` (from `CONTRACTS.md`).
+    - [x] `ledger.rs`: Append-only `.storypole/ledger.jsonl` reader/writer with deterministic git-merge conflict resilience.
+    - [x] `index.rs`: Ephemeral `.storypole/index.sqlite` builder and sync engine.
+    - [x] `dag.rs`: Topological sort, cycle detection, and `next_ready_tasks()` query engine.
   - `storypole-mcp`:
-    - `server.rs`: JSON-RPC 2.0 stdio MCP server exposing `storypole_next`, `storypole_defer`, `storypole_update_status`, and `storypole_add_task`.
+    - [x] `server.rs`: JSON-RPC 2.0 stdio MCP server exposing `storypole_next`, `storypole_defer`, `storypole_update_status`, and `storypole_add_task`.
   - `storypole-cli`:
-    - `main.rs` & `commands.rs`: `storypole init`, `add`, `next`, `defer`, `graph`, `serve` (HTTP/WS daemon for `benchwork`), and `mcp`.
-* **Exit Criteria:** `storypole` initializes `.storypole/` in the meta-harness, imports Phases 2–8 as DAG nodes, and serves tasks over MCP.
+    - [x] `main.rs` & `commands.rs`: `storypole init`, `add`, `next`, `defer`, `graph`, `serve` (HTTP/WS daemon for `benchwork`), and `mcp`.
+* **Exit Criteria:** `storypole` initializes `.storypole/` in the meta-harness, imports Phases 2–8 as DAG nodes, and serves tasks over MCP. (`VERIFIED`)
 
 ---
 
@@ -63,7 +63,7 @@
 
 ---
 
-## Phase 4: `gaugeblock/dado` — Deterministic AST Pattern & Typed Hole Engine
+## Phase 4: `gaugeblock/dado` — Deterministic AST Pattern & Typed Hole Engine (`ACTIVE / READY`)
 * **Dependencies:** `miter-engine`.
 * **Sub-Crates & Modules (<250 LOC each):**
   - `dado-core`:
