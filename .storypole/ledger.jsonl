@@ -37,3 +37,5 @@
 {"event":"task_verified","task_id":"523354d3-a66e-41f4-a941-0945841842ce","receipt":{"verifier":"manual","command":"n/a","exit_code":0,"diagnostic_count":null,"summary":"Manual verification confirmed","verified_at_epoch_ms":1792698851843}}
 {"event":"status_changed","task_id":"43db8920-2f12-4874-b0d7-983a444415db","from":"blocked","to":"ready","reason":"Dependency GB-5 verified","timestamp_ms":1792698851843}
 {"event":"status_changed","task_id":"c0ce7764-eaa4-4291-bb6c-d81f1934de99","from":"blocked","to":"ready","reason":"Dependency GB-5 verified","timestamp_ms":1792698851843}
+{"event":"task_claimed","task_id":"43db8920-2f12-4874-b0d7-983a444415db","claim":{"agent_id":"antigravity","claimed_at_epoch_ms":1792700000000,"lease_expires_at_epoch_ms":1792703600000}}
+{"event":"status_changed","task_id":"43db8920-2f12-4874-b0d7-983a444415db","from":"ready","to":"in_progress","reason":"Claimed by antigravity for Phase 7","timestamp_ms":1792700000000}
