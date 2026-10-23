@@ -68,3 +68,6 @@
 {"event":"task_claimed","task_id":"d77103fd-6527-4976-a769-9b7986e869f2","claim":{"agent_id":"antigravity","claimed_at_epoch_ms":1792714962230,"lease_expires_at_epoch_ms":1792718562230}}
 {"event":"status_changed","task_id":"d77103fd-6527-4976-a769-9b7986e869f2","from":"ready","to":"in_progress","reason":"Claimed by antigravity","timestamp_ms":1792714962230}
 {"event":"task_verified","task_id":"d77103fd-6527-4976-a769-9b7986e869f2","receipt":{"verifier":"manual","command":"n/a","exit_code":0,"diagnostic_count":null,"summary":"Manual verification confirmed","verified_at_epoch_ms":1792715381816}}
+{"event":"task_claimed","task_id":"f0f00564-f548-4559-94a7-83c513dd9914","claim":{"agent_id":"antigravity","claimed_at_epoch_ms":1792715400169,"lease_expires_at_epoch_ms":1792719000169}}
+{"event":"status_changed","task_id":"f0f00564-f548-4559-94a7-83c513dd9914","from":"ready","to":"in_progress","reason":"Claimed by antigravity","timestamp_ms":1792715400169}
+{"event":"task_verified","task_id":"f0f00564-f548-4559-94a7-83c513dd9914","receipt":{"verifier":"manual","command":"n/a","exit_code":0,"diagnostic_count":null,"summary":"Manual verification confirmed","verified_at_epoch_ms":1792716456500}}
