@@ -1,5 +1,23 @@
 # .cargo/config.toml — Local multi-repo development overrides for gaugeblock
-# Uncomment any entry below while actively developing across local sibling checkouts:
+# Configures shared build cache, sccache compiler caching, and native instruction tuning.
+
+[build]
+# Share build artifacts across all member repositories to eliminate duplicate compilation
+target-dir = "target"
+
+# Fast compiler caching via sccache
+rustc-wrapper = "sccache"
+
+# Target host CPU architecture (AVX2/FMA/BMI on x86_64, NEON on ARM64)
+rustflags = ["-C", "target-cpu=native"]
+
+# macOS-specific linking optimization: bypass slow dsymutil on debug builds
+[target.'cfg(target_os = "macos")']
+rustflags = ["-C", "target-cpu=native", "-C", "split-debuginfo=unpacked"]
+
+[env]
+# Disable incremental compilation so sccache can fully cache all compilation units
+CARGO_INCREMENTAL = "0"
 
 [patch.crates-io]
 # --- 1. miter (AST Slicer, Dependency Grapher & Verification Engine) ---
