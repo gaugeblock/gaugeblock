@@ -24,11 +24,11 @@ The `gaugeblock` suite is designed to be dogfooded end-to-end using the installe
 
 To keep developer and agent velocity high while preventing build breakages, all code changes follow a 4-tier verification matrix. Run only the tier required for your current workflow stage.
 
-| Tier | Gate | Scope | Commands | When to Run |
+| Tier | Gate | Scope | Commands (`cargo-nextest` preferred) | When to Run |
 |---|---|---|---|---|
-| **Tier 1** | **Inner Loop** | Active crate / file | `cargo check -p <crate>`<br>`cargo test -p <crate> --lib <submodule_or_test>` | Rapid iteration while writing functions or tests (<2s). |
-| **Tier 2** | **Commit Gate** | Affected crate(s) | `cargo fmt --check -p <crate>`<br>`cargo clippy -p <crate> --all-targets -- -D warnings`<br>`cargo test -p <crate>` | **Mandatory before creating an atomic commit.** |
-| **Tier 3** | **Task Gate** | Repository workspace | `cargo fmt --all -- --check`<br>`cargo clippy --workspace --all-targets -- -D warnings`<br>`cargo test --workspace` | **Mandatory before closing a task or marking `Verified` in `storypole`.** |
+| **Tier 1** | **Inner Loop** | Active crate / file | `cargo check -p <crate>`<br>`cargo nextest run -p <crate> --lib <submodule_or_test>` | Rapid iteration while writing functions or tests (<2s). |
+| **Tier 2** | **Commit Gate** | Affected crate(s) | `cargo fmt --check -p <crate>`<br>`cargo clippy -p <crate> --all-targets -- -D warnings`<br>`cargo nextest run -p <crate>` | **Mandatory before creating an atomic commit.** |
+| **Tier 3** | **Task Gate** | Repository workspace | `cargo fmt --all -- --check`<br>`cargo clippy --workspace --all-targets -- -D warnings`<br>`cargo nextest run --workspace`<br>`cargo test --doc --workspace` | **Mandatory before closing a task or marking `Verified` in `storypole`.** |
 | **Tier 4** | **Release Gate** | Cross-repo meta-harness | Workspace tests + E2E integration suites + `CONTRACTS.md` wire checks | **Mandatory before bumping versions or pushing `vX.Y.Z` git tags.** |
 
 ---

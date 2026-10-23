@@ -19,14 +19,14 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
 3. **Zero Inline Scope Creep (Mandatory Deferral to `storypole`):**
    * While executing a task, if you discover an unrelated bug, edge case, missing AST pattern, or refactoring opportunity outside your immediate file scope, **DO NOT fix it inline**.
    * You MUST record the item immediately via `storypole defer --kind <tech-debt|bug|enhancement> --symbol "<crate::path>" --title "..."` (or the `storypole_defer` MCP tool). Stay locked on your active task. Every discovered defect or out-of-scope requirement must be captured in `storypole` to ensure complete traceability.
-4. **Tiered Verification Matrix:**
+4. **Tiered Verification Matrix (`cargo-nextest` preferred runner):**
    * To sustain high inner-loop velocity without compromising reliability, verifications are strictly tiered:
      * **Tier 1 (Inner Loop — Rapid Iteration):** Run targeted checks on the active crate/module during development:
-       `cargo check -p <crate>` or `cargo test -p <crate> --lib <submodule_or_test>`
+       `cargo check -p <crate>` or `cargo nextest run -p <crate> --lib <submodule_or_test>` (fallback: `cargo test -p <crate> --lib <submodule_or_test>`)
      * **Tier 2 (Atomic Commit Gate):** Run on the affected crate before finalizing an atomic commit:
-       `cargo fmt --check -p <crate>`, `cargo clippy -p <crate> --all-targets -- -D warnings`, and `cargo test -p <crate>`
+       `cargo fmt --check -p <crate>`, `cargo clippy -p <crate> --all-targets -- -D warnings`, and `cargo nextest run -p <crate>` (fallback: `cargo test -p <crate>`)
      * **Tier 3 (Task Completion Gate):** Full workspace verification before closing a task or marking `Verified` in `storypole`:
-       `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, and `cargo test --workspace`
+       `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`, and `cargo test --doc --workspace` (fallback: `cargo test --workspace`)
      * **Tier 4 (Release & Wire Gate):** Full cross-repo suite, integration tests, and wire contract validation before bumping versions or pushing release tags.
 5. **Strict Error Handling & Observability:**
    * Library crates (`*-core`, `*-engine`) MUST use `thiserror` with strongly typed error enums. `.unwrap()` and `.expect()` are forbidden in production library paths (allowed only in tests or provably infallible static initializers with a `// SAFETY:` or `// INVARIANT:` comment). Enforced at compile time via `[workspace.lints.clippy]` (`unwrap_used = "deny"`, `expect_used = "deny"`).
@@ -154,5 +154,5 @@ For every assigned task:
 4. **Synthesize & Patch with `dado` & `batten`:** Compose deterministic AST patterns with `dado render` and validate grammatical constraints with `batten validate`.
 5. **Implement Modularly (Tier 1 Iteration):** Write small, single-purpose files (strictly under 250 LOC) with explicit doc comments (`///`). Use Tier 1 checks (`cargo check -p <crate>`) for rapid iteration.
 6. **Capture Unrelated Findings in `storypole`:** If you uncover an out-of-scope bug, edge case, or debt, defer it immediately via `storypole defer`.
-7. **Commit Atomically (Tier 2 Gate):** Verify affected crate (`cargo fmt --check -p <crate>`, `cargo clippy -p <crate>`, `cargo test -p <crate>`). Commit with Conventional Commits (`<type>(<scope>): <summary>`).
-8. **Verify & Close Task (Tier 3 Gate):** Run full workspace verification. Release lease and certify completion with `storypole verify <KEY>` or `storypole handoff`.
+7. **Commit Atomically (Tier 2 Gate):** Verify affected crate (`cargo fmt --check -p <crate>`, `cargo clippy -p <crate>`, `cargo nextest run -p <crate>`). Commit with Conventional Commits (`<type>(<scope>): <summary>`).
+8. **Verify & Close Task (Tier 3 Gate):** Run full workspace verification (`cargo nextest run --workspace` + `cargo test --doc --workspace`). Release lease and certify completion with `storypole verify <KEY>` or `storypole handoff`.

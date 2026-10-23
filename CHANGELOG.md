@@ -17,7 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Interactive `sawhorse.toml` provider configuration manager (GB-17).
   - Configurable 9-document repository architecture manager and AST-grounded documentation generator (GB-18).
 * **Workspace Test Runner (GB-13):**
-  - Planned adoption of `cargo-nextest` for parallel workspace test execution.
+  - Adopted `cargo-nextest` for parallel workspace test execution with process isolation and JUnit CI reporting.
+  - Deployed `.config/nextest.toml` configuration across all 9 workspaces and root meta-harness.
+  - Updated `AGENTS.md` and `CONTRIBUTING.md` tiered verification matrices.
+  - Modernized CI workflows with `taiki-e/install-action@nextest` and `cargo test --doc --workspace`.
+  - Added unified `scripts/test-suite.sh` test runner.
 
 ---
 
