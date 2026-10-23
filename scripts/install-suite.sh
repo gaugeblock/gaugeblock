@@ -20,6 +20,7 @@ PROFILE="all"
 BUILD_MODE="release"
 PROFILE_FLAG=""
 SYNC_MCP=true
+FORCE=false
 SELECTED_TOOLS=()
 
 while [[ $# -gt 0 ]]; do
@@ -27,6 +28,10 @@ while [[ $# -gt 0 ]]; do
     --debug)
       BUILD_MODE="debug"
       PROFILE_FLAG="--debug"
+      shift
+      ;;
+    --force|-f)
+      FORCE=true
       shift
       ;;
     --profile)
@@ -43,6 +48,7 @@ while [[ $# -gt 0 ]]; do
       echo "Options:"
       echo "  --profile <all|core|minimal>  Select tool preset (default: all)"
       echo "  --debug                       Build debug instead of release"
+      echo "  --force, -f                   Force rebuild and install even if versions match"
       echo "  --no-sync-mcp                 Skip updating Antigravity mcp_config.json"
       echo "  -h, --help                    Print help"
       exit 0
@@ -103,6 +109,33 @@ else
   esac
 fi
 
+get_target_version() {
+  local crate_dir="$1"
+  python3 -c "
+import os, tomllib
+curr = os.path.abspath('$crate_dir')
+with open(os.path.join(curr, 'Cargo.toml'), 'rb') as f:
+    d = tomllib.load(f)
+v = d.get('package', {}).get('version')
+if isinstance(v, str):
+    print(v)
+    exit(0)
+ws_v = d.get('workspace', {}).get('package', {}).get('version')
+if ws_v:
+    print(ws_v)
+    exit(0)
+p = os.path.dirname(os.path.dirname(curr))
+p_manifest = os.path.join(p, 'Cargo.toml')
+if os.path.exists(p_manifest):
+    with open(p_manifest, 'rb') as f:
+        pd = tomllib.load(f)
+    ws_v = pd.get('workspace', {}).get('package', {}).get('version')
+    if ws_v:
+        print(ws_v)
+        exit(0)
+" 2>/dev/null || true
+}
+
 echo "======================================================================"
 echo " gaugeblock Suite Installer (${BUILD_MODE} profile)"
 echo " Profile: ${PROFILE} | Tools: ${#TARGET_CRATES[@]}"
@@ -111,12 +144,21 @@ echo "======================================================================"
 for item in "${TARGET_CRATES[@]}"; do
   IFS=":" read -r bin_name crate_rel_path has_mcp <<< "$item"
   crate_abs_path="${WORKSPACE_ROOT}/${crate_rel_path}"
+  target_ver=$(get_target_version "${crate_abs_path}")
 
-  echo "--> Installing ${bin_name} from ${crate_rel_path}..."
+  if [ "$FORCE" = false ] && command -v "${bin_name}" >/dev/null 2>&1; then
+    installed_ver=$({ "${bin_name}" --version 2>/dev/null || true; } | awk '{print $2}')
+    if [ -n "${installed_ver}" ] && [ -n "${target_ver}" ] && [ "${installed_ver}" == "${target_ver}" ]; then
+      echo "--> ${bin_name} (${installed_ver}) already installed and up to date. Skipping (pass --force to reinstall)."
+      continue
+    fi
+  fi
+
+  echo "--> Installing ${bin_name} (${target_ver:-unknown}) from ${crate_rel_path}..."
   if [ -n "${PROFILE_FLAG}" ]; then
-    cargo install --path "${crate_abs_path}" --force --debug
+    cargo install --path "${crate_abs_path}" --target-dir "${WORKSPACE_ROOT}/target" --force --debug
   else
-    cargo install --path "${crate_abs_path}" --force
+    cargo install --path "${crate_abs_path}" --target-dir "${WORKSPACE_ROOT}/target" --force
   fi
 done
 
@@ -131,7 +173,7 @@ ALL_OK=true
 for item in "${TARGET_CRATES[@]}"; do
   bin_name="${item%%:*}"
   if command -v "${bin_name}" >/dev/null 2>&1; then
-    ver_output=$("${bin_name}" --version 2>/dev/null | head -n 1)
+    ver_output=$({ "${bin_name}" --version 2>/dev/null || true; } | head -n 1)
     if [ -z "$ver_output" ]; then
       ver_output="installed ($(which "${bin_name}"))"
     fi
