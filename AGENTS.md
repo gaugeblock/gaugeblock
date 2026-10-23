@@ -43,12 +43,22 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * Subject line: imperative mood ("add", "fix", not "added", "fixes"), lowercase start, no trailing period, maximum 72 characters.
    * Footers: Reference task keys when applicable (e.g., `Task: SP-14`, `Closes: SP-14`). Breaking changes require `BREAKING CHANGE: <description>`.
 8. **Semantic Versioning & Git Tagging:**
-   * Versioning strictly follows SemVer 2.0.0 (`MAJOR.MINOR.PATCH[-PRERELEASE]`).
-   * The root workspace defines `[workspace.package] version = "0.1.0-beta.X"` (or active lifecycle). Member crates MUST inherit via `version.workspace = true`.
-   * Pre-release increments: during the active beta development phase, backwards-compatible fixes, features, and refinements increment the pre-release patch sequence (`0.1.0-beta.1` -> `0.1.0-beta.2` -> `0.1.0-beta.3`). Breaking contracts require bumping the minor base (`0.2.0-beta.1`).
-   * Internal dependency synchronization: when bumping workspace version, update all inter-crate dependencies (e.g. `path = "...", version = "..."`), `web/package.json`, and embedded UI version badges in lockstep.
-   * Git release tags MUST follow `v<version>` (e.g., `v0.1.0-beta.2`) created with annotated tags (`git tag -a v<version> -m "v<version>"`).
-   * Increments: `PATCH` for backward-compatible fixes; `MINOR` for backward-compatible features or additive contracts; `MAJOR` for breaking schema/trait changes defined in `CONTRACTS.md`.
+   * **Intra-Repo Lockstep vs. Meta-Harness Independence:**
+     * Each of the 9 repositories (`gaugeblock/<name>`) is an independent Git repository and Cargo workspace.
+     * Member crates within a repository (`*-core`, `*-cli`, `*-mcp`, and the root facade) lockstep together via the repository root `Cargo.toml` (`[workspace.package] version = "..."`) using `version.workspace = true`.
+     * Across the meta-harness, repositories evolve and version independently (e.g., `benchwork` may be `0.1.0-beta.3` while `storypole` is `0.1.0-beta.11` and `miter` is `0.1.0-alpha.2`).
+   * **Cross-Repo Dependencies:**
+     * Dependencies across suite crates declare minimum required version constraints (e.g. `storypole-core = ">=0.1.0-beta.1, <0.2.0"` or `^0.1.0-beta.1`). Bump dependency constraints only when consuming newly introduced upstream APIs or updated schemas.
+     * Local multi-repo development is mapped via `.cargo/config.toml` `[patch.crates-io]` to sibling paths.
+   * **Pre-Release Increments & Breaking Changes:**
+     * During active beta, backwards-compatible fixes, features, and refinements increment the pre-release patch sequence (`0.1.0-beta.1` -> `0.1.0-beta.2`).
+     * Breaking API or schema changes in a crate bump that crate's minor base (e.g., `storypole` to `0.2.0-beta.1`). Consuming repositories bump their own versions independently as normal when updating dependencies to adopt the new version.
+   * **Git Tagging & Release Management:**
+     * Individual repositories tag their own releases in their local Git history using annotated tags `v<version>` (e.g., `git tag -a v0.1.0-beta.2 -m "v0.1.0-beta.2"`).
+     * The root meta-harness (`neurosymbolic-suite`) has no package version in `Cargo.toml`; it cuts annotated snapshot tags on certified ecosystem milestone passes: `suite-v<version>` (e.g., `suite-v0.1.0-beta.1`).
+   * **Distributed Changelogs:**
+     * Each repository maintains its own `CHANGELOG.md` detailing crate-level changes per release.
+     * Root `CHANGELOG.md` aggregates suite-wide milestones, cross-cutting contract evolution, and ecosystem compatibility.
 9. **Mandatory Dogfooding & Target Directory Prohibition:**
    * All agent workflows and operations MUST utilize the globally installed CLI suite (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`) from `PATH` or their registered MCP servers.
    * Agents are strictly forbidden from executing binaries directly from local `target/debug/` or `target/release/` directories for operational workflows.

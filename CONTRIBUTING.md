@@ -118,46 +118,49 @@ BREAKING CHANGE: TaskNode wire contract now requires ticket_key string.
 
 `gaugeblock` repositories adhere strictly to [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH[-PRERELEASE]`).
 
-### Workspace Synchronization
+### Workspace Synchronization vs. Meta-Harness Independence
 
-In every repository, the root `Cargo.toml` acts as the single source of truth for package versions:
+The `gaugeblock` ecosystem uses a **federated independent repository model**:
+1. **Intra-Repository Lockstep:** In every individual repository (`miter`, `storypole`, `benchwork`, etc.), its root `Cargo.toml` acts as the single source of truth for all member crates:
+   ```toml
+   [workspace.package]
+   version = "0.1.0-beta.2"
+   ```
+   All member crates (`crates/<name>-core`, `crates/<name>-cli`, `crates/<name>-mcp`, etc.) inherit this version via `version.workspace = true`.
+2. **Meta-Harness Independence:** Repositories evolve and release on their own cadence. For example, `storypole` may advance to `0.1.0-beta.11` while `benchwork` is on `0.1.0-beta.3` and `miter` is on `0.1.0-alpha.2`.
+3. **Cross-Repository Dependencies:** Downstream crates declare minimum required version constraints (e.g., `storypole-core = ">=0.1.0-beta.1, <0.2.0"` or `^0.1.0-beta.1`). They only bump this constraint when upgrading to consume newly introduced APIs or schemas.
 
-```toml
-[workspace.package]
-version = "0.1.0-beta.2"
-```
-
-All member crates (`crates/<name>-core`, `crates/<name>-cli`, `crates/<name>-mcp`, etc.) inherit the workspace version:
-
-```toml
-[package]
-name = "<name>-core"
-version.workspace = true
-```
-
-Whenever the workspace version is incremented:
+Whenever an individual repository's workspace version is incremented:
 1. **Internal Inter-Crate Dependencies:** Update all sibling path dependency requirements (e.g. `<name>-core = { path = "...", version = "0.1.0-beta.2" }`) in member `Cargo.toml` files in tandem.
 2. **Web Frontends & Badges:** Update `web/package.json` and any user-facing version badges (such as in visual headers) in lockstep with the Rust manifests.
-3. **Lockfile Generation:** Run `cargo check --workspace` to regenerate `Cargo.lock` with the synchronized versions.
+3. **Lockfile Generation:** Run `cargo check --workspace` inside the repository to regenerate `Cargo.lock` with the synchronized versions.
 
 ### Release Lifecycle & Pre-Release Increments
 
-* `0.0.1-alpha.X`: Harness bootstrap & early pre-alpha iterations.
+* `0.0.1-alpha.X`: Early pre-alpha iterations (`miter`).
 * `0.1.0-beta.X`: Active dogfooding phase per `ROADMAP.md`.
   * During the pre-release development phase, backwards-compatible fixes, additions, and enhancements increment the pre-release patch number (`0.1.0-beta.1` -> `0.1.0-beta.2` -> `0.1.0-beta.3`).
   * Additive schema or trait modifications that stay within the beta phase bump the pre-release identifier.
-  * Incompatible breaking changes to traits or JSON wire contracts in `CONTRACTS.md` require bumping the minor base (`0.2.0-beta.1`).
+  * Incompatible breaking changes to traits or JSON wire contracts in `CONTRACTS.md` require bumping that repository's minor base (`0.2.0-beta.1`). Consumer crates bump their versions independently when adopting the updated contract.
 * `1.0.0`: Production-ready release with stable wire contracts.
 
-### Git Tagging Format
+### Git Tagging & Release Format
 
-Release tags must always follow the exact pattern `v<version>` using annotated git tags:
+* **Per-Repository Tags:** Individual repositories tag releases in their local Git history using annotated tags matching their package version:
+  ```bash
+  git commit -m "chore(release): release v0.1.0-beta.2"
+  git tag -a v0.1.0-beta.2 -m "v0.1.0-beta.2"
+  git push origin main --tags
+  ```
+* **Meta-Harness Snapshot Tags:** The root meta-harness (`neurosymbolic-suite`) has no Cargo package version; it tags certified ecosystem integration passes:
+  ```bash
+  git tag -a suite-v0.1.0-beta.1 -m "suite-v0.1.0-beta.1 ecosystem release"
+  ```
 
-```bash
-git commit -m "chore(release): release v0.1.0-beta.2"
-git tag -a v0.1.0-beta.2 -m "v0.1.0-beta.2"
-git push origin main --tags
-```
+### Changelog Architecture
+
+* **Per-Repository Changelogs:** Each repository maintains its own `CHANGELOG.md` detailing crate-level changes per release (`v<version>`).
+* **Meta-Harness Changelog:** The root `CHANGELOG.md` records suite-level milestones, cross-cutting contract evolution, and ecosystem compatibility matrices.
 
 ### Post-1.0 Version Bump Criteria
 
