@@ -116,18 +116,18 @@ BREAKING CHANGE: TaskNode wire contract now requires ticket_key string.
 
 ## 5. Semantic Versioning & Release Tagging
 
-`gaugeblock` repositories adhere to [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH[-PRERELEASE]`).
+`gaugeblock` repositories adhere strictly to [Semantic Versioning 2.0.0](https://semver.org/) (`MAJOR.MINOR.PATCH[-PRERELEASE]`).
 
 ### Workspace Synchronization
 
-In every repository, the root `Cargo.toml` acts as the single source of truth:
+In every repository, the root `Cargo.toml` acts as the single source of truth for package versions:
 
 ```toml
 [workspace.package]
-version = "0.0.1-alpha.1"
+version = "0.1.0-beta.2"
 ```
 
-All member crates (`crates/<name>-core`, `crates/<name>-cli`, etc.) inherit the workspace version:
+All member crates (`crates/<name>-core`, `crates/<name>-cli`, `crates/<name>-mcp`, etc.) inherit the workspace version:
 
 ```toml
 [package]
@@ -135,23 +135,32 @@ name = "<name>-core"
 version.workspace = true
 ```
 
-### Release Lifecycle
+Whenever the workspace version is incremented:
+1. **Internal Inter-Crate Dependencies:** Update all sibling path dependency requirements (e.g. `<name>-core = { path = "...", version = "0.1.0-beta.2" }`) in member `Cargo.toml` files in tandem.
+2. **Web Frontends & Badges:** Update `web/package.json` and any user-facing version badges (such as in visual headers) in lockstep with the Rust manifests.
+3. **Lockfile Generation:** Run `cargo check --workspace` to regenerate `Cargo.lock` with the synchronized versions.
+
+### Release Lifecycle & Pre-Release Increments
 
 * `0.0.1-alpha.X`: Harness bootstrap & early pre-alpha iterations.
 * `0.1.0-beta.X`: Active dogfooding phase per `ROADMAP.md`.
+  * During the pre-release development phase, backwards-compatible fixes, additions, and enhancements increment the pre-release patch number (`0.1.0-beta.1` -> `0.1.0-beta.2` -> `0.1.0-beta.3`).
+  * Additive schema or trait modifications that stay within the beta phase bump the pre-release identifier.
+  * Incompatible breaking changes to traits or JSON wire contracts in `CONTRACTS.md` require bumping the minor base (`0.2.0-beta.1`).
 * `1.0.0`: Production-ready release with stable wire contracts.
 
 ### Git Tagging Format
 
-Release tags must always follow the exact pattern `v<version>`:
+Release tags must always follow the exact pattern `v<version>` using annotated git tags:
 
 ```bash
-git tag -a v0.0.1-alpha.1 -m "chore(release): release v0.0.1-alpha.1"
-git push origin v0.0.1-alpha.1
+git commit -m "chore(release): release v0.1.0-beta.2"
+git tag -a v0.1.0-beta.2 -m "v0.1.0-beta.2"
+git push origin main --tags
 ```
 
-### Version Bump Criteria
+### Post-1.0 Version Bump Criteria
 
-* **PATCH (`0.0.x`):** Backwards-compatible internal fixes, refactoring, or documentation improvements.
-* **MINOR (`0.x.0`):** Backwards-compatible new features, traits, or additive contract fields.
+* **PATCH (`1.0.x`):** Backwards-compatible internal fixes, refactoring, or documentation improvements.
+* **MINOR (`1.x.0`):** Backwards-compatible new features, traits, or additive contract fields.
 * **MAJOR (`x.0.0`):** Incompatible breaking changes to traits or JSON wire contracts in `CONTRACTS.md`.

@@ -2,7 +2,7 @@
 
 > **Organization:** `gaugeblock` (`[https://github.com/gaugeblock](https://github.com/gaugeblock)` | `[https://gaugeblock.dev](https://gaugeblock.dev)`)  
 > **Ecosystem Suite:** `miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`  
-> **Default Crate Version:** `0.0.1-alpha.1` (Git tag format: `v0.0.1-alpha.1`)
+> **Active Suite Lifecycle:** `0.1.0-beta.X` (`miter`: `0.1.0-alpha.X`) | Git tag format: `v<version>`
 
 You are an autonomous systems engineering agent operating inside the **`gaugeblock`** multi-repository meta-harness. Every repository in this workspace is a standalone open-source project that wrings together deterministically with the rest of the suite via strict data contracts (`CONTRACTS.md`).
 
@@ -44,8 +44,10 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * Footers: Reference task keys when applicable (e.g., `Task: SP-14`, `Closes: SP-14`). Breaking changes require `BREAKING CHANGE: <description>`.
 8. **Semantic Versioning & Git Tagging:**
    * Versioning strictly follows SemVer 2.0.0 (`MAJOR.MINOR.PATCH[-PRERELEASE]`).
-   * The root workspace defines `[workspace.package] version = "0.0.1-alpha.1"`. Member crates MUST inherit via `version.workspace = true`.
-   * Git release tags MUST follow `v<version>` (e.g., `v0.0.1-alpha.1`).
+   * The root workspace defines `[workspace.package] version = "0.1.0-beta.X"` (or active lifecycle). Member crates MUST inherit via `version.workspace = true`.
+   * Pre-release increments: during the active beta development phase, backwards-compatible fixes, features, and refinements increment the pre-release patch sequence (`0.1.0-beta.1` -> `0.1.0-beta.2` -> `0.1.0-beta.3`). Breaking contracts require bumping the minor base (`0.2.0-beta.1`).
+   * Internal dependency synchronization: when bumping workspace version, update all inter-crate dependencies (e.g. `path = "...", version = "..."`), `web/package.json`, and embedded UI version badges in lockstep.
+   * Git release tags MUST follow `v<version>` (e.g., `v0.1.0-beta.2`) created with annotated tags (`git tag -a v<version> -m "v<version>"`).
    * Increments: `PATCH` for backward-compatible fixes; `MINOR` for backward-compatible features or additive contracts; `MAJOR` for breaking schema/trait changes defined in `CONTRACTS.md`.
 9. **Mandatory Dogfooding & Target Directory Prohibition:**
    * All agent workflows and operations MUST utilize the globally installed CLI suite (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`) from `PATH` or their registered MCP servers.
@@ -92,7 +94,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.0.1-alpha.1"
+version = "0.1.0-beta.1"
 edition = "2024"
 authors = ["Colin Wolff <1562545+colinwolff@users.noreply.github.com>"]
 license = "Apache-2.0"
