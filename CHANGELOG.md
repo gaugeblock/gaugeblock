@@ -23,13 +23,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Configured `[profile.dev.package."*"] opt-level = 2` across all 9 workspace manifests, compiling heavy third-party dependencies at optimized speed while preserving `opt-level = 0` for fast incremental crate compilation.
   - Set `debug = 1` (line tables only) for dev and test profiles, reducing binary sizes and linking times by over 50%.
   - Added `lto = "thin"` and `codegen-units = 1` for release profiles.
-* **Cross-Workspace Dependency Harmonization:**
-  - Harmonized third-party crate versions across all 9 repositories:
+* **Cross-Workspace Dependency Harmonization & Upgrades:**
+  - Upgraded third-party crates to latest versions:
+    - `toml`: upgraded to `1.1` (`1.1.8+spec-1.1.0`) across all workspaces (`miter`, `storypole`, `dado`, `chalkline`, `sawhorse`).
+    - `redb`: upgraded to `4.4` in `miter`.
+    - `rusqlite`: aligned `features = ["bundled", "backup"]` between `storypole` and `rabbet`, sharing the exact compiled SQLite rlib.
     - `tokio`: harmonized to `1.43` across all member crates.
     - `thiserror`: harmonized to `2.0` across all member crates.
     - `clap`: harmonized to `4.5` across all member crates.
-    - `toml`: harmonized to `0.8` across all member crates.
   - Audited and verified zero version drift across all 43 third-party crates in the meta-harness.
+* **Feature Pruning & Dependency Slimming:**
+  - Completely eliminated `features = ["full"]` on `tokio` across the entire workspace.
+  - Removed completely unused `tokio` dependencies from `chalkline-cli` and `joiner-mcp`.
+  - Replaced coarse `full` features in CLI binaries (`sawhorse-cli`, `joiner-cli`, `benchwork-cli`, `rabbet-cli`) with minimal required subsets (`rt-multi-thread`, `macros`, `net`, `sync`, `time`), dropping dozens of transitive dependencies (`mio`, `socket2`, `signal`, `process`, `parking_lot`).
 * **Automated Audit Tooling:**
   - Added [`scripts/audit-deps.sh`](scripts/audit-deps.sh) to verify root Cargo configurations and assert zero dependency version discrepancies across manifests during Tier 3 verification.
 
