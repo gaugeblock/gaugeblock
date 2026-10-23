@@ -19,12 +19,54 @@
     {
       "name": "chalkline",
       "path": "chalkline"
+    },
+    {
+      "name": "dado",
+      "path": "dado"
+    },
+    {
+      "name": "batten",
+      "path": "batten"
+    },
+    {
+      "name": "joiner",
+      "path": "joiner"
+    },
+    {
+      "name": "benchwork",
+      "path": "benchwork"
+    },
+    {
+      "name": "rabbet",
+      "path": "rabbet"
     }
   ],
   "settings": {
     "rust-analyzer.check.command": "clippy",
     "rust-analyzer.cargo.buildScripts.enable": true,
-    "rust-analyzer.procMacro.enable": true
+    "rust-analyzer.procMacro.enable": true,
+    "rust-analyzer.linkedProjects": [
+      "miter/Cargo.toml",
+      "storypole/Cargo.toml",
+      "sawhorse/Cargo.toml",
+      "chalkline/Cargo.toml",
+      "dado/Cargo.toml",
+      "batten/Cargo.toml",
+      "joiner/Cargo.toml",
+      "benchwork/Cargo.toml",
+      "rabbet/Cargo.toml"
+    ],
+    "git.scanRepositories": [
+      "miter",
+      "storypole",
+      "sawhorse",
+      "chalkline",
+      "dado",
+      "batten",
+      "joiner",
+      "benchwork",
+      "rabbet"
+    ]
   }
 }
 
