@@ -131,7 +131,10 @@ ALL_OK=true
 for item in "${TARGET_CRATES[@]}"; do
   bin_name="${item%%:*}"
   if command -v "${bin_name}" >/dev/null 2>&1; then
-    ver_output=$("${bin_name}" --version 2>&1 | head -n 1 || echo "installed")
+    ver_output=$("${bin_name}" --version 2>/dev/null | head -n 1)
+    if [ -z "$ver_output" ]; then
+      ver_output="installed ($(which "${bin_name}"))"
+    fi
     printf "%-14s | %-12s | %-40s\n" "${bin_name}" "✅ OK" "${ver_output}"
   else
     printf "%-14s | %-12s | %-40s\n" "${bin_name}" "❌ NOT FOUND" "Missing from PATH"
