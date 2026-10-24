@@ -76,13 +76,13 @@ pub struct CompilerDiagnostic {
 
 ## 2. `storypole` Contracts (Backlog, Task DAG, Decisions & Agent Continuity)
 
-Exported by `storypole-core` and persisted in `.storypole/config.toml` (repo config), `.storypole/ledger.jsonl` (git-tracked append-only event log), and `.storypole/index.sqlite` (ephemeral derived relational index). Consumed by `chalkline`, `joiner`, `benchwork`, and external MCP agents.
+Exported by `storypole-core` and persisted in `.gaugeblock/storypole/` (or legacy `.storypole/` fallback): `.gaugeblock/config.toml` (repo config `[storypole]`), `ledger.jsonl` (git-tracked append-only event log), and `index.sqlite` (ephemeral derived relational index). Consumed by `chalkline`, `joiner`, `benchwork`, and external MCP agents.
 
 ```rust
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-/// Per-repository or meta-harness configuration loaded from `.storypole/config.toml`.
+/// Per-repository or meta-harness configuration loaded from `.gaugeblock/config.toml` [storypole] or legacy `.storypole/config.toml`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct StorypoleConfig {
     /// Human-readable ticket prefix (e.g., "GB", "SP", "MTR"). Generates IDs like `SP-14`.
