@@ -63,6 +63,14 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * All agent workflows and operations MUST utilize the globally installed CLI suite (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`) from `PATH` or their registered MCP servers.
    * Agents are strictly forbidden from executing binaries directly from local `target/debug/` or `target/release/` directories for operational workflows.
    * The `target/` directories are reserved exclusively for automated testing (`cargo test`) and compiler checks during active crate development. Use `scripts/install-suite.sh` to compile and install updated binaries into `~/.cargo/bin`.
+10. **Branch Isolation & Feature Branching:**
+   * All non-trivial tickets (`Kind != Chore` or changes spanning multiple files) MUST be developed on dedicated Git branches (`feat/<ticket-or-slug>`, `fix/<ticket-or-slug>`).
+   * Agents MUST NEVER make unchecked changes directly on `main`.
+   * When claiming a task via `storypole claim <KEY> <AGENT_ID> [--branch <BRANCH>]`, the current branch and base commit SHA are recorded in the task claim lease.
+11. **Plan Persistence & Specification Fidelity:**
+   * Every non-trivial task (`P1`/`P2` or multi-step feature) MUST have an attached `TaskPlan` (`storypole plan set`) and its unabridged design markdown saved under `.storypole/plans/<KEY>.md`.
+   * Design markdown files under `.storypole/plans/` are first-class versioned repository assets and MUST be committed to Git alongside ledger events.
+   * Discovered design invariants, boundary taxonomy, TOML schemas, and execution steps MUST be recorded in the task plan before executing code modifications.
 
 ---
 

@@ -192,6 +192,28 @@ pub struct AgentClaim {
     pub agent_id: String,
     pub claimed_at_epoch_ms: u64,
     pub lease_expires_at_epoch_ms: u64,
+    pub git_branch: Option<String>,
+    pub base_commit_sha: Option<String>,
+}
+
+/// Execution step within an attached TaskPlan.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PlanStep {
+    pub step_id: String,
+    pub title: String,
+    pub target_files: Vec<String>,
+    pub verification_gate: Option<String>,
+    pub completed: bool,
+}
+
+/// Attached architectural plan and execution blueprint.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskPlan {
+    pub summary: String,
+    pub design_markdown: String,
+    pub steps: Vec<PlanStep>,
+    pub plan_file_path: Option<String>,
+    pub updated_at_epoch_ms: u64,
 }
 
 /// Evidence required to transition a task into `TaskStatus::Verified`.
@@ -202,6 +224,10 @@ pub struct VerificationReceipt {
     pub passed_tests_count: Option<u32>,
     pub summary: String,
     pub verified_at_epoch_ms: u64,
+    pub git_branch: Option<String>,
+    pub base_commit_sha: Option<String>,
+    pub head_commit_sha: Option<String>,
+    pub commit_shas: Vec<String>,
 }
 
 /// Multi-dimensional scope coordinates for filtering across repos, crates, and AST symbols.
@@ -230,6 +256,7 @@ pub struct TaskNode {
     pub edges: Vec<TaskEdge>,
     pub decisions: Vec<TaskDecision>,
     pub acceptance_criteria: Vec<String>,
+    pub plan: Option<TaskPlan>,
     pub active_claim: Option<AgentClaim>,
     pub latest_handoff: Option<HandoffPacket>,
     pub verification_receipt: Option<VerificationReceipt>,
