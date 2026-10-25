@@ -6,3 +6,5 @@ spool/
 worktrees/
 datasets/
 *.bak*
+*.env
+credentials*
