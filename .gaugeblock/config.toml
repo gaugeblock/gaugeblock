@@ -47,7 +47,7 @@ api_key_env = "CLINE_API_KEY"
 base_url = "https://api.cline.bot/api/v1"
 dialect = "standard_open_ai"
 mode = "open_ai_compatible"
-model_name = "deepseek/deepseek-v4.1-flash-1017"
+model_name = "cline-pass/deepseek-v4-pro"
 
 [sawhorse.roles.hole_filler]
 fallback = ["universal"]
