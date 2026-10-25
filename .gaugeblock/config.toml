@@ -1,3 +1,74 @@
+[docs.docs.agents]
+path = "AGENTS.md"
+required = true
+
+[docs.docs.architecture]
+path = "ARCHITECTURE.md"
+required = true
+
+[docs.docs.changelog]
+path = "CHANGELOG.md"
+required = true
+
+[docs.docs.contributing]
+path = "CONTRIBUTING.md"
+required = true
+
+[docs.docs.design]
+path = "DESIGN.md"
+required = false
+
+[docs.docs.product]
+path = "PRODUCT.md"
+required = true
+
+[docs.docs.readme]
+path = "README.md"
+required = true
+
+[docs.docs.roadmap]
+path = "ROADMAP.md"
+required = false
+
+[docs.docs.spec]
+path = "SPEC.md"
+required = true
+
+[docs.policies]
+enforce_changelog_unreleased = true
+enforce_contributing_toolchains = true
+enforce_crate_topology = true
+enforce_file_loc_limits = true
+enforce_public_type_contracts = true
+enforce_readme_cli_flags = true
+
+[sawhorse.providers.universal]
+api_key_env = "CLINE_API_KEY"
+base_url = "https://api.cline.bot/api/v1"
+dialect = "standard_open_ai"
+mode = "open_ai_compatible"
+model_name = "deepseek/deepseek-v4.1-flash-1017"
+
+[sawhorse.roles.hole_filler]
+fallback = ["universal"]
+provider = "universal"
+
+[sawhorse.roles.oracle]
+fallback = ["universal"]
+provider = "universal"
+
+[sawhorse.roles.planner]
+fallback = ["universal"]
+provider = "universal"
+
+[sawhorse.roles.system1_router]
+fallback = ["universal"]
+provider = "universal"
+
+[sawhorse.timeouts]
+inference_timeout_secs = 60
+ping_timeout_secs = 5
+
 [storypole]
 allowed_crates = []
 allowed_repos = []
