@@ -73,3 +73,9 @@ benchwork-mcp  = { path = "./benchwork/crates/benchwork-mcp" }
 rabbet         = { path = "./rabbet" }
 rabbet-core    = { path = "./rabbet/crates/rabbet-core" }
 rabbet-cli     = { path = "./rabbet/crates/rabbet-cli" }
+
+# --- 10. outfeed (Neurosymbolic Release Gate, AST Drift Inspector & Changelog Synthesizer) ---
+outfeed        = { path = "./outfeed" }
+outfeed-core   = { path = "./outfeed/crates/outfeed-core" }
+outfeed-cli    = { path = "./outfeed/crates/outfeed-cli" }
+outfeed-mcp    = { path = "./outfeed/crates/outfeed-mcp" }

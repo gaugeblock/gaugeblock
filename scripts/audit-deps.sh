@@ -52,7 +52,7 @@ print("✅ Root .cargo/config.toml verification passed (sccache, shared target-d
 # 2. Audit all Cargo.toml files for dependency version drift
 suite_prefixes = (
     "miter", "storypole", "sawhorse", "chalkline", "dado",
-    "batten", "joiner", "benchwork", "rabbet"
+    "batten", "joiner", "benchwork", "rabbet", "outfeed"
 )
 
 deps = {}

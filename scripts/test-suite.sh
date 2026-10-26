@@ -17,6 +17,7 @@ REPOS=(
   "benchwork"
   "rabbet"
   "miter"
+  "outfeed"
 )
 
 target_repo="${1:-all}"

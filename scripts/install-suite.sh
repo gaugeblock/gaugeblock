@@ -71,6 +71,7 @@ ALL_CRATES=(
   "joiner:joiner/crates/joiner-cli:yes"
   "benchwork:benchwork/crates/benchwork-cli:yes"
   "rabbet:rabbet/crates/rabbet-cli:no"
+  "outfeed:outfeed/crates/outfeed-cli:yes"
 )
 
 # Resolve target crates list

@@ -16,6 +16,7 @@ PROJECTS=(
   "joiner|Neurosymbolic code synthesis orchestrator uniting deterministic AST templates with constrained LLMs."
   "benchwork|Modular visual workbench UI and local daemon for neurosymbolic code synthesis and DAG inspection."
   "rabbet|AST-anonymized telemetry corpus hub and open-weight micro-model training foundry."
+  "outfeed|Neurosymbolic release gate, AST drift inspector, and changelog synthesizer for the gaugeblock suite."
 )
 
 SUFFIXES=("" "-core" "-cli" "-mcp")

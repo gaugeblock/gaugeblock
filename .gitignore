@@ -34,6 +34,7 @@ reserve-staging/
 /joiner/
 /benchwork/
 /rabbet/
+/outfeed/
 
 # storypole ephemeral index
 .storypole/index.sqlite*
