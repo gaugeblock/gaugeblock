@@ -37,24 +37,34 @@ The `gaugeblock` suite consists of 10 standalone, highly focused tools that conn
 
 The entire `gaugeblock` suite is designed to be built, installed, and dogfooded directly from `PATH` rather than executing ad-hoc build artifacts from repository `target/` directories.
 
-### 1. Build and Install the Suite
+### 1. Bootstrap Workspace Checkouts & Binaries
+
+To bootstrap a developer workspace, clone all member repositories, compile seed binaries, and synchronize MCP configs:
+
+```bash
+# Clone all repositories and install full toolchain (SSH protocol)
+./scripts/bootstrap.sh
+
+# Or clone pinned to exact commits in suite.lock:
+./scripts/bootstrap.sh --locked
+
+# Or use HTTPS instead of SSH:
+./scripts/bootstrap.sh --protocol https
+```
+
+### 2. Build and Install the Suite
 
 The install script automatically installs chosen binaries to `~/.cargo/bin` and synchronizes active MCP endpoints to Antigravity's `mcp_config.json`:
 
 ```bash
-# Full suite (all 9 tools, release build)
+# Full suite (all 10 tools, release build)
 ./scripts/install-suite.sh
-
-# Profile presets:
-./scripts/install-suite.sh --profile minimal   # miter + storypole (fast bootstrap)
-./scripts/install-suite.sh --profile core      # 7 core coding & synthesis tools
-./scripts/install-suite.sh --profile all       # full 9-tool suite (default)
 
 # Install specific tools by name:
 ./scripts/install-suite.sh miter storypole dado
 
 # Add --debug for faster inner-loop compilation:
-./scripts/install-suite.sh --debug --profile core
+./scripts/install-suite.sh --debug miter
 ```
 
 Installed binaries:

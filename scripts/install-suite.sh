@@ -7,6 +7,19 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
+# Show help if requested
+for arg in "$@"; do
+  if [ "$arg" == "-h" ] || [ "$arg" == "--help" ]; then
+    if command -v outfeed >/dev/null 2>&1; then
+      outfeed install --help
+    else
+      echo "scripts/install-suite.sh — Delegates to outfeed install --all"
+      echo "Run with --force to force reinstall, or --no-sync-mcp to skip MCP config sync."
+    fi
+    exit 0
+  fi
+done
+
 # Bootstrap outfeed if not yet in PATH
 if ! command -v outfeed >/dev/null 2>&1; then
   echo "--> Bootstrapping outfeed from ${WORKSPACE_ROOT}/outfeed/crates/outfeed-cli..."
