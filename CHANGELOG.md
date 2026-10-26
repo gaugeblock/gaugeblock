@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0-beta.2] - 2026-10-26
 
 ### Added
-* **Phase 9: `gaugeblock/outfeed` — Neurosymbolic Release Gate, Packaging & Delivery Suite (GB-47, GB-48, GB-52):**
+* **Phase 9: `gaugeblock/outfeed` — Neurosymbolic Release Gate, Packaging & Delivery Suite (GB-47, GB-48, GB-52, GB-55):**
   - `outfeed-core`: Conventional commit parser, SemVer bump calculator, topological workspace crate dependency graph resolver, manifest patcher, and Keep a Changelog synthesizer.
   - Delivery Suite: `outfeed install` (auto-detects modified binaries, checks `--version`), `outfeed push` (validates clean tree, pushes branch and annotated tags), and `outfeed publish` (topological DAG sort, packaging dry-runs, crates.io already-uploaded error recovery).
+  - Cache Hygiene: `outfeed clean` (purges `target/debug` artifacts while preserving `target/release`), `outfeed clean --dry-run` (audits disk breakdown), and `outfeed prune` (age-based pruning of stale test binaries and intermediate artifacts).
   - Release Orchestrator: `outfeed release` macro executing plan -> apply -> install -> push -> publish gates.
-  - `outfeed-cli` & `outfeed-mcp`: Subcommands and stdio MCP server (`outfeed_plan`, `outfeed_apply`, `outfeed_install`, `outfeed_push`, `outfeed_publish`).
+  - `outfeed-cli` & `outfeed-mcp`: Subcommands and stdio MCP server (`outfeed_plan`, `outfeed_apply`, `outfeed_install`, `outfeed_push`, `outfeed_publish`, `outfeed_clean`).
 * **Benchwork AI Engineer Chat Studio & Generative UI Copilot Rail (GB-40, GB-44, GB-45, GB-46):**
   - Persistent multi-conversation AI Engineer Chat Studio in `web` with external store runtime, chat persistence in `.gaugeblock/chat/threads.jsonl`, and SQLite FTS cache.
   - CopilotRail with Generative UI interactive cards for human-in-the-loop tool approvals (decision holes, doc patches, task plans, synthesis triggers).
@@ -49,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **Suite Release Synchronization:**
   - `sawhorse`: released `v0.1.0-beta.3` (GB-49).
   - `benchwork`: released `v0.1.0-beta.4` (GB-51).
-  - `outfeed`: released `v0.1.0-beta.1` and `v0.1.0-beta.2` (GB-52).
+  - `outfeed`: released `v0.1.0-beta.1`, `v0.1.0-beta.2`, and `v0.1.0-beta.3` (GB-52, GB-55).
   - `storypole`: released `v0.1.0-beta.2`.
   - `miter`: released `v0.1.0-beta.1`.
 
