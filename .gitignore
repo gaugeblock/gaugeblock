@@ -38,6 +38,9 @@ reserve-staging/
 # storypole ephemeral index
 .storypole/index.sqlite*
 
+# rabbet local telemetry spool test artifacts
+.rabbet/
+
 # miter redb database and local cache
 .miter/*
 !.miter/config.toml
