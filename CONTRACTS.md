@@ -97,6 +97,24 @@ pub struct StorypoleConfig {
     pub verification_commands: Vec<(String, String)>,
 }
 
+/// Configuration defining multi-repository workspace membership.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct WorkspaceConfig {
+    /// List of member repository paths or names (e.g. `["benchwork", "miter"]`).
+    pub members: Vec<String>,
+    /// Default ticket prefix for workspace-level / cross-cutting tasks.
+    pub default_prefix: Option<String>,
+}
+
+/// A member repository discovered within a workspace.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DiscoveredMember {
+    pub name: String,
+    pub repo_path: std::path::PathBuf,
+    pub dot_dir: Option<std::path::PathBuf>,
+    pub ticket_prefix: Option<String>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TaskKind {
@@ -149,6 +167,10 @@ pub enum EdgeKind {
 pub struct TaskEdge {
     pub kind: EdgeKind,
     pub target_id: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_ticket_key: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub target_repo: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

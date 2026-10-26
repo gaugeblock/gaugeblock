@@ -5,6 +5,7 @@ miter/*.redb.lock
 spool/
 worktrees/
 datasets/
+chat/
 *.bak*
 *.env
 credentials*
