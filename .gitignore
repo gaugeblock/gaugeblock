@@ -19,6 +19,7 @@ Thumbs.db
 .env.*
 *.log
 *.rs.bk
+*.bak*
 
 # reserve-namespaces.sh
 reserve-staging/
