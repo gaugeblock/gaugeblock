@@ -1,6 +1,6 @@
 # CONTRACTS.md — Shared Types, JSON Schemas & Trait Boundaries
 
-> **Rule:** Every struct and trait below defines an immutable wire contract between the 9 `gaugeblock` repositories. All wire types MUST derive `serde::Serialize`, `serde::Deserialize`, `Debug`, `Clone`, and `PartialEq`.
+> **Rule:** Every struct and trait below defines an immutable wire contract between the 10 `gaugeblock` repositories. All wire types MUST derive `serde::Serialize`, `serde::Deserialize`, `Debug`, `Clone`, and `PartialEq`.
 
 ---
 
@@ -528,3 +528,80 @@ pub struct AnonymizedSynthesisTrace {
     pub verification: miter_engine::VerificationReport,
 }
 ```
+
+---
+
+## 7. `outfeed` Contracts (Release Gates, AST Drift & Delivery Orchestration)
+
+Exported by `outfeed-core` and consumed by `outfeed-cli`, `outfeed-mcp`, and meta-harness release scripts.
+
+```rust
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ConventionalKind {
+    Feat,
+    Fix,
+    Refactor,
+    Perf,
+    Docs,
+    Style,
+    Chore,
+    Ci,
+    Build,
+    Test,
+    Other(String),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CommitInfo {
+    pub sha: String,
+    pub summary: String,
+    pub body: Option<String>,
+    pub kind: ConventionalKind,
+    pub scope: Option<String>,
+    pub is_breaking: bool,
+    pub breaking_description: Option<String>,
+    pub referenced_tickets: Vec<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BumpType {
+    Major,
+    Minor,
+    Patch,
+    PreReleasePatch,
+    PreReleaseMinor,
+    PreReleaseAlpha,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ManifestDiff {
+    pub relative_path: String,
+    pub original_content: String,
+    pub proposed_content: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReleasePlan {
+    pub repo_name: String,
+    pub current_version: String,
+    pub target_version: String,
+    pub bump_type: BumpType,
+    pub bump_rationale: String,
+    pub commits: Vec<CommitInfo>,
+    pub referenced_tickets: Vec<String>,
+    pub changelog_markdown: String,
+    pub manifest_diffs: Vec<ManifestDiff>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReleaseStatus {
+    pub repo_name: String,
+    pub current_version: String,
+    pub latest_tag: Option<String>,
+    pub unreleased_commits: usize,
+    pub is_clean: bool,
+}
+```
+

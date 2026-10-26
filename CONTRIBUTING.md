@@ -1,6 +1,6 @@
 # Contributing to `gaugeblock`
 
-> Standards for atomic commits, conventional commit messages, tiered verification, and semantic versioning across the 9 `gaugeblock` repositories.
+> Standards for atomic commits, conventional commit messages, tiered verification, and semantic versioning across the 10 `gaugeblock` repositories.
 
 ---
 

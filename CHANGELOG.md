@@ -7,21 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [0.1.0-beta.2] - 2026-10-26
 
 ### Added
-* **Benchwork Conversational Engineer & Backlog Polish (GB-14 – GB-18):**
+* **Phase 9: `gaugeblock/outfeed` — Neurosymbolic Release Gate, Packaging & Delivery Suite (GB-47, GB-48, GB-52):**
+  - `outfeed-core`: Conventional commit parser, SemVer bump calculator, topological workspace crate dependency graph resolver, manifest patcher, and Keep a Changelog synthesizer.
+  - Delivery Suite: `outfeed install` (auto-detects modified binaries, checks `--version`), `outfeed push` (validates clean tree, pushes branch and annotated tags), and `outfeed publish` (topological DAG sort, packaging dry-runs, crates.io already-uploaded error recovery).
+  - Release Orchestrator: `outfeed release` macro executing plan -> apply -> install -> push -> publish gates.
+  - `outfeed-cli` & `outfeed-mcp`: Subcommands and stdio MCP server (`outfeed_plan`, `outfeed_apply`, `outfeed_install`, `outfeed_push`, `outfeed_publish`).
+* **Benchwork AI Engineer Chat Studio & Generative UI Copilot Rail (GB-40, GB-44, GB-45, GB-46):**
+  - Persistent multi-conversation AI Engineer Chat Studio in `web` with external store runtime, chat persistence in `.gaugeblock/chat/threads.jsonl`, and SQLite FTS cache.
+  - CopilotRail with Generative UI interactive cards for human-in-the-loop tool approvals (decision holes, doc patches, task plans, synthesis triggers).
+  - 3-Tier context injection engine: Tier A (Pinned Session Identity & AGENTS.md laws), Tier B (Per-turn `<gaugeblock_environment>` snapshot), and Tier C (Deterministic `@task`, `@doc`, `@symbol`, `/grill-me`, `/plan` expansions).
+  - Resilient single-model tool calling with stringified JSON recovery.
+  - Support for ClinePass provider presets, secret fallback in `.gaugeblock/.env`, and 4096 reasoning token headroom (GB-41, GB-44, GB-45).
+* **Unified `.gaugeblock/` Configuration Architecture (GB-36):**
+  - Consolidated root and per-repo state under `.gaugeblock/` (`config.toml`, `.env`, `storypole/`, `miter/`, `chat/`, `spool/`).
+  - Section-isolated parsing maintaining zero runtime coupling across tools.
+* **Storypole Backlog & Spec Hardening (GB-25, GB-26, GB-28, GB-31, GB-32, GB-34, GB-35):**
+  - First-class `TaskPlan` specification persistence and unabridged design blueprints under `.storypole/plans/<KEY>.md`.
+  - Dedicated branch isolation and base commit SHA tracking recorded in `AgentClaim` leases.
+  - Integrated `miter` compiler verification and target path resolution during task verification (`storypole verify`).
+  - Task update CLI (`storypole update`) and archive lifecycle (`storypole archive`, `storypole unarchive`).
+* **9-Document Repository Architecture (GB-18, GB-42):**
+  - Canonical 9-document architecture matrix (`README.md`, `CONTRIBUTING.md`, `PRODUCT.md`, `ARCHITECTURE.md`, `SPEC.md`, `DESIGN.md`, `ROADMAP.md`, `CHANGELOG.md`, `AGENTS.md`) enforced via `chalkline-core`.
+  - Multi-repo layout discovery in `miter-engine` (GB-42) and dynamic document viewer tabs in `benchwork` Panel 1 (GB-42).
+* **Benchwork Conversational Engineer & Backlog Polish (GB-14 – GB-17):**
   - Interactive `/grill-me` chat UI integrated into Spec Studio (GB-14).
   - Backlog Kanban board, tabular issue lists, and task detail inspector drawer (GB-15).
   - Neurosymbolic X-ray realignment and backlog synthesis triggers (GB-16).
   - Interactive `sawhorse.toml` provider configuration manager (GB-17).
-  - Configurable 9-document repository architecture manager and AST-grounded documentation generator (GB-18).
 * **Workspace Test Runner (GB-13):**
   - Adopted `cargo-nextest` for parallel workspace test execution with process isolation and JUnit CI reporting.
-  - Deployed `.config/nextest.toml` configuration across all 9 workspaces and root meta-harness.
+  - Deployed `.config/nextest.toml` configuration across all member workspaces and root meta-harness.
   - Updated `AGENTS.md` and `CONTRIBUTING.md` tiered verification matrices.
-  - Modernized CI workflows with `taiki-e/install-action@nextest` and `cargo test --doc --workspace`.
   - Added unified `scripts/test-suite.sh` test runner.
+
+### Changed
+* **Miter Beta Promotion (GB-50, GB-53):**
+  - Promoted `miter` from `0.1.0-alpha.4` to `0.1.0-beta.1` to reflect active dogfooding lifecycle status.
+* **Suite Release Synchronization:**
+  - `sawhorse`: released `v0.1.0-beta.3` (GB-49).
+  - `benchwork`: released `v0.1.0-beta.4` (GB-51).
+  - `outfeed`: released `v0.1.0-beta.1` and `v0.1.0-beta.2` (GB-52).
+  - `storypole`: released `v0.1.0-beta.2`.
+  - `miter`: released `v0.1.0-beta.1`.
 
 ---
 

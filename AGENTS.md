@@ -1,8 +1,8 @@
 # AGENTS.md — Operational Directives for the `gaugeblock` Meta-Harness
 
-> **Organization:** `gaugeblock` (`[https://github.com/gaugeblock](https://github.com/gaugeblock)` | `[https://gaugeblock.dev](https://gaugeblock.dev)`)  
-> **Ecosystem Suite:** `miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`  
-> **Active Suite Lifecycle:** `0.1.0-beta.X` (`miter`: `0.1.0-alpha.X`) | Git tag format: `v<version>`
+> **Organization:** `gaugeblock` (`https://github.com/gaugeblock` | `https://gaugeblock.dev`)  
+> **Ecosystem Suite:** `miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`, `outfeed`  
+> **Active Suite Lifecycle:** `0.1.0-beta.X` | Git tag format: `v<version>`
 
 You are an autonomous systems engineering agent operating inside the **`gaugeblock`** multi-repository meta-harness. Every repository in this workspace is a standalone open-source project that wrings together deterministically with the rest of the suite via strict data contracts (`CONTRACTS.md`).
 
@@ -14,7 +14,7 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * No `.rs`, `.ts`, or `.tsx` source file may exceed **250 lines of code** (including comments and tests).
    * If a file approaches 200 lines, split it immediately into clean submodules (`mod.rs` or `<module>/<submodule>.rs`) and move unit tests into a sibling `tests.rs` or `tests/` directory.
 2. **Unix Philosophy & Standalone Value:**
-   * Each of the 9 repositories MUST compile, pass tests, and provide a genuinely useful CLI/MCP/library experience completely on its own without requiring the entire stack to be running.
+   * Each of the 10 repositories MUST compile, pass tests, and provide a genuinely useful CLI/MCP/library experience completely on its own without requiring the entire stack to be running.
    * Cross-project coupling happens strictly through the shared schemas and traits defined in `CONTRACTS.md`.
 3. **Zero Inline Scope Creep (Mandatory Deferral to `storypole`):**
    * While executing a task, if you discover an unrelated bug, edge case, missing AST pattern, or refactoring opportunity outside your immediate file scope, **DO NOT fix it inline**.
@@ -44,7 +44,7 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * Footers: Reference task keys when applicable (e.g., `Task: SP-14`, `Closes: SP-14`). Breaking changes require `BREAKING CHANGE: <description>`.
 8. **Semantic Versioning & Git Tagging:**
    * **Intra-Repo Lockstep vs. Meta-Harness Independence:**
-     * Each of the 9 repositories (`gaugeblock/<name>`) is an independent Git repository and Cargo workspace.
+     * Each of the 10 repositories (`gaugeblock/<name>`) is an independent Git repository and Cargo workspace.
      * Member crates within a repository (`*-core`, `*-cli`, `*-mcp`, and the root facade) lockstep together via the repository root `Cargo.toml` (`[workspace.package] version = "..."`) using `version.workspace = true`.
      * Across the meta-harness, repositories evolve and version independently (e.g., `benchwork` may be `0.1.0-beta.3` while `storypole` is `0.1.0-beta.11` and `miter` is `0.1.0-alpha.2`).
    * **Cross-Repo Dependencies:**
@@ -60,9 +60,9 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
      * Each repository maintains its own `CHANGELOG.md` detailing crate-level changes per release.
      * Root `CHANGELOG.md` aggregates suite-wide milestones, cross-cutting contract evolution, and ecosystem compatibility.
 9. **Mandatory Dogfooding & Target Directory Prohibition:**
-   * All agent workflows and operations MUST utilize the globally installed CLI suite (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`) from `PATH` or their registered MCP servers.
+   * All agent workflows and operations MUST utilize the globally installed CLI suite (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`, `outfeed`) from `PATH` or their registered MCP servers.
    * Agents are strictly forbidden from executing binaries directly from local `target/debug/` or `target/release/` directories for operational workflows.
-   * The `target/` directories are reserved exclusively for automated testing (`cargo test`) and compiler checks during active crate development. Use `scripts/install-suite.sh` to compile and install updated binaries into `~/.cargo/bin`.
+   * The `target/` directories are reserved exclusively for automated testing (`cargo test`) and compiler checks during active crate development. Use `outfeed install --all` or `scripts/install-suite.sh` to compile and install updated binaries into `~/.cargo/bin`.
 10. **Branch Isolation & Feature Branching:**
    * All non-trivial tickets (`Kind != Chore` or changes spanning multiple files) MUST be developed on dedicated Git branches (`feat/<ticket-or-slug>`, `fix/<ticket-or-slug>`).
    * Agents MUST NEVER make unchecked changes directly on `main`.

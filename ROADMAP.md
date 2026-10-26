@@ -1,4 +1,4 @@
-# ROADMAP.md — `gaugeblock` 9-Repository Master Build Plan
+# ROADMAP.md — `gaugeblock` 10-Repository Master Build Plan
 
 > **Strategy:** Each phase unlocks a dogfooding capability used to accelerate the next phase.  
 > **Rule:** Every source file across every phase must remain strictly **under 250 lines**.
@@ -7,15 +7,17 @@
 
 | Phase | Repository | Capability | Status | Ticket | Version / Release |
 | :---: | :--- | :--- | :---: | :---: | :---: |
-| **0** | `gaugeblock` (meta-harness) | Multi-repo orchestration & contracts | **DONE** | — | `v0.0.1-alpha.1` |
-| **1** | `gaugeblock/storypole` | Git-native backlog, task DAG & memory | **DONE** | Bootstrap | `v0.1.0-beta.1` |
-| **2** | `gaugeblock/sawhorse` | 3-mode provider-agnostic LLM runtime | **DONE** | `GB-1` | `v0.1.0-beta.1` |
-| **3** | `gaugeblock/chalkline` | Spec planner, `/grill-me` & DAG compiler | **DONE** | `GB-2` | `v0.1.0-beta.1` |
-| **4** | `gaugeblock/dado` | Deterministic AST patterns & typed holes | **DONE** | `GB-3` | `v0.1.0-beta.1` |
-| **5** | `gaugeblock/batten` | Dynamic scope-to-CFG grammar compiler | **DONE** | `GB-4` | `v0.1.0-beta.1` |
-| **6** | `gaugeblock/joiner` | Master neurosymbolic synthesis engine | **DONE** | `GB-5` | `v0.1.0-beta.1` |
-| **7** | `gaugeblock/benchwork` | Modular visual workbench UI & local daemon | **DONE** | `GB-6` | `v0.1.0-beta.1` |
-| **8** | `gaugeblock/rabbet` | Telemetry corpus hub & open-weight foundry | **DONE** | `GB-7` | `v0.1.0-beta.1` |
+| **0** | `gaugeblock` (meta-harness) | Multi-repo orchestration & contracts | **DONE** | — | `v0.1.0-beta.2` |
+| **1** | `gaugeblock/storypole` | Git-native backlog, task DAG & memory | **DONE** | Bootstrap | `v0.1.0-beta.2` |
+| **2** | `gaugeblock/sawhorse` | 3-mode provider-agnostic LLM runtime | **DONE** | `GB-1` | `v0.1.0-beta.3` |
+| **3** | `gaugeblock/chalkline` | Spec planner, `/grill-me` & DAG compiler | **DONE** | `GB-2` | `v0.1.0-beta.2` |
+| **4** | `gaugeblock/dado` | Deterministic AST patterns & typed holes | **DONE** | `GB-3` | `v0.1.0-beta.2` |
+| **5** | `gaugeblock/batten` | Dynamic scope-to-CFG grammar compiler | **DONE** | `GB-4` | `v0.1.0-beta.2` |
+| **6** | `gaugeblock/joiner` | Master neurosymbolic synthesis engine | **DONE** | `GB-5` | `v0.1.0-beta.2` |
+| **7** | `gaugeblock/benchwork` | Modular visual workbench UI & local daemon | **DONE** | `GB-6` | `v0.1.0-beta.4` |
+| **8** | `gaugeblock/rabbet` | Telemetry corpus hub & open-weight foundry | **DONE** | `GB-7` | `v0.1.0-beta.2` |
+| **9** | `gaugeblock/miter` | Polyglot AST analysis & compiler verification | **DONE** | `GB-50` | `v0.1.0-beta.1` |
+| **10** | `gaugeblock/outfeed` | Neurosymbolic release gate & delivery suite | **DONE** | `GB-47` | `v0.1.0-beta.2` |
 
 ---
 
@@ -164,3 +166,22 @@
     - [x] `rabbet serve --port <port> --admin-token <token>`: Public Ingestion Gate + Token-protected Maintainer Admin Console (`/admin` + `/api/v1/admin/*`).
     - [x] `rabbet mine-oss <repo_path>`, `rabbet export-parquet`, `rabbet publish-hub`, `rabbet admin <stats|compact|candidates|approve>`.
 * **Exit Criteria:** Generates the initial cold-start Rust training dataset in Parquet format from open-source crates, compiles DPO preference pairs from Gold traces, and establishes the Maintainer Admin Control Plane with Litestream continuous replication. (`VERIFIED`)
+
+---
+
+## Phase 9: `gaugeblock/outfeed` — Neurosymbolic Release Gate, Packaging & Delivery Suite (`DONE`)
+* **Dependencies:** `storypole-core`, `sawhorse-core`.
+* **Sub-Crates & Modules (<250 LOC each):**
+  - `outfeed-core`:
+    - [x] `semver.rs`: Conventional commit parser, SemVer bump calculator (`Major`, `Minor`, `Patch`, `PreReleasePatch`, `PreReleaseMinor`, `PreReleaseAlpha`).
+    - [x] `manifest.rs`: In-memory workspace manifest parser and patcher (`Cargo.toml` lockstep updater).
+    - [x] `engine.rs`: Release planner and executor with explicit version override support.
+    - [x] `install.rs`: Suite-wide binary builder and installer with `--version` validation and `--locked` resolution.
+    - [x] `push.rs`: Git working tree cleaner, branch pusher, and annotated tag pusher with dry-run support.
+    - [x] `publish.rs`: Topological workspace DAG calculator, packaging validator, and crates.io re-upload error recovery.
+    - [x] `release.rs`: Macro orchestrator uniting plan -> apply -> install -> push -> publish gates.
+  - `outfeed-cli`:
+    - [x] `args.rs` & `main.rs`: Subcommands `outfeed status`, `plan`, `apply`, `install`, `push`, `publish`, `release`.
+  - `outfeed-mcp`:
+    - [x] Model Context Protocol server exposing `outfeed_plan`, `outfeed_apply`, `outfeed_install`, `outfeed_push`, `outfeed_publish`.
+* **Exit Criteria:** Dogfooded to plan, verify, tag, install, and publish the suite across crates.io and local systems without manual bash scripts. (`VERIFIED`)

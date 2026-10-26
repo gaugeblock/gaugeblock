@@ -6,7 +6,7 @@
 
 ## Ecosystem Architecture
 
-The `gaugeblock` suite consists of 9 standalone, highly focused tools that connect deterministically via strict wire data contracts:
+The `gaugeblock` suite consists of 10 standalone, highly focused tools that connect deterministically via strict wire data contracts:
 
 | Repository | Role | Core Responsibility |
 |---|---|---|
@@ -16,9 +16,10 @@ The `gaugeblock` suite consists of 9 standalone, highly focused tools that conne
 | [`chalkline`](https://github.com/gaugeblock/chalkline) | Spec Planner | Interactive `/grill-me` specification planner, AST extractor, and DAG compiler. |
 | [`dado`](https://github.com/gaugeblock/dado) | Context Slicer | AST context window optimization and minimal symbol slice assembly. |
 | [`batten`](https://github.com/gaugeblock/batten) | Grammar & Guidance | Context-free grammar (CFG) constrained decoding engine. |
-| [`joiner`](https://github.com/gaugeblock/joiner) | Code Synthesizer | Neurosymbolic hole filler, iterative AST patcher, and compiler verifier. |
+| [`joiner`](https://github.com/joiner) | Code Synthesizer | Neurosymbolic hole filler, iterative AST patcher, and compiler verifier. |
 | [`benchwork`](https://github.com/gaugeblock/benchwork) | Benchmark & UI | Local web console, SWE-bench evaluation harness, and execution recorder. |
 | [`rabbet`](https://github.com/gaugeblock/rabbet) | Telemetry & Training | DPO/RL trace collector, privacy scrubber, and dataset compiler. |
+| [`outfeed`](https://github.com/gaugeblock/outfeed) | Packaging & Delivery | Neurosymbolic release gate, AST drift inspector, changelog synthesizer, and release orchestrator. |
 
 ---
 
@@ -57,7 +58,7 @@ The install script automatically installs chosen binaries to `~/.cargo/bin` and 
 ```
 
 Installed binaries:
-`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`.
+`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`, `outfeed`.
 
 ### 2. Antigravity MCP Server Configuration
 
@@ -72,7 +73,8 @@ To empower AI coding agents with the suite's toolset, register the MCP stdio ser
     "dado": { "command": "dado", "args": ["mcp"] },
     "batten": { "command": "batten", "args": ["mcp"] },
     "joiner": { "command": "joiner", "args": ["mcp"] },
-    "benchwork": { "command": "benchwork", "args": ["mcp"] }
+    "benchwork": { "command": "benchwork", "args": ["mcp"] },
+    "outfeed": { "command": "outfeed", "args": ["mcp"] }
   }
 }
 ```

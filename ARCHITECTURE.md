@@ -24,22 +24,22 @@
 
 ### `benchwork`
 - Path: `benchwork/`
-- Version: `0.1.0-beta.3`
+- Version: `0.1.0-beta.4`
 - Description: Modular visual workbench UI and local daemon for neurosymbolic code synthesis and DAG inspection
 
 ### `benchwork-cli`
 - Path: `benchwork/crates/benchwork-cli`
-- Version: `0.1.0-beta.3`
+- Version: `0.1.0-beta.4`
 - Description: Command-line interface and local daemon for benchwork
 
 ### `benchwork-core`
 - Path: `benchwork/crates/benchwork-core`
-- Version: `0.1.0-beta.3`
+- Version: `0.1.0-beta.4`
 - Description: Core domain types, workspace aggregation, and multi-crate services for benchwork
 
 ### `benchwork-mcp`
 - Path: `benchwork/crates/benchwork-mcp`
-- Version: `0.1.0-beta.3`
+- Version: `0.1.0-beta.4`
 - Description: Model Context Protocol stdio server for benchwork
 
 ### `chalkline`
@@ -104,33 +104,53 @@
 
 ### `miter-ast`
 - Path: `miter/crates/ast_indexer`
-- Version: `0.1.0-alpha.3`
+- Version: `0.1.0-beta.1`
 - Description: Tree-sitter AST ingestion: functions, inputs and return types with their provenance and nesting depth
 
 ### `miter-cli`
 - Path: `miter/`
-- Version: `0.1.0-alpha.3`
+- Version: `0.1.0-beta.1`
 - Description: Workspace member crate
 
 ### `miter-engine`
 - Path: `miter/crates/engine`
-- Version: `0.1.0-alpha.3`
+- Version: `0.1.0-beta.1`
 - Description: AST storage and analysis engine: polyglot model, hydration, audit, slices, clones, contracts and secret redaction
 
 ### `miter-harness`
 - Path: `miter/crates/harness`
-- Version: `0.1.0-alpha.3`
+- Version: `0.1.0-beta.1`
 - Description: Deterministic compiler verification: sandboxed git worktrees and diagnostic parsing for `miter verify`
 
 ### `miter-mcp`
 - Path: `miter/crates/mcp`
-- Version: `0.1.0-alpha.3`
+- Version: `0.1.0-beta.1`
 - Description: Model Context Protocol (MCP) stdio server exposing AST hydration and compiler verification
 
 ### `miter-storage`
 - Path: `miter/crates/storage`
-- Version: `0.1.0-alpha.3`
+- Version: `0.1.0-beta.1`
 - Description: Canonical redb tables, schema versioning and auto-purge recovery for the miter workspace database
+
+### `outfeed`
+- Path: `outfeed/`
+- Version: `0.1.0-beta.2`
+- Description: Neurosymbolic release gate, AST drift inspector, changelog synthesizer, and delivery orchestrator
+
+### `outfeed-cli`
+- Path: `outfeed/crates/outfeed-cli`
+- Version: `0.1.0-beta.2`
+- Description: Command-line interface and entrypoints for outfeed release and packaging
+
+### `outfeed-core`
+- Path: `outfeed/crates/outfeed-core`
+- Version: `0.1.0-beta.2`
+- Description: Core release planner, SemVer bump calculator, topological DAG resolver, and Keep a Changelog synthesizer
+
+### `outfeed-mcp`
+- Path: `outfeed/crates/outfeed-mcp`
+- Version: `0.1.0-beta.2`
+- Description: Model Context Protocol (MCP) stdio server for outfeed release management
 
 ### `rabbet`
 - Path: `rabbet/`
@@ -149,17 +169,17 @@
 
 ### `sawhorse`
 - Path: `sawhorse/`
-- Version: `0.1.0-beta.2`
+- Version: `0.1.0-beta.3`
 - Description: Provider-agnostic 3-mode LLM runtime for deterministic neurosymbolic code synthesis.
 
 ### `sawhorse-cli`
 - Path: `sawhorse/crates/sawhorse-cli`
-- Version: `0.1.0-beta.2`
+- Version: `0.1.0-beta.3`
 - Description: Command-line interface and diagnostic tooling for sawhorse
 
 ### `sawhorse-core`
 - Path: `sawhorse/crates/sawhorse-core`
-- Version: `0.1.0-beta.2`
+- Version: `0.1.0-beta.3`
 - Description: Core library, contracts, routing, and provider adapters for sawhorse
 
 ### `storypole`
