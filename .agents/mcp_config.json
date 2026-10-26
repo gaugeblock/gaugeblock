@@ -27,6 +27,10 @@
     "benchwork": {
       "command": "benchwork",
       "args": ["mcp"]
+    },
+    "outfeed": {
+      "command": "outfeed",
+      "args": ["mcp"]
     }
   }
 }
