@@ -498,6 +498,16 @@ pub enum ModelRole {
     Oracle,        // Unconstrained or mildly constrained fallback for novel algorithms
 }
 
+/// Level of reasoning or thinking effort requested from the model.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ReasoningEffort {
+    None,   // Explicitly disable reasoning trace / thinking phase
+    Low,    // Minimal reasoning effort
+    Medium, // Standard reasoning effort
+    High,   // Exhaustive reasoning effort
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct InferenceRequest {
     pub role: ModelRole,
@@ -507,6 +517,7 @@ pub struct InferenceRequest {
     pub grammar_format: Option<crate::GrammarFormat>, // Gbnf, Lark, or Regex
     pub max_tokens: u16,
     pub temperature: f32,
+    pub reasoning_effort: Option<ReasoningEffort>, // Optional reasoning effort level
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -516,6 +527,8 @@ pub struct InferenceResponse {
     pub completion_tokens: u32,
     pub latency_ms: u64,
     pub model_used: String,
+    pub reasoning_trace: Option<String>, // Optional chain-of-thought trace
+    pub reasoning_tokens: Option<u32>,   // Tokens consumed by reasoning
 }
 ```
 
