@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Documentation
+- Suite-wide 9-document architecture rollout and standardized 9-section READMEs across all 10 member repositories and workspace root (GB-86, GB-87, GB-88, GB-89, GB-90)
+- Scaffolding of AST-grounded CONTRIBUTING.md, ARCHITECTURE.md, SPEC.md, and AGENTS.md across member repos via `chalkline docs scaffold`
+- Zero-drift verification gate enforced via `chalkline docs check`
+
 ## [0.1.0-beta.2] - 2026-10-26
 
 ### Added

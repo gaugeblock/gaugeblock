@@ -10,26 +10,33 @@ The `gaugeblock` suite consists of 10 standalone, highly focused tools that conn
 
 | Repository | Role | Core Responsibility |
 |---|---|---|
-| [`miter`](https://github.com/gaugeblock/miter) | AST & Verification | AST slicing, lexical scope indexing, and compiler error verification. |
+| [`miter`](https://github.com/gaugeblock/miter) | AST & Verification | AST slicing, lexical scope indexing, secret redaction, and compiler error verification. |
 | [`storypole`](https://github.com/gaugeblock/storypole) | Backlog & DAG | Git-native append-only ledger (`.storypole/`), task DAG, and MCP memory server. |
 | [`sawhorse`](https://github.com/gaugeblock/sawhorse) | Model Runtime | 3-mode provider-agnostic inference engine (OpenAI-compat, Local GGUF, Candle). |
-| [`chalkline`](https://github.com/gaugeblock/chalkline) | Spec Planner | Interactive `/grill-me` specification planner, AST extractor, and DAG compiler. |
-| [`dado`](https://github.com/gaugeblock/dado) | Context Slicer | AST context window optimization and minimal symbol slice assembly. |
-| [`batten`](https://github.com/gaugeblock/batten) | Grammar & Guidance | Context-free grammar (CFG) constrained decoding engine. |
-| [`joiner`](https://github.com/joiner) | Code Synthesizer | Neurosymbolic hole filler, iterative AST patcher, and compiler verifier. |
-| [`benchwork`](https://github.com/gaugeblock/benchwork) | Benchmark & UI | Local web console, SWE-bench evaluation harness, and execution recorder. |
-| [`rabbet`](https://github.com/gaugeblock/rabbet) | Telemetry & Training | DPO/RL trace collector, privacy scrubber, and dataset compiler. |
-| [`outfeed`](https://github.com/gaugeblock/outfeed) | Packaging & Delivery | Neurosymbolic release gate, AST drift inspector, changelog synthesizer, and release orchestrator. |
+| [`chalkline`](https://github.com/gaugeblock/chalkline) | Spec Planner & 9-Docs | Interactive `/grill-me` specification planner, AST extractor, DAG compiler, and 9-doc architecture manager. |
+| [`dado`](https://github.com/gaugeblock/dado) | Pattern Engine | Deterministic polyglot AST patterns, typed holes (`?[id: Type]`), structural mixins, and Tree-sitter splicing. |
+| [`batten`](https://github.com/gaugeblock/batten) | Grammar & Guidance | Dynamic scope-to-Context-Free Grammar (GBNF/Lark/Regex) compiler and pre-flight validator. |
+| [`joiner`](https://github.com/gaugeblock/joiner) | Code Synthesizer | Master neurosymbolic hole filler, iterative AST patcher, compiler repair loop, and telemetry spooler. |
+| [`benchwork`](https://github.com/gaugeblock/benchwork) | Benchmark & UI | Local web CAD console (`benchwork up`), multi-repo store aggregator, and Benji AI engineer. |
+| [`rabbet`](https://github.com/gaugeblock/rabbet) | Telemetry & Training | Public telemetry corpus hub, privacy scrubber, Parquet dataset compiler, and open-weight foundry. |
+| [`outfeed`](https://github.com/gaugeblock/outfeed) | Packaging & Delivery | Neurosymbolic release gate, AST drift inspector, changelog synthesizer, and suite delivery orchestrator. |
 
 ---
 
-## Core Documentation
+## Canonical 9-Document Architecture
 
-* **[`AGENTS.md`](./AGENTS.md):** Non-negotiable engineering laws, workspace conventions, and agent execution loop.
-* **[`CONTRACTS.md`](./CONTRACTS.md):** Shared wire types, JSON schemas, and inter-repository trait boundaries.
-* **[`ROADMAP.md`](./ROADMAP.md):** Master 9-phase bootstrap and implementation roadmap.
-* **[`CONTRIBUTING.md`](./CONTRIBUTING.md):** Conventional commits, atomic commits, tiered verification matrix, and semantic versioning.
-* **[`PRODUCT.md`](./PRODUCT.md):** Product requirements, user stories, and design invariants.
+Every repository across the `gaugeblock` meta-harness enforces an orthogonal, mutually exclusive separation of concerns across 9 essential markdown documents (managed and audited via `chalkline docs check`):
+
+* **[`README.md`](./README.md):** Public elevator pitch, ecosystem architecture, installation, and quickstart.
+* **[`CONTRIBUTING.md`](./CONTRIBUTING.md):** Human developer local workstation setup, toolchain requirements, and PR etiquette.
+* **[`PRODUCT.md`](./PRODUCT.md):** User personas, problem statements, customer journeys, and success metrics.
+* **[`ARCHITECTURE.md`](./ARCHITECTURE.md):** Multi-repository meta-harness topology, crate boundaries, and subsystem wiring.
+* **[`SPEC.md`](./SPEC.md):** Formal behavioral invariants, state machines, and algebraic data type contracts.
+* **[`DESIGN.md`](./DESIGN.md):** Architectural Decision Records (ADRs), trade-off analyses, and design explorations.
+* **[`ROADMAP.md`](./ROADMAP.md):** Strategic horizons, milestone epics, and breaking change schedules.
+* **[`CHANGELOG.md`](./CHANGELOG.md):** Chronological historical release logs (Keep a Changelog format) and unreleased entries.
+* **[`AGENTS.md`](./AGENTS.md):** Non-negotiable engineering directives, file-size ceilings (<=250 LOC), and verification loops for autonomous systems.
+* **[`CONTRACTS.md`](./CONTRACTS.md):** Cross-repository shared wire types, JSON schemas, and inter-tool trait boundaries.
 
 ---
 
