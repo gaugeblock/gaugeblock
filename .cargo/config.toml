@@ -79,6 +79,10 @@ rabbet         = { path = "./rabbet" }
 rabbet-core    = { path = "./rabbet/crates/rabbet-core" }
 rabbet-cli     = { path = "./rabbet/crates/rabbet-cli" }
 
+# --- 11. common (Shared wire contracts & foundation crates) ---
+gaugeblock-common     = { path = "./common" }
+gaugeblock-contracts  = { path = "./common/crates/gaugeblock-contracts" }
+
 # --- 10. outfeed (Neurosymbolic Release Gate, AST Drift Inspector & Changelog Synthesizer) ---
 outfeed        = { path = "./outfeed" }
 outfeed-core   = { path = "./outfeed/crates/outfeed-core" }

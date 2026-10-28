@@ -49,7 +49,7 @@ flowchart TD
 
 ## 2. Repository & Workspace Topology
 
-The meta-harness organizes 10 standalone Git checkouts mapped via local `.cargo/config.toml` `[patch.crates-io]` for zero-friction local multi-repo development:
+The meta-harness organizes 11 standalone Git checkouts mapped via local `.cargo/config.toml` `[patch.crates-io]` for zero-friction local multi-repo development:
 
 ```text
 neurosymbolic-suite/               # Root meta-harness & contract coordinator
@@ -58,6 +58,7 @@ neurosymbolic-suite/               # Root meta-harness & contract coordinator
 │   ├── docs.toml                  # 9-Document architecture policies
 │   └── storypole/                 # Append-only task and claim ledger
 ├── CONTRACTS.md                   # Formal shared wire types and schemas
+├── common/                        # Shared wire contracts & foundation crates
 ├── miter/                         # AST slicing, scope indexing, redb engine
 ├── storypole/                     # Git-native SQLite/JSONL backlog & claim leases
 ├── sawhorse/                      # 3-Mode provider-agnostic LLM runtime
@@ -74,6 +75,16 @@ neurosymbolic-suite/               # Root meta-harness & contract coordinator
 
 ## 3. Crate & Package Topology
 
+
+### `gaugeblock-common`
+- Path: `common/`
+- Version: `0.1.0-beta.1`
+- Description: Facade re-exporting the suite's shared wire contracts.
+
+### `gaugeblock-contracts`
+- Path: `common/crates/gaugeblock-contracts`
+- Version: `0.1.0-beta.1`
+- Description: Pure-serde wire types mirroring `CONTRACTS.md`, with no C dependencies or async runtime.
 
 ### `batten`
 - Path: `batten/`

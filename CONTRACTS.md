@@ -685,3 +685,29 @@ pub struct ReleaseStatus {
 }
 ```
 
+### `suite.lock` snapshot (outfeed)
+
+```rust
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SuiteMetadata {
+    pub version: String,
+    pub created_at: String,
+    pub meta_harness: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SuiteToolEntry {
+    pub name: String,
+    pub version: String,
+    pub commit: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tag: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SuiteLock {
+    pub suite: SuiteMetadata,
+    pub tools: Vec<SuiteToolEntry>,
+}
+```
+
