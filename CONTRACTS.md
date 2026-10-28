@@ -19,16 +19,30 @@ cross-language consumers; a boundary converts between the two.
 ```rust
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
+/// A source language or declarative format the suite reads.
+///
+/// Mirrors `miter`'s implemented taxonomy: a language is listed only when an extractor exists.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Language {
     Rust,
     TypeScript,
+    Tsx,
+    JavaScript,
     Python,
-    Go,
-    C,
-    Cpp,
+    Sql,
+    Html,
+    Css,
+    Markdown,
+    Dockerfile,
+    Yaml,
+    Hcl,
+    Env,
 }
+
+// Wire spelling: the lowercase `name()` form (`"rust"`, `"typescript"`, `"dockerfile"`).
+// Deserialization is case-insensitive and also accepts `rs`, `ts`, `js`, `py`, `md`, `yaml`/`yml`,
+// `hcl`/`terraform`, `css`/`scss` and `dockerfile`/`docker`.
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SymbolBinding {
