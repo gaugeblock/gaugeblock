@@ -39,6 +39,10 @@
     {
       "name": "rabbet",
       "path": "rabbet"
+    },
+    {
+      "name": "outfeed",
+      "path": "outfeed"
     }
   ],
   "settings": {
@@ -54,7 +58,8 @@
       "batten/Cargo.toml",
       "joiner/Cargo.toml",
       "benchwork/Cargo.toml",
-      "rabbet/Cargo.toml"
+      "rabbet/Cargo.toml",
+      "outfeed/Cargo.toml"
     ],
     "git.scanRepositories": [
       "miter",
@@ -65,7 +70,8 @@
       "batten",
       "joiner",
       "benchwork",
-      "rabbet"
+      "rabbet",
+      "outfeed"
     ]
   }
 }
