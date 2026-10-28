@@ -8,6 +8,14 @@
 
 Exported by `miter-engine` and consumed by `chalkline`, `dado`, `batten`, `joiner`, and `rabbet`.
 
+### Note on `Language` and `SymbolKind`
+
+`miter`'s `Language` and `SymbolKind` are **internal AST taxonomies**, not wire types: they carry no
+`serde` derives, and `SymbolKind` names 15 polyglot declaration kinds (`Module`, `Struct`, `Enum`,
+`Trait`, `Class`, `Interface`, `TypeAlias`, `Function`, `Method`, `Property`, `Table`,
+`InfraResource`, `DockerStage`, `K8sManifest`, `Heading`). The shapes below are the *wire* view seen by
+cross-language consumers; a boundary converts between the two.
+
 ```rust
 use serde::{Deserialize, Serialize};
 
@@ -123,8 +131,7 @@ pub enum TaskKind {
     Refactor,
     Bug,
     TechDebt,
-    DecisionHole,
-    PatternExtraction,
+    Spike,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -146,6 +153,8 @@ pub enum TaskStatus {
     Verified,
     /// Intentionally parked for future milestones.
     Deferred,
+    /// Completed and archived out of active backlog views.
+    Archived,
     /// Exhausted retry budget or failed verification; requires handoff inspection or split.
     Failed,
 }
@@ -241,9 +250,10 @@ pub struct TaskPlan {
 /// Evidence required to transition a task into `TaskStatus::Verified`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VerificationReceipt {
-    pub command_executed: String,
-    pub exit_code: i32,
-    pub passed_tests_count: Option<u32>,
+    pub verifier: String,
+    pub command: String,
+    pub exit_code: Option<i32>,
+    pub diagnostic_count: Option<u32>,
     pub summary: String,
     pub verified_at_epoch_ms: u64,
     pub git_branch: Option<String>,
@@ -374,6 +384,11 @@ pub enum LedgerEvent {
         spawned_children: Vec<TaskNode>,
         timestamp_ms: u64,
     },
+    PlanUpdated {
+        task_id: Uuid,
+        plan: TaskPlan,
+        timestamp_ms: u64,
+    },
     TaskVerified {
         task_id: Uuid,
         receipt: VerificationReceipt,
@@ -494,6 +509,8 @@ pub struct DadoPattern {
     pub template_source: String,
     pub required_imports: Vec<String>,
     pub holes: Vec<TypedHole>,
+    #[serde(default)]
+    pub canonical_example_fills: std::collections::BTreeMap<String, String>,
 }
 
 /// Produced by `batten` from `(LexicalScope + TypedHole)`.
