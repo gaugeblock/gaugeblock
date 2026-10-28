@@ -168,7 +168,7 @@ EOF
 
 Part of the **gaugeblock** neurosymbolic code synthesis ecosystem. Visit [gaugeblock.dev](https://gaugeblock.dev).
 
-*Status: v0.0.1-alpha.1 namespace reservation — active development in progress.*
+*Status: v0.1.0-alpha.1 namespace reservation — active development in progress.*
 EOF
 
     # 3. Root crate Cargo.toml with workspace membership and Rust 2024 inheritance
@@ -181,7 +181,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.0.1-alpha.1"
+version = "0.1.0-alpha.1"
 edition = "2024"
 authors = ["${AUTHOR} <${AUTHOR_EMAIL}>"]
 license = "${LICENSE}"
@@ -308,7 +308,7 @@ elif [[ "$cmd" == "publish" ]]; then
     echo "🧪 Running in DRY-RUN mode (crates will be verified and packaged but not published)..."
   fi
 
-  echo "🚀 Publishing v0.0.1-alpha.1 stubs to crates.io (skipping already reserved)..."
+  echo "🚀 Publishing v0.1.0-alpha.1 stubs to crates.io (skipping already reserved)..."
   for entry in "${PROJECTS[@]}"; do
     IFS='|' read -r base desc <<< "$entry"
     repo_dir="./reserve-staging/${base}"
@@ -328,7 +328,7 @@ elif [[ "$cmd" == "publish" ]]; then
       GIT_AUTHOR_EMAIL="$AUTHOR_EMAIL" \
       GIT_COMMITTER_NAME="$AUTHOR" \
       GIT_COMMITTER_EMAIL="$AUTHOR_EMAIL" \
-      git commit -m "chore: initial v0.0.1-alpha.1 namespace reservation for ${base}"
+      git commit -m "chore: initial v0.1.0-alpha.1 namespace reservation for ${base}"
 
       if command -v gh &> /dev/null; then
         if ! gh repo view "${GH_OWNER}/${base}" &> /dev/null; then
