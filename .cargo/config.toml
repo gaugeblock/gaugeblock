@@ -19,6 +19,11 @@ rustflags = ["-C", "target-cpu=native", "-C", "split-debuginfo=unpacked"]
 # Disable incremental compilation so sccache can fully cache all compilation units
 CARGO_INCREMENTAL = "0"
 
+# Raise the sccache capacity above its 10 GiB default so the shared dependency and
+# proc-macro cache for all 11 workspace targets is not evicted mid-suite-release (LRU
+# thrashing would otherwise force recompilation of syn/tokio/serde between repositories).
+SCCACHE_CACHE_SIZE = "15G"
+
 [patch.crates-io]
 # --- 1. miter (AST Slicer, Dependency Grapher & Verification Engine) ---
 miter-cli      = { path = "./miter" }
