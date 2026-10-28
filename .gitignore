@@ -25,6 +25,7 @@ Thumbs.db
 reserve-staging/
 
 # gaugeblock suite repos
+/common/
 /miter/
 /storypole/
 /sawhorse/
