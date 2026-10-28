@@ -420,6 +420,47 @@ pub struct ContractField {
     pub canonical_type: String, // e.g., "uuid", "string", "i64", "vec<string>", "option<i32>"
     pub required: bool,
 }
+
+/// Canonical 9-document repository architecture contracts managed by chalkline.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DocAuditReport {
+    pub items: Vec<DocAuditItem>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct DocAuditItem {
+    pub doc_type: DocType,
+    pub path: std::path::PathBuf,
+    pub status: DocStatus,
+    pub violations: Vec<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum DocStatus {
+    Present,
+    Missing,
+    Drifted,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DocType {
+    Readme,
+    Contributing,
+    Product,
+    Architecture,
+    Spec,
+    Design,
+    Roadmap,
+    Changelog,
+    Agents,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct WorkspaceDocsAuditReport {
+    pub targets: Vec<(String, DocAuditReport)>,
+}
 ```
 
 ---
