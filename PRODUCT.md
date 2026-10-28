@@ -20,7 +20,7 @@ Modern LLM-based software engineering does the exact opposite. It relies on mass
 
 ---
 
-## 2. The 9-Repository `gaugeblock` Ecosystem
+## 2. The 10-Repository `gaugeblock` Ecosystem
 
 | # | Repository | Crates Published | Core Role & Metaphor |
 | :--- | :--- | :--- | :--- |
@@ -31,8 +31,9 @@ Modern LLM-based software engineering does the exact opposite. It relies on mass
 | **5** | **`gaugeblock/dado`** | `dado`, `dado-core`, `dado-cli` | **AST Pattern & Typed Hole Engine:** Parameterized polyglot AST templates containing named, typed holes (`?[hole_id: ExpectedType]`), structural mixins, and cross-language contract generators (e.g., Rust structs <-> TypeScript interfaces). |
 | **6** | **`gaugeblock/batten`** | `batten`, `batten-core`, `batten-cli` | **Scope-to-CFG Grammar Compiler:** Compiles a `miter` lexical scope and a `dado` hole's target type into a strict Context-Free Grammar (GBNF/Lark/llguidance) so an LLM physically cannot emit out-of-scope identifiers or invalid syntax. |
 | **7** | **`gaugeblock/joiner`** | `joiner`, `joiner-core`, `joiner-cli`, `joiner-mcp` | **Master Neurosymbolic Orchestrator:** Pulls ready tasks from `storypole`, routes via System 1 to `dado` patterns, constrains `sawhorse` with `batten` grammars to fill holes, verifies via `miter`, handles Oracle fallback, and records telemetry. |
-| **8** | **`gaugeblock/benchwork`** | `benchwork`, `benchwork-core`, `benchwork-cli` + TypeScript UI | **Modular Visual Workbench UI:** Single pluggable web workbench (Vite + TypeScript + Rust daemon) with 4 dynamic panels: Spec/`/grill-me` Studio, Live Backlog DAG Board, AST & Synthesis Inspector, and Model/Corpus Hub. |
+| **8** | **`benchwork`** | `benchwork`, `benchwork-core`, `benchwork-cli` + TypeScript UI | **Modular Visual Workbench UI:** Single pluggable web workbench (Vite + TypeScript + Rust daemon) with 4 dynamic panels: Spec/`/grill-me` Studio, Live Backlog DAG Board, AST & Synthesis Inspector, and Model/Corpus Hub. |
 | **9** | **`gaugeblock/rabbet`** | `rabbet`, `rabbet-core`, `rabbet-cli` | **Telemetry Corpus Hub & Foundry:** Cold-start OSS repository miner (using `miter` + `dado` in reverse), opt-in AST-anonymized telemetry ingestion pipeline (Bronze/Silver/Gold/Diamond tiers), and open-weight training foundry. |
+| **10** | **`gaugeblock/outfeed`** | `outfeed`, `outfeed-core`, `outfeed-cli`, `outfeed-mcp` | **Packaging & Delivery Gate:** Topological crate packager, SemVer drift detector, changelog synthesizer, and crates.io publishing engine. |
 
 ---
 
@@ -74,3 +75,12 @@ Every synthesis loop in `joiner` can record an opt-in, AST-anonymized trace (whe
 * **Silver Trace:** Passed compilation + passed full unit/integration test suite on attempt #1.
 * **Gold Trace:** Required self-repair or Oracle fallback, then passed tests -> yields a **Direct Preference Optimization (DPO)** pair `(rejected_ast, verified_ast)` or a newly extracted `dado` pattern candidate.
 * **Diamond Trace:** Code survived unchanged in git `main` across subsequent commits without revert.
+
+---
+
+## 5. Verified Release & Delivery Pipeline (`outfeed`)
+
+Once code modifications survive Tier 3 gates across the workspace, **`outfeed`** acts as the deterministic release gate:
+* **AST Drift Inspection:** Verifies documentation and public API contracts against code before tagging.
+* **Topological Sort Publishing:** Resolves member dependencies across workspaces to guarantee sub-crates (`*-core`, `*-mcp`) deploy prior to consumer CLIs and facade packages.
+* **Changelog Synthesis:** Synthesizes `Keep a Changelog` records from Conventional Commits and Storypole tasks automatically.

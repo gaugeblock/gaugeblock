@@ -1,0 +1,43 @@
+[docs.readme]
+path = "README.md"
+required = true
+
+[docs.contributing]
+path = "CONTRIBUTING.md"
+required = true
+
+[docs.product]
+path = "PRODUCT.md"
+required = true
+
+[docs.architecture]
+path = "ARCHITECTURE.md"
+required = true
+
+[docs.spec]
+path = "SPEC.md"
+required = true
+
+[docs.design]
+path = "DESIGN.md"
+required = true
+
+[docs.roadmap]
+path = "ROADMAP.md"
+required = true
+
+[docs.changelog]
+path = "CHANGELOG.md"
+required = true
+
+[docs.agents]
+path = "AGENTS.md"
+required = true
+
+[policies]
+enforce_public_type_contracts = false
+enforce_crate_topology = true
+enforce_file_loc_limits = true
+enforce_readme_cli_flags = false
+enforce_changelog_unreleased = true
+enforce_contributing_toolchains = true

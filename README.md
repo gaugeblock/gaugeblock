@@ -23,6 +23,23 @@ The `gaugeblock` suite consists of 10 standalone, highly focused tools that conn
 
 ---
 
+## Why `gaugeblock`?
+
+Modern LLM-driven coding tools rely on pure stochastic autoregression—forcing models to regurgitate hundreds of lines of boilerplate syntax, guess variable scopes, and hallucinate types across file boundaries.
+
+`gaugeblock` inverts this paradigm through **neurosymbolic program synthesis**:
+
+| Without `gaugeblock` | With `gaugeblock` |
+|---|---|
+| **Stochastic Autoregression:** LLM predicts every token of code, boilerplate, imports, and types from scratch—burning 85% of token budget and context on predictable structure. | **Deterministic AST Skeletons:** `miter` extracts live symbol scopes; `dado` provides structural AST patterns with typed holes (`?[id: Type]`); LLMs only fill constrained logic. |
+| **Context Window Exhaustion:** Agents read 800-line files repeatedly with raw `cat` or `grep`, quickly hitting prompt saturation and degrading reasoning quality. | **Surgical AST Slicing:** `miter skeleton` and `miter lookup` return compact signatures and cross-file reference graphs in milliseconds with zero secret leakage. |
+| **Grammar & Scope Hallucinations:** Models invent out-of-scope identifiers, call non-existent methods, or generate invalid syntax in 40%+ of complex edits. | **Scope-to-Grammar Compiling:** `batten` compiles active lexical variables into Context-Free Grammars (GBNF/Lark), physically constraining LLM generation to valid tokens. |
+| **Silent Multi-File Contract Drift:** Types, database schemas, and API contracts diverge silently across Rust, TypeScript, and SQL definitions. | **Continuous Contract Enforcement:** `miter contracts` and `chalkline docs check` audit cross-language types, public contracts, and documentation drift before commits. |
+| **Chaotic Agent Workflows:** Agents fix out-of-scope bugs inline, forget design invariants, and lose work across context window truncations. | **Git-Native Task DAG & Laws:** `storypole` maintains append-only task leases and zero-inline deferrals; `chalkline` resolves ambiguity via `/grill-me`. |
+
+
+---
+
 ## Canonical 9-Document Architecture
 
 Every repository across the `gaugeblock` meta-harness enforces an orthogonal, mutually exclusive separation of concerns across 9 essential markdown documents (managed and audited via `chalkline docs check`):

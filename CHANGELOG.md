@@ -166,7 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `CONTRACTS.md`: Shared wire format specifications and data contract schemas across tool boundaries.
     - `ROADMAP.md`: Master 9-phase dependency graph and milestone exit criteria.
   - Automated namespace reservation tooling ([`scripts/reserve-namespaces.sh`](scripts/reserve-namespaces.sh)) securing 24 crate names across 8 repository families on crates.io at `v0.0.1-alpha.1`.
-  - Pure bash topological workspace publishing pipeline ([`scripts/publish-workspace.sh`](scripts/publish-workspace.sh)).
+  - Pure bash topological workspace publishing pipeline ([`scripts/publish-crates.sh`](scripts/publish-crates.sh)).
   - Local multi-repo development mapping via `[patch.crates-io]` in root `.cargo/config.toml`.
   - Multi-root VS Code workspace configuration (`gaugeblock.code-workspace`).
 * **Phase 1: `gaugeblock/storypole` — Backlog, Task DAG & MCP Memory Store:**

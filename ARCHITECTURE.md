@@ -1,6 +1,79 @@
-# System Architecture
+# System Architecture — `gaugeblock` Meta-Harness
 
-## Crate & Package Topology
+> **Meta-Harness:** `gaugeblock` (`neurosymbolic-suite`)  
+> **Topology:** 10 Autonomous Repositories + Shared Data Contracts  
+> **Lifecycle:** `0.1.0-beta.X`
+
+---
+
+## 1. High-Level Ecosystem Topology
+
+The `gaugeblock` meta-harness wrings together 10 independent repositories into an end-to-end neurosymbolic code synthesis loop. Every repository functions as a standalone CLI, library crate, and MCP server, while adhering to shared wire protocols defined in `CONTRACTS.md`.
+
+```mermaid
+flowchart TD
+    subgraph Planning["1. Planning & Intent"]
+        U["Developer / Agent"] -->|intent & spec| CL["chalkline (Spec Planner)"]
+        CL -->|topological DAG & tasks| SP["storypole (Backlog & Leases)"]
+    end
+
+    subgraph Symbolic["2. Symbolic Analysis & Templates"]
+        SP -->|next task| JN["joiner (Master Orchestrator)"]
+        JN -->|query AST & scope| MT["miter (AST Slicer & Verifier)"]
+        JN -->|fetch pattern sketch| DD["dado (AST Pattern & Holes)"]
+        JN -->|compile scope to CFG| BT["batten (Grammar Compiler)"]
+    end
+
+    subgraph Neural["3. Constrained Inference"]
+        BT -->|GBNF / Lark mask| SH["sawhorse (3-Mode LLM Runtime)"]
+        DD -->|typed hole prompts| SH
+        SH -->|tokens| JN
+    end
+
+    subgraph Verification["4. Verification & Gate"]
+        JN -->|apply patch in worktree| MT
+        MT -->|compiler diagnostic parsing| JN
+        JN -->|task completion| SP
+        JN -->|anonymized trace| RB["rabbet (Telemetry Hub)"]
+        SP -->|release gate| OF["outfeed (Packager & Publisher)"]
+    end
+
+    subgraph VisualWorkbench["Cross-Cutting Workbench"]
+        BW["benchwork (Visual Studio UI & Daemon)"] -.->|inspects| Planning
+        BW -.->|inspects| Symbolic
+        BW -.->|inspects| Verification
+    end
+```
+
+---
+
+## 2. Repository & Workspace Topology
+
+The meta-harness organizes 10 standalone Git checkouts mapped via local `.cargo/config.toml` `[patch.crates-io]` for zero-friction local multi-repo development:
+
+```text
+neurosymbolic-suite/               # Root meta-harness & contract coordinator
+├── .gaugeblock/                   # Shared config, Storypole ledger, docs policies
+│   ├── config.toml                # Multi-tool unified configuration
+│   ├── docs.toml                  # 9-Document architecture policies
+│   └── storypole/                 # Append-only task and claim ledger
+├── CONTRACTS.md                   # Formal shared wire types and schemas
+├── miter/                         # AST slicing, scope indexing, redb engine
+├── storypole/                     # Git-native SQLite/JSONL backlog & claim leases
+├── sawhorse/                      # 3-Mode provider-agnostic LLM runtime
+├── chalkline/                     # Spec planner, /grill-me, 9-doc manager
+├── dado/                          # AST pattern templates & typed holes
+├── batten/                        # Scope-to-grammar compiler & token masks
+├── joiner/                        # Neurosymbolic synthesizer & repair loop
+├── benchwork/                     # Multi-repo web CAD console & daemon
+├── rabbet/                        # Telemetry corpus hub & training foundry
+└── outfeed/                       # Release gate, SemVer bump, packager
+```
+
+---
+
+## 3. Crate & Package Topology
+
 
 ### `batten`
 - Path: `batten/`
