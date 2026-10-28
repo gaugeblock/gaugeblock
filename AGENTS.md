@@ -53,6 +53,7 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * **Pre-Release Increments & Breaking Changes:**
      * During active beta, backwards-compatible fixes, features, and refinements increment the pre-release patch sequence (`0.1.0-beta.1` -> `0.1.0-beta.2`).
      * Breaking API or schema changes in a crate bump that crate's minor base (e.g., `storypole` to `0.2.0-beta.1`). Consuming repositories bump their own versions independently as normal when updating dependencies to adopt the new version.
+     * **Namespace reservations publish at `0.1.0-alpha.1`.** A placeholder that only claims a crates.io name is never a `beta`: the crate moves to `0.1.0-beta.1` on its first real, dogfood-ready build (see `GB-127`).
    * **Git Tagging & Release Management:**
      * Individual repositories tag their own releases in their local Git history using annotated tags `v<version>` (e.g., `git tag -a v0.1.0-beta.2 -m "v0.1.0-beta.2"`).
      * The root meta-harness (`neurosymbolic-suite`) has no package version in `Cargo.toml`; it cuts annotated snapshot tags on certified ecosystem milestone passes: `suite-v<version>` (e.g., `suite-v0.1.0-beta.1`).
