@@ -291,6 +291,10 @@ pub struct TaskNode {
 pub struct TaskContextBriefing {
     pub task: TaskNode,
     pub verification_command: Option<String>,
+    /// `(ticket_key, title, status)` for every task linked by `RelatedTo`, `BlockedBy` or
+    /// `ParentEpic` in **either** direction. Outgoing edges cover dependencies and the parent
+    /// epic; the inbound pass surfaces an epic's children, dependents blocked by this task, and
+    /// siblings that recorded the link on their own side. Mutual links appear once.
     pub related_tasks_summary: Vec<(String, String, TaskStatus)>,
     pub inherited_decisions: Vec<TaskDecision>,
     pub file_collision_warnings: Vec<String>,
