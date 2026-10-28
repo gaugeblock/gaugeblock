@@ -26,7 +26,7 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
      * **Tier 2 (Atomic Commit Gate):** Run on the affected crate before finalizing an atomic commit:
        `cargo fmt --check -p <crate>`, `cargo clippy -p <crate> --all-targets -- -D warnings`, `cargo nextest run -p <crate>` (fallback: `cargo test -p <crate>`), and `chalkline docs check -d <repo>` (enforcing 9-doc compliance and zero AST drift).
      * **Tier 3 (Task Completion Gate):** Full workspace verification before closing a task or marking `Verified` in `storypole`:
-       `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`, `miter contracts`, and `chalkline docs check --workspace` (certifying 100% documentation fidelity across all 11 workspace targets).
+       `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`, `miter contracts`, `scripts/check-lockfiles.sh` (every repository tracks a fresh `Cargo.lock`), and `chalkline docs check --workspace` (certifying 100% documentation fidelity across all 11 workspace targets).
      * **Tier 4 (Release & Wire Gate):** Full cross-repo suite, integration tests, wire contract validation (`miter contracts`), and `chalkline docs check --workspace` before bumping versions or pushing release tags.
 5. **Strict Error Handling & Observability:**
    * Library crates (`*-core`, `*-engine`) MUST use `thiserror` with strongly typed error enums. `.unwrap()` and `.expect()` are forbidden in production library paths (allowed only in tests or provably infallible static initializers with a `// SAFETY:` or `// INVARIANT:` comment). Enforced at compile time via `[workspace.lints.clippy]` (`unwrap_used = "deny"`, `expect_used = "deny"`).
@@ -36,6 +36,7 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * Every commit MUST represent a single logical unit of work (one bug fix, one discrete refactoring, or one sub-crate capability). Never bundle unrelated edits across disparate domains.
    * Every commit MUST pass Tier 2 verification. Never commit broken intermediate states that break `git bisect`.
    * Staging hygiene: Never use `git add .` blindly. Inspect `git diff --staged` before creating a commit.
+   * **An ignored path aborts the whole `git add`.** `git add -A <dir> Cargo.lock` in a repository that ignored `Cargo.lock` staged *nothing* and exited non-zero, and a following `git commit -q` then failed with no output — silently producing a no-op merge (GB-150). Stage explicit paths that are known to be tracked, and confirm the commit landed with `git log --oneline -1`.
 7. **Conventional Commits Specification:**
    * Commit messages MUST follow Conventional Commits v1.0.0: `<type>(<scope>): <summary>`
    * Allowed types: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `style`, `chore`, `ci`, `build`.
