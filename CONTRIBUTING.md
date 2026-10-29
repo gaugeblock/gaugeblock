@@ -15,8 +15,26 @@ The `gaugeblock` suite is designed to be dogfooded end-to-end using the installe
 3. **Out-of-Scope Defect Registration:**
    Never fix unrelated bugs or issues inline during an active task. Always defer them immediately into `storypole`:
    ```bash
-   storypole defer --kind bug --symbol "<crate::path>" --title "<summary>"
+   storypole defer "<summary>" --kind bug --symbols "<crate::path>"
    ```
+4. **Build Cache & Disk Headroom:**
+   `.cargo/config.toml` shares one `target/` across all 11 repositories, wraps `rustc` in `sccache`,
+   and sets `[build] incremental = false`. The incremental paragraph matters: `CARGO_INCREMENTAL`
+   under `[env]` populates the environment of the processes cargo *spawns* (rustc, build scripts),
+   not cargo's own, so that form of the knob is inert and `target/debug/incremental` keeps refilling.
+
+   Measured on macOS 12.7.6 (x86_64), cargo 1.99.1 / rustc 1.99.1, sccache 0.18.0, warm `target/`,
+   `cargo check -p storypole-core` after touching `lib.rs`:
+
+   | Config | Wall | Incremental artefacts written |
+   |:--|--:|--:|
+   | `[env] CARGO_INCREMENTAL = "0"` (inert) | 1.67 s | 4.1 MB |
+   | `[build] incremental = false` | 3.90 s | 0 B |
+
+   The 2.2 s is a per-crate recheck paid once, while the win is disk that stays bounded across a
+   multi-repo session - this suite has hit `ENOSPC` twice (`GB-122`, `GB-187`), and one session of
+   `outfeed install --debug` across four repositories left 1.3 GB of incremental artefacts. Reclaiming
+   it is always safe: `rm -rf target/*/incremental` costs rebuild time, never correctness.
 
 ---
 

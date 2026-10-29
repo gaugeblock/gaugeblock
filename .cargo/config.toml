@@ -8,6 +8,12 @@ target-dir = "target"
 # Fast compiler caching via sccache
 rustc-wrapper = "sccache"
 
+# Incremental artefacts are not worth their disk here: sccache already caches compilation units,
+# and `target/debug/incremental` grows by ~0.5-1.5 GB per multi-repo session (GB-187). This must be
+# `[build] incremental`, not `[env] CARGO_INCREMENTAL` - the `[env]` table is applied to the processes
+# cargo spawns (rustc, build scripts), not to cargo's own decision to enable incrementality.
+incremental = false
+
 # Target host CPU architecture (AVX2/FMA/BMI on x86_64, NEON on ARM64)
 rustflags = ["-C", "target-cpu=native"]
 
@@ -16,12 +22,13 @@ rustflags = ["-C", "target-cpu=native"]
 rustflags = ["-C", "target-cpu=native", "-C", "split-debuginfo=unpacked"]
 
 [env]
-# Disable incremental compilation so sccache can fully cache all compilation units
-CARGO_INCREMENTAL = "0"
-
 # Raise the sccache capacity above its 10 GiB default so the shared dependency and
 # proc-macro cache for all 11 workspace targets is not evicted mid-suite-release (LRU
 # thrashing would otherwise force recompilation of syn/tokio/serde between repositories).
+#
+# NOTE: `CARGO_INCREMENTAL` does not belong here. The `[env]` table is applied to the processes cargo
+# spawns (rustc, build scripts), not to cargo itself, so putting the knob here has no effect - it is
+# `[build] incremental` above that actually turns incrementality off (GB-187).
 SCCACHE_CACHE_SIZE = "15G"
 
 [patch.crates-io]
