@@ -35,6 +35,22 @@ The `gaugeblock` suite is designed to be dogfooded end-to-end using the installe
    multi-repo session - this suite has hit `ENOSPC` twice (`GB-122`, `GB-187`), and one session of
    `outfeed install --debug` across four repositories left 1.3 GB of incremental artefacts. Reclaiming
    it is always safe: `rm -rf target/*/incremental` costs rebuild time, never correctness.
+5. **Release profile stays at `codegen-units = 1` — measured, not inherited:**
+   All ten roots pin `opt-level = 3`, `lto = "thin"`, `codegen-units = 1`. A stale plan claimed the
+   single CGU cost "3x–5x" release build time; it does not. Cold `cargo build --release -p outfeed-cli`
+   with `RUSTC_WRAPPER` cleared (verified: sccache reported 0 compile requests) and `target/release`
+   removed between runs, same machine, sequential:
+
+   | Profile | Wall | Binary |
+   |:--|--:|--:|
+   | `codegen-units = 1` + `lto = "thin"` | **395.58 s** | 9,371,408 B |
+   | default `codegen-units = 16` + `lto = "thin"` | 398.03 s | 11,099,512 B (+18.4%) |
+
+   Environment: macOS 12.7.6 (x86_64), cargo/rustc 1.99.1, warm dependency-free `target/`.
+
+   The wall time is dominated by dependency codegen and the thin-LTO link, not by per-crate CGU
+   splitting, so the multi-CGU build bought 0.6% (inside noise) and paid 1.7 MB. Re-test only if
+   `lto` changes to `"fat"`/`false`, or the binary's shape changes materially (`GB-190`).
 
 ---
 
