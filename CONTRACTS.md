@@ -2,6 +2,13 @@
 
 > **Rule:** Every struct and trait below defines an immutable wire contract between the 10 `gaugeblock` repositories. All wire types MUST derive `serde::Serialize`, `serde::Deserialize`, `Debug`, `Clone`, and `PartialEq`.
 
+> **Foundation crates (not member contracts):** `gaugeblock-contracts` holds every wire type on this
+> page. Two further crates in `common/` will hold *behaviour* rather than data, and their boundary is
+> frozen in [`common/ARCHITECTURE.md` §4](./common/ARCHITECTURE.md): `gaugeblock-git` owns every git and
+> worktree operation (`GB-131`), `gaugeblock-workspace` owns canonical `.gaugeblock/` paths, member
+> topology and suite config and may depend on `gaugeblock-git` but never the reverse (`GB-189`). No
+> member may add a private path or git helper once those exist.
+
 ---
 
 ## 1. `miter` Contracts (AST Slicing, Lexical Scope & Verification)
