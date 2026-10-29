@@ -179,7 +179,13 @@ For every assigned task:
 2. **Context Slicing with `miter`:** Use installed `miter lookup`, `miter skeleton`, and `miter impact` to inspect AST signatures and blast radii rather than dumping entire repositories into context.
 3. **Plan & Spec with `chalkline`:** Use installed `chalkline recon` and `chalkline grill` to auto-resolve conventions and identify decision boundaries.
 4. **Synthesize & Patch with `dado` & `batten`:** Compose deterministic AST patterns with `dado render` and validate grammatical constraints with `batten validate`.
-5. **Implement Modularly (Tier 1 Iteration):** Write small, single-purpose files (strictly under 250 LOC) with explicit doc comments (`///`). Use Tier 1 checks (`cargo check -p <crate>`) for rapid iteration.
-6. **Capture Unrelated Findings in `storypole`:** If you uncover an out-of-scope bug, edge case, or debt, defer it immediately via `storypole defer`.
-7. **Commit Atomically (Tier 2 Gate):** Verify affected crate (`cargo fmt --check -p <crate>`, `cargo clippy -p <crate>`, `cargo nextest run -p <crate>`). Commit with Conventional Commits (`<type>(<scope>): <summary>`).
-8. **Verify & Close Task (Tier 3 Gate):** Run full workspace verification (`cargo nextest run --workspace` + `cargo test --doc --workspace`). Release lease and certify completion with `storypole verify <KEY>` or `storypole handoff`.
+5. **Dogfood the synthesis loop where it is deterministic:** the suite exists to generate and verify code, so feature work feeds it back.
+   * New wire types and DTOs SHOULD be emitted with `dado contract` rather than hand-written, so the pattern library grows from real use.
+   * Rendered batches SHOULD pass `batten validate` before they are committed; a fill the grammar rejects is a failed synthesis, and that verdict belongs in the loop rather than in review.
+   * `storypole verify` captures one `Silver` trace per verified head into `<canonical .gaugeblock>/spool/outbox.jsonl`, keyed on `(task_key, head_commit_sha)`. Do not write traces from `outfeed gate`: it is a repeatable check, so writing there duplicates traces for unfinished work.
+   * `joiner fill` (GB-167) is the path to `Gold` DPO pairs; it is opt-in because it spends inference tokens.
+
+6. **Implement Modularly (Tier 1 Iteration):** Write small, single-purpose files (strictly under 250 LOC) with explicit doc comments (`///`). Use Tier 1 checks (`cargo check -p <crate>`) for rapid iteration.
+7. **Capture Unrelated Findings in `storypole`:** If you uncover an out-of-scope bug, edge case, or debt, defer it immediately via `storypole defer`.
+8. **Commit Atomically (Tier 2 Gate):** Verify affected crate (`cargo fmt --check -p <crate>`, `cargo clippy -p <crate>`, `cargo nextest run -p <crate>`). Commit with Conventional Commits (`<type>(<scope>): <summary>`).
+9. **Verify & Close Task (Tier 3 Gate):** Run full workspace verification (`cargo nextest run --workspace` + `cargo test --doc --workspace`). Release lease and certify completion with `storypole verify <KEY>` or `storypole handoff`.
