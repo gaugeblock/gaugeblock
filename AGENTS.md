@@ -73,6 +73,11 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * Every non-trivial task (`P1`/`P2` or multi-step feature) MUST have an attached `TaskPlan` (`storypole plan set`) and its unabridged design markdown saved under `.storypole/plans/<KEY>.md`.
    * Design markdown files under `.storypole/plans/` are first-class versioned repository assets and MUST be committed to Git alongside ledger events.
    * Discovered design invariants, boundary taxonomy, TOML schemas, and execution steps MUST be recorded in the task plan before executing code modifications.
+12. **Performance Claims Must Be Measured, And The Measurement Must Persist:**
+   * No change may be described as faster, lighter, or cheaper without a before/after measurement taken on the same machine, in the same order, with the same inputs. Run timed phases sequentially; parallel runs contend for CPU and produce noise (`GB-71` produced a bogus 30 s build this way before being re-measured).
+   * Record the numbers in three places: the commit message that makes the claim, the `storypole` task description or acceptance criteria, and a durable document in the repository that owns the change (`CONTRIBUTING.md`, `PERF.md`, or the relevant `SPEC.md`). A figure that lives only in chat has not been recorded.
+   * State the environment with the number: platform, tool versions, cache state, and whether the measurement is a cold or warm run. Report regressions as plainly as wins - a slower build is a result, not something to omit.
+   * When a benchmark informs a decision with no code change (a migration already made, a design chosen), measure it retroactively and backfill the task. `GB-71` shipped its migration before any timing existed and the gap had to be closed afterwards.
 
 ---
 
