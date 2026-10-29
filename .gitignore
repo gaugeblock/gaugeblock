@@ -47,3 +47,13 @@ reserve-staging/
 !.miter/config.toml
 *.redb
 *.redb.lock
+
+# Derived runtime state under .gaugeblock/ — never tracked. Canonical project state stays tracked:
+# config.toml, docs.toml, storypole/ledger.jsonl and storypole/plans/.
+.gaugeblock/spool/
+.gaugeblock/worktrees/
+.gaugeblock/datasets/
+.gaugeblock/.env
+.gaugeblock/**/*.sqlite
+.gaugeblock/**/*.sqlite-wal
+.gaugeblock/**/*.sqlite-shm
