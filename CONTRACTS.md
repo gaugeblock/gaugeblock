@@ -612,7 +612,9 @@ pub struct InferenceResponse {
 
 ## 6. `joiner` & `rabbet` Contracts (Synthesis Traces & Telemetry Tiers)
 
-Exported by `joiner-core` and `rabbet-core`.
+Exported by `gaugeblock-contracts` (re-exported by `joiner-core` and `rabbet-core`) and written by
+`storypole`, `joiner`, and `benchwork`. One outbox line is one `SpoolEntry`; the trace alone is not a
+line, because a reader cannot recompute a hash that was never recorded (`GB-182`).
 
 ```rust
 use serde::{Deserialize, Serialize};
@@ -630,15 +632,40 @@ pub enum TelemetryTier {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AnonymizedSynthesisTrace {
     pub trace_id: Uuid,
-    pub language: miter_engine::Language,
+    pub language: gaugeblock_contracts::Language,
     pub tier: TelemetryTier,
     pub selected_pattern_id: Option<String>,
     pub anonymized_scope_signature: String,
     pub filled_holes: Vec<(String, String)>, // (hole_id, anonymized_expression)
     pub rejected_attempt: Option<String>,    // Present on Gold DPO traces
-    pub verification: miter_engine::VerificationReport,
+    pub verification: gaugeblock_contracts::VerificationReport,
+    pub task_key: Option<String>,        // Storypole provenance; absent on joiner traces
+    pub head_commit_sha: Option<String>, // Verified head; absent on joiner traces
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SyncStatus {
+    #[default]
+    Pending, // Awaiting transmission to a rabbet hub
+    Synced,  // Acknowledged by the hub
+    Rejected, // Rejected by schema validation or hub deduplication
+}
+
+/// One line of `<canonical .gaugeblock>/spool/outbox.jsonl`.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SpoolEntry {
+    pub trace: AnonymizedSynthesisTrace,
+    pub content_hash: String, // SHA-256 over canonical serde_json bytes of `trace`
+    pub sync_status: SyncStatus,
+    pub recorded_at_ms: u64,
 }
 ```
+
+`SpoolEntry::hash_trace` is the single hashing implementation: the writer records its result and
+`rabbet`'s ingestion gate recomputes it, so a hash mismatch means the payload was edited in transit.
+On the wire `sync_status` is a lowercase string (`pending` | `synced` | `rejected`), which is what
+outboxes written before the type was shared already contain.
 
 ---
 
