@@ -57,3 +57,8 @@ reserve-staging/
 .gaugeblock/**/*.sqlite
 .gaugeblock/**/*.sqlite-wal
 .gaugeblock/**/*.sqlite-shm
+
+# miter index databases (binary artefacts, rebuilt on demand)
+.miter/
+**/.miter/
+.gaugeblock/miter/
