@@ -62,3 +62,6 @@ reserve-staging/
 .miter/
 **/.miter/
 .gaugeblock/miter/
+
+# rabbet local corpus database (created when the CLI runs from the repo root)
+/rabbet.db*
