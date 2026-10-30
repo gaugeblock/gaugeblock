@@ -286,3 +286,41 @@ neurosymbolic-suite/               # Root meta-harness & contract coordinator
 - Version: `0.1.0-beta.2`
 - Description: Model Context Protocol (MCP) stdio server for storypole
 
+
+---
+
+## Crate & file audit (measured)
+
+The suite is audited from the meta-harness root, not repo by repo, because a plain walk from the root
+honours the `.gitignore` that excludes every member checkout (`GB-194`). Three commands, re-runnable:
+
+```bash
+miter audit --path . --threshold 250   # the hard ceiling; exits non-zero on a violation
+miter audit --path . --threshold 200   # the band AGENTS.md says to split in
+miter deps  --path .                   # crate edges + declared-but-unreferenced dependencies
+```
+
+Measured on 2026-10-29 (miter 0.1.0-beta.4, all eleven members present):
+
+| Question | Result |
+|:---|:---|
+| Files over the hard 250-line ceiling | **0** - `GB-191`, `GB-192`, `GB-193` closed the last three |
+| Files in the 200-250 band | **70** - miter 34, benchwork 14, storypole 8, outfeed 4, joiner 3, chalkline 3, common 2, sawhorse 1, rabbet 1 (`GB-195`) |
+| Workspace crates and import edges | **42 crates, 132 crate-to-crate edges**, every edge into `gaugeblock-contracts` inbound |
+| Declared dependencies no source references | **59** - batten 9, dado 9, rabbet 9, benchwork 7, chalkline 7, joiner 5, outfeed 5, sawhorse 4, storypole 3 |
+| Structural clones at 0.90 similarity | **100 pairs (17 cross-crate)**, and the cross-crate ones spot-check to *shape only*, not shared meaning (`GB-197`) |
+
+What the numbers say about boundaries:
+
+1. **The file half is closed.** No ceiling violations anywhere, so the remaining 70 files are a
+   mechanical sweep, not a design problem.
+2. **The duplication that matters is at the wrapper level**, not the function level: a 6-line
+   `Command::new("git")...output()` appears **66 times across 24 files in three repos** (outfeed 44,
+   miter 12, storypole 10), which sits below `miter clones`' 15-line floor. That is the measured case
+   for `gaugeblock-git` (`GB-131`), and `.gaugeblock` path derivation spread over ~10 storypole files
+   plus chalkline, dado and joiner is the same case for `gaugeblock-workspace` (`GB-189`).
+3. **Dead declarations are diffuse**: 59 across nine repos with no repo holding a majority, so the fix
+   is a sweep per repo rather than one refactor.
+4. **`miter clones` cannot yet drive a boundary decision** - it reports structure, and two functions
+   that share a shape while operating on different data score 1.000. Content overlap is required
+   before its count means "duplication" (`GB-197`).
