@@ -324,3 +324,15 @@ What the numbers say about boundaries:
 4. **`miter clones` cannot yet drive a boundary decision** - it reports structure, and two functions
    that share a shape while operating on different data score 1.000. Content overlap is required
    before its count means "duplication" (`GB-197`).
+
+### From measurement to plan
+
+The program that acts on these numbers is **Staged B** (`GB-200`); its phases and exit criteria live in
+`.gaugeblock/storypole/plans/GB-200.md`. In order: make the dependency numbers trustworthy (`GB-199`),
+purge the 59 dead declarations (`GB-201`), freeze the mesh behind a layer gate seeded with the six
+existing lateral edges (`GB-202`), land `gaugeblock-git` + `gaugeblock-workspace` and settle
+`gaugeblock-mcp` (`GB-131`, `GB-189`, `GB-130`), split `miter-engine` into polyglot / inventory /
+analysis with the engine as facade (`GB-203`), then burn the six lateral edges to zero (`GB-204`).
+
+Law 2 holds: none of it consolidates repositories, and no phase may make one member's build depend on
+another's checkout.
