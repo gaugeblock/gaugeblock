@@ -47,9 +47,12 @@ api_key_env = "CLINE_API_KEY"
 base_url = "https://api.cline.bot/api/v1"
 dialect = "standard_open_ai"
 mode = "open_ai_compatible"
-# The `cline-pass/` prefix routes through the zero-cost pass. The same id without the prefix
-# (`deepseek/deepseek-v4.1-flash-1017`) is in the /models catalogue but bills Cline credits and
-# answers 402 on an empty balance - both verified against the live endpoint on 2026-10-29.
+# ClinePass is a curated set of documented ids, NOT a namespace - you cannot prefix an arbitrary
+# catalogue model and have it work. This id is one of the fifteen listed at
+# https://docs.cline.bot/getting-started/clinepass#models (captured 2026-10-29). The same model
+# without the prefix (`deepseek/deepseek-v4.1-flash-1017`) is in the /models catalogue but bills
+# Cline credits and answers 402 on an empty balance. `sawhorse models` labels which ids the
+# subscription actually covers.
 model_name = "cline-pass/deepseek-v4.1-flash-1017"
 
 [sawhorse.roles.hole_filler]
