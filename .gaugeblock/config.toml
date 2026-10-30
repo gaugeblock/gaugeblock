@@ -55,6 +55,18 @@ mode = "open_ai_compatible"
 # subscription actually covers.
 model_name = "cline-pass/deepseek-v4.1-flash-1017"
 
+# Declared limits (GB-215). The provider API exposes ids only - `/models` has no metadata,
+# `/models/{id}` is 404, and a completion's `usage` reports what a prompt cost rather than the
+# ceiling - so the window is stated here and used as the cap for a sliding output budget.
+# 1M is the documented window for this model; 32K output leaves room for a whole function.
+context_window = 1000000
+max_output_tokens = 32768
+
+# Reasoning effort for this provider when a caller does not choose one. `medium` is the owner's
+# preference for interactive work; the hole filler overrides it to `none` by default because filling
+# is deterministic, and raises it only when a caller asks.
+reasoning_effort = "medium"
+
 [sawhorse.roles.hole_filler]
 fallback = ["universal"]
 provider = "universal"
@@ -71,9 +83,11 @@ provider = "universal"
 fallback = ["universal"]
 provider = "universal"
 
+# A reasoning model at `medium` effort with a 32K output budget does not answer in 60s: two runs
+# failed as transport errors at exactly 60s, which is the timeout and not the network (GB-215).
 [sawhorse.timeouts]
-inference_timeout_secs = 60
-ping_timeout_secs = 5
+inference_timeout_secs = 300
+ping_timeout_secs = 10
 
 [storypole]
 allowed_crates = []
