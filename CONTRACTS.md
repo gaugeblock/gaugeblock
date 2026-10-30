@@ -585,11 +585,15 @@ pub enum ModelRole {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ReasoningEffort {
-    None,   // Explicitly disable reasoning trace / thinking phase
-    Low,    // Minimal reasoning effort
-    Medium, // Standard reasoning effort
-    High,   // Exhaustive reasoning effort
+    None,          // Explicitly disable reasoning trace / thinking phase
+    Low,           // Minimal reasoning effort (upstream `minimal` folds here)
+    Medium,        // Standard reasoning effort (upstream `med` folds here)
+    High,          // Exhaustive reasoning effort
+    #[serde(rename = "xhigh")]
+    XHigh,         // Beyond High; wire string is `xhigh`, not `x_high`
+    Max,           // The model's maximum effort (`maximum` folds here)
 }
+// Closed set: unknown upstream tokens are dropped, not passed through (GB-221).
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct InferenceRequest {
