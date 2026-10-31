@@ -18,7 +18,7 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * Cross-project coupling happens strictly through the shared schemas and traits defined in `CONTRACTS.md`.
 3. **Zero Inline Scope Creep (Mandatory Deferral to `storypole`):**
    * While executing a task, if you discover an unrelated bug, edge case, missing AST pattern, or refactoring opportunity outside your immediate file scope, **DO NOT fix it inline**.
-   * You MUST record the item immediately via `storypole defer --kind <tech-debt|bug|enhancement> --symbol "<crate::path>" --title "..."` (or the `storypole_defer` MCP tool). Stay locked on your active task. Every discovered defect or out-of-scope requirement must be captured in `storypole` to ensure complete traceability.
+   * You MUST record the item immediately via `storypole defer --kind <tech-debt|bug> --symbols "<crate::path>" "<title>"` (or the `storypole_defer` MCP tool). The title is positional, `--symbols` is plural, and kinds are the task kinds (`bug`, `tech-debt`, `feature`, `refactor`, `epic`, `spike`) - a wrong spelling here fails the command rather than being corrected for you, which cost three attempts in one session.. Stay locked on your active task. Every discovered defect or out-of-scope requirement must be captured in `storypole` to ensure complete traceability.
 4. **Tiered Verification Matrix (`cargo-nextest` preferred runner):**
    * To sustain high inner-loop velocity without compromising reliability, verifications are strictly tiered:
      * **Tier 1 (Inner Loop — Rapid Iteration):** Run targeted checks on the active crate/module during development:
