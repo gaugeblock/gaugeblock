@@ -581,6 +581,11 @@ pub enum ModelRole {
     Oracle,        // Unconstrained or mildly constrained fallback for novel algorithms
 }
 
+// NOTE (GB-217): the catalog of models, their limits, billing tiers and per-protocol reasoning
+// encodings is owned by the external `models-catalog` crate, not by this contract. `sawhorse` owns the
+// policy - which effort to ask for and how much budget to spend - and this enum is the closed set of
+// tiers that may appear on the wire. Six values, because that is where the catalog's own ordinal scale
+// stops; a seventh would be a catalog change first.
 /// Level of reasoning or thinking effort requested from the model.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
