@@ -61,7 +61,10 @@ reserve-staging/
 # miter index databases (binary artefacts, rebuilt on demand)
 .miter/
 **/.miter/
-.gaugeblock/miter/
+# The index database is machine state; the declarative TOML beside it is not. Allowlists are gate
+# inputs - an exception that lives only on one machine is a gate nobody else can reproduce.
+.gaugeblock/miter/*
+!.gaugeblock/miter/*.toml
 
 # rabbet local corpus database (created when the CLI runs from the repo root)
 /rabbet.db*

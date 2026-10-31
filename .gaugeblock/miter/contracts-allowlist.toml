@@ -1,0 +1,13 @@
+# Declared non-mirrors: fields that must not cross a language boundary (GB-239).
+#
+# The contract comparator matches entities by name across Rust and TypeScript and reports fields that
+# exist on one side only. Most such fields are real drift. These are not: each entry names a field that
+# is deliberately absent from one representation, and carries the reason it must stay that way.
+#
+# A reason is required by the loader, not by convention. An exception without one is a suppression, and
+# a blanket entity exclusion would hide the drift that matters - so entries are per field and reviewed.
+
+[[exception]]
+entity = "role_override_config"
+field = "api_key"
+reason = "secret: the browser must never receive a provider key, so the TypeScript mirror omits it deliberately"

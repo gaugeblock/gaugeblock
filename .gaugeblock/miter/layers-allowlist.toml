@@ -1,0 +1,133 @@
+# Lateral-edge allowlist: exceptions to the layering rule declared in GB-202.
+#
+# An edge is lateral when both crates sit in the same layer and belong to different products. These
+# are the cross-product edges measured on 2026-10-30 over 42 crates and 107 edges: 23 lateral, 84
+# downward, 0 upward. Every entry names the ticket that owes the burn-down, because an exception
+# without an owner is a suppression.
+#
+# How an entry leaves this file: the site count reaches zero. GB-204 owns that work, choosing per
+# call site between (a) moving shared types into gaugeblock-contracts or gaugeblock-workspace,
+# (b) depending on a lower-layer crate instead of a whole product, and (c) inverting control behind
+# a trait or a CLI boundary. Partial progress must not silence the gate, so an entry is deleted by
+# hand only when the edge is gone from `miter deps --layers`.
+#
+# Note for the record: the audit this ticket descends from reported 6 lateral domain-to-domain
+# edges. The corrected scanner (GB-199) and the same-family exemption leave 23 - the earlier figure
+# counted only a subset, and the larger number is the honest one.
+#
+# Regenerate after a burn-down with: miter deps --layers
+
+[[lateral]]
+from = "batten-core"
+to = "dado-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "benchwork-core"
+to = "batten-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "benchwork-core"
+to = "chalkline-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "benchwork-core"
+to = "dado-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "benchwork-core"
+to = "joiner-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "benchwork-core"
+to = "miter-engine"
+ticket = "GB-204"
+
+[[lateral]]
+from = "benchwork-core"
+to = "sawhorse-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "benchwork-core"
+to = "storypole-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "chalkline-core"
+to = "miter-engine"
+ticket = "GB-204"
+
+[[lateral]]
+from = "chalkline-core"
+to = "sawhorse-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "chalkline-core"
+to = "storypole-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "dado-core"
+to = "chalkline-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "dado-core"
+to = "miter-engine"
+ticket = "GB-204"
+
+[[lateral]]
+from = "joiner-core"
+to = "batten-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "joiner-core"
+to = "chalkline-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "joiner-core"
+to = "dado-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "joiner-core"
+to = "miter-engine"
+ticket = "GB-204"
+
+[[lateral]]
+from = "joiner-core"
+to = "miter-harness"
+ticket = "GB-204"
+
+[[lateral]]
+from = "joiner-core"
+to = "sawhorse-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "joiner-core"
+to = "storypole-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "outfeed-core"
+to = "sawhorse-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "outfeed-core"
+to = "storypole-core"
+ticket = "GB-204"
+
+[[lateral]]
+from = "rabbet-core"
+to = "miter-engine"
+ticket = "GB-204"
