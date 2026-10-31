@@ -126,8 +126,3 @@ ticket = "GB-204"
 from = "outfeed-core"
 to = "storypole-core"
 ticket = "GB-204"
-
-[[lateral]]
-from = "rabbet-core"
-to = "miter-engine"
-ticket = "GB-204"
