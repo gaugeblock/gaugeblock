@@ -35,6 +35,31 @@ The `gaugeblock` suite is designed to be dogfooded end-to-end using the installe
    multi-repo session - this suite has hit `ENOSPC` twice (`GB-122`, `GB-187`), and one session of
    `outfeed install --debug` across four repositories left 1.3 GB of incremental artefacts. Reclaiming
    it is always safe: `rm -rf target/*/incremental` costs rebuild time, never correctness.
+
+   **The shared `target/` serialises.** One lock, `<root>/target/debug/.cargo-lock`, is taken by every
+   cargo invocation in every repository, so an agent running gates in two members at once is not faster
+   - it queues, and the loser prints `Blocking waiting for file lock on build directory` and sits at 0%
+   CPU. Long-lived `miter mcp` daemons contend for the same lock. Measured during `GB-130`/`GB-234`: four
+   stalls in one session, two distinct causes.
+
+   1. **Lock contention.** A gate killed by its own timeout leaves cargo alive holding the lock, with
+      `cwd` in the member repo. `lsof <root>/target/debug/.cargo-lock` names the holder; kill it rather
+      than the wrapper. A killed shell reaps its children with it, so `nohup ... &` from a command that
+      times out is not a reliable way to leave a build running.
+   2. **sccache deadlock.** Two `rustc --crate-name ring` processes at 0% CPU, one orphaned from an
+      already-finished build; killing the orphan released both. `ring` is the crate this shows up on
+      because it is the longest single compile in the graph.
+
+   Escape hatch, used to finish that session's gates: run the affected crate in an isolated directory
+   with the wrapper cleared, which cannot contend with anything:
+
+   ```bash
+   CARGO_TARGET_DIR=/tmp/gb-bat RUSTC_WRAPPER= cargo clippy -p <crate> --all-targets -- -D warnings
+   ```
+
+   It costs one cold compile of the dependency graph and then behaves normally. Tracked as `GB-236`,
+   including the open question of whether sharing `target/` is still the right trade now that eleven
+   repositories and a daemon set all serialise on it.
 5. **Release profile stays at `codegen-units = 1` — measured, not inherited:**
    All ten roots pin `opt-level = 3`, `lto = "thin"`, `codegen-units = 1`. A stale plan claimed the
    single CGU cost "3x–5x" release build time; it does not. Cold `cargo build --release -p outfeed-cli`
