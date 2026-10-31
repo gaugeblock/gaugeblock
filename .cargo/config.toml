@@ -90,6 +90,7 @@ rabbet-cli     = { path = "./rabbet/crates/rabbet-cli" }
 gaugeblock-common     = { path = "./common" }
 gaugeblock-contracts  = { path = "./common/crates/gaugeblock-contracts" }
 gaugeblock-git         = { path = "./common/crates/gaugeblock-git" }
+gaugeblock-workspace   = { path = "./common/crates/gaugeblock-workspace" }
 
 # --- 10. outfeed (Neurosymbolic Release Gate, AST Drift Inspector & Changelog Synthesizer) ---
 outfeed        = { path = "./outfeed" }
