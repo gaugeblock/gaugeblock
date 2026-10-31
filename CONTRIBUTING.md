@@ -39,8 +39,10 @@ The `gaugeblock` suite is designed to be dogfooded end-to-end using the installe
    **The shared `target/` serialises.** One lock, `<root>/target/debug/.cargo-lock`, is taken by every
    cargo invocation in every repository, so an agent running gates in two members at once is not faster
    - it queues, and the loser prints `Blocking waiting for file lock on build directory` and sits at 0%
-   CPU. Long-lived `miter mcp` daemons contend for the same lock. Measured during `GB-130`/`GB-234`: four
-   stalls in one session, two distinct causes.
+   CPU. Measured during `GB-130`/`GB-234`: four stalls in one session, two distinct causes. Both were
+   this repository's own processes - nothing else was implicated: `lsof` on the lock file named a `cargo`
+   orphan, and three other `miter mcp` daemons turned out to serve other workspaces and hold none of
+   this tree's state.
 
    1. **Lock contention.** A gate killed by its own timeout leaves cargo alive holding the lock, with
       `cwd` in the member repo. `lsof <root>/target/debug/.cargo-lock` names the holder; kill it rather
