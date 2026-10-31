@@ -91,6 +91,7 @@ gaugeblock-common     = { path = "./common" }
 gaugeblock-contracts  = { path = "./common/crates/gaugeblock-contracts" }
 gaugeblock-git         = { path = "./common/crates/gaugeblock-git" }
 gaugeblock-workspace   = { path = "./common/crates/gaugeblock-workspace" }
+gaugeblock-mcp         = { path = "./common/crates/gaugeblock-mcp" }
 
 # --- 10. outfeed (Neurosymbolic Release Gate, AST Drift Inspector & Changelog Synthesizer) ---
 outfeed        = { path = "./outfeed" }
