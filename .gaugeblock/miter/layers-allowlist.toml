@@ -79,11 +79,6 @@ ticket = "GB-204"
 
 [[lateral]]
 from = "joiner-core"
-to = "chalkline-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "joiner-core"
 to = "dado-core"
 ticket = "GB-204"
 
