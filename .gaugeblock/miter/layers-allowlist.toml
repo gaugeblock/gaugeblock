@@ -64,11 +64,6 @@ ticket = "GB-204"
 
 [[lateral]]
 from = "chalkline-core"
-to = "sawhorse-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "chalkline-core"
 to = "storypole-core"
 ticket = "GB-204"
 
