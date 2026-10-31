@@ -59,7 +59,11 @@ The `gaugeblock` suite is designed to be dogfooded end-to-end using the installe
    CARGO_TARGET_DIR=/tmp/gb-bat RUSTC_WRAPPER= cargo clippy -p <crate> --all-targets -- -D warnings
    ```
 
-   It costs one cold compile of the dependency graph and then behaves normally. Tracked as `GB-236`,
+   It costs one cold compile of the dependency graph and then behaves normally. **Do not run `miter`'s
+   sandbox tests under it:** the variable is inherited by the sandboxed `cargo` the harness spawns, which
+   then reuses the outer artifacts and reports a deliberately broken tree as building successfully -
+   two `miter-cli` harness tests fail that way and pass the moment `CARGO_TARGET_DIR` is unset. Tracked
+   as `GB-236`,
    including the open question of whether sharing `target/` is still the right trade now that eleven
    repositories and a daemon set all serialise on it.
 5. **Release profile stays at `codegen-units = 1` — measured, not inherited:**
