@@ -16,11 +16,13 @@
 # counted only a subset, and the larger number is the honest one.
 #
 # Regenerate after a burn-down with: miter deps --layers
-
-[[lateral]]
-from = "batten-core"
-to = "dado-core"
-ticket = "GB-204"
+#
+# 2026-11-06 (GB-204 step 1): four edges were repointed to the crate that actually owns the symbol,
+# which does not clear them from this file because the layer model keys a product family off the
+# leading name segment - benchwork-core -> miter-inventory is still a cross-product domain edge, just
+# a far cheaper one (no redb, no sqlparser, no tree-sitter in the consumer's tree). batten-core ->
+# dado-core is genuinely gone: TypedHole is gaugeblock-contracts', and batten no longer depends on
+# dado at all, so 19 -> 18 with three renames and one deletion.
 
 [[lateral]]
 from = "benchwork-core"
@@ -44,7 +46,7 @@ ticket = "GB-204"
 
 [[lateral]]
 from = "benchwork-core"
-to = "miter-engine"
+to = "miter-inventory"
 ticket = "GB-204"
 
 [[lateral]]
@@ -59,7 +61,7 @@ ticket = "GB-204"
 
 [[lateral]]
 from = "chalkline-core"
-to = "miter-engine"
+to = "miter-inventory"
 ticket = "GB-204"
 
 [[lateral]]
@@ -69,7 +71,7 @@ ticket = "GB-204"
 
 [[lateral]]
 from = "dado-core"
-to = "miter-engine"
+to = "miter-polyglot"
 ticket = "GB-204"
 
 [[lateral]]
@@ -84,7 +86,7 @@ ticket = "GB-204"
 
 [[lateral]]
 from = "joiner-core"
-to = "miter-engine"
+to = "miter-polyglot"
 ticket = "GB-204"
 
 [[lateral]]
