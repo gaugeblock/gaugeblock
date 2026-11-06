@@ -1,40 +1,40 @@
-[docs.docs.agents]
+[docs.agents]
 path = "AGENTS.md"
 required = true
 
-[docs.docs.architecture]
+[docs.architecture]
 path = "ARCHITECTURE.md"
 required = true
 
-[docs.docs.changelog]
+[docs.changelog]
 path = "CHANGELOG.md"
 required = true
 
-[docs.docs.contributing]
+[docs.contributing]
 path = "CONTRIBUTING.md"
 required = true
 
-[docs.docs.design]
+[docs.design]
 path = "DESIGN.md"
 required = false
 
-[docs.docs.product]
+[docs.product]
 path = "PRODUCT.md"
 required = true
 
-[docs.docs.readme]
+[docs.readme]
 path = "README.md"
 required = true
 
-[docs.docs.roadmap]
+[docs.roadmap]
 path = "ROADMAP.md"
 required = false
 
-[docs.docs.spec]
+[docs.spec]
 path = "SPEC.md"
 required = true
 
-[docs.policies]
+[policies]
 enforce_changelog_unreleased = true
 enforce_contributing_toolchains = true
 enforce_crate_topology = true

@@ -86,6 +86,26 @@ neurosymbolic-suite/               # Root meta-harness & contract coordinator
 - Version: `0.1.0-beta.1`
 - Description: Pure-serde wire types mirroring `CONTRACTS.md`, with no C dependencies or async runtime.
 
+### `gaugeblock-security`
+- Path: `common/crates/gaugeblock-security`
+- Version: `0.1.0-beta.1`
+- Description: Redaction and secret detection with no dependencies at all (`GB-158`), so any crate that writes telemetry, spools or logs can scrub text without linking an AST engine.
+
+### `gaugeblock-inventory`
+- Path: `common/crates/gaugeblock-inventory`
+- Version: `0.1.0-beta.1`
+- Description: Workspace introspection — Cargo manifests, clap surfaces, public types, git metadata — read by miter, chalkline and benchwork's documentation engines (`GB-204`).
+
+### `miter-polyglot`
+- Path: `miter/crates/polyglot`
+- Version: `0.1.0-beta.4`
+- Description: The universal symbol model and every language reader (Rust, TypeScript, Python, SQL, HCL, Dockerfile, Kubernetes, env, CSS, HTML, Markdown), split out of `miter-engine` in `GB-203`.
+
+### `miter-analysis`
+- Path: `miter/crates/analysis`
+- Version: `0.1.0-beta.4`
+- Description: Pure analysis passes split out of `miter-engine` in `GB-203`: clones, references, skeletons, slices, clusters and the dependency-graph layer model.
+
 ### `batten`
 - Path: `batten/`
 - Version: `0.1.0-beta.2`
