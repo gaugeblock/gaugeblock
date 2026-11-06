@@ -68,3 +68,7 @@ reserve-staging/
 
 # rabbet local corpus database (created when the CLI runs from the repo root)
 /rabbet.db*
+
+# Flight-recorder spans (GB-243): one append-only log plus its index. Machine state, not source;
+# the schema they follow lives in gaugeblock-contracts.
+.gaugeblock/telemetry/
