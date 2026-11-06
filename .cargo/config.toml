@@ -39,6 +39,12 @@ miter-ast      = { path = "./miter/crates/ast_indexer" }
 miter-storage  = { path = "./miter/crates/storage" }
 miter-mcp      = { path = "./miter/crates/mcp" }
 miter-harness  = { path = "./miter/crates/harness" }
+# The three crates GB-203 split out of the engine. They are mapped here because consumers now name
+# them directly instead of reaching through the `miter-engine` facade (`GB-204`), and none of them is
+# published yet - they are the five names OF-5 has to reserve before the next release can publish.
+miter-polyglot = { path = "./miter/crates/polyglot" }
+miter-inventory = { path = "./miter/crates/inventory" }
+miter-analysis = { path = "./miter/crates/analysis" }
 
 # --- 2. storypole (Backlog, Task DAG & Memory Store) ---
 storypole      = { path = "./storypole" }
