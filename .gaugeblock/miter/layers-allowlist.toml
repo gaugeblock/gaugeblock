@@ -1,9 +1,8 @@
 # Lateral-edge allowlist: exceptions to the layering rule declared in GB-202.
 #
 # An edge is lateral when both crates sit in the same layer and belong to different products. These
-# are the cross-product edges measured on 2026-10-30 over 42 crates and 107 edges: 23 lateral, 84
-# downward, 0 upward. Every entry names the ticket that owes the burn-down, because an exception
-# without an owner is a suppression.
+# are the cross-product edges measured on 2026-11-06: 4 lateral, 139 downward, 0 upward. Every entry
+# names the ticket that owes the burn-down, because an exception without an owner is a suppression.
 #
 # How an entry leaves this file: the site count reaches zero. GB-204 owns that work, choosing per
 # call site between (a) moving shared types into gaugeblock-contracts or gaugeblock-workspace,
@@ -11,54 +10,19 @@
 # a trait or a CLI boundary. Partial progress must not silence the gate, so an entry is deleted by
 # hand only when the edge is gone from `miter deps --layers`.
 #
-# Note for the record: the audit this ticket descends from reported 6 lateral domain-to-domain
-# edges. The corrected scanner (GB-199) and the same-family exemption leave 23 - the earlier figure
-# counted only a subset, and the larger number is the honest one.
+# 2026-11-06 (GB-204 step 3): the layer model gained an `orchestrator` layer, ranked above `domain`.
+# `joiner-core` and `benchwork-core` are composition roots - composing other products IS their
+# product - so their edges to any product core are downward and are not debt. That removed twelve
+# entries at once, which is the honest consequence of classifying rather than inverting: the gate no
+# longer asks those two crates to hide a dependency they exist to have. The four entries below are
+# edges between crates that are NOT composition roots, which is why they are the real ones.
+#
+# Recorded tradeoff: benchwork-core -> storypole-core (35 sites) and joiner -> sawhorse (13) are now
+# downward and ungated. A BacklogPort or CompletionPort there would still buy substitutability, but
+# it is a quality goal now, not a gate requirement, and this file says so rather than implying
+# otherwise.
 #
 # Regenerate after a burn-down with: miter deps --layers
-#
-# 2026-11-06 (GB-204 step 2): miter-inventory moved to common as gaugeblock-inventory, which makes it
-# foundation, so benchwork-core -> gaugeblock-inventory and chalkline-core -> gaugeblock-inventory are
-# now downward edges and their entries are gone. 18 -> 16. miter-polyglot stays in miter: it builds
-# miter_ast::AstIndexer and FunctionSymbol, so it cannot sit beneath foundation until GB-246 extracts
-# that vocabulary.
-#
-# 2026-11-06 (GB-204 step 1): four edges were repointed to the crate that actually owns the symbol,
-# which does not clear them from this file because the layer model keys a product family off the
-# leading name segment - benchwork-core -> miter-inventory is still a cross-product domain edge, just
-# a far cheaper one (no redb, no sqlparser, no tree-sitter in the consumer's tree). batten-core ->
-# dado-core is genuinely gone: TypedHole is gaugeblock-contracts', and batten no longer depends on
-# dado at all, so 19 -> 18 with three renames and one deletion.
-
-[[lateral]]
-from = "benchwork-core"
-to = "batten-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "benchwork-core"
-to = "chalkline-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "benchwork-core"
-to = "dado-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "benchwork-core"
-to = "joiner-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "benchwork-core"
-to = "sawhorse-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "benchwork-core"
-to = "storypole-core"
-ticket = "GB-204"
 
 [[lateral]]
 from = "chalkline-core"
@@ -68,36 +32,6 @@ ticket = "GB-204"
 [[lateral]]
 from = "dado-core"
 to = "miter-polyglot"
-ticket = "GB-204"
-
-[[lateral]]
-from = "joiner-core"
-to = "batten-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "joiner-core"
-to = "dado-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "joiner-core"
-to = "miter-polyglot"
-ticket = "GB-204"
-
-[[lateral]]
-from = "joiner-core"
-to = "miter-harness"
-ticket = "GB-204"
-
-[[lateral]]
-from = "joiner-core"
-to = "sawhorse-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "joiner-core"
-to = "storypole-core"
 ticket = "GB-204"
 
 [[lateral]]
