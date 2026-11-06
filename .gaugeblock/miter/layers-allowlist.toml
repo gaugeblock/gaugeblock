@@ -17,6 +17,12 @@
 #
 # Regenerate after a burn-down with: miter deps --layers
 #
+# 2026-11-06 (GB-204 step 2): miter-inventory moved to common as gaugeblock-inventory, which makes it
+# foundation, so benchwork-core -> gaugeblock-inventory and chalkline-core -> gaugeblock-inventory are
+# now downward edges and their entries are gone. 18 -> 16. miter-polyglot stays in miter: it builds
+# miter_ast::AstIndexer and FunctionSymbol, so it cannot sit beneath foundation until GB-246 extracts
+# that vocabulary.
+#
 # 2026-11-06 (GB-204 step 1): four edges were repointed to the crate that actually owns the symbol,
 # which does not clear them from this file because the layer model keys a product family off the
 # leading name segment - benchwork-core -> miter-inventory is still a cross-product domain edge, just
@@ -46,22 +52,12 @@ ticket = "GB-204"
 
 [[lateral]]
 from = "benchwork-core"
-to = "miter-inventory"
-ticket = "GB-204"
-
-[[lateral]]
-from = "benchwork-core"
 to = "sawhorse-core"
 ticket = "GB-204"
 
 [[lateral]]
 from = "benchwork-core"
 to = "storypole-core"
-ticket = "GB-204"
-
-[[lateral]]
-from = "chalkline-core"
-to = "miter-inventory"
 ticket = "GB-204"
 
 [[lateral]]

@@ -43,7 +43,6 @@ miter-harness  = { path = "./miter/crates/harness" }
 # them directly instead of reaching through the `miter-engine` facade (`GB-204`), and none of them is
 # published yet - they are the five names OF-5 has to reserve before the next release can publish.
 miter-polyglot = { path = "./miter/crates/polyglot" }
-miter-inventory = { path = "./miter/crates/inventory" }
 miter-analysis = { path = "./miter/crates/analysis" }
 
 # --- 2. storypole (Backlog, Task DAG & Memory Store) ---
@@ -97,6 +96,7 @@ gaugeblock-common     = { path = "./common" }
 gaugeblock-contracts  = { path = "./common/crates/gaugeblock-contracts" }
 gaugeblock-git         = { path = "./common/crates/gaugeblock-git" }
 gaugeblock-workspace   = { path = "./common/crates/gaugeblock-workspace" }
+gaugeblock-inventory   = { path = "./common/crates/gaugeblock-inventory" }
 gaugeblock-mcp         = { path = "./common/crates/gaugeblock-mcp" }
 
 # --- 10. outfeed (Neurosymbolic Release Gate, AST Drift Inspector & Changelog Synthesizer) ---
