@@ -785,3 +785,29 @@ pub struct SuiteLock {
 }
 ```
 
+
+## JSON output envelope (`--json`)
+
+Every suite binary that supports `--json` emits **one envelope**, defined once in
+`gaugeblock_contracts::json` (`GB-274`). This is a wire contract, not a formatting preference: its
+consumers are scripts, which cannot see a shape change.
+
+```json
+{"schema_version": 1, "command": "list", "tasks": [...], "count": 42}
+{"schema_version": 1, "command": "show", "task": {...}, "decisions": [...]}
+```
+
+1. **Always an object.** A bare array has nowhere to put anything added later — a count, echoed
+   filters, warnings, provenance — so each future need re-opens the same break.
+2. **The payload key names the thing** (`tasks`, `task`, `receipt`, `findings`), never `data`.
+3. **`schema_version` is present from the first release**, and stays `1` across the whole `0.1.x` line.
+   A bump means "a consumer must change", which is a decision, not a formality.
+4. **No `--json=payload` mode.** A second mode recreates the inconsistency the envelope removes.
+
+Before this, `storypole list --json` returned a bare array while `show --json` returned an object. The
+asymmetry was the symptom; the absence of a stated contract was the cause, and it is why the shapes
+diverged in the first place.
+
+**Adoption status:** `gaugeblock-contracts` defines it; `storypole` adopts it first. Other binaries
+adopt as they are touched, and a binary that emits JSON in another shape is a contract violation rather
+than a style choice.
