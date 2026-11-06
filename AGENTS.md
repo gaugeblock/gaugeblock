@@ -60,6 +60,7 @@ You are an autonomous systems engineering agent operating inside the **`gaugeblo
    * **Git Tagging & Release Management:**
      * Individual repositories tag their own releases in their local Git history using annotated tags `v<version>` (e.g., `git tag -a v0.1.0-beta.2 -m "v0.1.0-beta.2"`).
      * The root meta-harness (`neurosymbolic-suite`) has no package version in `Cargo.toml`; it cuts annotated snapshot tags on certified ecosystem milestone passes: `suite-v<version>` (e.g., `suite-v0.1.0-beta.1`).
+    *Naming:* the working directory is `neurosymbolic-suite`, the GitHub repository is **`gaugeblock/gaugeblock`** (the project predates the name). Push targets `git@github.com:gaugeblock/gaugeblock.git`, and a `neurosymbolic-suite` repository does not exist — do not go looking for one.
    * **Distributed Changelogs:**
      * Each repository maintains its own `CHANGELOG.md` detailing crate-level changes per release.
      * Root `CHANGELOG.md` aggregates suite-wide milestones, cross-cutting contract evolution, and ecosystem compatibility.
