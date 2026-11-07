@@ -256,6 +256,11 @@ neurosymbolic-suite/               # Root meta-harness & contract coordinator
 - Version: `0.1.0-beta.2`
 - Description: Model Context Protocol (MCP) stdio server for outfeed release management
 
+### `outfeed-orchestrator`
+- Path: `outfeed/crates/outfeed-orchestrator`
+- Version: `0.1.0-beta.7`
+- Description: Suite release composition root: release planning, suite waves, backlog reads and changelog synthesis, above the core
+
 ### `rabbet`
 - Path: `rabbet/`
 - Version: `0.1.0-beta.2`
