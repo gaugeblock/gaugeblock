@@ -23,11 +23,3 @@
 # otherwise.
 #
 # Regenerate after a burn-down with: miter deps --layers
-
-
-[[lateral]]
-from = "dado-core"
-to = "miter-polyglot"
-ticket = "GB-204"
-
-

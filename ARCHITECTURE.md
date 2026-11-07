@@ -85,6 +85,11 @@ neurosymbolic-suite/               # Root meta-harness & contract coordinator
 - Path: `common/crates/gaugeblock-contracts`
 - Version: `0.1.0-beta.1`
 - Description: Pure-serde wire types mirroring `CONTRACTS.md`, with no C dependencies or async runtime.
+### `gaugeblock-syntax`
+- Path: `common/crates/gaugeblock-syntax`
+- Version: `0.1.0-beta.1`
+- Description: Grammar table and syntax diagnostics over the shared `Language` vocabulary, so `miter` and `dado` ask one crate whether code parses
+
 
 ### `gaugeblock-security`
 - Path: `common/crates/gaugeblock-security`
