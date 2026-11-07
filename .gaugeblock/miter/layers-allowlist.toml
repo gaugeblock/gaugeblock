@@ -30,12 +30,4 @@ from = "dado-core"
 to = "miter-polyglot"
 ticket = "GB-204"
 
-[[lateral]]
-from = "outfeed-core"
-to = "sawhorse-core"
-ticket = "GB-204"
 
-[[lateral]]
-from = "outfeed-core"
-to = "storypole-core"
-ticket = "GB-204"
