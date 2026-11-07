@@ -24,10 +24,6 @@
 #
 # Regenerate after a burn-down with: miter deps --layers
 
-[[lateral]]
-from = "chalkline-core"
-to = "storypole-core"
-ticket = "GB-204"
 
 [[lateral]]
 from = "dado-core"
