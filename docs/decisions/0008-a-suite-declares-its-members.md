@@ -29,7 +29,7 @@ The underlying reason is that layout carries no intent. A member repository hold
 suite root is itself a git repository containing members, so it looks exactly like a repository
 containing a nested checkout.
 
-## Decision
+## Decision Outcome
 
 The suite states its members in `.gaugeblock/config.toml`:
 

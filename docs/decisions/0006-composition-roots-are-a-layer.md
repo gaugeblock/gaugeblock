@@ -37,7 +37,7 @@ teaches the reader that allowlist entries are permanent — and then real debt h
    the gate goes green while the dependency lives on. The code was moved out into `outfeed-orchestrator`
    instead (`GB-285`, `GB-286`).
 
-## Decision
+## Decision Outcome
 
 There is a layer between domain and integrator: `Orchestrator`, rank 2. A crate on the `ORCHESTRATORS` list
 is classified there, and its edges to product crates classify as **downward**, which is unconstrained.

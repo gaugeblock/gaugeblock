@@ -10,7 +10,7 @@ informed: none
 
 **Supersedes:** none · **Related:** `GB-313`, `GB-316`, `GB-311`, `GB-305`
 
-## Context
+## Context and Problem Statement
 
 The suite is twelve repositories with one canonical backlog at the root. Work happens inside member
 repositories; tickets live in the harness ledger.
@@ -24,7 +24,7 @@ Two consequences followed. Agents began branching the harness to the same name a
 that a ledger line could be tied to a code branch. And `storypole verify` could not run inside a member
 repository at all, because the member holds a stub store rather than a view of the canonical ledger.
 
-## Decision
+## Decision Outcome
 
 1. **A ticket carries a repository scope**, resolved by one function in a fixed order: explicit
    argument, persisted scope, derivation from the files and symbols the ticket names, the working
