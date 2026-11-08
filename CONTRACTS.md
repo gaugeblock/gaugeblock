@@ -281,6 +281,13 @@ pub struct VerificationReceipt {
     pub base_commit_sha: Option<String>,
     pub head_commit_sha: Option<String>,
     pub commit_shas: Vec<String>,
+    /// Repository whose checkout was verified. `None` means the receipt does not know which repository
+    /// it measured, which is a fact about the receipt rather than a default (`GB-313`, `GB-316`).
+    pub repo: Option<String>,
+    /// Configuration key whose verification chain ran: a crate name, a repo name, or `default`.
+    /// A harness chain and a member chain are different commands, and receipts that ran different
+    /// commands must not read the same (`GB-316`).
+    pub chain_key: Option<String>,
 }
 
 /// Multi-dimensional scope coordinates for filtering across repos, crates, and AST symbols.

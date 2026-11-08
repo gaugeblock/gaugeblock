@@ -16,6 +16,7 @@ Format: [MADR](https://adr.github.io/madr/). One file per decision, `NNNN-slug.m
 | [0005](0005-reference-docs-live-in-docs.md) | 2026-11-06 | Reference documents live in `docs/`; README, CHANGELOG and AGENTS stay at the root |
 | [0006](0006-composition-roots-are-a-layer.md) | 2026-11-06 | A crate whose product *is* composition gets its own layer, and the exemption is directional |
 | [0007](0007-tickets-belong-to-a-repository.md) | 2026-11-07 | A ticket belongs to one repository; its receipt names the repo, branch, commits and chain |
+| [0008](0008-a-suite-declares-its-members.md) | 2026-11-07 | A suite declares its members; membership is never inferred from layout |
 
 Decisions sharing a date are ordered by when the decision was actually reached, which for a same-day batch is
 the order the work was done rather than the order of filenames chosen afterwards.
