@@ -14,6 +14,8 @@ Format: [MADR](https://adr.github.io/madr/). One file per decision, `NNNN-slug.m
 | [0003](0003-receipts-cannot-exceed-evidence.md) | 2026-11-06 | A verification receipt may never be stronger than the evidence behind it |
 | [0004](0004-one-json-envelope.md) | 2026-11-06 | Every binary emits one `--json` envelope |
 | [0005](0005-reference-docs-live-in-docs.md) | 2026-11-06 | Reference documents live in `docs/`; README, CHANGELOG and AGENTS stay at the root |
+| [0006](0006-composition-roots-are-a-layer.md) | 2026-11-06 | A crate whose product *is* composition gets its own layer, and the exemption is directional |
+| [0007](0007-tickets-belong-to-a-repository.md) | 2026-11-07 | A ticket belongs to one repository; its receipt names the repo, branch, commits and chain |
 
 Decisions sharing a date are ordered by when the decision was actually reached, which for a same-day batch is
 the order the work was done rather than the order of filenames chosen afterwards.
