@@ -2,7 +2,7 @@
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![gaugeblock](https://img.shields.io/badge/suite-gaugeblock-orange.svg)](https://github.com/gaugeblock)
-[![Documentation](https://img.shields.io/badge/docs-9--doc%20topology-green.svg)](ARCHITECTURE.md)
+[![Documentation](https://img.shields.io/badge/docs-9--doc%20topology-green.svg)](docs/ARCHITECTURE.md)
 [![Rust 2024](https://img.shields.io/badge/Rust-2024%20Edition-orange.svg)](https://www.rust-lang.org)
 
 > A deterministic, multi-repository meta-harness for AI-native systems engineering, AST slicing, semantic task management, and verified code synthesis.
@@ -51,14 +51,14 @@ Every repository across the `gaugeblock` meta-harness enforces an orthogonal, mu
 
 * **[`README.md`](./README.md):** Public elevator pitch, ecosystem architecture, installation, and quickstart.
 * **[`CONTRIBUTING.md`](./CONTRIBUTING.md):** Human developer local workstation setup, toolchain requirements, and PR etiquette.
-* **[`PRODUCT.md`](./PRODUCT.md):** User personas, problem statements, customer journeys, and success metrics.
-* **[`ARCHITECTURE.md`](./ARCHITECTURE.md):** Multi-repository meta-harness topology, crate boundaries, and subsystem wiring.
-* **[`SPEC.md`](./SPEC.md):** Formal behavioral invariants, state machines, and algebraic data type contracts.
-* **[`DESIGN.md`](./DESIGN.md):** Architectural Decision Records (ADRs), trade-off analyses, and design explorations.
-* **[`ROADMAP.md`](./ROADMAP.md):** Strategic horizons, milestone epics, and breaking change schedules.
+* **[`PRODUCT.md`](docs/PRODUCT.md):** User personas, problem statements, customer journeys, and success metrics.
+* **[`ARCHITECTURE.md`](docs/ARCHITECTURE.md):** Multi-repository meta-harness topology, crate boundaries, and subsystem wiring.
+* **[`SPEC.md`](docs/SPEC.md):** Formal behavioral invariants, state machines, and algebraic data type contracts.
+* **[`DESIGN.md`](docs/DESIGN.md):** Architectural Decision Records (ADRs), trade-off analyses, and design explorations.
+* **[`ROADMAP.md`](docs/ROADMAP.md):** Strategic horizons, milestone epics, and breaking change schedules.
 * **[`CHANGELOG.md`](./CHANGELOG.md):** Chronological historical release logs (Keep a Changelog format) and unreleased entries.
 * **[`AGENTS.md`](./AGENTS.md):** Non-negotiable engineering directives, file-size ceilings (<=250 LOC), and verification loops for autonomous systems.
-* **[`CONTRACTS.md`](./CONTRACTS.md):** Cross-repository shared wire types, JSON schemas, and inter-tool trait boundaries.
+* **[`CONTRACTS.md`](docs/CONTRACTS.md):** Cross-repository shared wire types, JSON schemas, and inter-tool trait boundaries.
 
 ---
 

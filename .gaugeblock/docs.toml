@@ -7,23 +7,23 @@ path = "CONTRIBUTING.md"
 required = true
 
 [docs.product]
-path = "PRODUCT.md"
+path = "docs/PRODUCT.md"
 required = true
 
 [docs.architecture]
-path = "ARCHITECTURE.md"
+path = "docs/ARCHITECTURE.md"
 required = true
 
 [docs.spec]
-path = "SPEC.md"
+path = "docs/SPEC.md"
 required = true
 
 [docs.design]
-path = "DESIGN.md"
+path = "docs/DESIGN.md"
 required = true
 
 [docs.roadmap]
-path = "ROADMAP.md"
+path = "docs/ROADMAP.md"
 required = true
 
 [docs.changelog]
