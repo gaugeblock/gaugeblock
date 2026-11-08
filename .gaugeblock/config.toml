@@ -1,3 +1,21 @@
+[suite]
+# The repositories this suite contains. Membership is declared rather than inferred, because a
+# member carries its own .gaugeblock and a suite root is itself a git repository containing members,
+# so layout alone cannot tell them apart (GB-324). An empty list means the suite answers for nobody.
+members = [
+    "batten",
+    "benchwork",
+    "chalkline",
+    "common",
+    "dado",
+    "joiner",
+    "miter",
+    "outfeed",
+    "rabbet",
+    "sawhorse",
+    "storypole",
+]
+
 [docs.agents]
 path = "AGENTS.md"
 required = true
