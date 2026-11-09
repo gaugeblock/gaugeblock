@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "37030911-edfe-43ca-91f1-6178d291e869",
+    "ticket_key": "GB-342",
+    "slug": "shared-target-dir-serialises-every-suite-build-behind-one-lock-370309",
+    "title": "Shared target-dir serialises every suite build behind one lock",
+    "description": "",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        ".cargo/config.toml"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794264725230,
+    "updated_at_epoch_ms": 1794264725230
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "37030911-edfe-43ca-91f1-6178d291e869",
+        "ticket_key": "GB-342",
+        "slug": "shared-target-dir-serialises-every-suite-build-behind-one-lock-370309",
+        "title": "Shared target-dir serialises every suite build behind one lock",
+        "description": "",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            ".cargo/config.toml"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794264725230,
+        "updated_at_epoch_ms": 1794264725230
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
