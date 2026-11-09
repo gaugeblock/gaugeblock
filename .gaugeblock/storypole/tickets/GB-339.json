@@ -60,6 +60,16 @@
         "created_at_epoch_ms": 1794167027143,
         "updated_at_epoch_ms": 1794167027143
       }
+    },
+    {
+      "event": "task_updated",
+      "task_id": "a2c93716-87f4-4a7f-84ea-1844bdacdc74",
+      "title": null,
+      "description": "One of twelve tools emits spans and only for provider completions, so the panel observes inference and nothing else, while telemetry is meant to be suite-wide: observability plus the metadata half of the training corpus. Shape: one span per CLI invocation from a shared helper in gaugeblock-workspace called at each main boundary (binary, command, repo, branch, task_key when a claim is held, duration, status, first diagnostic), plus nested spans for sub-operations joined by trace_id and parent_span_id, which sawhorse already mints correctly. Payloads stay out by design: no prompt or completion text, and the join to the spool is span.task_key, so training data comes from spool records joined to spans rather than from the spans themselves. Retention becomes configurable (max_bytes, keep_rotations, retain) with raw logs untracked and rotated; tracked retained aggregates are a deliberate exception and stay disabled until more than one tool emits.\n\nMECHANISM DONE 2026-11-08 (commit cb516f3), WIRING OWED. No caller yet.\n\nInvocationSpan::start(binary, command) opens a span at a process boundary, records command, repository (suite member\nname, else checkout directory) and branch, and closes with Ok or Error; dropping without finishing records it as\nrunning. sink_path moved beside it, since where an invocation writes is that module's subject, and telemetry.rs had\nreached 258 lines.\n\nWHY NO CALLER IN THIS COMMIT: wiring needs gaugeblock-workspace added to CLI crates that do not have it - batten has\nnone anywhere, chalkline/rabbet/sawhorse have it only in their cores. That is a dependency decision per crate. I tried\nchalkline first, hit the missing dependency, and reverted rather than smuggling it in at the end of a session. The\nmeasurement is recorded here so the next attempt starts from it instead of discovering it again.\n\nNEXT STEPS, in order:\n  1. wire ONE tool end to end and prove the span appears in the suite log with binary, command, repo and duration;\n  2. add the dependency to the remaining CLI crates, one commit each;\n  3. only then is the epic's coverage claim meaningful - nine tools emitting is the point, not the helper existing.\n\nA mechanism with no caller is exactly the failure this session catalogued five times (a reader never called, a\nchain never run, a table column never written). It is recorded as owed rather than described as delivered.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794251901008
     }
   ]
 }
