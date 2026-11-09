@@ -18,6 +18,7 @@ Format: [MADR](https://adr.github.io/madr/). One file per decision, `NNNN-slug.m
 | [0007](0007-tickets-belong-to-a-repository.md) | 2026-11-07 | A ticket belongs to one repository; its receipt names the repo, branch, commits and chain |
 | [0008](0008-a-suite-declares-its-members.md) | 2026-11-07 | A suite declares its members; membership is never inferred from layout |
 | [0009](0009-source-follows-the-branch.md) | 2026-11-08 | Source state follows the branch; derived and coordination state follows the checkout (amends 0001) |
+| [0010](0010-a-ticket-is-a-file.md) | 2026-11-08 | A ticket is a file and its identity is its uuid; edges reference, never copy |
 
 Decisions sharing a date are ordered by when the decision was actually reached, which for a same-day batch is
 the order the work was done rather than the order of filenames chosen afterwards.
