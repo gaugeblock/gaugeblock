@@ -28,19 +28,7 @@
     ],
     "plan": null,
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793461761014,
-      "completed_items": [
-        "anonymized_synthesis_trace mirrored in 1eaec01 with its nested VerificationReport and CompilerDiagnostic interfaces; measured 18 -> 15 drift lines and the entity drops out. Verified entities rose 35 -> 37 because the two new interfaces are themselves cross-referenced. tsc --noEmit clean."
-      ],
-      "remaining_items": [
-        "15 lines in 3 entities, each blocked on a decision rather than on effort: chat_message needs rename-vs-mapper-vs-distinct-types (recommend mapper, since Rust is persisted and TS is render state); dado_pattern is stale in both directions so one side gains and one loses; typed_hole needs a canonical spelling for ast_node_kind vs kind, which settles three of its five lines."
-      ],
-      "last_error_or_blocker": "Owner decision on the three, specifically chat_message: a rename pushes UI vocabulary into the persisted wire format, a mapper keeps them separate at the cost of a translation layer.",
-      "git_ref": "1eaec01",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": {
       "verifier": "manual",
       "command": "n/a",

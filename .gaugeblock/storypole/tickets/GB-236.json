@@ -25,19 +25,7 @@
     ],
     "plan": null,
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793427505232,
-      "completed_items": [
-        "The durable half is done: CONTRIBUTING.md now records the contention, both measured causes (lock holder identified with lsof on target/debug/.cargo-lock; sccache deadlock identified as two rustc ring processes at 0% CPU with one orphaned), the reliable remedy (kill the lock holder, not the wrapper), and the escape hatch (CARGO_TARGET_DIR=/tmp/... RUSTC_WRAPPER= for the affected crate, costing one cold dependency compile)."
-      ],
-      "remaining_items": [
-        "Two acceptance criteria are open and both are decisions rather than edits: (1) whether build.target-dir should stay shared across 11 repositories now that they plus the miter MCP daemons all serialise on one lock; (2) making the stall self-diagnosable, since Blocking waiting for file lock names neither the repository nor the daemon holding it."
-      ],
-      "last_error_or_blocker": "None. Note for whoever picks it up: the symptom is indistinguishable from a slow build, which is why it cost a session - a 0% CPU sample is the signal, not elapsed time.",
-      "git_ref": "251ce39",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1793427448701,
     "updated_at_epoch_ms": 1794096803440

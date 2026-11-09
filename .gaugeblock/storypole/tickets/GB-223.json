@@ -23,19 +23,7 @@
     "acceptance_criteria": [],
     "plan": null,
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793430375939,
-      "completed_items": [
-        "Fixed in two commits. 3648091 miter-cli: added --check, extracted the verdict from the two renderers, 3 unit tests (drift without check describes, drift with check rejects, clean passes, singular not pluralised); also re-exported MissingFieldDrift which was public shape but unreachable by name. b851188 outfeed-core: the gate contracts step now passes --check. Verified against the installed binary: plain `miter contracts` exits 0 with the report, `--check` exits 1 with \"contract drift: 9 entities across 33 field(s)\"."
-      ],
-      "remaining_items": [
-        "The gate is now honest and red, which is the point. GB-238 holds the work: 9 entities, 33 fields, and a design question - the checker matches on entity name, so some pairs are genuinely one drifted wire contract (benchwork ChatMessage: content/timestamp_ms vs text/timestamp) while others merely share a name between a Rust ledger record and a TypeScript UI model. Deciding which is which has to come before any field is renamed."
-      ],
-      "last_error_or_blocker": "None. Note the field count moved 32 -> 33 between filing and fixing: the first count was taken against a three-day-stale index (GB-237), so the stale index was hiding a drift as well as symbols.",
-      "git_ref": "b851188",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": {
       "verifier": "manual",
       "command": "n/a",

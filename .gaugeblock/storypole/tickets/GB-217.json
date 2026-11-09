@@ -33,19 +33,7 @@
     ],
     "plan": null,
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793409758759,
-      "completed_items": [
-        "Steps 1-7 done, step 5 in reduced form. ddca648 catalog source + config-override precedence; fa01c42 gateway budget delegated with exact-expectation tests; 40463bc + 1ef157e + 6985283 requires_streaming measured (every cline-pass model is flagged) and enforced so a constrained model streams on the first call; b186f2f wire_token; a3509ae payload emits ONE reasoning field instead of three, verified by live dump (reasoning_effort alone); 2566d7e deletes the hand-maintained ClinePass list and reads eligibility plus model existence from the catalog, which turns configured_is_advertised from false to true for the configured id."
-      ],
-      "remaining_items": [
-        "Step 5b: per-protocol wire reasoning params via to_wire_reasoning_params, which needs the catalog threaded into build_payload (Anthropic budgets, GLM toggles, Gemini budgets cannot be expressed by a single reasoning_effort field). Step 8: CONTRACTS.md and common/ARCHITECTURE.md section 4 need to state that model metadata is owned by models-catalog while the suite keeps policy, and that sawhorse models reports catalog-backed eligibility."
-      ],
-      "last_error_or_blocker": "None. Two deliberate scope notes: step 5 was done as the canonical single field rather than the full per-protocol form, and CLINE_PASS_DOCS survives as a documentation pointer while CLINE_PASS_MODELS and the capture date are deleted.",
-      "git_ref": "2566d7e",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": {
       "verifier": "manual",
       "command": "n/a",

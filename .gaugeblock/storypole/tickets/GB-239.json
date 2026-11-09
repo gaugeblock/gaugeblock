@@ -27,19 +27,7 @@
     ],
     "plan": null,
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793461391944,
-      "completed_items": [
-        "Both halves done and measured. Nesting: 33 -> 21 lines via dotted paths plus depth tolerance and parent subsumption. Declared non-mirrors: contracts-allowlist.toml with a schema-required reason, surfaced as a counted line in the report. End to end on the suite index: 20 real drift lines plus 1 declared exception, and api_key no longer appears among the drift."
-      ],
-      "remaining_items": [
-        "Nothing in this ticket. The 20 remaining lines are GB-238 work: 5 stale-mirror fields to add to the TypeScript mirror and 15 diverged fields needing a canonical spelling per entity."
-      ],
-      "last_error_or_blocker": "None.",
-      "git_ref": "72175b5",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": {
       "verifier": "manual",
       "command": "n/a",

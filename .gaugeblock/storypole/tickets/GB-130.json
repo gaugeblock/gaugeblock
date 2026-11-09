@@ -67,19 +67,7 @@
       "updated_at_epoch_ms": 1793170551095
     },
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793422773679,
-      "completed_items": [
-        "All seven stdio servers migrated and the JSON-RPC literals are gone: 49 occurrences across 10 files down to 2, both inside gaugeblock-mcp. Crate: 11 tests. Per repo: batten 14, dado 14, chalkline 23, outfeed 80, storypole 44, joiner 37, benchwork 35 - all green, clippy -D warnings and docs clean. Two defects fixed by construction: outfeed and storypole answered a tools/call with no params.name with nothing at all (silence indistinguishable from a hang) - now -32602; and all seven logged a malformed line and dropped it - now -32700 with id null."
-      ],
-      "remaining_items": [
-        "Two follow-ups filed and not done inline. GB-234: batten, joiner and benchwork still build the MCP content envelope inside dispatch_tool, so ToolOutcome::Raw exists for them; moving it up is a change to every return site in three dispatchers. GB-235: miter keeps a typed JsonRpcRequest/JsonRpcResponse pair and is the remaining copy - it is literal-free because it uses struct fields, and migrating it is a design change to a typed protocol rather than a loop replacement."
-      ],
-      "last_error_or_blocker": "None. Correction recorded: my first commit message claimed three servers returned raw JSON where the spec requires a content array. That was wrong - their dispatchers build the envelope - and the message and crate docs were amended to say what was actually wrong: the envelope lives in the tool layer for three servers and in the loop for four, so a wire type sat where it did not belong.",
-      "git_ref": "70df238",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": {
       "verifier": "manual",
       "command": "n/a",

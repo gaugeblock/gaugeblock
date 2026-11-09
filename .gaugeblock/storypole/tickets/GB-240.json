@@ -28,19 +28,7 @@
     ],
     "plan": null,
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793467920668,
-      "completed_items": [
-        "a33cb3c: get_dag_view now loads through one helper where the single store is authoritative and the workspace store only contributes tasks the single store lacks; get_task_briefing had the same inversion and is fixed the same way. clippy clean, 24 benchwork-core tests green."
-      ],
-      "remaining_items": [
-        "One criterion: a fixture that verifies a task and asserts the DAG view reports it verified. load_tasks is the single place to point it at. Also worth a visual check in the UI once the daemon is reinstalled - GB-57 and GB-53 should move from Ready to Verified."
-      ],
-      "last_error_or_blocker": "None. Separately, GB-128 was closed as part of this: its children (GB-129/130/131/189) are all verified, so it was one of the phantom Ready cards.",
-      "git_ref": "a33cb3c",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": {
       "verifier": "manual",
       "command": "n/a",

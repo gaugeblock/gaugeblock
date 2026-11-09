@@ -38,19 +38,7 @@
     ],
     "plan": null,
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793404433293,
-      "completed_items": [
-        "Purge complete in substance: 62 -> 4. Dropped 43 declarations across joiner, outfeed, batten, dado, benchwork, chalkline, rabbet, sawhorse and storypole, demoted 2 to dev-dependencies (dado-core tracing+uuid), and documented the 3 survives with reasons. Every repo gated individually: clippy --workspace --all-targets -D warnings plus its own suite (joiner 37, outfeed 80, batten 14, dado 14, benchwork 35, chalkline 23, rabbet 13, sawhorse 30, storypole 44)."
-      ],
-      "remaining_items": [
-        "One item left and it is not purge work: outfeed-core/reqwest is a false positive from the scanner (GB-233). The arithmetic exit criterion (unused == 0) cannot be met until that is fixed, which is why this is a handoff rather than a verify."
-      ],
-      "last_error_or_blocker": "GB-233: miter deps misses a dependency referenced only as a qualified path in some files. Fixing it should drop the count to 3, all of them documented keeps.",
-      "git_ref": "431f505",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": {
       "verifier": "manual",
       "command": "n/a",

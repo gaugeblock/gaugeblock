@@ -25,19 +25,7 @@
     ],
     "plan": null,
     "active_claim": null,
-    "latest_handoff": {
-      "recorded_by_agent": "cline",
-      "timestamp_ms": 1793465148275,
-      "completed_items": [
-        "Read commands now warn when the index is older than the code (c611e6f). store::load is the single funnel for every read, so the check lives there: db mtime versus the newest source file under the tree the index sits in, warning on stderr when more than a minute behind. Verified by aging the index 30 minutes: stderr carries the warning and stdout is byte-identical, so --json stays parseable. Fresh index is silent."
-      ],
-      "remaining_items": [
-        "The refresh POLICY is still open and is a decision, not an edit: reindex on mcp daemon start, on file save, on a TTL, or leave it explicit now that staleness is visible. The warning makes the failure impossible to miss either way, which was the actual defect - a stale answer was indistinguishable from a true absence."
-      ],
-      "last_error_or_blocker": "None. Two measurements recorded for the policy work: redb rewrites the file on open, so an index mtime taken after opening always reads now (this cost the first implementation its warning); and the check costs one directory walk, early-exiting at the first newer file.",
-      "git_ref": "c611e6f",
-      "dirty_files": []
-    },
+    "latest_handoff": null,
     "verification_receipt": {
       "verifier": "storypole-verify",
       "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 && chalkline docs check --workspace",
