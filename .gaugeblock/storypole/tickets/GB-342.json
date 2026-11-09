@@ -62,6 +62,16 @@
       },
       "captured_by_agent": "user",
       "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "37030911-edfe-43ca-91f1-6178d291e869",
+      "title": "Shared target-dir: already decided, not a finding (withdrawn)",
+      "description": "CORRECTED 2026-11-08: this ticket should not have been filed. The shared target directory at the suite root is an\nalready-settled arrangement, not a discovery, and it was re-reported here as though it were new after a build lock held\nup an install during the GB-339 telemetry work.\n\nWhat happened, so the record is honest: two `cargo install` runs were started in parallel, the second blocked on the\nbuild directory lock, and I described the serialisation to the user as a suite-level finding. It was not new. The\nbehaviour is the direct consequence of `target-dir = \"target\"` in the root `.cargo/config.toml`, which is deliberate\nand already understood.\n\nNo code change, no investigation, and no ADR is owed. The observation stands - installs serialise, and a heavy\ndependency starves other builds - but it is a known property rather than a defect waiting to be triaged.\n\nRetained rather than deleted because the ledger is append-only and a withdrawn ticket is more useful than a silently\nabsent one.",
+      "priority": 5,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794265021685
     }
   ]
 }
