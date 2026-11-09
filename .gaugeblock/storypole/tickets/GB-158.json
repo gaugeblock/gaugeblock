@@ -1,0 +1,121 @@
+{
+  "ticket": {
+    "id": "a3802934-a3f5-4e98-b673-43b8eba356ea",
+    "ticket_key": "GB-158",
+    "slug": "extract-gaugeblock-security-for-suite-wide-redaction-a38029",
+    "title": "Extract gaugeblock-security for suite-wide redaction",
+    "description": "Redaction and secret detection are domain-neutral yet live in miter-engine, so joiner and rabbet link redb, sqlparser, hcl, dockerfile-parser, serde_yaml, globset, rayon and miter-storage only to scrub telemetry text. Extract gaugeblock-security into the common repo (packages are gaugeblock-<thing>, not common-<thing>) holding shannon_entropy, is_high_entropy_secret, is_sensitive_identifier, is_secret_literal and scrub_source_text - all std-only - and fold polyglot::redact::redacted_value in so redaction has one home. Keep engine's pub mod security as a re-export shim, then repoint joiner and rabbet. Release note: the name needs a 0.1.0-alpha.1 reservation before 0.1.0-beta.1 can publish.",
+    "kind": "tech_debt",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "common",
+      "module_path": null,
+      "target_files": [
+        "common/Cargo.toml,common/crates/gaugeblock-contracts/Cargo.toml,miter/crates/engine/src/security"
+      ],
+      "target_symbols": [
+        "miter_engine::security::scrub_source_text"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Delivered: common/crates/gaugeblock-security holds the entropy/identifier/secret-literal/scrub primitives with a re-export shim left in miter; joiner-core and rabbet-core now take redaction from the foundation crate (commits d5d451a, ef6661f, c54674c).",
+      "verified_at_epoch_ms": 1793942119695,
+      "git_branch": "main",
+      "base_commit_sha": "ff55dd95b8691b4af28fe95316cd19c1bf3ed54e",
+      "head_commit_sha": "ff55dd95b8691b4af28fe95316cd19c1bf3ed54e",
+      "commit_shas": [
+        "ff55dd95b8691b4af28fe95316cd19c1bf3ed54e"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793247804128,
+    "updated_at_epoch_ms": 1794038011704,
+    "archived_at_epoch_ms": 1794038011704
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "a3802934-a3f5-4e98-b673-43b8eba356ea",
+        "ticket_key": "GB-158",
+        "slug": "extract-gaugeblock-security-for-suite-wide-redaction-a38029",
+        "title": "Extract gaugeblock-security for suite-wide redaction",
+        "description": "Redaction and secret detection are domain-neutral yet live in miter-engine, so joiner and rabbet link redb, sqlparser, hcl, dockerfile-parser, serde_yaml, globset, rayon and miter-storage only to scrub telemetry text. Extract gaugeblock-security into the common repo (packages are gaugeblock-<thing>, not common-<thing>) holding shannon_entropy, is_high_entropy_secret, is_sensitive_identifier, is_secret_literal and scrub_source_text - all std-only - and fold polyglot::redact::redacted_value in so redaction has one home. Keep engine's pub mod security as a re-export shim, then repoint joiner and rabbet. Release note: the name needs a 0.1.0-alpha.1 reservation before 0.1.0-beta.1 can publish.",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "common",
+          "module_path": null,
+          "target_files": [
+            "common/Cargo.toml,common/crates/gaugeblock-contracts/Cargo.toml,miter/crates/engine/src/security"
+          ],
+          "target_symbols": [
+            "miter_engine::security::scrub_source_text"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793247804128,
+        "updated_at_epoch_ms": 1793247804128
+      },
+      "captured_by_agent": "cline",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_verified",
+      "task_id": "a3802934-a3f5-4e98-b673-43b8eba356ea",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Delivered: common/crates/gaugeblock-security holds the entropy/identifier/secret-literal/scrub primitives with a re-export shim left in miter; joiner-core and rabbet-core now take redaction from the foundation crate (commits d5d451a, ef6661f, c54674c).",
+        "verified_at_epoch_ms": 1793942119695,
+        "git_branch": "main",
+        "base_commit_sha": "ff55dd95b8691b4af28fe95316cd19c1bf3ed54e",
+        "head_commit_sha": "ff55dd95b8691b4af28fe95316cd19c1bf3ed54e",
+        "commit_shas": [
+          "ff55dd95b8691b4af28fe95316cd19c1bf3ed54e"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "a3802934-a3f5-4e98-b673-43b8eba356ea",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953214227
+    },
+    {
+      "event": "task_archived",
+      "task_id": "a3802934-a3f5-4e98-b673-43b8eba356ea",
+      "status": "verified",
+      "timestamp_ms": 1794038011704
+    }
+  ]
+}

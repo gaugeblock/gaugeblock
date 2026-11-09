@@ -1,0 +1,237 @@
+{
+  "ticket": {
+    "id": "330a9552-63a8-455c-b80f-d977f16577cb",
+    "ticket_key": "GB-261",
+    "slug": "consolidate-all-legacy-tool-state-into-per-repo-gaugeblock-and-retire-the-legacy-dotfiles-330a95",
+    "title": "Consolidate all legacy tool state into per-repo .gaugeblock and retire the legacy dotfiles",
+    "description": "",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "workspace::migration"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "PHASE 5 GATES RUN 2026-11-06, all green:\n  find . -maxdepth 3 -name .storypole -o -name .miter  -> 0 legacy directories anywhere in the metaharness\n  miter deps --layers --check                          -> verdict clean, 147 downward edges, 0 upward, 4 allowlisted\n  storypole ledger-reconcile                           -> index and ledger agree\n  outfeed lockfiles                                    -> all 11 repositories track a fresh Cargo.lock\n  chalkline docs check --workspace                     -> 12 targets audited, 108 present, 0 missing, 0 drifted\n\nThe migration's own evidence, recorded when it happened: derived index.sqlite files were discarded rather than migrated (a cache is rebuilt, not carried), and GB-260 archived the 10 legacy ledgers (128 events) and recovered the stranded SP-4 that only existed in one of them. Redundant per-tool configs were removed under GB-267, verified by benchwork tidy reporting nothing to consolidate.\n\nNothing about this changes tool behavior at runtime: every tool already resolved the canonical path, which is why the move was safe and why the leftover dotfiles were pure duplication."
+    ],
+    "plan": {
+      "summary": "GB-261 — Consolidate all legacy tool state into `.gaugeblock`",
+      "design_markdown": "# GB-261 — Consolidate all legacy tool state into `.gaugeblock`\n\n**Status:** plan, awaiting the Phase 0 decision on `D1` before any move is executed.\n**Rule this must not break:** nothing is deleted until its bytes exist somewhere tracked, and no\nderived cache is ever migrated.\n\n---\n\n## 1. Situation as measured (2026-11-06)\n\n| Location | Count | Contents | Nature |\n|:--|:--|:--|:--|\n| `<repo>/.storypole/config.toml` | 10 | per-repo `ticket_prefix`, `allowed_repos`, `allowed_crates`, TTL | **live identity — all ten differ** |\n| `<repo>/.storypole/plans/*.md` | 10 | design docs (`GB-17`, `GB-36`, `GB-46`, `GB-47`, `GB-48`, `GB-55`, `GB-57`, …) | tracked assets (law 11) |\n| `<repo>/.storypole/index.sqlite*` | 10 | derived index | **cache — never migrate** |\n| `<repo>/.storypole/.gitignore` | 10 | ignores the three cache files | redundant once dir goes |\n| `<repo>/.storypole/ledger.jsonl` | 0 | retired in `GB-260`, bytes archived | done |\n| `miter/.miter/config.toml` | 1 | legacy miter config | compare with root canonical |\n| `.gaugeblock/docs.bak.1792899161403` | 1 | stale config backup | artifact |\n\nConfirmed: `.gaugeblock` resolves **per repository** (git common dir), not suite-wide. Root and\n`sawhorse` each have one. Root `.gaugeblock/storypole/ledger.jsonl` (1,564 events, 254 keys) is the\nsuite backlog.\n\n## 2. The tool is not the answer today (`GB-262`)\n\n`benchwork migrate --dry-run`, verbatim:\n\n```\nMigrated items: 1\n  - [DRY RUN] Would archive .gaugeblock/docs.toml -> ./.gaugeblock/docs.bak.1793995267318\n```\n\nOne item, and it is wrong: `.gaugeblock/docs.toml` is live canonical config (`GB-256` fixed the nested\n`[docs.docs.*]` table in it). It sees **none** of the ten `.storypole/` directories or `miter/.miter/`,\ndespite help text promising those. **`benchwork migrate` is not run in this epic.** Alert problem is\n`GB-255`; detection and false-positive problem is `GB-262`. Migration is by hand, phase by phase,\nbecause the inventory is small and the failure modes are silent.\n\n\n## 3. Decisions\n\n**D1 — where does per-repo storypole state live?** *(blocks execution)*\nTen different `config.toml` files each carry that repository's ticket prefix and allowed repos/crates.\nThey cannot merge into one file without losing nine identities.\n\n- **Option A (recommended):** `<repo>/.gaugeblock/storypole/{config.toml, plans/}` — preserves identity,\n  matches per-repo resolution, keeps each config in its own repository's history.\n- **Option B:** one canonical config at the meta-harness root with per-repo sections. Single source, but\n  changes the schema and every loader, and moves repo-scoped settings out of the repos that own them.\n- **Option C:** collapse to one suite prefix. **Rejected** — destroys namespaces that already exist.\n\nEverything below assumes **A**.\n\n**D2 — plans.** `<repo>/.storypole/plans/*.md` → `<repo>/.gaugeblock/storypole/plans/`. Law 11 still\nsatisfied: documents stay committed, in the repository that owns them.\n\n**D3 — `index.sqlite*`.** Delete, never copy. Derived from the ledger; a migrated cache lies after the\nfirst append.\n\n**D4 — `miter/.miter/config.toml`.** `diff` against `.gaugeblock/miter/config.toml`. Identical → delete.\nDifferent → `miter/.gaugeblock/miter/config.toml` under the same rule as D1.\n\n**D5 — stale backups.** Diff against the live file; preserve only content absent from live config, into\n`.gaugeblock/config-archive/`. Otherwise delete.\n\n**D6 — out of scope:** `spool/`, `worktrees/`, `datasets/`, `.env`, `storypole/ledger.jsonl`,\n`storypole/ledger-archive/`, `miter/miter.redb`, `chat/threads.jsonl`.\n\n## 4. Execution phases\n\n**Phase 0 — probe resolution (no mutation).** Determine whether `storypole`, run with a per-repo\n`.gaugeblock/storypole/config.toml` and no local ledger, (a) reads that config and (b) creates a *local*\nledger. If it creates one, a per-repo move forks the backlog and D1 must be re-decided first.\n**Gate: answered in writing on this ticket before Phase 1.**\n\n**Phase 1 — one repository end to end.** `rabbet` (no plans, lowest blast radius). Move `config.toml`,\ndelete `index.sqlite*` and `.gitignore`, `git rm` the empty `.storypole/`, commit. Then `storypole list`\ninside `rabbet` and at the root. **Gate: both return the same backlog, and `rabbet`'s prefix is `RB`.**\n\n**Phase 2 — the nine remaining repos**, one commit each, same gate. Repos with plans (`benchwork`,\n`outfeed`, `storypole`, `chalkline`) also get a checksum comparison of every `*.md` at its new path.\n\n**Phase 3 — miter** (D4), after the diff.\n**Phase 4 — stale backups** (D5).\n\n**Phase 5 — verification.** `miter deps --layers --check`, `storypole ledger-reconcile`,\n`outfeed lockfiles`, `chalkline docs check -d <repo>` per touched repo, plus a `find` proving zero\n`.storypole/` remain.\n\n## 5. Rollback\n\nPer-repo and per-commit, so rollback is `git revert <sha>` in one repository. Nothing is deleted whose\nbytes are not in git history or in `.gaugeblock/storypole/ledger-archive/`. `index.sqlite*` is the sole\nexception and is a cache.\n\n## 6. Acceptance criteria\n\n1. Zero `.storypole/` directories, zero legacy ledgers.\n2. Every repository's `ticket_prefix` still resolves to its own value.\n3. All ten design documents present at `<repo>/.gaugeblock/storypole/plans/`, checksums unchanged.\n4. `storypole list` at the root returns the same task count before and after (175 at plan time).\n5. No derived cache migrated; nothing deleted that is absent from git history.\n6. `benchwork migrate` untouched by this work; `GB-262` records why.\n",
+      "steps": [],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-261.md",
+      "updated_at_epoch_ms": 1793995299412
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794031409466,
+      "git_branch": "main",
+      "base_commit_sha": "b49ecdeb8dbcc07ca8e5a85d3e8aae4e3a9ca5e9",
+      "head_commit_sha": "b49ecdeb8dbcc07ca8e5a85d3e8aae4e3a9ca5e9",
+      "commit_shas": [
+        "b49ecdeb8dbcc07ca8e5a85d3e8aae4e3a9ca5e9"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793995274941,
+    "updated_at_epoch_ms": 1794038024786,
+    "archived_at_epoch_ms": 1794038024786
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "330a9552-63a8-455c-b80f-d977f16577cb",
+        "ticket_key": "GB-261",
+        "slug": "consolidate-all-legacy-tool-state-into-per-repo-gaugeblock-and-retire-the-legacy-dotfiles-330a95",
+        "title": "Consolidate all legacy tool state into per-repo .gaugeblock and retire the legacy dotfiles",
+        "description": "",
+        "kind": "epic",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "workspace::migration"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793995274941,
+        "updated_at_epoch_ms": 1793995274941
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "plan": {
+        "summary": "GB-261 — Consolidate all legacy tool state into `.gaugeblock`",
+        "design_markdown": "# GB-261 — Consolidate all legacy tool state into `.gaugeblock`\n\n**Status:** plan, awaiting the Phase 0 decision on `D1` before any move is executed.\n**Rule this must not break:** nothing is deleted until its bytes exist somewhere tracked, and no\nderived cache is ever migrated.\n\n---\n\n## 1. Situation as measured (2026-11-06)\n\n| Location | Count | Contents | Nature |\n|:--|:--|:--|:--|\n| `<repo>/.storypole/config.toml` | 10 | per-repo `ticket_prefix`, `allowed_repos`, `allowed_crates`, TTL | **live identity — all ten differ** |\n| `<repo>/.storypole/plans/*.md` | 10 | design docs (`GB-17`, `GB-36`, `GB-46`, `GB-47`, `GB-48`, `GB-55`, `GB-57`, …) | tracked assets (law 11) |\n| `<repo>/.storypole/index.sqlite*` | 10 | derived index | **cache — never migrate** |\n| `<repo>/.storypole/.gitignore` | 10 | ignores the three cache files | redundant once dir goes |\n| `<repo>/.storypole/ledger.jsonl` | 0 | retired in `GB-260`, bytes archived | done |\n| `miter/.miter/config.toml` | 1 | legacy miter config | compare with root canonical |\n| `.gaugeblock/docs.bak.1792899161403` | 1 | stale config backup | artifact |\n\nConfirmed: `.gaugeblock` resolves **per repository** (git common dir), not suite-wide. Root and\n`sawhorse` each have one. Root `.gaugeblock/storypole/ledger.jsonl` (1,564 events, 254 keys) is the\nsuite backlog.\n\n## 2. The tool is not the answer today (`GB-262`)\n\n`benchwork migrate --dry-run`, verbatim:\n\n```\nMigrated items: 1\n  - [DRY RUN] Would archive .gaugeblock/docs.toml -> ./.gaugeblock/docs.bak.1793995267318\n```\n\nOne item, and it is wrong: `.gaugeblock/docs.toml` is live canonical config (`GB-256` fixed the nested\n`[docs.docs.*]` table in it). It sees **none** of the ten `.storypole/` directories or `miter/.miter/`,\ndespite help text promising those. **`benchwork migrate` is not run in this epic.** Alert problem is\n`GB-255`; detection and false-positive problem is `GB-262`. Migration is by hand, phase by phase,\nbecause the inventory is small and the failure modes are silent.\n\n\n## 3. Decisions\n\n**D1 — where does per-repo storypole state live?** *(blocks execution)*\nTen different `config.toml` files each carry that repository's ticket prefix and allowed repos/crates.\nThey cannot merge into one file without losing nine identities.\n\n- **Option A (recommended):** `<repo>/.gaugeblock/storypole/{config.toml, plans/}` — preserves identity,\n  matches per-repo resolution, keeps each config in its own repository's history.\n- **Option B:** one canonical config at the meta-harness root with per-repo sections. Single source, but\n  changes the schema and every loader, and moves repo-scoped settings out of the repos that own them.\n- **Option C:** collapse to one suite prefix. **Rejected** — destroys namespaces that already exist.\n\nEverything below assumes **A**.\n\n**D2 — plans.** `<repo>/.storypole/plans/*.md` → `<repo>/.gaugeblock/storypole/plans/`. Law 11 still\nsatisfied: documents stay committed, in the repository that owns them.\n\n**D3 — `index.sqlite*`.** Delete, never copy. Derived from the ledger; a migrated cache lies after the\nfirst append.\n\n**D4 — `miter/.miter/config.toml`.** `diff` against `.gaugeblock/miter/config.toml`. Identical → delete.\nDifferent → `miter/.gaugeblock/miter/config.toml` under the same rule as D1.\n\n**D5 — stale backups.** Diff against the live file; preserve only content absent from live config, into\n`.gaugeblock/config-archive/`. Otherwise delete.\n\n**D6 — out of scope:** `spool/`, `worktrees/`, `datasets/`, `.env`, `storypole/ledger.jsonl`,\n`storypole/ledger-archive/`, `miter/miter.redb`, `chat/threads.jsonl`.\n\n## 4. Execution phases\n\n**Phase 0 — probe resolution (no mutation).** Determine whether `storypole`, run with a per-repo\n`.gaugeblock/storypole/config.toml` and no local ledger, (a) reads that config and (b) creates a *local*\nledger. If it creates one, a per-repo move forks the backlog and D1 must be re-decided first.\n**Gate: answered in writing on this ticket before Phase 1.**\n\n**Phase 1 — one repository end to end.** `rabbet` (no plans, lowest blast radius). Move `config.toml`,\ndelete `index.sqlite*` and `.gitignore`, `git rm` the empty `.storypole/`, commit. Then `storypole list`\ninside `rabbet` and at the root. **Gate: both return the same backlog, and `rabbet`'s prefix is `RB`.**\n\n**Phase 2 — the nine remaining repos**, one commit each, same gate. Repos with plans (`benchwork`,\n`outfeed`, `storypole`, `chalkline`) also get a checksum comparison of every `*.md` at its new path.\n\n**Phase 3 — miter** (D4), after the diff.\n**Phase 4 — stale backups** (D5).\n\n**Phase 5 — verification.** `miter deps --layers --check`, `storypole ledger-reconcile`,\n`outfeed lockfiles`, `chalkline docs check -d <repo>` per touched repo, plus a `find` proving zero\n`.storypole/` remain.\n\n## 5. Rollback\n\nPer-repo and per-commit, so rollback is `git revert <sha>` in one repository. Nothing is deleted whose\nbytes are not in git history or in `.gaugeblock/storypole/ledger-archive/`. `index.sqlite*` is the sole\nexception and is a cache.\n\n## 6. Acceptance criteria\n\n1. Zero `.storypole/` directories, zero legacy ledgers.\n2. Every repository's `ticket_prefix` still resolves to its own value.\n3. All ten design documents present at `<repo>/.gaugeblock/storypole/plans/`, checksums unchanged.\n4. `storypole list` at the root returns the same task count before and after (175 at plan time).\n5. No derived cache migrated; nothing deleted that is absent from git history.\n6. `benchwork migrate` untouched by this work; `GB-262` records why.\n",
+        "steps": [],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-261.md",
+        "updated_at_epoch_ms": 1793995299412
+      },
+      "timestamp_ms": 1793995299412
+    },
+    {
+      "event": "task_updated",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "PHASE 1 DONE 2026-11-06 (rabbet 6dc84ed). benchwork migrate with the forced-install binary: dry run said 'Would move .storypole -> .gaugeblock/storypole (would discard 1 derived cache file)'",
+        " apply said 'discarded 1'",
+        " and the destination contains only .gaugeblock/storypole/{config.toml",
+        ".gitignore} - no index.sqlite arrived. config preserved: consolidated .gaugeblock/config.toml carries [storypole] ticket_prefix = \"RB\"",
+        " and a defer produced RB-1 (probe removed afterwards",
+        " along with the repo-local ledger it created). Gate passed.\\n\\nTWO NEW FINDINGS that Phase 2 would multiply across nine repos",
+        " so they need a decision first:\\n\\nD7 - repo-local ledgers. The first write inside a member repo creates <repo>/.gaugeblock/storypole/ledger.jsonl. That is by design per the Phase 0 probe",
+        " but it means a task filed while working in rabbet lands in rabbet's own backlog and is invisible from the root. If the suite is meant to have ONE backlog",
+        " migration must also pin ledger location; if per-repo backlogs are intended",
+        " the root ledger is the anomaly (it holds 254 keys from every repo). Undecided and consequential.\\n\\nD8 - duplicate storypole config. Migration leaves BOTH .gaugeblock/storypole/config.toml (moved",
+        " flat) and .gaugeblock/config.toml ([storypole] section",
+        " consolidated) with the same values. Two sources of truth for one setting: fine while they agree",
+        " a silent divergence the day one is edited. Decide precedence and delete the loser",
+        " or make migration write only one."
+      ],
+      "timestamp_ms": 1793997508001
+    },
+    {
+      "event": "task_updated",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "D7 VERDICT 2026-11-06 (measured",
+        " not remembered). Multi-ledger awareness exists but is narrower than expected: storypole_core::ledger::audit::discover_ledgers(root) finds the root ledger and every member ledger",
+        " but its only consumer is audit_ledgers (ledger_audit_tests.rs is the only other caller). storypole list has NO workspace/aggregate flag - only --repo and --dir - so listing and writes are both single-ledger.\\n\\nEmpirical: a task deferred inside rabbet (RB-1) does NOT appear in storypole list at the suite root. Probes removed; rabbet left with no local ledger.\\n\\nSo the merged virtual ledger with key-routed writes does not exist today. Filed as a feature ticket. This does not block Phase 2: migration moves config and plans and touches no ledger",
+        " and the ten legacy ledgers were already archived in GB-260. But it does mean a task filed while working inside a member repo is invisible from the root until that feature lands",
+        " and that is worth knowing before anyone files work that way."
+      ],
+      "timestamp_ms": 1793997926273
+    },
+    {
+      "event": "task_updated",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "PHASE 2 DONE 2026-11-06 (nine repos: dado be80455",
+        " chalkline fabad24",
+        " storypole 761464d",
+        " joiner 6561f05",
+        " batten 624c9d5",
+        " outfeed 2c86f47",
+        " sawhorse bb9449e",
+        " benchwork cd67201; miter committed separately with its .miter move; rabbet in Phase 1). Every repo reports 'Moved .storypole -> .gaugeblock/storypole (discarded 1 derived cache file)' and index.sqlite* is absent from every destination. Zero .storypole directories remain suite-wide (find returns 0)",
+        " and zero .miter directories remain. Configs and plans preserved in .gaugeblock/storypole/.\\n\\nREMAINDER",
+        " found by verifying rather than trusting the receipt: the D8 duplicate-config reconcile did NOT run. Each repo now has BOTH .gaugeblock/config.toml with [storypole] AND .gaugeblock/storypole/config.toml. Cause: the migration used a binary predating the reconcile fix",
+        " because outfeed install skipped the rebuild - and that skip happened even without --force because my GB-264 fix hashes only the leaf crate's src",
+        " while the edit was in benchwork-core. So the fix shipped in a75b148 is untested in the field. Filed as a bug.\\n\\nAlso: re-running migrate will NOT clean the duplicates",
+        " because reconcile iterates plan items and a repo with no legacy dir yields no items. The fix must scan .gaugeblock/*/config.toml directly rather than depend on migration having something to move."
+      ],
+      "timestamp_ms": 1793999084452
+    },
+    {
+      "event": "task_updated",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "D8 THIRD REACHABILITY FAILURE",
+        " and the one that explains the other two (2026-11-06). After installing both fixes (outfeed ✔ v0.1.0-beta.7",
+        " benchwork ✔ v0.1.0-beta.7)",
+        " running migrate across all ten repos produced NO reconcile output",
+        " and rabbet still has .gaugeblock/storypole/config.toml. Cause: 'benchwork migrate' short-circuits with 'Workspace is already unified under .gaugeblock/ (no legacy items found).' and never calls execute_migration at all - so the reconcile",
+        " living inside that function",
+        " cannot run in exactly the state it was written for.\\n\\nThat is the same mistake three times wearing different clothes: reconcile driven by plan items (unreachable when nothing to move)",
+        " then reconcile inside the execution engine (unreachable when the engine is not invoked). The design conclusion is now clear and should be honoured rather than patched again: RECONCILIATION IS NOT MIGRATION. Deduplicating config files is a tidy operation over an already-unified workspace",
+        " and it must be its own entry point - a public reconcile function called unconditionally",
+        " or a benchwork tidy/reconcile subcommand - not a rider on migrate's execution path.\\n\\nState of the ten repos: all migrated (no .storypole or .miter anywhere)",
+        " all derived indexes discarded",
+        " every config and plan preserved",
+        " each repo committed. Outstanding: ten duplicate .gaugeblock/storypole/config.toml files against unified [storypole] sections",
+        " plus Phase 5 verification which has not run."
+      ],
+      "timestamp_ms": 1793999590722
+    },
+    {
+      "event": "task_updated",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "PHASE 5 GATES RUN 2026-11-06, all green:\n  find . -maxdepth 3 -name .storypole -o -name .miter  -> 0 legacy directories anywhere in the metaharness\n  miter deps --layers --check                          -> verdict clean, 147 downward edges, 0 upward, 4 allowlisted\n  storypole ledger-reconcile                           -> index and ledger agree\n  outfeed lockfiles                                    -> all 11 repositories track a fresh Cargo.lock\n  chalkline docs check --workspace                     -> 12 targets audited, 108 present, 0 missing, 0 drifted\n\nThe migration's own evidence, recorded when it happened: derived index.sqlite files were discarded rather than migrated (a cache is rebuilt, not carried), and GB-260 archived the 10 legacy ledgers (128 events) and recovered the stranded SP-4 that only existed in one of them. Redundant per-tool configs were removed under GB-267, verified by benchwork tidy reporting nothing to consolidate.\n\nNothing about this changes tool behavior at runtime: every tool already resolved the canonical path, which is why the move was safe and why the leftover dotfiles were pure duplication."
+      ],
+      "timestamp_ms": 1794031409040
+    },
+    {
+      "event": "task_verified",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794031409466,
+        "git_branch": "main",
+        "base_commit_sha": "b49ecdeb8dbcc07ca8e5a85d3e8aae4e3a9ca5e9",
+        "head_commit_sha": "b49ecdeb8dbcc07ca8e5a85d3e8aae4e3a9ca5e9",
+        "commit_shas": [
+          "b49ecdeb8dbcc07ca8e5a85d3e8aae4e3a9ca5e9"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "status": "verified",
+      "timestamp_ms": 1794037251213
+    },
+    {
+      "event": "task_archived",
+      "task_id": "330a9552-63a8-455c-b80f-d977f16577cb",
+      "status": "verified",
+      "timestamp_ms": 1794038024786
+    }
+  ]
+}

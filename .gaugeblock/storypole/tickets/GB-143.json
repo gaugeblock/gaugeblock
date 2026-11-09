@@ -1,0 +1,281 @@
+{
+  "ticket": {
+    "id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+    "ticket_key": "GB-143",
+    "slug": "repoint-downstream-crates-onto-gaugeblock-contracts-and-remove-the-duplicated-definitions-a5aa73",
+    "title": "Repoint downstream crates onto gaugeblock-contracts and remove the duplicated definitions",
+    "description": "Subtask of Epic GB-129",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "contracts,types,gaugeblock-common"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "parent_epic",
+        "target_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+        "target_ticket_key": "GB-129",
+        "target_repo": "workspace"
+      },
+      {
+        "kind": "blocked_by",
+        "target_id": "70b1eb64-354c-438d-bea8-03e189a2c983"
+      }
+    ],
+    "decisions": [
+      {
+        "decision_id": "37ce2855-05e9-403f-bbb3-7e9e62c43f09",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "error_strategy",
+        "question": "Where should contract-type behaviour live once members re-export gaugeblock-contracts types?",
+        "proposed_options": [
+          "A: Move behaviour into contracts — relocate constructors (InferenceRequest::new, TypedHole::new), Display for GrammarFormat and task helpers (AgentClaim::is_expired, slug generation) into gaugeblock-contracts so members re-export types+behaviour; contracts stays pure (no I/O).",
+          "B: Keep definitions in members — contracts remains a documentation mirror for cross-language consumers only; members keep owning their types, so no orphan-rule problem and no schema churn.",
+          "C: Newtype wrappers — members wrap each contract type in a tuple struct that carries their impls; wire shape is preserved via transparent serde, at the cost of double definitions.",
+          "D: Hybrid — pure-data types (outfeed, miter) re-export from contracts; behaviour-rich types (storypole, sawhorse, dado, batten) stay local until their extra fields (e.g. DadoPattern::canonical_example_fills) are reconciled into CONTRACTS.md."
+        ],
+        "chosen_option": "A: Move behaviour into contracts",
+        "rationale": "After reconciling CONTRACTS.md with the implementations the schema uncertainty that motivated option D is gone, so the only open question is behaviour placement. The four impls are pure and infallible (InferenceRequest::new, TypedHole::new, Display for GrammarFormat, AgentClaim::is_expired) and inherent impls travel with a re-exported type, so sawhorse_core::InferenceRequest::new keeps compiling with no newtype indirection; the impls live in the crate that owns the type, so the orphan rule is satisfied. Option D would have preserved four duplicate definitions - exactly the drift this ticket just repaired. miter's internal Language/SymbolKind remain internal and are bridged by a From conversion written in miter.",
+        "resolved_by": "owner",
+        "updated_at_epoch_ms": 1793222279082
+      }
+    ],
+    "acceptance_criteria": [
+      "gaugeblock-contracts carries the pure helpers; each member re-exports the type; no duplicate wire definitions remain; member public APIs unchanged."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": {
+      "recorded_by_agent": "cline",
+      "timestamp_ms": 1793228999374,
+      "completed_items": [
+        "Five of six members repointed onto gaugeblock-contracts under option A: outfeed-core (83c97a7), batten-core (33a6286), sawhorse-core (c190b9b), dado-core+cli+mcp (c88b13c, which also deleted a custom serde shim), miter-engine (040f29a, bidirectional language bridge plus a lock test). Contracts gained the pure behaviour the members needed: InferenceRequest builders, TypedHole::new, Display/Hash for GrammarFormat, Hash for ModelRole, AgentClaim::is_expired and TaskEdge::{new,with_target_meta} (bd9d938). Wire Language is now the 13-format lowercase taxonomy with lenient aliases, mirrored in CONTRACTS.md. Roughly 600 lines of duplicated wire definitions removed with no consumer API change."
+      ],
+      "remaining_items": [
+        "storypole-core is the last member. Audit already done: LedgerEvent has 14 variants with matching payloads in both crates, and TaskEdge (moved) plus AgentClaim::is_expired (already in contracts) were the only inherent impls on the repointed types. Remaining work is mechanical but must land in one commit because model/{task,decision,events,config}.rs reference each other: replace the local TaskKind, TaskStatus, EdgeKind, TaskEdge, DecisionStatus, TaskDecision, TaskScope, TaskNode, TaskPlan, PlanStep, AgentClaim, HandoffPacket, VerificationReceipt, TaskContextBriefing, LedgerEvent, StorypoleConfig, WorkspaceConfig and DiscoveredMember definitions with re-exports from gaugeblock_contracts, delete the two now-duplicated impls, keep every free function and the store/ledger replay code. Verify with cargo nextest run --workspace plus a real scratch-store round trip (init, add, claim, verify) to prove ledger replay still works, then chalkline docs check -d storypole."
+      ],
+      "last_error_or_blocker": null,
+      "git_ref": "040f29a",
+      "dirty_files": []
+    },
+    "verification_receipt": {
+      "verifier": "cline",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "All six members now consume gaugeblock-contracts: outfeed-core (83c97a7), batten-core (33a6286), sawhorse-core (c190b9b), dado-core+cli+mcp (c88b13c), miter-engine (040f29a) and storypole-core (5ffb991). Contracts carries the wire types plus the pure behaviour that travelled with them (InferenceRequest builders, TypedHole::new, Display/Hash for GrammarFormat, Hash and Default for ModelRole/TaskKind, AgentClaim::is_expired, TaskEdge builders) and the 13-format lowercase Language with lenient aliases. Roughly 1150 lines of duplicated wire definitions removed with no consumer API change. Proven beyond unit tests: the 840+ event meta-harness ledger replays through the repointed types (storypole list exit 0), sawhorse keys its role map on the contract enum, and dado/miter/batten gates are green.",
+      "verified_at_epoch_ms": 1793229518003,
+      "git_branch": "main",
+      "base_commit_sha": "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2",
+      "head_commit_sha": "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2",
+      "commit_shas": [
+        "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793218934444,
+    "updated_at_epoch_ms": 1794038001130,
+    "archived_at_epoch_ms": 1794038001130
+  },
+  "events": [
+    {
+      "event": "handoff_recorded",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793220831049,
+        "completed_items": [
+          "Pilot repoint merged to outfeed main (83c97a7): outfeed-core now depends on gaugeblock-contracts 0.1.0-beta.1 (resolved locally via [patch.crates-io]) and re-exports CommitInfo, ConventionalKind, BumpType, ManifestDiff, ReleasePlan, SuiteLock, SuiteMetadata and SuiteToolEntry, deleting 8 duplicated definitions (-138/+28 lines). Public paths (outfeed_core::model::commits, ::model::plans, ::suite_lock) are unchanged, so callers see no difference. Gates: fmt OK, clippy --workspace --all-targets -D warnings clean, nextest --workspace 67/67 unchanged, docs check 9/9."
+        ],
+        "remaining_items": [
+          "Repoint the remaining definition owners, one repo per commit with its own gate: storypole-core (TaskNode/TaskDecision/etc. are co-located with inherent impls such as AgentClaim::is_expired and slug generation, so the re-export must keep those impls next to the type - likely a contracts re-export plus a local impl block), sawhorse-core (ExecutionMode/InferenceRequest/InferenceResponse/ModelRole), miter-engine + miter-ast (Language/SymbolBinding/LexicalScope/VerificationReport), dado-core (DadoPattern/TypedHole) and batten-core (CompiledGrammarConstraint/GrammarFormat). Also publish gaugeblock-contracts and gaugeblock-common at 0.1.0-beta.1 before any member that names them is released, otherwise standalone member builds fail to resolve the dependency."
+        ],
+        "last_error_or_blocker": null,
+        "git_ref": "83c97a7",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "handoff_recorded",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793221092427,
+        "completed_items": [
+          "Pilot repoint landed (outfeed 83c97a7): outfeed-core consumes gaugeblock-contracts and deleted 8 duplicated pure-data definitions with zero API change. Investigated the next four members and found the repoint is NOT mechanical there: sawhorse InferenceRequest has an inherent new(); dado TypedHole has new() and DadoPattern carries an extra canonical_example_fills field absent from CONTRACTS.md; batten implements Display for GrammarFormat; storypole TaskNode/AgentClaim carry lease and slug helpers. Rust rejects inherent impls on re-exported foreign types (E0116), so behaviour placement must be decided first. Raised decision 37ce2855-05e9-403f-bbb3-7e9e62c43f09 with four options (A move behaviour into contracts, B keep local owners, C newtype wrappers, D hybrid)."
+        ],
+        "remaining_items": [
+          "Resolve the pending decision, then repoint per option: for A add constructors/Display/helpers to gaugeblock-contracts; for D reconcile the dado/dado_pattern and typed_hole schema drift (canonical_example_fills, ast_node_kind, description, kind, max_tokens) into CONTRACTS.md before swapping dado/batten. Also publish gaugeblock-contracts and gaugeblock-common at 0.1.0-beta.1 before any member naming them is released."
+        ],
+        "last_error_or_blocker": null,
+        "git_ref": "83c97a7",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "handoff_recorded",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793228999374,
+        "completed_items": [
+          "Five of six members repointed onto gaugeblock-contracts under option A: outfeed-core (83c97a7), batten-core (33a6286), sawhorse-core (c190b9b), dado-core+cli+mcp (c88b13c, which also deleted a custom serde shim), miter-engine (040f29a, bidirectional language bridge plus a lock test). Contracts gained the pure behaviour the members needed: InferenceRequest builders, TypedHole::new, Display/Hash for GrammarFormat, Hash for ModelRole, AgentClaim::is_expired and TaskEdge::{new,with_target_meta} (bd9d938). Wire Language is now the 13-format lowercase taxonomy with lenient aliases, mirrored in CONTRACTS.md. Roughly 600 lines of duplicated wire definitions removed with no consumer API change."
+        ],
+        "remaining_items": [
+          "storypole-core is the last member. Audit already done: LedgerEvent has 14 variants with matching payloads in both crates, and TaskEdge (moved) plus AgentClaim::is_expired (already in contracts) were the only inherent impls on the repointed types. Remaining work is mechanical but must land in one commit because model/{task,decision,events,config}.rs reference each other: replace the local TaskKind, TaskStatus, EdgeKind, TaskEdge, DecisionStatus, TaskDecision, TaskScope, TaskNode, TaskPlan, PlanStep, AgentClaim, HandoffPacket, VerificationReceipt, TaskContextBriefing, LedgerEvent, StorypoleConfig, WorkspaceConfig and DiscoveredMember definitions with re-exports from gaugeblock_contracts, delete the two now-duplicated impls, keep every free function and the store/ledger replay code. Verify with cargo nextest run --workspace plus a real scratch-store round trip (init, add, claim, verify) to prove ledger replay still works, then chalkline docs check -d storypole."
+        ],
+        "last_error_or_blocker": null,
+        "git_ref": "040f29a",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793220648174,
+        "lease_expires_at_epoch_ms": 1793224248174,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "from": "blocked",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793220648174
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793221001785,
+        "lease_expires_at_epoch_ms": 1793224601785,
+        "git_branch": "refactor/members-consume-contracts",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793221001785
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "decision": {
+        "decision_id": "37ce2855-05e9-403f-bbb3-7e9e62c43f09",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "error_strategy",
+        "question": "Where should contract-type behaviour live once members re-export gaugeblock-contracts types?",
+        "proposed_options": [
+          "A: Move behaviour into contracts — relocate constructors (InferenceRequest::new, TypedHole::new), Display for GrammarFormat and task helpers (AgentClaim::is_expired, slug generation) into gaugeblock-contracts so members re-export types+behaviour; contracts stays pure (no I/O).",
+          "B: Keep definitions in members — contracts remains a documentation mirror for cross-language consumers only; members keep owning their types, so no orphan-rule problem and no schema churn.",
+          "C: Newtype wrappers — members wrap each contract type in a tuple struct that carries their impls; wire shape is preserved via transparent serde, at the cost of double definitions.",
+          "D: Hybrid — pure-data types (outfeed, miter) re-export from contracts; behaviour-rich types (storypole, sawhorse, dado, batten) stay local until their extra fields (e.g. DadoPattern::canonical_example_fills) are reconciled into CONTRACTS.md."
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1793221049766
+      },
+      "timestamp_ms": 1793221049766
+    },
+    {
+      "event": "status_changed",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "from": "in_progress",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1793221049766
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "decision_id": "37ce2855-05e9-403f-bbb3-7e9e62c43f09",
+      "chosen_option": "A: Move behaviour into contracts",
+      "rationale": "After reconciling CONTRACTS.md with the implementations the schema uncertainty that motivated option D is gone, so the only open question is behaviour placement. The four impls are pure and infallible (InferenceRequest::new, TypedHole::new, Display for GrammarFormat, AgentClaim::is_expired) and inherent impls travel with a re-exported type, so sawhorse_core::InferenceRequest::new keeps compiling with no newtype indirection; the impls live in the crate that owns the type, so the orphan rule is satisfied. Option D would have preserved four duplicate definitions - exactly the drift this ticket just repaired. miter's internal Language/SymbolKind remain internal and are bridged by a From conversion written in miter.",
+      "resolved_by": "owner",
+      "spawned_followup": null,
+      "appended_criterion": "gaugeblock-contracts carries the pure helpers; each member re-exports the type; no duplicate wire definitions remain; member public APIs unchanged.",
+      "timestamp_ms": 1793222279082
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793222279082,
+        "lease_expires_at_epoch_ms": 1793225879082,
+        "git_branch": "refactor/members-consume-contracts",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793222385049,
+        "lease_expires_at_epoch_ms": 1793225985049,
+        "git_branch": "refactor/members-consume-contracts",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793222385049
+    },
+    {
+      "event": "task_verified",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "receipt": {
+        "verifier": "cline",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "All six members now consume gaugeblock-contracts: outfeed-core (83c97a7), batten-core (33a6286), sawhorse-core (c190b9b), dado-core+cli+mcp (c88b13c), miter-engine (040f29a) and storypole-core (5ffb991). Contracts carries the wire types plus the pure behaviour that travelled with them (InferenceRequest builders, TypedHole::new, Display/Hash for GrammarFormat, Hash and Default for ModelRole/TaskKind, AgentClaim::is_expired, TaskEdge builders) and the 13-format lowercase Language with lenient aliases. Roughly 1150 lines of duplicated wire definitions removed with no consumer API change. Proven beyond unit tests: the 840+ event meta-harness ledger replays through the repointed types (storypole list exit 0), sawhorse keys its role map on the contract enum, and dado/miter/batten gates are green.",
+        "verified_at_epoch_ms": 1793229518003,
+        "git_branch": "main",
+        "base_commit_sha": "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2",
+        "head_commit_sha": "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2",
+        "commit_shas": [
+          "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+      "status": "verified",
+      "timestamp_ms": 1794038001130
+    }
+  ]
+}

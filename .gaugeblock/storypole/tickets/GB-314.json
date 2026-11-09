@@ -1,0 +1,77 @@
+{
+  "ticket": {
+    "id": "52860d7f-c351-4831-bc98-0b684b55f346",
+    "ticket_key": "GB-314",
+    "slug": "detect-dirty-files-treats-an-unreadable-mtime-as-unchanged-so-a-file-whose-metadata-fails-is-never-re-indexed-52860d",
+    "title": "detect_dirty_files treats an unreadable mtime as 'unchanged', so a file whose metadata fails is never re-indexed",
+    "description": "OBSERVED 2026-11-07: `detect_dirty_files` treats an unreadable mtime as NOT dirty:\n\n    None => false,\n\nso a file whose metadata cannot be read is never re-indexed - the opposite of the rule the polyglot pass states in its own comment (\"an absent timestamp must not read as unchanged\"). Not fixed at the time because it was outside the GB-302 change; recorded here before the detail was lost.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_engine::analysis::dirty::detect_dirty_files"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794106868967,
+    "updated_at_epoch_ms": 1794119329203
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "52860d7f-c351-4831-bc98-0b684b55f346",
+        "ticket_key": "GB-314",
+        "slug": "detect-dirty-files-treats-an-unreadable-mtime-as-unchanged-so-a-file-whose-metadata-fails-is-never-re-indexed-52860d",
+        "title": "detect_dirty_files treats an unreadable mtime as 'unchanged', so a file whose metadata fails is never re-indexed",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_engine::analysis::dirty::detect_dirty_files"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794106868967,
+        "updated_at_epoch_ms": 1794106868967
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "52860d7f-c351-4831-bc98-0b684b55f346",
+      "title": null,
+      "description": "OBSERVED 2026-11-07: `detect_dirty_files` treats an unreadable mtime as NOT dirty:\n\n    None => false,\n\nso a file whose metadata cannot be read is never re-indexed - the opposite of the rule the polyglot pass states in its own comment (\"an absent timestamp must not read as unchanged\"). Not fixed at the time because it was outside the GB-302 change; recorded here before the detail was lost.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794119329203
+    }
+  ]
+}

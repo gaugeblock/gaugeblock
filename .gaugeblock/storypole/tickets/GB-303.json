@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "e4d2de93-24b3-4b18-b881-356f0b70dd78",
+    "ticket_key": "GB-303",
+    "slug": "auto-index-refresh-costs-3-2s-because-it-rewrites-the-whole-database-to-persist-a-few-changed-rows-e4d2de",
+    "title": "Auto-index refresh costs 3.2s because it rewrites the whole database to persist a few changed rows",
+    "description": "",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_engine::persist::save_redb_into"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794087169091,
+    "updated_at_epoch_ms": 1794087169091
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "e4d2de93-24b3-4b18-b881-356f0b70dd78",
+        "ticket_key": "GB-303",
+        "slug": "auto-index-refresh-costs-3-2s-because-it-rewrites-the-whole-database-to-persist-a-few-changed-rows-e4d2de",
+        "title": "Auto-index refresh costs 3.2s because it rewrites the whole database to persist a few changed rows",
+        "description": "",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_engine::persist::save_redb_into"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794087169091,
+        "updated_at_epoch_ms": 1794087169091
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

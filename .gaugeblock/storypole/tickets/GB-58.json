@@ -1,0 +1,202 @@
+{
+  "ticket": {
+    "id": "5cfd04c4-3006-41e7-879d-37884de6d077",
+    "ticket_key": "GB-58",
+    "slug": "multi-repo-storypole-rollout-and-task-distribution-across-suite-repositories-5cfd04",
+    "title": "Multi-Repo Storypole Rollout and Task Distribution across Suite Repositories",
+    "description": "Stage and commit local .storypole/ ledgers across all member repositories, migrate scoped tasks from root ledger to child repos, and preserve design plans.",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": "workspace",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "workspace,multirepo,rollout"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "Staged rollout and migration of storypole ledgers and plans across 10 member repositories",
+      "design_markdown": "# GB-58: Multi-Repo Storypole Rollout and Task Distribution across Suite Repositories\n\n> **Status:** Ready  \n> **Target Scope:** `workspace` (all 10 member repositories)  \n> **Key Invariants:**  \n> 1. Standalone Autonomy: Every repository must have its own `.storypole/` committed to Git with its canonical prefix.  \n> 2. Zero Working Tree Pollution: Each member repository must be cleanly versioned without untracked files.  \n> 3. Traceability: Scoped tasks and plans must be properly preserved during migration.  \n> 4. Non-breaking: Root workspace ledger retains workspace-level and cross-cutting epics.  \n\n---\n\n## 1. Executive Summary & Rollout Strategy\n\nWith `GB-57` having delivered the multi-repo engine capabilities to `storypole`, `GB-58` executes the staged rollout across the 10 member repositories:\n1. Initialize and commit `.storypole/` configurations in each member repository with its canonical prefix:\n   * `batten`: `BA`\n   * `benchwork`: `BW`\n   * `chalkline`: `CH`\n   * `dado`: `DA`\n   * `joiner`: `JN`\n   * `miter`: `MTR`\n   * `outfeed`: `OF`\n   * `rabbet`: `RB`\n   * `sawhorse`: `SH`\n   * `storypole`: `SP`\n2. Distribute scoped tasks from the meta-harness root ledger into their respective repository ledgers.\n3. Migrate attached design plans (`plans/*.md`) to member repositories.\n4. Verify workspace rollups and standalone CLI operations across all 10 repositories.\n\n---\n\n## 2. Execution Steps\n\n### Step 1: Stage and commit local `.storypole/` configuration in each member repository\n* In each of the 9 remaining member repositories, initialize `.storypole/config.toml`, `.gitignore`, and `ledger.jsonl`.\n* Commit cleanly in each repository's Git history: `chore(storypole): initialize local backlog store with prefix <PREFIX>`.\n* *Verification Gate:* `for d in batten benchwork chalkline dado joiner miter outfeed rabbet sawhorse storypole; do (cd $d && storypole list); done`\n\n### Step 2: Distribute scoped tasks from root ledger to member repositories\n* Run `storypole workspace distribute` to partition tasks by `scope.repo`.\n* *Verification Gate:* Tasks appear in their respective member repositories.\n\n### Step 3: Migrate associated design markdown plans to member repositories\n* Copy corresponding design plans from `.gaugeblock/storypole/plans/` into `<repo>/.storypole/plans/`.\n* Commit plan assets to the respective member repositories.\n* *Verification Gate:* `storypole plan show <KEY>` resolves from within member repositories.\n\n### Step 4: Full workspace rollup audit and clean git status check\n* Verify `storypole workspace list` reports initialized stores with accurate task counts.\n* Verify `git status` across all 10 repositories and meta-harness root is completely clean.\n* *Verification Gate:* `git status -s` is clean across all 10 repos.\n",
+      "steps": [
+        {
+          "step_id": "step-1",
+          "title": "Stage and commit local .storypole/ configuration in each member repository",
+          "target_files": [],
+          "verification_gate": "for d in batten benchwork chalkline dado joiner miter outfeed rabbet sawhorse storypole; do (cd $d && storypole list); done",
+          "completed": false
+        },
+        {
+          "step_id": "step-2",
+          "title": "Distribute scoped tasks from root ledger to member repositories",
+          "target_files": [],
+          "verification_gate": "storypole workspace distribute",
+          "completed": false
+        },
+        {
+          "step_id": "step-3",
+          "title": "Migrate associated design markdown plans to member repositories",
+          "target_files": [],
+          "verification_gate": "test -d benchwork/.storypole/plans",
+          "completed": false
+        },
+        {
+          "step_id": "step-4",
+          "title": "Full workspace rollup audit and clean git status check",
+          "target_files": [],
+          "verification_gate": "storypole workspace list",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-58.md",
+      "updated_at_epoch_ms": 1793003856683
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Completed rollout of local .storypole/ configurations, task distribution, and design plan migration across all 10 member repositories",
+      "verified_at_epoch_ms": 1793003947869,
+      "git_branch": "main",
+      "base_commit_sha": "b08be24d8402d3c813355053be4e096509ea379e",
+      "head_commit_sha": "b08be24d8402d3c813355053be4e096509ea379e",
+      "commit_shas": [
+        "b08be24d8402d3c813355053be4e096509ea379e"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793003827619,
+    "updated_at_epoch_ms": 1794037968911,
+    "archived_at_epoch_ms": 1794037968911
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "5cfd04c4-3006-41e7-879d-37884de6d077",
+        "ticket_key": "GB-58",
+        "slug": "multi-repo-storypole-rollout-and-task-distribution-across-suite-repositories-5cfd04",
+        "title": "Multi-Repo Storypole Rollout and Task Distribution across Suite Repositories",
+        "description": "Stage and commit local .storypole/ ledgers across all member repositories, migrate scoped tasks from root ledger to child repos, and preserve design plans.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": "workspace",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "workspace,multirepo,rollout"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793003827619,
+        "updated_at_epoch_ms": 1793003827619
+      }
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "5cfd04c4-3006-41e7-879d-37884de6d077",
+      "plan": {
+        "summary": "Staged rollout and migration of storypole ledgers and plans across 10 member repositories",
+        "design_markdown": "# GB-58: Multi-Repo Storypole Rollout and Task Distribution across Suite Repositories\n\n> **Status:** Ready  \n> **Target Scope:** `workspace` (all 10 member repositories)  \n> **Key Invariants:**  \n> 1. Standalone Autonomy: Every repository must have its own `.storypole/` committed to Git with its canonical prefix.  \n> 2. Zero Working Tree Pollution: Each member repository must be cleanly versioned without untracked files.  \n> 3. Traceability: Scoped tasks and plans must be properly preserved during migration.  \n> 4. Non-breaking: Root workspace ledger retains workspace-level and cross-cutting epics.  \n\n---\n\n## 1. Executive Summary & Rollout Strategy\n\nWith `GB-57` having delivered the multi-repo engine capabilities to `storypole`, `GB-58` executes the staged rollout across the 10 member repositories:\n1. Initialize and commit `.storypole/` configurations in each member repository with its canonical prefix:\n   * `batten`: `BA`\n   * `benchwork`: `BW`\n   * `chalkline`: `CH`\n   * `dado`: `DA`\n   * `joiner`: `JN`\n   * `miter`: `MTR`\n   * `outfeed`: `OF`\n   * `rabbet`: `RB`\n   * `sawhorse`: `SH`\n   * `storypole`: `SP`\n2. Distribute scoped tasks from the meta-harness root ledger into their respective repository ledgers.\n3. Migrate attached design plans (`plans/*.md`) to member repositories.\n4. Verify workspace rollups and standalone CLI operations across all 10 repositories.\n\n---\n\n## 2. Execution Steps\n\n### Step 1: Stage and commit local `.storypole/` configuration in each member repository\n* In each of the 9 remaining member repositories, initialize `.storypole/config.toml`, `.gitignore`, and `ledger.jsonl`.\n* Commit cleanly in each repository's Git history: `chore(storypole): initialize local backlog store with prefix <PREFIX>`.\n* *Verification Gate:* `for d in batten benchwork chalkline dado joiner miter outfeed rabbet sawhorse storypole; do (cd $d && storypole list); done`\n\n### Step 2: Distribute scoped tasks from root ledger to member repositories\n* Run `storypole workspace distribute` to partition tasks by `scope.repo`.\n* *Verification Gate:* Tasks appear in their respective member repositories.\n\n### Step 3: Migrate associated design markdown plans to member repositories\n* Copy corresponding design plans from `.gaugeblock/storypole/plans/` into `<repo>/.storypole/plans/`.\n* Commit plan assets to the respective member repositories.\n* *Verification Gate:* `storypole plan show <KEY>` resolves from within member repositories.\n\n### Step 4: Full workspace rollup audit and clean git status check\n* Verify `storypole workspace list` reports initialized stores with accurate task counts.\n* Verify `git status` across all 10 repositories and meta-harness root is completely clean.\n* *Verification Gate:* `git status -s` is clean across all 10 repos.\n",
+        "steps": [
+          {
+            "step_id": "step-1",
+            "title": "Stage and commit local .storypole/ configuration in each member repository",
+            "target_files": [],
+            "verification_gate": "for d in batten benchwork chalkline dado joiner miter outfeed rabbet sawhorse storypole; do (cd $d && storypole list); done",
+            "completed": false
+          },
+          {
+            "step_id": "step-2",
+            "title": "Distribute scoped tasks from root ledger to member repositories",
+            "target_files": [],
+            "verification_gate": "storypole workspace distribute",
+            "completed": false
+          },
+          {
+            "step_id": "step-3",
+            "title": "Migrate associated design markdown plans to member repositories",
+            "target_files": [],
+            "verification_gate": "test -d benchwork/.storypole/plans",
+            "completed": false
+          },
+          {
+            "step_id": "step-4",
+            "title": "Full workspace rollup audit and clean git status check",
+            "target_files": [],
+            "verification_gate": "storypole workspace list",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-58.md",
+        "updated_at_epoch_ms": 1793003856683
+      },
+      "timestamp_ms": 1793003856683
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "5cfd04c4-3006-41e7-879d-37884de6d077",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1793003869760,
+        "lease_expires_at_epoch_ms": 1793007469760,
+        "git_branch": "main",
+        "base_commit_sha": "b08be24d8402d3c813355053be4e096509ea379e"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "5cfd04c4-3006-41e7-879d-37884de6d077",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1793003869760
+    },
+    {
+      "event": "task_verified",
+      "task_id": "5cfd04c4-3006-41e7-879d-37884de6d077",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Completed rollout of local .storypole/ configurations, task distribution, and design plan migration across all 10 member repositories",
+        "verified_at_epoch_ms": 1793003947869,
+        "git_branch": "main",
+        "base_commit_sha": "b08be24d8402d3c813355053be4e096509ea379e",
+        "head_commit_sha": "b08be24d8402d3c813355053be4e096509ea379e",
+        "commit_shas": [
+          "b08be24d8402d3c813355053be4e096509ea379e"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "5cfd04c4-3006-41e7-879d-37884de6d077",
+      "status": "verified",
+      "timestamp_ms": 1794037968911
+    }
+  ]
+}

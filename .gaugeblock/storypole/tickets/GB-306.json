@@ -1,0 +1,81 @@
+{
+  "ticket": {
+    "id": "06b4b0df-6192-4606-9613-3ff25b99e538",
+    "ticket_key": "GB-306",
+    "slug": "outfeed-gate-law-12-regression-warnings-from-the-telemetry-baseline-06b4b0",
+    "title": "outfeed gate: Law 12 regression warnings from the telemetry baseline",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "outfeed_core::gate"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "SCOPE 2026-11-07, from the flight-recorder alignment recorded in plans/GB-243.md section 12.3. First of four runtime consumers the spans unlock.\n\nWHAT: when `outfeed gate` runs a step, compare its duration against the rolling baseline for that (repo, step) pair from `.gaugeblock/telemetry/index.sqlite`, and print an inline warning when it regresses plainly - the stated threshold is more than twice the rolling P50 and more than a 500 ms absolute delta (so a 3 ms step becoming 8 ms does not warn).\n\nWHY THE THRESHOLDS ARE DOUBLE: a Law 12 warning that fires on noise teaches people to ignore warnings, which is worse than no warning. The absolute delta exists so tiny steps cannot trigger on ratio alone; the ratio exists so a genuinely slow step cannot hide under the absolute floor.\n\nMINIMUM HISTORY, which is the part most likely to be skipped: a step with too few samples must say nothing rather than guess. \"Too few\" needs a written number (the design discussion suggests a rolling window and a minimum sample count) and the warning must print the sample count it used, so a reader can tell a baseline of 30 runs from a baseline of 3.\n\nWHERE THE DATA COMES FROM: benchwork indexes spans into `.gaugeblock/telemetry/index.sqlite` (GB-243). A gate that reads that index couples itself to a file another process writes, so the read must tolerate a missing table, a database held open, and an empty window - each of those cases ends in \"no warning\", never in a failed gate. A performance advisory must never be able to fail a build.\n\nNOTE ON AUTHORITY: law 12 requires that performance claims be measured. This ticket makes regression visible at the moment it happens rather than in a postmortem, which is the same law applied forward.\n\nDone when: a deliberately slowed step warns with its sample count and the observed/P50 ratio, an unchanged step prints nothing, a gate run on a tree with no telemetry history behaves exactly as today, and none of those cases can fail the gate."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794091035074,
+    "updated_at_epoch_ms": 1794091048994
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "06b4b0df-6192-4606-9613-3ff25b99e538",
+        "ticket_key": "GB-306",
+        "slug": "outfeed-gate-law-12-regression-warnings-from-the-telemetry-baseline-06b4b0",
+        "title": "outfeed gate: Law 12 regression warnings from the telemetry baseline",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "outfeed_core::gate"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794091035074,
+        "updated_at_epoch_ms": 1794091035074
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "06b4b0df-6192-4606-9613-3ff25b99e538",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "SCOPE 2026-11-07, from the flight-recorder alignment recorded in plans/GB-243.md section 12.3. First of four runtime consumers the spans unlock.\n\nWHAT: when `outfeed gate` runs a step, compare its duration against the rolling baseline for that (repo, step) pair from `.gaugeblock/telemetry/index.sqlite`, and print an inline warning when it regresses plainly - the stated threshold is more than twice the rolling P50 and more than a 500 ms absolute delta (so a 3 ms step becoming 8 ms does not warn).\n\nWHY THE THRESHOLDS ARE DOUBLE: a Law 12 warning that fires on noise teaches people to ignore warnings, which is worse than no warning. The absolute delta exists so tiny steps cannot trigger on ratio alone; the ratio exists so a genuinely slow step cannot hide under the absolute floor.\n\nMINIMUM HISTORY, which is the part most likely to be skipped: a step with too few samples must say nothing rather than guess. \"Too few\" needs a written number (the design discussion suggests a rolling window and a minimum sample count) and the warning must print the sample count it used, so a reader can tell a baseline of 30 runs from a baseline of 3.\n\nWHERE THE DATA COMES FROM: benchwork indexes spans into `.gaugeblock/telemetry/index.sqlite` (GB-243). A gate that reads that index couples itself to a file another process writes, so the read must tolerate a missing table, a database held open, and an empty window - each of those cases ends in \"no warning\", never in a failed gate. A performance advisory must never be able to fail a build.\n\nNOTE ON AUTHORITY: law 12 requires that performance claims be measured. This ticket makes regression visible at the moment it happens rather than in a postmortem, which is the same law applied forward.\n\nDone when: a deliberately slowed step warns with its sample count and the observed/P50 ratio, an unchanged step prints nothing, a gate run on a tree with no telemetry history behaves exactly as today, and none of those cases can fail the gate."
+      ],
+      "timestamp_ms": 1794091048994
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "06fe5cc9-e058-4603-b29c-d0e180e1a1fe",
+    "ticket_key": "GB-265",
+    "slug": "aggregate-member-ledgers-into-list-show-and-route-writes-by-ticket-key-06fe5c",
+    "title": "Aggregate member ledgers into list/show and route writes by ticket key",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::ledger::audit"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793997926152,
+    "updated_at_epoch_ms": 1793997926152
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "06fe5cc9-e058-4603-b29c-d0e180e1a1fe",
+        "ticket_key": "GB-265",
+        "slug": "aggregate-member-ledgers-into-list-show-and-route-writes-by-ticket-key-06fe5c",
+        "title": "Aggregate member ledgers into list/show and route writes by ticket key",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::ledger::audit"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793997926152,
+        "updated_at_epoch_ms": 1793997926152
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

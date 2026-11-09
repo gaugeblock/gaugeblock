@@ -1,0 +1,158 @@
+{
+  "ticket": {
+    "id": "ccd9fd6c-98b6-4b3a-a2fe-a924716b12f9",
+    "ticket_key": "GB-90",
+    "slug": "workspace-root-9-doc-architecture-suite-index-ccd9fd",
+    "title": "Workspace Root 9-Doc Architecture & Suite Index",
+    "description": "Update root README.md, fix joiner URL, update documentation index, resolve CHANGELOG.md unreleased drift, and pass chalkline docs check on root meta-harness.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": "workspace",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "parent_epic",
+        "target_id": "b8bcaa0f-5c8d-42cb-88b5-c23d9f0a0180",
+        "target_ticket_key": "GB-86",
+        "target_repo": "workspace"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "Workspace Root 9-Doc Architecture & Suite Index",
+      "design_markdown": "# GB-90: Workspace Root 9-Doc Architecture & Suite Index\n\n## Scope\nRoot meta-harness (`neurosymbolic-suite`).\n\n## Execution Steps\n1. **Branch Isolation:**\n   - Create and checkout `docs/readme-standardization` in the meta-harness root.\n2. **README.md:**\n   - Update `README.md` ecosystem table: fix joiner GitHub URL to `https://github.com/gaugeblock/joiner`, update tool roles and descriptions.\n   - Cross-link all 9 canonical docs (`AGENTS.md`, `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTRACTS.md`, `CONTRIBUTING.md`, `DESIGN.md`, `PRODUCT.md`, `ROADMAP.md`, `SPEC.md`).\n   - Add documentation navigation index pointing to member repo 9-docs.\n3. **CHANGELOG.md:**\n   - Add `## [Unreleased]` section to root `CHANGELOG.md`.\n4. **Verification Gate:**\n   - Run `chalkline docs check` on the root workspace: verify 0 missing, 0 drifted.\n5. **Atomic Commit:**\n   - Stage and commit root changes: `docs(workspace): update root README and align 9-doc suite index`.\n",
+      "steps": [],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-90.md",
+      "updated_at_epoch_ms": 1793067038424
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "agent-antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Updated root README.md, fixed joiner link, aligned 9-document architecture index, added CHANGELOG unreleased marker, and verified 0 missing 0 drifted",
+      "verified_at_epoch_ms": 1793067540360,
+      "git_branch": "docs/readme-standardization",
+      "base_commit_sha": "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7",
+      "head_commit_sha": "e83d2e2970821a9e3c2d403edeca9091a97788c7",
+      "commit_shas": [
+        "e83d2e2970821a9e3c2d403edeca9091a97788c7"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793066956883,
+    "updated_at_epoch_ms": 1794037974129,
+    "archived_at_epoch_ms": 1794037974129
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "ccd9fd6c-98b6-4b3a-a2fe-a924716b12f9",
+        "ticket_key": "GB-90",
+        "slug": "workspace-root-9-doc-architecture-suite-index-ccd9fd",
+        "title": "Workspace Root 9-Doc Architecture & Suite Index",
+        "description": "Update root README.md, fix joiner URL, update documentation index, resolve CHANGELOG.md unreleased drift, and pass chalkline docs check on root meta-harness.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": "workspace",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793066956883,
+        "updated_at_epoch_ms": 1793066956883
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "ccd9fd6c-98b6-4b3a-a2fe-a924716b12f9",
+      "edge": {
+        "kind": "parent_epic",
+        "target_id": "b8bcaa0f-5c8d-42cb-88b5-c23d9f0a0180",
+        "target_ticket_key": "GB-86",
+        "target_repo": "workspace"
+      },
+      "timestamp_ms": 1793066963880
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "ccd9fd6c-98b6-4b3a-a2fe-a924716b12f9",
+      "plan": {
+        "summary": "Workspace Root 9-Doc Architecture & Suite Index",
+        "design_markdown": "# GB-90: Workspace Root 9-Doc Architecture & Suite Index\n\n## Scope\nRoot meta-harness (`neurosymbolic-suite`).\n\n## Execution Steps\n1. **Branch Isolation:**\n   - Create and checkout `docs/readme-standardization` in the meta-harness root.\n2. **README.md:**\n   - Update `README.md` ecosystem table: fix joiner GitHub URL to `https://github.com/gaugeblock/joiner`, update tool roles and descriptions.\n   - Cross-link all 9 canonical docs (`AGENTS.md`, `ARCHITECTURE.md`, `CHANGELOG.md`, `CONTRACTS.md`, `CONTRIBUTING.md`, `DESIGN.md`, `PRODUCT.md`, `ROADMAP.md`, `SPEC.md`).\n   - Add documentation navigation index pointing to member repo 9-docs.\n3. **CHANGELOG.md:**\n   - Add `## [Unreleased]` section to root `CHANGELOG.md`.\n4. **Verification Gate:**\n   - Run `chalkline docs check` on the root workspace: verify 0 missing, 0 drifted.\n5. **Atomic Commit:**\n   - Stage and commit root changes: `docs(workspace): update root README and align 9-doc suite index`.\n",
+        "steps": [],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-90.md",
+        "updated_at_epoch_ms": 1793067038424
+      },
+      "timestamp_ms": 1793067038424
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "ccd9fd6c-98b6-4b3a-a2fe-a924716b12f9",
+      "claim": {
+        "agent_id": "agent-antigravity",
+        "claimed_at_epoch_ms": 1793067471246,
+        "lease_expires_at_epoch_ms": 1793071071246,
+        "git_branch": "docs/readme-standardization",
+        "base_commit_sha": "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "ccd9fd6c-98b6-4b3a-a2fe-a924716b12f9",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by agent-antigravity",
+      "timestamp_ms": 1793067471246
+    },
+    {
+      "event": "task_verified",
+      "task_id": "ccd9fd6c-98b6-4b3a-a2fe-a924716b12f9",
+      "receipt": {
+        "verifier": "agent-antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Updated root README.md, fixed joiner link, aligned 9-document architecture index, added CHANGELOG unreleased marker, and verified 0 missing 0 drifted",
+        "verified_at_epoch_ms": 1793067540360,
+        "git_branch": "docs/readme-standardization",
+        "base_commit_sha": "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7",
+        "head_commit_sha": "e83d2e2970821a9e3c2d403edeca9091a97788c7",
+        "commit_shas": [
+          "e83d2e2970821a9e3c2d403edeca9091a97788c7"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "ccd9fd6c-98b6-4b3a-a2fe-a924716b12f9",
+      "status": "verified",
+      "timestamp_ms": 1794037974129
+    }
+  ]
+}

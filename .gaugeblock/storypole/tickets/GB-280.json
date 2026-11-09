@@ -1,0 +1,99 @@
+{
+  "ticket": {
+    "id": "f4892770-58b4-4724-a988-3f4a09882e4c",
+    "ticket_key": "GB-280",
+    "slug": "miter-impact-changed-map-a-git-diff-to-impacted-symbols-entrypoints-and-tests-f48927",
+    "title": "miter impact --changed: map a git diff to impacted symbols, entrypoints and tests",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_engine::impact"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "EVIDENCE 2026-11-06: the miss that mattered. Adding a Chore variant to TaskKind required edits in five files - the enum",
+      " CLI parsing",
+      " the KIND_NAMES array (which also needed its arity fixed)",
+      " MCP dispatch and the MCP JSON schema. I found them by compiling and reading errors",
+      " and 'miter impact TaskKind' would have listed every exhaustive match in one call before I touched anything. Impact exists and answers exactly that question; the friction was that I did not think of it because the edit felt small.\\n\\nPROPOSED: 'miter impact --changed [--since <rev>]' that takes a git diff and reports impacted symbols",
+      " entrypoints and the affected test selector - asking 'what did I just break' instead of 'what breaks if I change X'. For an agent mid-task that is the question that actually gets asked",
+      " and answering it from the index is faster and cheaper than a compiler round trip.\\n\\nACCEPTANCE: after an edit",
+      " one invocation names the symbols whose signatures or exhaustiveness changed",
+      " the tests that cover them",
+      " and the crates affected; on a clean tree it reports nothing."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794007645912,
+    "updated_at_epoch_ms": 1794007653045
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "f4892770-58b4-4724-a988-3f4a09882e4c",
+        "ticket_key": "GB-280",
+        "slug": "miter-impact-changed-map-a-git-diff-to-impacted-symbols-entrypoints-and-tests-f48927",
+        "title": "miter impact --changed: map a git diff to impacted symbols, entrypoints and tests",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_engine::impact"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794007645912,
+        "updated_at_epoch_ms": 1794007645912
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "f4892770-58b4-4724-a988-3f4a09882e4c",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "EVIDENCE 2026-11-06: the miss that mattered. Adding a Chore variant to TaskKind required edits in five files - the enum",
+        " CLI parsing",
+        " the KIND_NAMES array (which also needed its arity fixed)",
+        " MCP dispatch and the MCP JSON schema. I found them by compiling and reading errors",
+        " and 'miter impact TaskKind' would have listed every exhaustive match in one call before I touched anything. Impact exists and answers exactly that question; the friction was that I did not think of it because the edit felt small.\\n\\nPROPOSED: 'miter impact --changed [--since <rev>]' that takes a git diff and reports impacted symbols",
+        " entrypoints and the affected test selector - asking 'what did I just break' instead of 'what breaks if I change X'. For an agent mid-task that is the question that actually gets asked",
+        " and answering it from the index is faster and cheaper than a compiler round trip.\\n\\nACCEPTANCE: after an edit",
+        " one invocation names the symbols whose signatures or exhaustiveness changed",
+        " the tests that cover them",
+        " and the crates affected; on a clean tree it reports nothing."
+      ],
+      "timestamp_ms": 1794007653045
+    }
+  ]
+}

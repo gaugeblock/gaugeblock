@@ -1,0 +1,115 @@
+{
+  "ticket": {
+    "id": "191bbd67-fd6c-4379-a6da-28679704eb74",
+    "ticket_key": "GB-268",
+    "slug": "every-repo-has-empty-verification-commands-so-storypole-verify-runs-nothing-and-records-a-manual-receipt-191bbd",
+    "title": "Every repo has empty verification_commands, so storypole verify runs nothing and records a manual receipt",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::config::StorypoleConfig"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "AUDIT 2026-11-06 (config accuracy",
+      " after migration). Measured across the ten repos plus the suite root.\\n\\nCORRECT: ticket_prefix is distinct and right everywhere - RB DA CH SP MTR JN BA OF SH BW",
+      " root GB. claim_ttl_minutes is 60 everywhere.\\n\\nHOLE 1 - verification_commands is [] in all eleven configs",
+      " so storypole verify executes nothing and records verifier: manual. The completion gate is decorative",
+      " which is precisely the gap AGENTS.md Tier 2/3 assumes is filled. Recommended per repo: [[\"fmt\"",
+      " \"cargo fmt --all -- --check\"]",
+      " [\"clippy\"",
+      " \"cargo clippy --workspace --all-targets -- -D warnings\"]",
+      " [\"tests\"",
+      " \"cargo nextest run --workspace\"]",
+      " [\"docs\"",
+      " \"chalkline docs check -d <repo>\"]] with the repo name substituted; root gets the GB-wide equivalents (--workspace / miter contracts / outfeed lockfiles / chalkline docs check --workspace). NOTE the field is Vec<(String",
+      " String)>",
+      " so the TOML shape is an array of two-element arrays - confirm against the deserialiser before writing eleven files.\\n\\nHOLE 2 - allowed_repos is [] in nine repos and [\"storypole\"] in one. Empty means unrestricted (config.rs:101 skips the check entirely when empty)",
+      " so this is not a bug but it is not a policy either: nine repos accept work scoped to any repository. Recommendation: member repos scope to themselves ([\"<repo>\"])",
+      " matching storypole and matching how each repo stands alone per law 2; the suite root stays unrestricted because that is where cross-repo work is filed. allowed_crates is [] everywhere and appears unenforced - decide whether to populate or retire it.\\n\\nFIX AT THE GENERATOR",
+      " not by hand: storypole_cli workspace_cmds.rs:82 already writes allowed_repos: vec![member.name.clone()] when scaffolding members",
+      " so the writer is the right place to emit accurate values. Eleven hand-edits would drift again on the next scaffold."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793999768853,
+    "updated_at_epoch_ms": 1793999769031
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "191bbd67-fd6c-4379-a6da-28679704eb74",
+        "ticket_key": "GB-268",
+        "slug": "every-repo-has-empty-verification-commands-so-storypole-verify-runs-nothing-and-records-a-manual-receipt-191bbd",
+        "title": "Every repo has empty verification_commands, so storypole verify runs nothing and records a manual receipt",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::config::StorypoleConfig"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793999768853,
+        "updated_at_epoch_ms": 1793999768853
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "191bbd67-fd6c-4379-a6da-28679704eb74",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "AUDIT 2026-11-06 (config accuracy",
+        " after migration). Measured across the ten repos plus the suite root.\\n\\nCORRECT: ticket_prefix is distinct and right everywhere - RB DA CH SP MTR JN BA OF SH BW",
+        " root GB. claim_ttl_minutes is 60 everywhere.\\n\\nHOLE 1 - verification_commands is [] in all eleven configs",
+        " so storypole verify executes nothing and records verifier: manual. The completion gate is decorative",
+        " which is precisely the gap AGENTS.md Tier 2/3 assumes is filled. Recommended per repo: [[\"fmt\"",
+        " \"cargo fmt --all -- --check\"]",
+        " [\"clippy\"",
+        " \"cargo clippy --workspace --all-targets -- -D warnings\"]",
+        " [\"tests\"",
+        " \"cargo nextest run --workspace\"]",
+        " [\"docs\"",
+        " \"chalkline docs check -d <repo>\"]] with the repo name substituted; root gets the GB-wide equivalents (--workspace / miter contracts / outfeed lockfiles / chalkline docs check --workspace). NOTE the field is Vec<(String",
+        " String)>",
+        " so the TOML shape is an array of two-element arrays - confirm against the deserialiser before writing eleven files.\\n\\nHOLE 2 - allowed_repos is [] in nine repos and [\"storypole\"] in one. Empty means unrestricted (config.rs:101 skips the check entirely when empty)",
+        " so this is not a bug but it is not a policy either: nine repos accept work scoped to any repository. Recommendation: member repos scope to themselves ([\"<repo>\"])",
+        " matching storypole and matching how each repo stands alone per law 2; the suite root stays unrestricted because that is where cross-repo work is filed. allowed_crates is [] everywhere and appears unenforced - decide whether to populate or retire it.\\n\\nFIX AT THE GENERATOR",
+        " not by hand: storypole_cli workspace_cmds.rs:82 already writes allowed_repos: vec![member.name.clone()] when scaffolding members",
+        " so the writer is the right place to emit accurate values. Eleven hand-edits would drift again on the next scaffold."
+      ],
+      "timestamp_ms": 1793999769031
+    }
+  ]
+}

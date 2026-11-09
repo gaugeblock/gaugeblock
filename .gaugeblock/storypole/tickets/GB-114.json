@@ -1,0 +1,198 @@
+{
+  "ticket": {
+    "id": "150580f0-de24-4825-985d-b5565297c041",
+    "ticket_key": "GB-114",
+    "slug": "inference-cad-workbench-training-delivery-documentation-overhaul-sawhorse-rabbet-benchwork-outfeed-150580",
+    "title": "Inference, CAD Workbench, Training & Delivery Documentation Overhaul (Sawhorse, Rabbet, Benchwork, Outfeed)",
+    "description": "Transform documentation for sawhorse, rabbet, benchwork, and outfeed with comprehensive provider architectures, telemetry schemas, React CAD console diagrams, release orchestration pipelines, ADRs, and AGENTS.md laws",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "GB-114: Inference, CAD Workbench, Training & Delivery Documentation Overhaul (Sawhorse, Rabbet, Benchwork, Outfeed)",
+      "design_markdown": "# GB-114: Inference, CAD Workbench, Training & Delivery Documentation Overhaul (Sawhorse, Rabbet, Benchwork, Outfeed)\n\n## Architectural Directives & Mandatory Exemplar\n1. **Mandatory Exemplar Requirement:** The implementing agent MUST read and align with `miter/README.md` and `miter/AGENTS.md` as the gold standard. Every repository document set must deliver matching depth:\n   - `README.md`: Woodworking metaphor, badges, \"Why X?\" without/with tables, real console walkthroughs, complete CLI/MCP references.\n   - `PRODUCT.md`: Distinct user personas, acute friction points, JTBD, telemetry metrics.\n   - `ARCHITECTURE.md`: High-density Mermaid diagrams, crate boundaries, storage/runtime pipelines, cross-tool contracts.\n   - `SPEC.md`: Formal behavioral invariants, state machines, algebraic wire types, CLI grammar/exit codes.\n   - `DESIGN.md`: Minimum 3 concrete ADRs with Context, Decision, Consequences, and Rejected Alternatives.\n   - `AGENTS.md`: Full non-negotiable engineering laws (hard 250 LOC, zero inline scope creep with `storypole defer`, Tiered Verification Gates, conventional commits, branch isolation) plus domain-specific invariant rules.\n   - `CONTRIBUTING.md`: Precise Rust 2024 toolchain, inner loop commands, clippy/fmt rules.\n   - `ROADMAP.md`: Active beta lifecycle status, completed milestones, future horizons mapped to Storypole.\n   - `CHANGELOG.md`: Strict Keep a Changelog with active `[Unreleased]`.\n\n## Phased Execution Steps\n1. `gb-115-sawhorse-docs` | Elevate sawhorse across all 9 canonical docs (3-mode inference, Candle local GGUF, OpenAI-compat, SSE streaming, reasoning traces) | `chalkline docs check -d sawhorse`\n2. `gb-116-rabbet-docs` | Elevate rabbet across all 9 canonical docs (telemetry corpus hub, privacy scrubber, Parquet dataset compiler, training foundry) | `chalkline docs check -d rabbet`\n3. `gb-117-benchwork-docs` | Elevate benchwork across all 9 canonical docs (CAD workbench UI, Benji AI engineer, multi-repo aggregation, Playwright E2E) | `chalkline docs check -d benchwork`\n4. `gb-118-outfeed-docs` | Elevate outfeed across all 9 canonical docs (release orchestration, git porcelain checks, changelog synthesis, suite.lock) | `chalkline docs check -d outfeed`\n",
+      "steps": [
+        {
+          "step_id": "gb-115",
+          "title": "Elevate sawhorse across all 9 canonical docs",
+          "target_files": [],
+          "verification_gate": "chalkline docs check -d sawhorse",
+          "completed": false
+        },
+        {
+          "step_id": "gb-116",
+          "title": "Elevate rabbet across all 9 canonical docs",
+          "target_files": [],
+          "verification_gate": "chalkline docs check -d rabbet",
+          "completed": false
+        },
+        {
+          "step_id": "gb-117",
+          "title": "Elevate benchwork across all 9 canonical docs",
+          "target_files": [],
+          "verification_gate": "chalkline docs check -d benchwork",
+          "completed": false
+        },
+        {
+          "step_id": "gb-118",
+          "title": "Elevate outfeed across all 9 canonical docs",
+          "target_files": [],
+          "verification_gate": "chalkline docs check -d outfeed",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-114.md",
+      "updated_at_epoch_ms": 1793150438596
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1793161118846,
+      "git_branch": "main",
+      "base_commit_sha": "a71e02c00a58fa5229fe406e5667db9e793b2981",
+      "head_commit_sha": "72f7b71a2b37d1d04ad7af508065dc48a27c9ad0",
+      "commit_shas": [
+        "72f7b71a2b37d1d04ad7af508065dc48a27c9ad0"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793149853975,
+    "updated_at_epoch_ms": 1794037978330,
+    "archived_at_epoch_ms": 1794037978330
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "150580f0-de24-4825-985d-b5565297c041",
+        "ticket_key": "GB-114",
+        "slug": "inference-cad-workbench-training-delivery-documentation-overhaul-sawhorse-rabbet-benchwork-outfeed-150580",
+        "title": "Inference, CAD Workbench, Training & Delivery Documentation Overhaul (Sawhorse, Rabbet, Benchwork, Outfeed)",
+        "description": "Transform documentation for sawhorse, rabbet, benchwork, and outfeed with comprehensive provider architectures, telemetry schemas, React CAD console diagrams, release orchestration pipelines, ADRs, and AGENTS.md laws",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793149853975,
+        "updated_at_epoch_ms": 1793149853975
+      }
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "150580f0-de24-4825-985d-b5565297c041",
+      "plan": {
+        "summary": "GB-114: Inference, CAD Workbench, Training & Delivery Documentation Overhaul (Sawhorse, Rabbet, Benchwork, Outfeed)",
+        "design_markdown": "# GB-114: Inference, CAD Workbench, Training & Delivery Documentation Overhaul (Sawhorse, Rabbet, Benchwork, Outfeed)\n\n## Architectural Directives & Mandatory Exemplar\n1. **Mandatory Exemplar Requirement:** The implementing agent MUST read and align with `miter/README.md` and `miter/AGENTS.md` as the gold standard. Every repository document set must deliver matching depth:\n   - `README.md`: Woodworking metaphor, badges, \"Why X?\" without/with tables, real console walkthroughs, complete CLI/MCP references.\n   - `PRODUCT.md`: Distinct user personas, acute friction points, JTBD, telemetry metrics.\n   - `ARCHITECTURE.md`: High-density Mermaid diagrams, crate boundaries, storage/runtime pipelines, cross-tool contracts.\n   - `SPEC.md`: Formal behavioral invariants, state machines, algebraic wire types, CLI grammar/exit codes.\n   - `DESIGN.md`: Minimum 3 concrete ADRs with Context, Decision, Consequences, and Rejected Alternatives.\n   - `AGENTS.md`: Full non-negotiable engineering laws (hard 250 LOC, zero inline scope creep with `storypole defer`, Tiered Verification Gates, conventional commits, branch isolation) plus domain-specific invariant rules.\n   - `CONTRIBUTING.md`: Precise Rust 2024 toolchain, inner loop commands, clippy/fmt rules.\n   - `ROADMAP.md`: Active beta lifecycle status, completed milestones, future horizons mapped to Storypole.\n   - `CHANGELOG.md`: Strict Keep a Changelog with active `[Unreleased]`.\n\n## Phased Execution Steps\n1. `gb-115-sawhorse-docs` | Elevate sawhorse across all 9 canonical docs (3-mode inference, Candle local GGUF, OpenAI-compat, SSE streaming, reasoning traces) | `chalkline docs check -d sawhorse`\n2. `gb-116-rabbet-docs` | Elevate rabbet across all 9 canonical docs (telemetry corpus hub, privacy scrubber, Parquet dataset compiler, training foundry) | `chalkline docs check -d rabbet`\n3. `gb-117-benchwork-docs` | Elevate benchwork across all 9 canonical docs (CAD workbench UI, Benji AI engineer, multi-repo aggregation, Playwright E2E) | `chalkline docs check -d benchwork`\n4. `gb-118-outfeed-docs` | Elevate outfeed across all 9 canonical docs (release orchestration, git porcelain checks, changelog synthesis, suite.lock) | `chalkline docs check -d outfeed`\n",
+        "steps": [
+          {
+            "step_id": "gb-115",
+            "title": "Elevate sawhorse across all 9 canonical docs",
+            "target_files": [],
+            "verification_gate": "chalkline docs check -d sawhorse",
+            "completed": false
+          },
+          {
+            "step_id": "gb-116",
+            "title": "Elevate rabbet across all 9 canonical docs",
+            "target_files": [],
+            "verification_gate": "chalkline docs check -d rabbet",
+            "completed": false
+          },
+          {
+            "step_id": "gb-117",
+            "title": "Elevate benchwork across all 9 canonical docs",
+            "target_files": [],
+            "verification_gate": "chalkline docs check -d benchwork",
+            "completed": false
+          },
+          {
+            "step_id": "gb-118",
+            "title": "Elevate outfeed across all 9 canonical docs",
+            "target_files": [],
+            "verification_gate": "chalkline docs check -d outfeed",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-114.md",
+        "updated_at_epoch_ms": 1793150438596
+      },
+      "timestamp_ms": 1793150438596
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "150580f0-de24-4825-985d-b5565297c041",
+      "claim": {
+        "agent_id": "antigravity-agent",
+        "claimed_at_epoch_ms": 1793161097639,
+        "lease_expires_at_epoch_ms": 1793164697639,
+        "git_branch": "feat/phase4-epic",
+        "base_commit_sha": "a71e02c00a58fa5229fe406e5667db9e793b2981"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "150580f0-de24-4825-985d-b5565297c041",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity-agent",
+      "timestamp_ms": 1793161097639
+    },
+    {
+      "event": "task_verified",
+      "task_id": "150580f0-de24-4825-985d-b5565297c041",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793161118846,
+        "git_branch": "main",
+        "base_commit_sha": "a71e02c00a58fa5229fe406e5667db9e793b2981",
+        "head_commit_sha": "72f7b71a2b37d1d04ad7af508065dc48a27c9ad0",
+        "commit_shas": [
+          "72f7b71a2b37d1d04ad7af508065dc48a27c9ad0"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "150580f0-de24-4825-985d-b5565297c041",
+      "status": "verified",
+      "timestamp_ms": 1794037978330
+    }
+  ]
+}

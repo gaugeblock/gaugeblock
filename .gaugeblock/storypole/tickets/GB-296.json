@@ -1,0 +1,81 @@
+{
+  "ticket": {
+    "id": "093ff470-e34f-4374-b5bf-e738855edce4",
+    "ticket_key": "GB-296",
+    "slug": "benchwork-enhancement-sprint-repair-the-workbench-then-decide-whether-it-needs-an-overhaul-093ff4",
+    "title": "Benchwork enhancement sprint: repair the workbench, then decide whether it needs an overhaul",
+    "description": "",
+    "kind": "epic",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_core"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "PLACEHOLDER for the sprint you said you would raise later. No scope is assumed here; the measurements below exist so the conversation starts from evidence rather than from impressions.\n\nWhat is already known about the workbench not working, gathered 2026-11-06:\n- The flight recorder shows nothing because the daemon tails one repository's telemetry log and the suite is twelve repositories (GB-293, diagnosed with file paths and evidence).\n- Even with that fixed the panel would be nearly empty: sawhorse is the only span producer, and both spans in the tree are error-classified because this environment has no inference credentials (GB-294).\n- The daemon's own store view is not stale: benchwork archive-all --status verified correctly reported zero remaining after the CLI archived 221 tasks.\n\nUnknown and worth establishing before any overhaul decision: which complaints are load-path problems (the daemon not starting, then working) versus model problems (the workspace view being wrong about the suite) versus UI problems. The first two have different fixes and only the third is an overhaul. Also unmeasured: whether the suite is even shaped the way the current workbench assumes - nine of its panels read a single-repository view, and this suite is twelve repositories with a meta-harness on top (GB-293 is one instance of that mismatch, not the general case).\n\nDeliberately not started. The instruction was to bring it up later, and an overhaul begun from a bug report rather than a diagnosis is how a working tool gets replaced by a broken one."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794038110060,
+    "updated_at_epoch_ms": 1794038115746
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "093ff470-e34f-4374-b5bf-e738855edce4",
+        "ticket_key": "GB-296",
+        "slug": "benchwork-enhancement-sprint-repair-the-workbench-then-decide-whether-it-needs-an-overhaul-093ff4",
+        "title": "Benchwork enhancement sprint: repair the workbench, then decide whether it needs an overhaul",
+        "description": "",
+        "kind": "epic",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "benchwork_core"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794038110060,
+        "updated_at_epoch_ms": 1794038110060
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "093ff470-e34f-4374-b5bf-e738855edce4",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "PLACEHOLDER for the sprint you said you would raise later. No scope is assumed here; the measurements below exist so the conversation starts from evidence rather than from impressions.\n\nWhat is already known about the workbench not working, gathered 2026-11-06:\n- The flight recorder shows nothing because the daemon tails one repository's telemetry log and the suite is twelve repositories (GB-293, diagnosed with file paths and evidence).\n- Even with that fixed the panel would be nearly empty: sawhorse is the only span producer, and both spans in the tree are error-classified because this environment has no inference credentials (GB-294).\n- The daemon's own store view is not stale: benchwork archive-all --status verified correctly reported zero remaining after the CLI archived 221 tasks.\n\nUnknown and worth establishing before any overhaul decision: which complaints are load-path problems (the daemon not starting, then working) versus model problems (the workspace view being wrong about the suite) versus UI problems. The first two have different fixes and only the third is an overhaul. Also unmeasured: whether the suite is even shaped the way the current workbench assumes - nine of its panels read a single-repository view, and this suite is twelve repositories with a meta-harness on top (GB-293 is one instance of that mismatch, not the general case).\n\nDeliberately not started. The instruction was to bring it up later, and an overhaul begun from a bug report rather than a diagnosis is how a working tool gets replaced by a broken one."
+      ],
+      "timestamp_ms": 1794038115746
+    }
+  ]
+}

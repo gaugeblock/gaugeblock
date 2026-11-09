@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "4e6f2431-bcd4-4192-835c-54b2d9165523",
+    "ticket_key": "GB-288",
+    "slug": "miter-index-inside-a-member-writes-to-the-suite-root-so-the-repo-local-index-the-verify-chain-needs-cannot-be-created-without-db-4e6f24",
+    "title": "miter index inside a member writes to the suite root, so the repo-local index the verify chain needs cannot be created without --db",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_cli::index storypole_core::ops::verification"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794032245121,
+    "updated_at_epoch_ms": 1794032245121
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "4e6f2431-bcd4-4192-835c-54b2d9165523",
+        "ticket_key": "GB-288",
+        "slug": "miter-index-inside-a-member-writes-to-the-suite-root-so-the-repo-local-index-the-verify-chain-needs-cannot-be-created-without-db-4e6f24",
+        "title": "miter index inside a member writes to the suite root, so the repo-local index the verify chain needs cannot be created without --db",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_cli::index storypole_core::ops::verification"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794032245121,
+        "updated_at_epoch_ms": 1794032245121
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

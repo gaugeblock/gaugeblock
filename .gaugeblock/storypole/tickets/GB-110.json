@@ -1,0 +1,184 @@
+{
+  "ticket": {
+    "id": "18bce0d8-44d5-46f7-a936-2a5152239485",
+    "ticket_key": "GB-110",
+    "slug": "neurosymbolic-engine-grammar-documentation-overhaul-dado-batten-joiner-18bce0",
+    "title": "Neurosymbolic Engine & Grammar Documentation Overhaul (Dado, Batten, Joiner)",
+    "description": "Transform documentation for dado, batten, and joiner into best-practice, high-density references with complete AST pattern specs, CFG grammar compiler invariants, neurosymbolic repair loops, and AGENTS.md laws",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "GB-110: Neurosymbolic Engine & Grammar Documentation Overhaul (Dado, Batten, Joiner)",
+      "design_markdown": "# GB-110: Neurosymbolic Engine & Grammar Documentation Overhaul (Dado, Batten, Joiner)\n\n## Architectural Directives & Mandatory Exemplar\n1. **Mandatory Exemplar Requirement:** The implementing agent MUST read and align with `miter/README.md` and `miter/AGENTS.md` as the gold standard. Every repository document set must deliver matching depth:\n   - `README.md`: Woodworking metaphor, badges, \"Why X?\" without/with tables, real console walkthroughs, complete CLI/MCP references.\n   - `PRODUCT.md`: Distinct user personas, acute friction points, JTBD, telemetry metrics.\n   - `ARCHITECTURE.md`: High-density Mermaid diagrams, crate boundaries, storage/runtime pipelines, cross-tool contracts.\n   - `SPEC.md`: Formal behavioral invariants, state machines, algebraic wire types, CLI grammar/exit codes.\n   - `DESIGN.md`: Minimum 3 concrete ADRs with Context, Decision, Consequences, and Rejected Alternatives.\n   - `AGENTS.md`: Full non-negotiable engineering laws (hard 250 LOC, zero inline scope creep with `storypole defer`, Tiered Verification Gates, conventional commits, branch isolation) plus domain-specific invariant rules.\n   - `CONTRIBUTING.md`: Precise Rust 2024 toolchain, inner loop commands, clippy/fmt rules.\n   - `ROADMAP.md`: Active beta lifecycle status, completed milestones, future horizons mapped to Storypole.\n   - `CHANGELOG.md`: Strict Keep a Changelog with active `[Unreleased]`.\n\n## Phased Execution Steps\n1. `gb-111-dado-docs` | Elevate dado across all 9 canonical docs (polyglot AST patterns, typed holes `?[id: Type]`, structural mixins, Tree-sitter splicing) | `chalkline docs check -d dado`\n2. `gb-112-batten-docs` | Elevate batten across all 9 canonical docs (dynamic scope to CFG compiler, GBNF/Lark token masking, state machines) | `chalkline docs check -d batten`\n3. `gb-113-joiner-docs` | Elevate joiner across all 9 canonical docs (master neurosymbolic loop, System 1/2 routing, compiler error feedback repair loop) | `chalkline docs check -d joiner`\n",
+      "steps": [
+        {
+          "step_id": "gb-111",
+          "title": "Elevate dado across all 9 canonical docs",
+          "target_files": [],
+          "verification_gate": "chalkline docs check -d dado",
+          "completed": false
+        },
+        {
+          "step_id": "gb-112",
+          "title": "Elevate batten across all 9 canonical docs",
+          "target_files": [],
+          "verification_gate": "chalkline docs check -d batten",
+          "completed": false
+        },
+        {
+          "step_id": "gb-113",
+          "title": "Elevate joiner across all 9 canonical docs",
+          "target_files": [],
+          "verification_gate": "chalkline docs check -d joiner",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-110.md",
+      "updated_at_epoch_ms": 1793150428381
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Completed Phase 3: Core Synthesis Loop Documentation Overhaul (dado GB-111, batten GB-112, and joiner GB-113 all 9-doc compliant and elevated to gold standard)",
+      "verified_at_epoch_ms": 1793159740025,
+      "git_branch": "feat/phase-3-synthesis-docs",
+      "base_commit_sha": "5384777916d21d03c199d8bdd53c83c68d5a649c",
+      "head_commit_sha": "5384777916d21d03c199d8bdd53c83c68d5a649c",
+      "commit_shas": [
+        "5384777916d21d03c199d8bdd53c83c68d5a649c"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793149830622,
+    "updated_at_epoch_ms": 1794037977532,
+    "archived_at_epoch_ms": 1794037977532
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "18bce0d8-44d5-46f7-a936-2a5152239485",
+        "ticket_key": "GB-110",
+        "slug": "neurosymbolic-engine-grammar-documentation-overhaul-dado-batten-joiner-18bce0",
+        "title": "Neurosymbolic Engine & Grammar Documentation Overhaul (Dado, Batten, Joiner)",
+        "description": "Transform documentation for dado, batten, and joiner into best-practice, high-density references with complete AST pattern specs, CFG grammar compiler invariants, neurosymbolic repair loops, and AGENTS.md laws",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793149830622,
+        "updated_at_epoch_ms": 1793149830622
+      }
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "18bce0d8-44d5-46f7-a936-2a5152239485",
+      "plan": {
+        "summary": "GB-110: Neurosymbolic Engine & Grammar Documentation Overhaul (Dado, Batten, Joiner)",
+        "design_markdown": "# GB-110: Neurosymbolic Engine & Grammar Documentation Overhaul (Dado, Batten, Joiner)\n\n## Architectural Directives & Mandatory Exemplar\n1. **Mandatory Exemplar Requirement:** The implementing agent MUST read and align with `miter/README.md` and `miter/AGENTS.md` as the gold standard. Every repository document set must deliver matching depth:\n   - `README.md`: Woodworking metaphor, badges, \"Why X?\" without/with tables, real console walkthroughs, complete CLI/MCP references.\n   - `PRODUCT.md`: Distinct user personas, acute friction points, JTBD, telemetry metrics.\n   - `ARCHITECTURE.md`: High-density Mermaid diagrams, crate boundaries, storage/runtime pipelines, cross-tool contracts.\n   - `SPEC.md`: Formal behavioral invariants, state machines, algebraic wire types, CLI grammar/exit codes.\n   - `DESIGN.md`: Minimum 3 concrete ADRs with Context, Decision, Consequences, and Rejected Alternatives.\n   - `AGENTS.md`: Full non-negotiable engineering laws (hard 250 LOC, zero inline scope creep with `storypole defer`, Tiered Verification Gates, conventional commits, branch isolation) plus domain-specific invariant rules.\n   - `CONTRIBUTING.md`: Precise Rust 2024 toolchain, inner loop commands, clippy/fmt rules.\n   - `ROADMAP.md`: Active beta lifecycle status, completed milestones, future horizons mapped to Storypole.\n   - `CHANGELOG.md`: Strict Keep a Changelog with active `[Unreleased]`.\n\n## Phased Execution Steps\n1. `gb-111-dado-docs` | Elevate dado across all 9 canonical docs (polyglot AST patterns, typed holes `?[id: Type]`, structural mixins, Tree-sitter splicing) | `chalkline docs check -d dado`\n2. `gb-112-batten-docs` | Elevate batten across all 9 canonical docs (dynamic scope to CFG compiler, GBNF/Lark token masking, state machines) | `chalkline docs check -d batten`\n3. `gb-113-joiner-docs` | Elevate joiner across all 9 canonical docs (master neurosymbolic loop, System 1/2 routing, compiler error feedback repair loop) | `chalkline docs check -d joiner`\n",
+        "steps": [
+          {
+            "step_id": "gb-111",
+            "title": "Elevate dado across all 9 canonical docs",
+            "target_files": [],
+            "verification_gate": "chalkline docs check -d dado",
+            "completed": false
+          },
+          {
+            "step_id": "gb-112",
+            "title": "Elevate batten across all 9 canonical docs",
+            "target_files": [],
+            "verification_gate": "chalkline docs check -d batten",
+            "completed": false
+          },
+          {
+            "step_id": "gb-113",
+            "title": "Elevate joiner across all 9 canonical docs",
+            "target_files": [],
+            "verification_gate": "chalkline docs check -d joiner",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-110.md",
+        "updated_at_epoch_ms": 1793150428381
+      },
+      "timestamp_ms": 1793150428381
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "18bce0d8-44d5-46f7-a936-2a5152239485",
+      "claim": {
+        "agent_id": "agent-antigravity",
+        "claimed_at_epoch_ms": 1793159739898,
+        "lease_expires_at_epoch_ms": 1793163339898,
+        "git_branch": "feat/phase-3-synthesis-docs",
+        "base_commit_sha": "5384777916d21d03c199d8bdd53c83c68d5a649c"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "18bce0d8-44d5-46f7-a936-2a5152239485",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by agent-antigravity",
+      "timestamp_ms": 1793159739898
+    },
+    {
+      "event": "task_verified",
+      "task_id": "18bce0d8-44d5-46f7-a936-2a5152239485",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Completed Phase 3: Core Synthesis Loop Documentation Overhaul (dado GB-111, batten GB-112, and joiner GB-113 all 9-doc compliant and elevated to gold standard)",
+        "verified_at_epoch_ms": 1793159740025,
+        "git_branch": "feat/phase-3-synthesis-docs",
+        "base_commit_sha": "5384777916d21d03c199d8bdd53c83c68d5a649c",
+        "head_commit_sha": "5384777916d21d03c199d8bdd53c83c68d5a649c",
+        "commit_shas": [
+          "5384777916d21d03c199d8bdd53c83c68d5a649c"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "18bce0d8-44d5-46f7-a936-2a5152239485",
+      "status": "verified",
+      "timestamp_ms": 1794037977532
+    }
+  ]
+}

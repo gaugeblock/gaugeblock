@@ -1,0 +1,63 @@
+{
+  "ticket": {
+    "id": "3c95afee-f098-4cf2-9bde-8b44c5369aa9",
+    "ticket_key": "GB-231",
+    "slug": "make-the-verifier-stricter-than-the-generator-compile-is-too-easy-a-bar-3c95af",
+    "title": "Make the verifier stricter than the generator: compile is too easy a bar",
+    "description": "The owner observed that Gold is rare partly because the oracle and the universal provider are the same model - the verifier cannot be harder than the generator. There is a cheaper lever than harder fixtures: raise the verifiers bar.\n\nToday assess_rust + miter verify accept anything that compiles. A candidate that compiles but ignores the documented delegation, leaves an unused import, or returns a wrong-but-well-typed value passes as Silver, and no repair happens. Measured consequence: sum_positive produced 0/3 Gold because its one-line delegation compiles first try.\n\nPROPOSAL: grade the oracle in tiers and let a caller pick - (1) compiles, (2) compiles + clippy -D warnings (unused imports and dead code become failures), (3) compiles + the crates tests pass, (4) compiles + a property or doc-test assertion when the fixture provides one. Tier 2 alone would have rejected the unicode_segmentation candidate on the unused-import rule and forced the repair that the doc comment was asking for. This manufactures Gold honestly - by demanding more, not by inventing difficulty - and it is measurable: same fixtures, compare tier-1 vs tier-2 Gold rate.",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793398904924,
+    "updated_at_epoch_ms": 1793398904924
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "3c95afee-f098-4cf2-9bde-8b44c5369aa9",
+        "ticket_key": "GB-231",
+        "slug": "make-the-verifier-stricter-than-the-generator-compile-is-too-easy-a-bar-3c95af",
+        "title": "Make the verifier stricter than the generator: compile is too easy a bar",
+        "description": "The owner observed that Gold is rare partly because the oracle and the universal provider are the same model - the verifier cannot be harder than the generator. There is a cheaper lever than harder fixtures: raise the verifiers bar.\n\nToday assess_rust + miter verify accept anything that compiles. A candidate that compiles but ignores the documented delegation, leaves an unused import, or returns a wrong-but-well-typed value passes as Silver, and no repair happens. Measured consequence: sum_positive produced 0/3 Gold because its one-line delegation compiles first try.\n\nPROPOSAL: grade the oracle in tiers and let a caller pick - (1) compiles, (2) compiles + clippy -D warnings (unused imports and dead code become failures), (3) compiles + the crates tests pass, (4) compiles + a property or doc-test assertion when the fixture provides one. Tier 2 alone would have rejected the unicode_segmentation candidate on the unused-import rule and forced the repair that the doc comment was asking for. This manufactures Gold honestly - by demanding more, not by inventing difficulty - and it is measurable: same fixtures, compare tier-1 vs tier-2 Gold rate.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793398904924,
+        "updated_at_epoch_ms": 1793398904924
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "ticket": {
+    "id": "c772f8a2-2bac-4635-b40f-7337b68553c3",
+    "ticket_key": "GB-26",
+    "slug": "integrate-miter-compiler-verification-into-storypole-verify-workflows-c772f8",
+    "title": "Integrate miter compiler verification into storypole verify workflows",
+    "description": "Connect miter-engine's CompilerVerifier to storypole verification, adding --miter flag to storypole verify to run compiler verification, slice diagnostics, and record verifier 'miter' with exact exit code, diagnostic counts, and commit ref.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "storypole-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "storypole,miter,verification,compiler"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "b91f614d-543f-429e-afd3-438ee5dd6998"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "storypole verify --miter invokes miter CompilerVerifier,captures diagnostic_count and compiler exit code directly in VerificationReceipt,sets verifier to miter or miter-verify"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "miter-verify",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Verified miter compiler integration into storypole verify workflows",
+      "verified_at_epoch_ms": 1792862865968,
+      "git_branch": "feat/gb-26-miter-verify",
+      "base_commit_sha": "8f3619a689ec3186f3e14080063aa20b3a5e0407",
+      "head_commit_sha": "8f3619a689ec3186f3e14080063aa20b3a5e0407",
+      "commit_shas": [
+        "8f3619a689ec3186f3e14080063aa20b3a5e0407"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792733264214,
+    "updated_at_epoch_ms": 1794037988198,
+    "archived_at_epoch_ms": 1794037988198
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "c772f8a2-2bac-4635-b40f-7337b68553c3",
+        "ticket_key": "GB-26",
+        "slug": "integrate-miter-compiler-verification-into-storypole-verify-workflows-c772f8",
+        "title": "Integrate miter compiler verification into storypole verify workflows",
+        "description": "Connect miter-engine's CompilerVerifier to storypole verification, adding --miter flag to storypole verify to run compiler verification, slice diagnostics, and record verifier 'miter' with exact exit code, diagnostic counts, and commit ref.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "storypole-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "storypole,miter,verification,compiler"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "storypole verify --miter invokes miter CompilerVerifier,captures diagnostic_count and compiler exit code directly in VerificationReceipt,sets verifier to miter or miter-verify"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792733264214,
+        "updated_at_epoch_ms": 1792733264214
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "c772f8a2-2bac-4635-b40f-7337b68553c3",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "b91f614d-543f-429e-afd3-438ee5dd6998"
+      },
+      "timestamp_ms": 1792733279462
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "c772f8a2-2bac-4635-b40f-7337b68553c3",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792862585044,
+        "lease_expires_at_epoch_ms": 1792866185044,
+        "git_branch": "feat/gb-26-miter-verify",
+        "base_commit_sha": "8f3619a689ec3186f3e14080063aa20b3a5e0407"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "c772f8a2-2bac-4635-b40f-7337b68553c3",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792862585044
+    },
+    {
+      "event": "task_verified",
+      "task_id": "c772f8a2-2bac-4635-b40f-7337b68553c3",
+      "receipt": {
+        "verifier": "miter-verify",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Verified miter compiler integration into storypole verify workflows",
+        "verified_at_epoch_ms": 1792862865968,
+        "git_branch": "feat/gb-26-miter-verify",
+        "base_commit_sha": "8f3619a689ec3186f3e14080063aa20b3a5e0407",
+        "head_commit_sha": "8f3619a689ec3186f3e14080063aa20b3a5e0407",
+        "commit_shas": [
+          "8f3619a689ec3186f3e14080063aa20b3a5e0407"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "c772f8a2-2bac-4635-b40f-7337b68553c3",
+      "status": "verified",
+      "timestamp_ms": 1794037988198
+    }
+  ]
+}

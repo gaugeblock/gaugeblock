@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "76e37ee9-9796-4f7e-a8ca-fa1dc7f15ab7",
+    "ticket_key": "GB-226",
+    "slug": "rabbet-admin-stats-ignores-db-path-and-rabbet-db-path-76e37e",
+    "title": "rabbet admin stats ignores --db-path and RABBET_DB_PATH",
+    "description": "Found while verifying GB-216: with the corpus at /tmp/gb216.db holding 33 accepted traces, `RABBET_DB_PATH=/tmp/gb216.db rabbet admin stats` reported \"Database: rabbet.db\" and 0 traces, and `--db-path` is not accepted at all (error: unexpected argument). The ingest, mine-patterns and export-parquet subcommands all take --db-path, so the one command a maintainer reaches for first to confirm an import is the one that looks at a different database. Either give admin stats the same --db-path/RABBET_DB_PATH handling as the others, or print the resolved path prominently so the mismatch is obvious.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "rabbet_cli::commands::admin"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793391360504,
+    "updated_at_epoch_ms": 1793391360504
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "76e37ee9-9796-4f7e-a8ca-fa1dc7f15ab7",
+        "ticket_key": "GB-226",
+        "slug": "rabbet-admin-stats-ignores-db-path-and-rabbet-db-path-76e37e",
+        "title": "rabbet admin stats ignores --db-path and RABBET_DB_PATH",
+        "description": "Found while verifying GB-216: with the corpus at /tmp/gb216.db holding 33 accepted traces, `RABBET_DB_PATH=/tmp/gb216.db rabbet admin stats` reported \"Database: rabbet.db\" and 0 traces, and `--db-path` is not accepted at all (error: unexpected argument). The ingest, mine-patterns and export-parquet subcommands all take --db-path, so the one command a maintainer reaches for first to confirm an import is the one that looks at a different database. Either give admin stats the same --db-path/RABBET_DB_PATH handling as the others, or print the resolved path prominently so the mismatch is obvious.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "rabbet_cli::commands::admin"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793391360504,
+        "updated_at_epoch_ms": 1793391360504
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    }
+  ]
+}

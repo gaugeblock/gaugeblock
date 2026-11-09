@@ -1,0 +1,294 @@
+{
+  "ticket": {
+    "id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+    "ticket_key": "GB-155",
+    "slug": "cut-the-meta-harness-suite-release-pre-release-checklist-suite-lock-root-changelog-and-certified-snapshot-tag-51a9ba",
+    "title": "Cut the meta-harness suite release: pre-release checklist, suite.lock, root changelog and certified snapshot tag",
+    "description": "OWNER DECISION 2026-10-30: the suite release is deliberately held. Do not start this epic - publishing, tagging and pushing are irreversible in the way that matters, and the architecture is still moving (GB-203, then GB-204, then GB-195). Resume only on an explicit go-ahead.",
+    "kind": "epic",
+    "status": "ready",
+    "priority": 1,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "release,suite,snapshot"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "ROOT PUSHED 2026-11-06",
+      " no release cut. Created gaugeblock/gaugeblock as a PUBLIC repository (the working directory is neurosymbolic-suite; the repo name is gaugeblock/gaugeblock because the project predates the name) and pushed 432 commits; origin/main now matches local HEAD",
+      " zero ahead. No version bumps",
+      " no tags",
+      " no publishes - the release steps of this epic remain open.\\n\\nStep 4 of the plan is now executable for the first time. Two caveats recorded rather than assumed: (1) the repository is public",
+      " so the canonical ledger",
+      " ledger archive and design plans are now visible - they contain agent identifiers",
+      " task descriptions and local paths",
+      " which was accepted deliberately; (2) GAUGEBLOCK does not yet have a root CHANGELOG entry or suite.lock for this push",
+      " so the publishable snapshot is behind where the epic intends it to land.\\n\\nPre-push hygiene verified: 0 tracked .env",
+      " 0 miter.redb",
+      " 0 .sqlite",
+      " 0 target/; largest tracked file .gaugeblock/storypole/ledger.jsonl at 1.4MB."
+    ],
+    "plan": {
+      "summary": "Certified meta-harness snapshot: publish contracts first, release 11 members, write suite.lock + root changelog, tag suite-v0.1.0-beta.3, push",
+      "design_markdown": "# Task Plan: GB-155 — Cut the Meta-Harness Suite Release\n\n> **Epic Key:** `GB-155`  \n> **Scope:** `workspace` + `outfeed`  \n> **Status:** Planned — runbook ready, execute after the contracts publish\n\n---\n\n## 1. Objective\n\nGive the meta-harness its own release: a `suite.lock` pinning all eleven repositories, a root changelog\nsection, and an annotated `suite-v<version>` snapshot tag, behind a certified gate.\n\nCurrent state (2026-10-28): the root has **no git remote**, **no `suite.lock`**, and one historical tag\n`suite-v0.1.0-beta.2`, so the next snapshot derives as **`0.1.0-beta.3`**.\n\n`outfeed release --suite` already implements the mechanics but has never run end to end.\n\n---\n\n## 2. Pre-Release Checklist\n\n1. Every member clean, on `main`, and pushed (`outfeed sync --all --status-only` shows no divergence).\n2. Tier 3 matrix green across all eleven repos: `cargo fmt --all -- --check`,\n   `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`,\n   `miter contracts`, `outfeed lockfiles`, `chalkline docs check --workspace`\n   (expect `12 targets audited, 108 present, 0 missing, 0 drifted`).\n3. `gaugeblock-contracts` and `gaugeblock-common` published at `0.1.0-beta.3`-independent version\n   `0.1.0-beta.1` **before** any member that depends on them.\n4. `suite.lock` generated and committed, pinning all eleven repositories with exact commits.\n5. Root `CHANGELOG.md` gains an ecosystem section listing every member version.\n6. Annotated tag `suite-v0.1.0-beta.3` on the root.\n7. Decision on a root remote: `push_repo` cannot push a repository without one, and the harness\n   history is currently single-copy on this machine.\n8. Delete `outfeed/PERF_AUDIT_PLAN.md` once the release is out (it is a stray; its content lives in\n   the ledger, the tickets, and the commit messages).\n\n---\n\n## 3. Runbook\n\n```bash\n# 0. Rebuild the tooling so the installed outfeed has lockfiles/override/waves.\ncargo install --path outfeed/crates/outfeed-cli --force\n\n# 1. Publish the foundation first (irreversible; crates.io rate-limits new crates).\noutfeed publish common --dry-run      # packages both crates\noutfeed publish common                # real upload; expect a 429 cooldown on the 2nd crate\n\n# 2. Confirm the contracts are visible before members reference them.\nfor c in gaugeblock-contracts gaugeblock-common; do\n  curl -s https://crates.io/api/v1/crates/$c | python3 -c \\\n    \"import sys,json;print(json.load(sys.stdin)['crate']['max_version'])\"\ndone\n\n# 3. Release the members (11 repositories, common first because it is wave 0).\noutfeed release --all --no-llm --dry-run   # inspect the plan table first\noutfeed release --all --yes --no-llm\n\n# 4. Meta-harness snapshot (writes suite.lock, root changelog, suite-v tag).\noutfeed release --suite --suite-version 0.1.0-beta.3 --yes --skip-publish --skip-install\n\n# 5. Push everything, including members that were clean before this pass.\noutfeed push --all\n```\n\n---\n\n## 4. Gotchas learned the hard way\n\n* **`common` proposes the wrong version.** With no tag baseline the calculator overshoots to\n  `0.1.0-beta.2`; use `outfeed release common --override-version 0.1.0-beta.1`. A second pass with the\n  same override is a clean no-op (`already released as v0.1.0-beta.1`).\n* **`outfeed release --all` must run from the harness root**; from inside a member it sees no members\n  and reports \"0 repositories\".\n* **A push failure is invisible on a re-run.** `release --all` self-heals only the registry half\n  (`PublishPending`); a repo tagged locally but never pushed reports `Skip (Clean)` next time\n  (`GB-153`). Check `git log origin/main..HEAD` per repo before declaring victory.\n* **crates.io 429s quote the deadline in the body**, not a `Retry-After` header; `GB-140` handles it,\n  but a three-attempt budget cannot outlast a 10-per-hour new-crate limit — space uploads out.\n* **Never run two `storypole` mutations in parallel**: appends spliced two JSON events onto one line\n  twice today. `GB-147` makes the append atomic, but keep mutations serial until it is trusted.\n* **`git add <dir> Cargo.lock` aborts staging entirely in a repo that ignores it**, and\n  `git commit -q` then fails silently (`GB-150`). All eleven repos now track a fresh lockfile.\n",
+      "steps": [
+        {
+          "step_id": "1",
+          "title": "Publish gaugeblock-contracts and gaugeblock-common at 0.1.0-beta.1",
+          "target_files": [],
+          "verification_gate": "curl crates.io shows 0.1.0-beta.1 for both",
+          "completed": false
+        },
+        {
+          "step_id": "2",
+          "title": "Release all eleven members",
+          "target_files": [],
+          "verification_gate": "outfeed release --all --dry-run plans 11 repos",
+          "completed": false
+        },
+        {
+          "step_id": "3",
+          "title": "Cut the suite snapshot",
+          "target_files": [],
+          "verification_gate": "suite.lock + CHANGELOG + suite-v tag on root",
+          "completed": false
+        },
+        {
+          "step_id": "4",
+          "title": "Push every member and the harness",
+          "target_files": [],
+          "verification_gate": "git log origin/main..HEAD empty per repo",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-155.md",
+      "updated_at_epoch_ms": 1793469998261
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793235911866,
+    "updated_at_epoch_ms": 1794004680748
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+        "ticket_key": "GB-155",
+        "slug": "cut-the-meta-harness-suite-release-pre-release-checklist-suite-lock-root-changelog-and-certified-snapshot-tag-51a9ba",
+        "title": "Cut the meta-harness suite release: pre-release checklist, suite.lock, root changelog and certified snapshot tag",
+        "description": "Tracked gap: the members get a release process but the meta-harness repository itself has none written down. Current state (2026-10-28): the root checkout has no git remote, no suite.lock, and one existing snapshot tag suite-v0.1.0-beta.2, so the next snapshot derives as 0.1.0-beta.3 (determine_suite_version reads the latest suite-v* tag). outfeed release --suite already implements the mechanics - determine_suite_version, generate_suite_lock + write_suite_lock, update_root_changelog, commit_and_tag_suite, push_repo - but it has never been exercised end to end from a clean root, and it cannot be complete while common is missing from SUITE_TOOLS (GB-151), because suite.lock would silently omit the eleventh repository. Pre-release checklist to satisfy before tagging: (1) every member clean, on main, pushed, and version-aligned; (2) Tier 3 matrix across all 12 targets - cargo fmt --all --check, cargo clippy --workspace --all-targets -D warnings, cargo nextest run --workspace, miter contracts, outfeed lockfiles, chalkline docs check --workspace (12 targets, 108 docs, 0 drifted); (3) gaugeblock-contracts and gaugeblock-common published at 0.1.0-beta.1 before any member that depends on them; (4) suite.lock generated and committed with all eleven repositories and their exact commits; (5) root CHANGELOG entry listing every member version; (6) annotated tag suite-v<version> on the root; (7) decision on a root remote, since push_repo cannot push a repository that has none - the harness history is currently single-copy on this machine; (8) the stray outfeed/PERF_AUDIT_PLAN.md deleted once this release is out. Acceptance: running the checklist on a clean tree produces a committed suite.lock covering 11 repositories, a root changelog section, and a suite-v tag, with every gate green before the tag is cut.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "release,suite,snapshot"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793235911866,
+        "updated_at_epoch_ms": 1793235911866
+      }
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+      "plan": {
+        "summary": "Certified meta-harness snapshot: publish contracts first, release 11 members, write suite.lock + root changelog, tag suite-v0.1.0-beta.3, push",
+        "design_markdown": "# Task Plan: GB-155 — Cut the Meta-Harness Suite Release\n\n> **Epic Key:** `GB-155`  \n> **Scope:** `workspace` + `outfeed`  \n> **Status:** Planned — runbook ready, execute after the contracts publish\n\n---\n\n## 1. Objective\n\nGive the meta-harness its own release: a `suite.lock` pinning all eleven repositories, a root changelog\nsection, and an annotated `suite-v<version>` snapshot tag, behind a certified gate.\n\nCurrent state (2026-10-28): the root has **no git remote**, **no `suite.lock`**, and one historical tag\n`suite-v0.1.0-beta.2`, so the next snapshot derives as **`0.1.0-beta.3`**.\n\n`outfeed release --suite` already implements the mechanics but has never run end to end.\n\n---\n\n## 2. Pre-Release Checklist\n\n1. Every member clean, on `main`, and pushed (`outfeed sync --all --status-only` shows no divergence).\n2. Tier 3 matrix green across all eleven repos: `cargo fmt --all -- --check`,\n   `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`,\n   `miter contracts`, `outfeed lockfiles`, `chalkline docs check --workspace`\n   (expect `12 targets audited, 108 present, 0 missing, 0 drifted`).\n3. `gaugeblock-contracts` and `gaugeblock-common` published at `0.1.0-beta.3`-independent version\n   `0.1.0-beta.1` **before** any member that depends on them.\n4. `suite.lock` generated and committed, pinning all eleven repositories with exact commits.\n5. Root `CHANGELOG.md` gains an ecosystem section listing every member version.\n6. Annotated tag `suite-v0.1.0-beta.3` on the root.\n7. Decision on a root remote: `push_repo` cannot push a repository without one, and the harness\n   history is currently single-copy on this machine.\n8. Delete `outfeed/PERF_AUDIT_PLAN.md` once the release is out (it is a stray; its content lives in\n   the ledger, the tickets, and the commit messages).\n\n---\n\n## 3. Runbook\n\n```bash\n# 0. Rebuild the tooling so the installed outfeed has lockfiles/override/waves.\ncargo install --path outfeed/crates/outfeed-cli --force\n\n# 1. Publish the foundation first (irreversible; crates.io rate-limits new crates).\noutfeed publish common --dry-run      # packages both crates\noutfeed publish common                # real upload; expect a 429 cooldown on the 2nd crate\n\n# 2. Confirm the contracts are visible before members reference them.\nfor c in gaugeblock-contracts gaugeblock-common; do\n  curl -s https://crates.io/api/v1/crates/$c | python3 -c \\\n    \"import sys,json;print(json.load(sys.stdin)['crate']['max_version'])\"\ndone\n\n# 3. Release the members (11 repositories, common first because it is wave 0).\noutfeed release --all --no-llm --dry-run   # inspect the plan table first\noutfeed release --all --yes --no-llm\n\n# 4. Meta-harness snapshot (writes suite.lock, root changelog, suite-v tag).\noutfeed release --suite --suite-version 0.1.0-beta.3 --yes --skip-publish --skip-install\n\n# 5. Push everything, including members that were clean before this pass.\noutfeed push --all\n```\n\n---\n\n## 4. Gotchas learned the hard way\n\n* **`common` proposes the wrong version.** With no tag baseline the calculator overshoots to\n  `0.1.0-beta.2`; use `outfeed release common --override-version 0.1.0-beta.1`. A second pass with the\n  same override is a clean no-op (`already released as v0.1.0-beta.1`).\n* **`outfeed release --all` must run from the harness root**; from inside a member it sees no members\n  and reports \"0 repositories\".\n* **A push failure is invisible on a re-run.** `release --all` self-heals only the registry half\n  (`PublishPending`); a repo tagged locally but never pushed reports `Skip (Clean)` next time\n  (`GB-153`). Check `git log origin/main..HEAD` per repo before declaring victory.\n* **crates.io 429s quote the deadline in the body**, not a `Retry-After` header; `GB-140` handles it,\n  but a three-attempt budget cannot outlast a 10-per-hour new-crate limit — space uploads out.\n* **Never run two `storypole` mutations in parallel**: appends spliced two JSON events onto one line\n  twice today. `GB-147` makes the append atomic, but keep mutations serial until it is trusted.\n* **`git add <dir> Cargo.lock` aborts staging entirely in a repo that ignores it**, and\n  `git commit -q` then fails silently (`GB-150`). All eleven repos now track a fresh lockfile.\n",
+        "steps": [
+          {
+            "step_id": "1",
+            "title": "Publish gaugeblock-contracts and gaugeblock-common at 0.1.0-beta.1",
+            "target_files": [],
+            "verification_gate": "curl crates.io shows 0.1.0-beta.1 for both",
+            "completed": false
+          },
+          {
+            "step_id": "2",
+            "title": "Release all eleven members",
+            "target_files": [],
+            "verification_gate": "outfeed release --all --dry-run plans 11 repos",
+            "completed": false
+          },
+          {
+            "step_id": "3",
+            "title": "Cut the suite snapshot",
+            "target_files": [],
+            "verification_gate": "suite.lock + CHANGELOG + suite-v tag on root",
+            "completed": false
+          },
+          {
+            "step_id": "4",
+            "title": "Push every member and the harness",
+            "target_files": [],
+            "verification_gate": "git log origin/main..HEAD empty per repo",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-155.md",
+        "updated_at_epoch_ms": 1793240605197
+      },
+      "timestamp_ms": 1793240605197
+    },
+    {
+      "event": "task_updated",
+      "task_id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+      "title": null,
+      "description": "OWNER DECISION 2026-10-30: the suite release is deliberately held. Do not start this epic - publishing, tagging and pushing are irreversible in the way that matters, and the architecture is still moving (GB-203, then GB-204, then GB-195). Resume only on an explicit go-ahead.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793466808540
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+      "plan": {
+        "summary": "Certified meta-harness snapshot: publish contracts first, release 11 members, write suite.lock + root changelog, tag suite-v0.1.0-beta.3, push",
+        "design_markdown": "# Task Plan: GB-155 — Cut the Meta-Harness Suite Release\n\n> **Epic Key:** `GB-155`  \n> **Scope:** `workspace` + `outfeed`  \n> **Status:** Planned — runbook ready, execute after the contracts publish\n\n---\n\n## 1. Objective\n\nGive the meta-harness its own release: a `suite.lock` pinning all eleven repositories, a root changelog\nsection, and an annotated `suite-v<version>` snapshot tag, behind a certified gate.\n\nCurrent state (2026-10-28): the root has **no git remote**, **no `suite.lock`**, and one historical tag\n`suite-v0.1.0-beta.2`, so the next snapshot derives as **`0.1.0-beta.3`**.\n\n`outfeed release --suite` already implements the mechanics but has never run end to end.\n\n---\n\n## 2. Pre-Release Checklist\n\n1. Every member clean, on `main`, and pushed (`outfeed sync --all --status-only` shows no divergence).\n2. Tier 3 matrix green across all eleven repos: `cargo fmt --all -- --check`,\n   `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`,\n   `miter contracts`, `outfeed lockfiles`, `chalkline docs check --workspace`\n   (expect `12 targets audited, 108 present, 0 missing, 0 drifted`).\n3. `gaugeblock-contracts` and `gaugeblock-common` published at `0.1.0-beta.3`-independent version\n   `0.1.0-beta.1` **before** any member that depends on them.\n4. `suite.lock` generated and committed, pinning all eleven repositories with exact commits.\n5. Root `CHANGELOG.md` gains an ecosystem section listing every member version.\n6. Annotated tag `suite-v0.1.0-beta.3` on the root.\n7. Decision on a root remote: `push_repo` cannot push a repository without one, and the harness\n   history is currently single-copy on this machine.\n8. Delete `outfeed/PERF_AUDIT_PLAN.md` once the release is out (it is a stray; its content lives in\n   the ledger, the tickets, and the commit messages).\n\n---\n\n## 3. Runbook\n\n```bash\n# 0. Rebuild the tooling so the installed outfeed has lockfiles/override/waves.\ncargo install --path outfeed/crates/outfeed-cli --force\n\n# 1. Publish the foundation first (irreversible; crates.io rate-limits new crates).\noutfeed publish common --dry-run      # packages both crates\noutfeed publish common                # real upload; expect a 429 cooldown on the 2nd crate\n\n# 2. Confirm the contracts are visible before members reference them.\nfor c in gaugeblock-contracts gaugeblock-common; do\n  curl -s https://crates.io/api/v1/crates/$c | python3 -c \\\n    \"import sys,json;print(json.load(sys.stdin)['crate']['max_version'])\"\ndone\n\n# 3. Release the members (11 repositories, common first because it is wave 0).\noutfeed release --all --no-llm --dry-run   # inspect the plan table first\noutfeed release --all --yes --no-llm\n\n# 4. Meta-harness snapshot (writes suite.lock, root changelog, suite-v tag).\noutfeed release --suite --suite-version 0.1.0-beta.3 --yes --skip-publish --skip-install\n\n# 5. Push everything, including members that were clean before this pass.\noutfeed push --all\n```\n\n---\n\n## 4. Gotchas learned the hard way\n\n* **`common` proposes the wrong version.** With no tag baseline the calculator overshoots to\n  `0.1.0-beta.2`; use `outfeed release common --override-version 0.1.0-beta.1`. A second pass with the\n  same override is a clean no-op (`already released as v0.1.0-beta.1`).\n* **`outfeed release --all` must run from the harness root**; from inside a member it sees no members\n  and reports \"0 repositories\".\n* **A push failure is invisible on a re-run.** `release --all` self-heals only the registry half\n  (`PublishPending`); a repo tagged locally but never pushed reports `Skip (Clean)` next time\n  (`GB-153`). Check `git log origin/main..HEAD` per repo before declaring victory.\n* **crates.io 429s quote the deadline in the body**, not a `Retry-After` header; `GB-140` handles it,\n  but a three-attempt budget cannot outlast a 10-per-hour new-crate limit — space uploads out.\n* **Never run two `storypole` mutations in parallel**: appends spliced two JSON events onto one line\n  twice today. `GB-147` makes the append atomic, but keep mutations serial until it is trusted.\n* **`git add <dir> Cargo.lock` aborts staging entirely in a repo that ignores it**, and\n  `git commit -q` then fails silently (`GB-150`). All eleven repos now track a fresh lockfile.\n",
+        "steps": [
+          {
+            "step_id": "1",
+            "title": "Publish gaugeblock-contracts and gaugeblock-common at 0.1.0-beta.1",
+            "target_files": [],
+            "verification_gate": "curl crates.io shows 0.1.0-beta.1 for both",
+            "completed": true
+          },
+          {
+            "step_id": "2",
+            "title": "Release all eleven members",
+            "target_files": [],
+            "verification_gate": "outfeed release --all --dry-run plans 11 repos",
+            "completed": false
+          },
+          {
+            "step_id": "3",
+            "title": "Cut the suite snapshot",
+            "target_files": [],
+            "verification_gate": "suite.lock + CHANGELOG + suite-v tag on root",
+            "completed": false
+          },
+          {
+            "step_id": "4",
+            "title": "Push every member and the harness",
+            "target_files": [],
+            "verification_gate": "git log origin/main..HEAD empty per repo",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-155.md",
+        "updated_at_epoch_ms": 1793469998191
+      },
+      "timestamp_ms": 1793469998191
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+      "plan": {
+        "summary": "Certified meta-harness snapshot: publish contracts first, release 11 members, write suite.lock + root changelog, tag suite-v0.1.0-beta.3, push",
+        "design_markdown": "# Task Plan: GB-155 — Cut the Meta-Harness Suite Release\n\n> **Epic Key:** `GB-155`  \n> **Scope:** `workspace` + `outfeed`  \n> **Status:** Planned — runbook ready, execute after the contracts publish\n\n---\n\n## 1. Objective\n\nGive the meta-harness its own release: a `suite.lock` pinning all eleven repositories, a root changelog\nsection, and an annotated `suite-v<version>` snapshot tag, behind a certified gate.\n\nCurrent state (2026-10-28): the root has **no git remote**, **no `suite.lock`**, and one historical tag\n`suite-v0.1.0-beta.2`, so the next snapshot derives as **`0.1.0-beta.3`**.\n\n`outfeed release --suite` already implements the mechanics but has never run end to end.\n\n---\n\n## 2. Pre-Release Checklist\n\n1. Every member clean, on `main`, and pushed (`outfeed sync --all --status-only` shows no divergence).\n2. Tier 3 matrix green across all eleven repos: `cargo fmt --all -- --check`,\n   `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`,\n   `miter contracts`, `outfeed lockfiles`, `chalkline docs check --workspace`\n   (expect `12 targets audited, 108 present, 0 missing, 0 drifted`).\n3. `gaugeblock-contracts` and `gaugeblock-common` published at `0.1.0-beta.3`-independent version\n   `0.1.0-beta.1` **before** any member that depends on them.\n4. `suite.lock` generated and committed, pinning all eleven repositories with exact commits.\n5. Root `CHANGELOG.md` gains an ecosystem section listing every member version.\n6. Annotated tag `suite-v0.1.0-beta.3` on the root.\n7. Decision on a root remote: `push_repo` cannot push a repository without one, and the harness\n   history is currently single-copy on this machine.\n8. Delete `outfeed/PERF_AUDIT_PLAN.md` once the release is out (it is a stray; its content lives in\n   the ledger, the tickets, and the commit messages).\n\n---\n\n## 3. Runbook\n\n```bash\n# 0. Rebuild the tooling so the installed outfeed has lockfiles/override/waves.\ncargo install --path outfeed/crates/outfeed-cli --force\n\n# 1. Publish the foundation first (irreversible; crates.io rate-limits new crates).\noutfeed publish common --dry-run      # packages both crates\noutfeed publish common                # real upload; expect a 429 cooldown on the 2nd crate\n\n# 2. Confirm the contracts are visible before members reference them.\nfor c in gaugeblock-contracts gaugeblock-common; do\n  curl -s https://crates.io/api/v1/crates/$c | python3 -c \\\n    \"import sys,json;print(json.load(sys.stdin)['crate']['max_version'])\"\ndone\n\n# 3. Release the members (11 repositories, common first because it is wave 0).\noutfeed release --all --no-llm --dry-run   # inspect the plan table first\noutfeed release --all --yes --no-llm\n\n# 4. Meta-harness snapshot (writes suite.lock, root changelog, suite-v tag).\noutfeed release --suite --suite-version 0.1.0-beta.3 --yes --skip-publish --skip-install\n\n# 5. Push everything, including members that were clean before this pass.\noutfeed push --all\n```\n\n---\n\n## 4. Gotchas learned the hard way\n\n* **`common` proposes the wrong version.** With no tag baseline the calculator overshoots to\n  `0.1.0-beta.2`; use `outfeed release common --override-version 0.1.0-beta.1`. A second pass with the\n  same override is a clean no-op (`already released as v0.1.0-beta.1`).\n* **`outfeed release --all` must run from the harness root**; from inside a member it sees no members\n  and reports \"0 repositories\".\n* **A push failure is invisible on a re-run.** `release --all` self-heals only the registry half\n  (`PublishPending`); a repo tagged locally but never pushed reports `Skip (Clean)` next time\n  (`GB-153`). Check `git log origin/main..HEAD` per repo before declaring victory.\n* **crates.io 429s quote the deadline in the body**, not a `Retry-After` header; `GB-140` handles it,\n  but a three-attempt budget cannot outlast a 10-per-hour new-crate limit — space uploads out.\n* **Never run two `storypole` mutations in parallel**: appends spliced two JSON events onto one line\n  twice today. `GB-147` makes the append atomic, but keep mutations serial until it is trusted.\n* **`git add <dir> Cargo.lock` aborts staging entirely in a repo that ignores it**, and\n  `git commit -q` then fails silently (`GB-150`). All eleven repos now track a fresh lockfile.\n",
+        "steps": [
+          {
+            "step_id": "1",
+            "title": "Publish gaugeblock-contracts and gaugeblock-common at 0.1.0-beta.1",
+            "target_files": [],
+            "verification_gate": "curl crates.io shows 0.1.0-beta.1 for both",
+            "completed": false
+          },
+          {
+            "step_id": "2",
+            "title": "Release all eleven members",
+            "target_files": [],
+            "verification_gate": "outfeed release --all --dry-run plans 11 repos",
+            "completed": false
+          },
+          {
+            "step_id": "3",
+            "title": "Cut the suite snapshot",
+            "target_files": [],
+            "verification_gate": "suite.lock + CHANGELOG + suite-v tag on root",
+            "completed": false
+          },
+          {
+            "step_id": "4",
+            "title": "Push every member and the harness",
+            "target_files": [],
+            "verification_gate": "git log origin/main..HEAD empty per repo",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-155.md",
+        "updated_at_epoch_ms": 1793469998261
+      },
+      "timestamp_ms": 1793469998261
+    },
+    {
+      "event": "task_updated",
+      "task_id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "PRE-PUSH FINDING 2026-11-06: step 4 (push) has never been executable. The meta-harness root has no git remote and gaugeblock/neurosymbolic-suite does not exist on GitHub - ls-remote over SSH returns 'Repository not found' while members push fine",
+        " so it is absent rather than inaccessible. Creating it requires a private/public decision (the root holds the canonical ledger",
+        " ledger archive and design plans).\\n\\nRoot hygiene verified in preparation: 0 tracked .env files",
+        " 0 miter.redb",
+        " 0 .sqlite",
+        " 0 target/; largest tracked file is .gaugeblock/storypole/ledger.jsonl at 1.4MB",
+        " then ledger-archive/outfeed.jsonl 35KB and plans/*.md. Nothing large or secret would be published.\\n\\nMembers are pushed and clean as of this session (outfeed push --all: 11 repos",
+        " ahead counts 27-63 to zero",
+        " no release cut",
+        " no tags",
+        " no publishes)",
+        " so a root push would not be landing alongside unpublished member work - which removes the main argument for waiting."
+      ],
+      "timestamp_ms": 1794004520210
+    },
+    {
+      "event": "task_updated",
+      "task_id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "ROOT PUSHED 2026-11-06",
+        " no release cut. Created gaugeblock/gaugeblock as a PUBLIC repository (the working directory is neurosymbolic-suite; the repo name is gaugeblock/gaugeblock because the project predates the name) and pushed 432 commits; origin/main now matches local HEAD",
+        " zero ahead. No version bumps",
+        " no tags",
+        " no publishes - the release steps of this epic remain open.\\n\\nStep 4 of the plan is now executable for the first time. Two caveats recorded rather than assumed: (1) the repository is public",
+        " so the canonical ledger",
+        " ledger archive and design plans are now visible - they contain agent identifiers",
+        " task descriptions and local paths",
+        " which was accepted deliberately; (2) GAUGEBLOCK does not yet have a root CHANGELOG entry or suite.lock for this push",
+        " so the publishable snapshot is behind where the epic intends it to land.\\n\\nPre-push hygiene verified: 0 tracked .env",
+        " 0 miter.redb",
+        " 0 .sqlite",
+        " 0 target/; largest tracked file .gaugeblock/storypole/ledger.jsonl at 1.4MB."
+      ],
+      "timestamp_ms": 1794004680748
+    }
+  ]
+}

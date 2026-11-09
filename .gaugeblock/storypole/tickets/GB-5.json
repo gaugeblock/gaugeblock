@@ -1,0 +1,169 @@
+{
+  "ticket": {
+    "id": "523354d3-a66e-41f4-a941-0945841842ce",
+    "ticket_key": "GB-5",
+    "slug": "phase-6-joiner-master-neurosymbolic-synthesis-orchestrator-523354",
+    "title": "Phase 6: joiner — Master Neurosymbolic Synthesis Orchestrator",
+    "description": "Master Neurosymbolic Synthesis Orchestrator wrangling miter, sawhorse, dado, and batten.",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "joiner-core",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84"
+      },
+      {
+        "kind": "blocked_by",
+        "target_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1792698851843,
+      "git_branch": null,
+      "base_commit_sha": null,
+      "head_commit_sha": null,
+      "commit_shas": [],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792645196537,
+    "updated_at_epoch_ms": 1794037957164,
+    "archived_at_epoch_ms": 1794037957164
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "523354d3-a66e-41f4-a941-0945841842ce",
+        "ticket_key": "GB-5",
+        "slug": "phase-6-joiner-master-neurosymbolic-synthesis-orchestrator-523354",
+        "title": "Phase 6: joiner — Master Neurosymbolic Synthesis Orchestrator",
+        "description": "Master Neurosymbolic Synthesis Orchestrator wrangling miter, sawhorse, dado, and batten.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "joiner-core",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792645196537,
+        "updated_at_epoch_ms": 1792645196537
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84"
+      },
+      "timestamp_ms": 1792645201761
+    },
+    {
+      "event": "status_changed",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-2",
+      "timestamp_ms": 1792645201761
+    },
+    {
+      "event": "edge_added",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98"
+      },
+      "timestamp_ms": 1792645201792
+    },
+    {
+      "event": "status_changed",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "from": "blocked",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-4",
+      "timestamp_ms": 1792645201792
+    },
+    {
+      "event": "status_changed",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-4 verified",
+      "timestamp_ms": 1792684165123
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792695253599,
+        "lease_expires_at_epoch_ms": 1792698853599,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792695253599
+    },
+    {
+      "event": "task_verified",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1792698851843,
+        "git_branch": null,
+        "base_commit_sha": null,
+        "head_commit_sha": null,
+        "commit_shas": [],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "523354d3-a66e-41f4-a941-0945841842ce",
+      "status": "verified",
+      "timestamp_ms": 1794037957164
+    }
+  ]
+}

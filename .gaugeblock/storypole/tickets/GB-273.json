@@ -1,0 +1,198 @@
+{
+  "ticket": {
+    "id": "70f43197-7249-407e-8c8b-016522722ae0",
+    "ticket_key": "GB-273",
+    "slug": "add-a-config-validator-empty-or-inconsistent-fields-should-be-reported-not-silently-accepted-70f431",
+    "title": "Add a config validator: empty or inconsistent fields should be reported, not silently accepted",
+    "description": "",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::config"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "WORKSPACE MODE DONE 2026-11-06: 'storypole config check --workspace' audits every suite member in one pass, which is what the eleven-empty-configs sweep was done by hand to find. Membership from WorkspaceTopology, never a glob. A repository with no configuration is skipped rather than reported, since not being adopted yet is not a defect; the run fails only if no repository carries a config at all, which means it was pointed at the wrong tree. Reads through load_unified_or_legacy so an audit leaves no index files behind. Observed: 10 repositories audited, 0 findings, 0 errors - common correctly excluded.\\n\\nWhat this now makes mechanical: the exact question 'does every repo's config claim what it delivers' that required reading eleven files by hand earlier in this session."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794106559391,
+      "git_branch": "main",
+      "base_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+      "head_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+      "commit_shas": [
+        "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1794002495404,
+    "updated_at_epoch_ms": 1794106559391
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "70f43197-7249-407e-8c8b-016522722ae0",
+        "ticket_key": "GB-273",
+        "slug": "add-a-config-validator-empty-or-inconsistent-fields-should-be-reported-not-silently-accepted-70f431",
+        "title": "Add a config validator: empty or inconsistent fields should be reported, not silently accepted",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::config"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794002495404,
+        "updated_at_epoch_ms": 1794002495404
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "70f43197-7249-407e-8c8b-016522722ae0",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "EVIDENCE 2026-11-06",
+        " from a manual sweep across eleven configs: verification_commands was empty in all eleven (so verify silently ran 'cargo test')",
+        " allowed_repos was [] in ten and [\"storypole\"] in one (semantically 'unrestricted' vs 'scoped'",
+        " with nothing saying which was intended)",
+        " and allowed_crates was [] everywhere and appears unenforced. ticket_prefix was correct in all eleven. Findings that a validator could report",
+        " and that cost several manual passes to establish: empty verification_commands; a prefix that collides with another repo in the same suite; allowed_repos naming a repo that does not exist; a field that is present but unenforced. Shape: 'storypole config check [--workspace]' with warnings",
+        " not errors",
+        " except for genuine breakage - the point is that 'present but empty' stops being invisible."
+      ],
+      "timestamp_ms": 1794002501493
+    },
+    {
+      "event": "task_updated",
+      "task_id": "70f43197-7249-407e-8c8b-016522722ae0",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "RULES LANDED 2026-11-06 (storypole-core commit): StorypoleConfig::audit returns ConfigFinding { field, message, severity }. Warnings for weakened-but-working config (empty verification_commands, duplicate entries, claim_ttl_minutes 0, a path in allowed_repos, a non-upper-case prefix); errors only where the config cannot behave as written (empty prefix, an empty command that would let verify pass by doing nothing). Six tests including a healthy config that reports nothing - an audit that always finds something is one nobody reads. Tier 2: fmt clean, clippy -D warnings clean, 6/6.\\n\\nDeliberately not reported: unset allowed_repos. Empty means unrestricted (config.rs:101 skips the check), which is legitimate for a meta-harness root; warning there would dilute the signal.\\n\\nREMAINING: the 'storypole config check [--json]' subcommand is a thin adapter and is not wired yet. It can reuse print_json now that GB-274 landed, so the output shape is already decided."
+      ],
+      "timestamp_ms": 1794009467709
+    },
+    {
+      "event": "task_updated",
+      "task_id": "70f43197-7249-407e-8c8b-016522722ae0",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "DONE 2026-11-06 (storypole commit). 'storypole config check [--json]' wired as a subcommand of the new 'storypole config' group, delegating to StorypoleConfig::audit. JSON output goes through the GB-274 envelope ({command, errors, findings, schema_version}).\\n\\nExit discipline: zero for warnings, non-zero only for errors. A warning means the configuration works but claims more than it delivers; failing a build over that would train people to pass a flag instead of reading the output, which is how gates die.\\n\\nVerified twice: on this repository ('Configuration looks sound: no findings.', exit 0) and on a temp repo with empty verification_commands, which produced the exact warning the eleven-config sweep had to be done by hand to find - 'verification_commands is empty, so storypole verify falls back to cargo test' - exit 0. Tier 2: fmt clean, clippy -D warnings clean, 55/55.\\n\\nFOLLOW-UP not done: a --workspace mode that audits every repository in one pass, which is what would catch the eleven-config case mechanically. Single-repo is the 90% case and the fleet read can reuse GB-263's topology plumbing."
+      ],
+      "timestamp_ms": 1794028557421
+    },
+    {
+      "event": "task_updated",
+      "task_id": "70f43197-7249-407e-8c8b-016522722ae0",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "WORKSPACE MODE DONE 2026-11-06: 'storypole config check --workspace' audits every suite member in one pass, which is what the eleven-empty-configs sweep was done by hand to find. Membership from WorkspaceTopology, never a glob. A repository with no configuration is skipped rather than reported, since not being adopted yet is not a defect; the run fails only if no repository carries a config at all, which means it was pointed at the wrong tree. Reads through load_unified_or_legacy so an audit leaves no index files behind. Observed: 10 repositories audited, 0 findings, 0 errors - common correctly excluded.\\n\\nWhat this now makes mechanical: the exact question 'does every repo's config claim what it delivers' that required reading eleven files by hand earlier in this session."
+      ],
+      "timestamp_ms": 1794028791196
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "70f43197-7249-407e-8c8b-016522722ae0",
+      "claim": {
+        "agent_id": "cline-agent",
+        "claimed_at_epoch_ms": 1794106281250,
+        "lease_expires_at_epoch_ms": 1794109881250,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "70f43197-7249-407e-8c8b-016522722ae0",
+      "from": "deferred",
+      "to": "in_progress",
+      "reason": "Claimed by cline-agent",
+      "timestamp_ms": 1794106281250
+    },
+    {
+      "event": "task_verified",
+      "task_id": "70f43197-7249-407e-8c8b-016522722ae0",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794106456387,
+        "git_branch": "feat/gb-305-multi-repo-gate",
+        "base_commit_sha": "60e855f32227d06d0ccf5e977b872c97fbb40431",
+        "head_commit_sha": "c123df9d54b50c4046a8327fc5bedd18995a1a52",
+        "commit_shas": [
+          "c123df9d54b50c4046a8327fc5bedd18995a1a52"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_verified",
+      "task_id": "70f43197-7249-407e-8c8b-016522722ae0",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794106559391,
+        "git_branch": "main",
+        "base_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+        "head_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+        "commit_shas": [
+          "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    }
+  ]
+}

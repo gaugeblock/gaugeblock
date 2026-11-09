@@ -1,0 +1,97 @@
+{
+  "ticket": {
+    "id": "7573f51a-566a-45e0-8414-eaa0034818ef",
+    "ticket_key": "GB-264",
+    "slug": "outfeed-install-skips-the-rebuild-when-the-version-is-unchanged-so-source-edits-never-reach-cargo-bin-7573f5",
+    "title": "outfeed install skipped the rebuild silently when the version matched, so source edits never reached ~/.cargo/bin",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "outfeed_core::install"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "FIXED 2026-11-06 (outfeed 23207a0). The skip itself was intentional - --force is the documented pre-release mechanism - but it was SILENT and confident: 'up-to-date' reads as 'your build is current' when it means the version string matches",
+      " and that cost a debugging detour where the tested binary was two hours older than the source.\\n\\nTwo changes",
+      " per the maintainer's call that both had merit. (1) The skip message now states reason and remedy: 'v0.1.0-beta.7 (up-to-date by version; pass --force to rebuild from source)' - VERIFIED end-to-end by reinstalling outfeed with --force and observing the new text. (2) For --debug installs the version gate is bypassed when any file under the crate's src or its Cargo.toml is newer than the installed binary",
+      " because a debug install exists to pick up source edits and those never change the version. Unknowns (no binary",
+      " unreadable mtime) resolve to stale: rebuilding unnecessarily costs a minute",
+      " skipping a stale binary costs a confusing session. The negative direction is verified (benchwork binary 12:37 vs source 12:30 correctly skipped); the positive direction is not yet exercised.\\n\\nTier 2: fmt clean",
+      " clippy --all-targets -D warnings clean",
+      " outfeed-core 90/90. Note there are no unit tests on this path - the filtered run reported '0 tests run' - so the behavioural check above is the evidence",
+      " not a test."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793997193080,
+    "updated_at_epoch_ms": 1793998119672
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "7573f51a-566a-45e0-8414-eaa0034818ef",
+        "ticket_key": "GB-264",
+        "slug": "outfeed-install-skips-the-rebuild-when-the-version-is-unchanged-so-source-edits-never-reach-cargo-bin-7573f5",
+        "title": "outfeed install skips the rebuild when the version is unchanged, so source edits never reach ~/.cargo/bin",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "outfeed_core::install"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793997193080,
+        "updated_at_epoch_ms": 1793997193080
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "7573f51a-566a-45e0-8414-eaa0034818ef",
+      "title": "outfeed install skipped the rebuild silently when the version matched, so source edits never reached ~/.cargo/bin",
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "FIXED 2026-11-06 (outfeed 23207a0). The skip itself was intentional - --force is the documented pre-release mechanism - but it was SILENT and confident: 'up-to-date' reads as 'your build is current' when it means the version string matches",
+        " and that cost a debugging detour where the tested binary was two hours older than the source.\\n\\nTwo changes",
+        " per the maintainer's call that both had merit. (1) The skip message now states reason and remedy: 'v0.1.0-beta.7 (up-to-date by version; pass --force to rebuild from source)' - VERIFIED end-to-end by reinstalling outfeed with --force and observing the new text. (2) For --debug installs the version gate is bypassed when any file under the crate's src or its Cargo.toml is newer than the installed binary",
+        " because a debug install exists to pick up source edits and those never change the version. Unknowns (no binary",
+        " unreadable mtime) resolve to stale: rebuilding unnecessarily costs a minute",
+        " skipping a stale binary costs a confusing session. The negative direction is verified (benchwork binary 12:37 vs source 12:30 correctly skipped); the positive direction is not yet exercised.\\n\\nTier 2: fmt clean",
+        " clippy --all-targets -D warnings clean",
+        " outfeed-core 90/90. Note there are no unit tests on this path - the filtered run reported '0 tests run' - so the behavioural check above is the evidence",
+        " not a test."
+      ],
+      "timestamp_ms": 1793998119672
+    }
+  ]
+}

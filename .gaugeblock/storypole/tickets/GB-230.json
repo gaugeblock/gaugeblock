@@ -1,0 +1,63 @@
+{
+  "ticket": {
+    "id": "68e8c663-01d6-40ed-85b4-da9b6475b3ce",
+    "ticket_key": "GB-230",
+    "slug": "mine-gold-pairs-from-real-git-history-pre-fix-and-post-fix-revisions-of-the-same-hunk-68e8c6",
+    "title": "Mine Gold pairs from real git history: pre-fix and post-fix revisions of the same hunk",
+    "description": "The owners intended source of Gold (stated 2026-10-30): backfill and OSS mining over messy history - commits named fix, fix again, another try carry a genuine failed state and a genuine repair, which is exactly a DPO pair and is more honest than any fixture I could invent.\n\nMEASURED GAP: rabbet has no git-history access at all. `rabbet mine-oss --path <dir>` walks a directory (cold_miner.rs mentions .git only to skip it); there is no rev-range, no git log, no commits_between anywhere in rabbet-core. So the source does not exist yet.\n\nDEPENDENCY, and it reframes an existing ticket: the backfill miner needs exactly the history API planned for GB-131 step 3 - commits_between, merge_base, describe_range, all typed and tested against a real repository. That makes GB-131 steps 2-3 a prerequisite for the Gold corpus rather than pure refactor debt.\n\nSCOPE: for a rev range, find hunks that changed and whose commit message matches the repair vocabulary (fix, retry, try again, another attempt, correct); emit (pre-image, post-image) as a Gold candidate with the commit sha as provenance; verify the post-image compiles before it enters the corpus, because a historical commit is not a guarantee. Keep the commit message out of the training pair - it is metadata, not supervision.",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793398904840,
+    "updated_at_epoch_ms": 1793398904840
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "68e8c663-01d6-40ed-85b4-da9b6475b3ce",
+        "ticket_key": "GB-230",
+        "slug": "mine-gold-pairs-from-real-git-history-pre-fix-and-post-fix-revisions-of-the-same-hunk-68e8c6",
+        "title": "Mine Gold pairs from real git history: pre-fix and post-fix revisions of the same hunk",
+        "description": "The owners intended source of Gold (stated 2026-10-30): backfill and OSS mining over messy history - commits named fix, fix again, another try carry a genuine failed state and a genuine repair, which is exactly a DPO pair and is more honest than any fixture I could invent.\n\nMEASURED GAP: rabbet has no git-history access at all. `rabbet mine-oss --path <dir>` walks a directory (cold_miner.rs mentions .git only to skip it); there is no rev-range, no git log, no commits_between anywhere in rabbet-core. So the source does not exist yet.\n\nDEPENDENCY, and it reframes an existing ticket: the backfill miner needs exactly the history API planned for GB-131 step 3 - commits_between, merge_base, describe_range, all typed and tested against a real repository. That makes GB-131 steps 2-3 a prerequisite for the Gold corpus rather than pure refactor debt.\n\nSCOPE: for a rev range, find hunks that changed and whose commit message matches the repair vocabulary (fix, retry, try again, another attempt, correct); emit (pre-image, post-image) as a Gold candidate with the commit sha as provenance; verify the post-image compiles before it enters the corpus, because a historical commit is not a guarantee. Keep the commit message out of the training pair - it is metadata, not supervision.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793398904840,
+        "updated_at_epoch_ms": 1793398904840
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    }
+  ]
+}

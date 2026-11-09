@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "39ebe154-aa95-427e-b80e-d711359c53a1",
+    "ticket_key": "GB-313",
+    "slug": "verify-stamps-a-receipt-with-the-invoking-repo-s-branch-and-commit-count-even-when-the-ticket-has-nothing-to-do-with-it-39ebe1",
+    "title": "verify stamps a receipt with the invoking repo's branch and commit count, even when the ticket has nothing to do with it",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole-cli::lifecycle_cmds"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794106655631,
+    "updated_at_epoch_ms": 1794106655631
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "39ebe154-aa95-427e-b80e-d711359c53a1",
+        "ticket_key": "GB-313",
+        "slug": "verify-stamps-a-receipt-with-the-invoking-repo-s-branch-and-commit-count-even-when-the-ticket-has-nothing-to-do-with-it-39ebe1",
+        "title": "verify stamps a receipt with the invoking repo's branch and commit count, even when the ticket has nothing to do with it",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole-cli::lifecycle_cmds"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794106655631,
+        "updated_at_epoch_ms": 1794106655631
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

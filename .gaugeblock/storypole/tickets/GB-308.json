@@ -1,0 +1,81 @@
+{
+  "ticket": {
+    "id": "e6fd0806-ce32-444c-b792-a6057a3f838a",
+    "ticket_key": "GB-308",
+    "slug": "detect-agent-thrash-and-dead-ends-from-telemetry-alert-on-the-sse-stream-e6fd08",
+    "title": "Detect agent thrash and dead ends from telemetry, alert on the SSE stream",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_core::telemetry_index"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "SCOPE 2026-11-07, from plans/GB-243.md section 12.3. Third runtime consumer, and the one with the most room to be wrong.\n\nWHAT: detect two shapes of stuck agent from the span stream.\n  Gate thrash: 3 or more consecutive `outfeed gate` failures on the same step, same (task_key, worktree).\n  Search thrash: 5 or more consecutive read/MCP calls within 60 seconds with no file edit, plan update or gate run between them.\nSurface a `ThrashAlert` over the benchwork SSE stream, and optionally a recovery hint in gaugeblock-mcp responses.\n\nWHY THE SECOND SHAPE EXISTS: a gate failure is at least a signal that something was attempted. An agent reading file after file for a minute and changing nothing is the failure mode with no crash and no error - it looks like work in the span log and costs tokens, and it is invisible to every other instrument in the suite.\n\nWHAT MAKES THIS HARD, and must be decided before code:\n  Detection needs state across spans, so it cannot be computed by a stateless query over the log; something holds a window per (session_id, task_key). Where that state lives decides whether the alert survives a daemon restart, and whether two benchwork instances double-count.\n  \"Consecutive\" needs a definition that survives interleaving. Two agents on one task interleave their spans, and a naive last-N list will read one agent's read calls as another's thrash.\n  An edit is not the only thing that un-sticks an agent: a plan update, a gate run, a commit, an explicit defer. The un-stick set is a list and it needs writing down.\n  False positives are expensive here - an alert on normal exploration trains the operator to ignore alerts, which is the same failure as a noisy Law 12 warning.\n\nSEQUENCING: this depends on spans existing for CLI and MCP calls (GB-297 and GB-298), because today only sawhorse emits any. Building the detector first would mean tuning thresholds against a stream that carries one producer.\n\nDone when: both shapes are detected against synthetic span sequences with an interleaved two-agent case in the tests, the un-stick set is documented and tested, a restarted daemon does not re-alert on the same window, and the alert carries enough context (task, step, count, window) to act on without reading the log."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794091035477,
+    "updated_at_epoch_ms": 1794091063314
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "e6fd0806-ce32-444c-b792-a6057a3f838a",
+        "ticket_key": "GB-308",
+        "slug": "detect-agent-thrash-and-dead-ends-from-telemetry-alert-on-the-sse-stream-e6fd08",
+        "title": "Detect agent thrash and dead ends from telemetry, alert on the SSE stream",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "benchwork_core::telemetry_index"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794091035477,
+        "updated_at_epoch_ms": 1794091035477
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "e6fd0806-ce32-444c-b792-a6057a3f838a",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "SCOPE 2026-11-07, from plans/GB-243.md section 12.3. Third runtime consumer, and the one with the most room to be wrong.\n\nWHAT: detect two shapes of stuck agent from the span stream.\n  Gate thrash: 3 or more consecutive `outfeed gate` failures on the same step, same (task_key, worktree).\n  Search thrash: 5 or more consecutive read/MCP calls within 60 seconds with no file edit, plan update or gate run between them.\nSurface a `ThrashAlert` over the benchwork SSE stream, and optionally a recovery hint in gaugeblock-mcp responses.\n\nWHY THE SECOND SHAPE EXISTS: a gate failure is at least a signal that something was attempted. An agent reading file after file for a minute and changing nothing is the failure mode with no crash and no error - it looks like work in the span log and costs tokens, and it is invisible to every other instrument in the suite.\n\nWHAT MAKES THIS HARD, and must be decided before code:\n  Detection needs state across spans, so it cannot be computed by a stateless query over the log; something holds a window per (session_id, task_key). Where that state lives decides whether the alert survives a daemon restart, and whether two benchwork instances double-count.\n  \"Consecutive\" needs a definition that survives interleaving. Two agents on one task interleave their spans, and a naive last-N list will read one agent's read calls as another's thrash.\n  An edit is not the only thing that un-sticks an agent: a plan update, a gate run, a commit, an explicit defer. The un-stick set is a list and it needs writing down.\n  False positives are expensive here - an alert on normal exploration trains the operator to ignore alerts, which is the same failure as a noisy Law 12 warning.\n\nSEQUENCING: this depends on spans existing for CLI and MCP calls (GB-297 and GB-298), because today only sawhorse emits any. Building the detector first would mean tuning thresholds against a stream that carries one producer.\n\nDone when: both shapes are detected against synthetic span sequences with an interleaved two-agent case in the tests, the un-stick set is documented and tested, a restarted daemon does not re-alert on the same window, and the alert carries enough context (task, step, count, window) to act on without reading the log."
+      ],
+      "timestamp_ms": 1794091063314
+    }
+  ]
+}

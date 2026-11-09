@@ -1,0 +1,140 @@
+{
+  "ticket": {
+    "id": "27a052e0-f3cd-4695-b99c-4cb0665d8217",
+    "ticket_key": "GB-259",
+    "slug": "cargo-nextest-appears-to-hang-on-a-stalled-sccache-wrapper-rather-than-compiling-slowly-27a052",
+    "title": "cargo nextest appears to hang on a stalled sccache wrapper rather than compiling slowly",
+    "description": "",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "workspace::build"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "PUSH SESSION 2026-11-06: outfeed push --all pushed all eleven member repositories successfully (ahead counts 27-63 each",
+      " now 0",
+      " no rejections). No release was cut: no version bumps",
+      " no new tags",
+      " no publishes.\\n\\nFINDING worth attention: the meta-harness ROOT has no git remote at all (git remote -v is empty",
+      " no upstream for main",
+      " 431 commits). It holds the canonical ledger (1",
+      "500+ events)",
+      " the ledger archive from GB-260",
+      " the config",
+      " and the plans - so the single most important state in the suite is the one with no off-machine copy. Filed separately."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793994717239,
+    "updated_at_epoch_ms": 1794004343002
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "27a052e0-f3cd-4695-b99c-4cb0665d8217",
+        "ticket_key": "GB-259",
+        "slug": "cargo-nextest-appears-to-hang-on-a-stalled-sccache-wrapper-rather-than-compiling-slowly-27a052",
+        "title": "cargo nextest appears to hang on a stalled sccache wrapper rather than compiling slowly",
+        "description": "",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "workspace::build"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793994717239,
+        "updated_at_epoch_ms": 1793994717239
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "27a052e0-f3cd-4695-b99c-4cb0665d8217",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "REPRO as observed twice on 2026-11-06 (darwin",
+        " stable toolchain",
+        " sccache in PATH). Symptom: cargo nextest -p <crate> sits at one 'Compiling <crate>' line for 7+ minutes with no progress; two sccache wrapper processes show high elapsed time (6:36 seen) and no rustc activity. Killing the wrappers and rerunning with RUSTC_WRAPPER= cargo nextest ... completes in under a minute",
+        " so the compile itself was never slow.\\n\\nWhy it matters beyond lost time: any build timing taken while sccache is wedged is garbage",
+        " which is exactly the failure GB-71 already paid for once. It also reads as a slow crate",
+        " so the natural response is to optimise the crate rather than the wrapper.\\n\\nRecovery to document in AGENTS.md next to the build-timeout guidance: check       00:00 /bin/zsh -c cd /Users/wolff/dev2026/neurosymbolic-suite && storypole update GB-259 --criterion \"REPRO as observed twice on 2026-11-06 (darwin",
+        " stable toolchain",
+        " sccache in PATH). Symptom: cargo nextest -p <crate> sits at one 'Compiling <crate>' line for 7+ minutes with no progress; two sccache wrapper processes show high elapsed time (6:36 seen) and no rustc activity. Killing the wrappers and rerunning with RUSTC_WRAPPER= cargo nextest ... completes in under a minute",
+        " so the compile itself was never slow.\\n\\nWhy it matters beyond lost time: any build timing taken while sccache is wedged is garbage",
+        " which is exactly the failure GB-71 already paid for once. It also reads as a slow crate",
+        " so the natural response is to optimise the crate rather than the wrapper.\\n\\nRecovery to document in AGENTS.md next to the build-timeout guidance: check `ps -eo etime",
+        "command | grep rustc` for wrappers with high elapsed and no rustc child",
+        " then rerun with RUSTC_WRAPPER= set empty. Consider whether the pre-commit and gate paths should set it defensively during beta.\" 2>&1 | tail -2; git add .gaugeblock/storypole/ledger.jsonl && git commit -q -m \"chore(storypole): record the sccache repro on GB-259 and the gitignore sweep\" && echo recorded; for r in . common storypole miter outfeed sawhorse benchwork chalkline dado batten joiner rabbet; do n=$(git -C $r status --short | wc -l | tr -d ' '); [ \"$n\" != \"0\" ] && echo \"$r: $n dirty\"; done; echo clean; miter deps --layers --check 2>&1 | grep Verdict; storypole ledger-reconcile 2>&1 | tail -1\n      00:00 /bin/zsh -c cd /Users/wolff/dev2026/neurosymbolic-suite && storypole update GB-259 --criterion \"REPRO as observed twice on 2026-11-06 (darwin",
+        " stable toolchain",
+        " sccache in PATH). Symptom: cargo nextest -p <crate> sits at one 'Compiling <crate>' line for 7+ minutes with no progress; two sccache wrapper processes show high elapsed time (6:36 seen) and no rustc activity. Killing the wrappers and rerunning with RUSTC_WRAPPER= cargo nextest ... completes in under a minute",
+        " so the compile itself was never slow.\\n\\nWhy it matters beyond lost time: any build timing taken while sccache is wedged is garbage",
+        " which is exactly the failure GB-71 already paid for once. It also reads as a slow crate",
+        " so the natural response is to optimise the crate rather than the wrapper.\\n\\nRecovery to document in AGENTS.md next to the build-timeout guidance: check `ps -eo etime",
+        "command | grep rustc` for wrappers with high elapsed and no rustc child",
+        " then rerun with RUSTC_WRAPPER= set empty. Consider whether the pre-commit and gate paths should set it defensively during beta.\" 2>&1 | tail -2; git add .gaugeblock/storypole/ledger.jsonl && git commit -q -m \"chore(storypole): record the sccache repro on GB-259 and the gitignore sweep\" && echo recorded; for r in . common storypole miter outfeed sawhorse benchwork chalkline dado batten joiner rabbet; do n=$(git -C $r status --short | wc -l | tr -d ' '); [ \"$n\" != \"0\" ] && echo \"$r: $n dirty\"; done; echo clean; miter deps --layers --check 2>&1 | grep Verdict; storypole ledger-reconcile 2>&1 | tail -1\n      00:00 /bin/zsh -c cd /Users/wolff/dev2026/neurosymbolic-suite && storypole update GB-259 --criterion \"REPRO as observed twice on 2026-11-06 (darwin",
+        " stable toolchain",
+        " sccache in PATH). Symptom: cargo nextest -p <crate> sits at one 'Compiling <crate>' line for 7+ minutes with no progress; two sccache wrapper processes show high elapsed time (6:36 seen) and no rustc activity. Killing the wrappers and rerunning with RUSTC_WRAPPER= cargo nextest ... completes in under a minute",
+        " so the compile itself was never slow.\\n\\nWhy it matters beyond lost time: any build timing taken while sccache is wedged is garbage",
+        " which is exactly the failure GB-71 already paid for once. It also reads as a slow crate",
+        " so the natural response is to optimise the crate rather than the wrapper.\\n\\nRecovery to document in AGENTS.md next to the build-timeout guidance: check `ps -eo etime",
+        "command | grep rustc` for wrappers with high elapsed and no rustc child",
+        " then rerun with RUSTC_WRAPPER= set empty. Consider whether the pre-commit and gate paths should set it defensively during beta.\" 2>&1 | tail -2; git add .gaugeblock/storypole/ledger.jsonl && git commit -q -m \"chore(storypole): record the sccache repro on GB-259 and the gitignore sweep\" && echo recorded; for r in . common storypole miter outfeed sawhorse benchwork chalkline dado batten joiner rabbet; do n=$(git -C $r status --short | wc -l | tr -d ' '); [ \"$n\" != \"0\" ] && echo \"$r: $n dirty\"; done; echo clean; miter deps --layers --check 2>&1 | grep Verdict; storypole ledger-reconcile 2>&1 | tail -1\n      00:00 grep rustc for wrappers with high elapsed and no rustc child",
+        " then rerun with RUSTC_WRAPPER= set empty. Consider whether the pre-commit and gate paths should set it defensively during beta."
+      ],
+      "timestamp_ms": 1793994753369
+    },
+    {
+      "event": "task_updated",
+      "task_id": "27a052e0-f3cd-4695-b99c-4cb0665d8217",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "PUSH SESSION 2026-11-06: outfeed push --all pushed all eleven member repositories successfully (ahead counts 27-63 each",
+        " now 0",
+        " no rejections). No release was cut: no version bumps",
+        " no new tags",
+        " no publishes.\\n\\nFINDING worth attention: the meta-harness ROOT has no git remote at all (git remote -v is empty",
+        " no upstream for main",
+        " 431 commits). It holds the canonical ledger (1",
+        "500+ events)",
+        " the ledger archive from GB-260",
+        " the config",
+        " and the plans - so the single most important state in the suite is the one with no off-machine copy. Filed separately."
+      ],
+      "timestamp_ms": 1794004343002
+    }
+  ]
+}

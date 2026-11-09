@@ -1,0 +1,160 @@
+{
+  "ticket": {
+    "id": "588a4744-2708-4e19-927d-8180d3316679",
+    "ticket_key": "GB-30",
+    "slug": "render-taskplan-blueprint-design-markdown-and-interactive-step-checklist-in-benchwork-task-inspector-588a47",
+    "title": "Render TaskPlan blueprint, design markdown, and interactive step checklist in Benchwork task inspector",
+    "description": "Add an Execution Plan section or tab to the Benchwork Task Briefing Drawer and Inspector. Render plan summary, interactive step checklist (step_id, title, target files, gate badges, completion checkbox), and design markdown viewer linking to .storypole/plans/<KEY>.md.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork,plan,inspector,ui"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "d747957d-ec95-430c-971b-ec6e1f24f22a"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Task inspector renders Execution Plan section when task.plan is present;Displays interactive checklist of plan steps with target files and gate badges;Renders markdown design blueprint viewer with copyable plan file path;Step completion toggles can be updated and persisted to storypole ledger"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Created InspectorPlan component rendering TaskPlan summary, copyable blueprint path, interactive steps checklist, and collapsible design markdown viewer",
+      "verified_at_epoch_ms": 1792861070905,
+      "git_branch": "feat/gb-30-render-taskplan-ui",
+      "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "commit_shas": [
+        "d077715a40cf1fe0f23fea84cd151072305bad74"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792859992259,
+    "updated_at_epoch_ms": 1794037988665,
+    "archived_at_epoch_ms": 1794037988665
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "588a4744-2708-4e19-927d-8180d3316679",
+        "ticket_key": "GB-30",
+        "slug": "render-taskplan-blueprint-design-markdown-and-interactive-step-checklist-in-benchwork-task-inspector-588a47",
+        "title": "Render TaskPlan blueprint, design markdown, and interactive step checklist in Benchwork task inspector",
+        "description": "Add an Execution Plan section or tab to the Benchwork Task Briefing Drawer and Inspector. Render plan summary, interactive step checklist (step_id, title, target files, gate badges, completion checkbox), and design markdown viewer linking to .storypole/plans/<KEY>.md.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork,plan,inspector,ui"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "Task inspector renders Execution Plan section when task.plan is present;Displays interactive checklist of plan steps with target files and gate badges;Renders markdown design blueprint viewer with copyable plan file path;Step completion toggles can be updated and persisted to storypole ledger"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792859992259,
+        "updated_at_epoch_ms": 1792859992259
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "588a4744-2708-4e19-927d-8180d3316679",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "d747957d-ec95-430c-971b-ec6e1f24f22a"
+      },
+      "timestamp_ms": 1792860023982
+    },
+    {
+      "event": "status_changed",
+      "task_id": "588a4744-2708-4e19-927d-8180d3316679",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-29",
+      "timestamp_ms": 1792860023982
+    },
+    {
+      "event": "status_changed",
+      "task_id": "588a4744-2708-4e19-927d-8180d3316679",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-29 verified",
+      "timestamp_ms": 1792860774365
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "588a4744-2708-4e19-927d-8180d3316679",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792860972137,
+        "lease_expires_at_epoch_ms": 1792864572137,
+        "git_branch": "feat/gb-30-render-taskplan-ui",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "588a4744-2708-4e19-927d-8180d3316679",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792860972137
+    },
+    {
+      "event": "task_verified",
+      "task_id": "588a4744-2708-4e19-927d-8180d3316679",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Created InspectorPlan component rendering TaskPlan summary, copyable blueprint path, interactive steps checklist, and collapsible design markdown viewer",
+        "verified_at_epoch_ms": 1792861070905,
+        "git_branch": "feat/gb-30-render-taskplan-ui",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "commit_shas": [
+          "d077715a40cf1fe0f23fea84cd151072305bad74"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "588a4744-2708-4e19-927d-8180d3316679",
+      "status": "verified",
+      "timestamp_ms": 1794037988665
+    }
+  ]
+}

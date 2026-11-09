@@ -1,0 +1,533 @@
+{
+  "ticket": {
+    "id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+    "ticket_key": "GB-36",
+    "slug": "unified-gaugeblock-configuration-directory-strategy-and-state-consolidation-b4b474",
+    "title": "Unified .gaugeblock/ configuration directory strategy and state consolidation",
+    "description": "Consolidate scattered tool-specific hidden directories (.miter, .sawhorse, .benchwork, .rabbet, .storypole, .dado) into a unified .gaugeblock/ directory with hierarchical configuration cascading and backward-compatible migration.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": "storypole-core,benchwork-core",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [
+      {
+        "decision_id": "cd195d08-c7f2-4f6c-8a44-3a69414fbd49",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "general",
+        "question": "How should standalone repositories parse and deserialize .gaugeblock/config.toml?",
+        "proposed_options": [
+          "section_isolated",
+          "shared_crate",
+          "sub_file_configs"
+        ],
+        "chosen_option": "section_isolated",
+        "rationale": "Each tool deserializes its own table from .gaugeblock/config.toml, ignoring unknown keys to maintain zero-coupling and Unix standalone value.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792866349277
+      },
+      {
+        "decision_id": "e03ac949-3f26-46e9-8801-8c1b5aaf5a94",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "general",
+        "question": "When both .gaugeblock/config.toml and legacy configs exist, what is the precedence?",
+        "proposed_options": [
+          "unified_precedence",
+          "legacy_override",
+          "strict_error"
+        ],
+        "chosen_option": "unified_precedence",
+        "rationale": ".gaugeblock/config.toml takes precedence if the tool section is defined; fall back to legacy dotfiles if missing.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792866357125
+      },
+      {
+        "decision_id": "c95c7596-7fb0-4787-ac67-3a7b1c11c011",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "general",
+        "question": "How should Git tracking and ignore rules be structured for .gaugeblock/?",
+        "proposed_options": [
+          "dual_layer",
+          "root_only",
+          "allowlist_only"
+        ],
+        "chosen_option": "dual_layer",
+        "rationale": "Auto-scaffold .gaugeblock/.gitignore for SQLite/Redb/spool/worktrees/datasets and maintain root .gitignore rules.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792866363343
+      },
+      {
+        "decision_id": "75b58ab5-08d1-4a8b-b168-642cc738f881",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "general",
+        "question": "Where should the 1-click migration command and UX live?",
+        "proposed_options": [
+          "benchwork_and_gaugeblock_and_individual",
+          "benchwork_only",
+          "meta_cli_only"
+        ],
+        "chosen_option": "benchwork_and_gaugeblock_and_individual",
+        "rationale": "Provide benchwork migrate (with UI banner in Panel 1), a root gaugeblock meta-CLI (gaugeblock migrate), and per-tool migration commands (e.g., storypole migrate) for maximum flexibility.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792866368612
+      },
+      {
+        "decision_id": "bdfe3590-83f4-48f5-b2fa-9f95e03d9a36",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "general",
+        "question": "How should migration handle filesystem changes and existing files?",
+        "proposed_options": [
+          "safe_move_with_dry_run",
+          "dry_run_mandatory",
+          "copy_only"
+        ],
+        "chosen_option": "safe_move_with_dry_run",
+        "rationale": "Safe atomic move of legacy dirs/files into .gaugeblock/ with .bak backups on conflict, consolidating configs into .gaugeblock/config.toml, plus a --dry-run flag.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792866374429
+      }
+    ],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "Unified .gaugeblock/ Configuration Directory Strategy and State Consolidation",
+      "design_markdown": "# GB-36: Unified `.gaugeblock/` Configuration Directory Strategy and State Consolidation\n\n> **Status:** Ready / Specified  \n> **Target Scope:** `storypole-core`, `sawhorse-core`, `miter-storage`, `benchwork-core`, `benchwork-cli`, `workspace`  \n> **Key Architecture Decisions:** D1 (Section-Isolated Reading), D2 (Unified Precedence & Legacy Fallback), D3 (Dual-Layer Git Ignores), D4 (Triple Migration Entrypoints: Benchwork, Meta-CLI, & Per-Tool), D5 (Safe Move with `--dry-run` & Backups)\n\n---\n\n## 1. Executive Summary & Vision\n\nAs the `gaugeblock` suite expanded across 9 distinct tools (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`), tool-specific dotfiles and state directories began proliferating at the repository root:\n- `.storypole/` (`config.toml`, `ledger.jsonl`, `index.sqlite`, `plans/`)\n- `.miter/` (`config.toml`, `miter.redb`)\n- `sawhorse.toml` (and `.sawhorse/`)\n- `.dado/` (`patterns/`, `mixins/`)\n- `.rabbet/spool/` (`outbox.jsonl`)\n- `.benchwork/` (local telemetry, cache)\n\nThis scatter introduces root directory noise, fragmented gitignore configurations, redundant root configuration parsing, and poor developer ergonomics.\n\n`GB-36` establishes a unified `.gaugeblock/` workspace directory standard across all 9 suite tools:\n1. **Single Root Container (`.gaugeblock/`):** All tool-specific state, databases, outboxes, sandboxes, and configuration reside in a single, predictable directory.\n2. **Master Hierarchical Configuration (`.gaugeblock/config.toml`):** A single unified configuration file containing dedicated tables for each tool (`[storypole]`, `[sawhorse]`, `[miter]`, `[rabbet]`, `[docs]`).\n3. **Section-Isolated Reading:** Each tool parses only its own table from `.gaugeblock/config.toml` without depending on sibling tool crates or a monolithic schema crate.\n4. **Transparent Backward Compatibility:** Tools check `.gaugeblock/` first, automatically falling back to legacy root dotfiles if `.gaugeblock/` has not yet been initialized.\n5. **Universal 1-Click Migration:** Available via `benchwork migrate` (with a Benchwork UI banner), a dedicated `gaugeblock` meta-CLI, and per-tool migration commands.\n\n---\n\n## 2. Directory Layout & Git Lifecycle\n\n```text\n.gaugeblock/\n├── .gitignore                      # Ephemeral ignore rules (sqlite, redb, spool, worktrees, datasets)\n├── config.toml                     # Master unified configuration (replaces scattered toml configs)\n├── docs.toml                       # 9-Document architecture mapping & policies (GB-18)\n├── storypole/\n│   ├── ledger.jsonl                # Git-tracked append-only task ledger & event stream\n│   ├── index.sqlite                # Derived query index (ephemeral / gitignored)\n│   └── plans/                      # Git-tracked rich Markdown execution plans\n├── miter/\n│   └── miter.redb                  # Symbol & AST graph database (ephemeral / gitignored)\n├── dado/\n│   ├── patterns/                   # Local pattern templates & overrides (git-tracked)\n│   └── mixins/                     # Custom mixin definitions (git-tracked)\n├── spool/\n│   └── outbox.jsonl                # Joiner telemetry outbox (ephemeral / gitignored)\n├── worktrees/                      # Miter / Joiner sandbox worktrees (ephemeral / gitignored)\n└── datasets/                       # Local parquets, training runs, cache shards (ephemeral / gitignored)\n```\n\n### Git Tracking & Dual-Layer Ignores (Decision D3)\nAn auto-scaffolded `.gaugeblock/.gitignore` marks ephemeral and volatile artifacts while committing essential project memory:\n```gitignore\n# Ephemeral SQLite indexes & locks\nstorypole/index.sqlite*\n# AST redb storage\nmiter/*.redb\n# Outbox spool telemetry\nspool/\n# Sandbox worktrees and test environments\nworktrees/\n# Cache shards and parquets\ndatasets/\n```\n\nWorkspace root `.gitignore` will also include:\n```gitignore\n.gaugeblock/storypole/index.sqlite*\n.gaugeblock/miter/*.redb\n.gaugeblock/spool/\n.gaugeblock/worktrees/\n.gaugeblock/datasets/\n```\n\n---\n\n## 3. Master Unified Configuration Schema (`.gaugeblock/config.toml`)\n\n```toml\n[gaugeblock]\nversion = \"0.1.0\"\nworkspace_name = \"neurosymbolic-suite\"\ntelemetry_opt_in = true\n\n[storypole]\nticket_prefix = \"GB\"\nclaim_ttl_minutes = 60\nauto_track_git_branches = true\n\n[sawhorse]\n[sawhorse.default_model]\nprovider = \"deepseek\"\nmodel_name = \"deepseek-coder\"\nbase_url = \"https://api.deepseek.com/v1\"\napi_key_env = \"DEEPSEEK_API_KEY\"\n\n[sawhorse.roles.oracle]\nprovider = \"anthropic\"\nmodel_name = \"claude-3-5-sonnet\"\n\n[miter]\nexclude = [\"target/**\", \"node_modules/**\"]\n\n[rabbet]\nhub_url = \"https://hub.gaugeblock.dev\"\nsync_interval_mins = 60\n```\n\n### Section-Isolated Reading (Decision D1 & D2)\nEach standalone tool deserializes its respective table from `.gaugeblock/config.toml`. For example:\n- `storypole-core` deserializes `#[derive(Deserialize)] struct ConfigFile { storypole: Option<StorypoleConfig> }`\n- `sawhorse-core` deserializes `#[derive(Deserialize)] struct ConfigFile { sawhorse: Option<SawhorseConfig> }`\n- If `.gaugeblock/config.toml` exists and contains the section, it is used.\n- If missing, it checks legacy paths (`.storypole/config.toml`, `sawhorse.toml`, etc.).\n\n---\n\n## 4. Migration Engine & Tooling Strategy (Decisions D4 & D5)\n\nThe migration logic is implemented as a reusable engine inside `benchwork-core::migration`:\n- **Detection:** Scans for `.storypole/`, `.miter/`, `sawhorse.toml`, `.dado/`, `.rabbet/spool/`.\n- **Atomic Move:** Moves existing directories into `.gaugeblock/` subdirectories (`.storypole` -> `.gaugeblock/storypole/`, etc.).\n- **Config Consolidation:** Reads legacy TOML files and generates a merged `.gaugeblock/config.toml`.\n- **Dual-Layer Gitignore:** Scaffolds `.gaugeblock/.gitignore` and updates root `.gitignore`.\n- **Safety:** Supports `--dry-run` and creates `.bak` backups before overwriting any collision.\n\n### Migration Entrypoints\n1. `benchwork migrate [--dry-run] [--force]`\n2. `benchwork` Web UI: Automatic banner in Panel 1 / Status bar: *\"Legacy dotfiles detected (.storypole, sawhorse.toml). Click to migrate to .gaugeblock/\"*.\n3. `gaugeblock migrate [--dry-run]`: Standalone root meta-CLI binary.\n4. Per-tool migration commands: `storypole migrate` and `sawhorse init --migrate`.\n\n---\n\n## 5. Execution Steps & Verification Gates\n\n| Step | Component | Focus | Verification Gate |\n|---|---|---|---|\n| **S1** | `storypole-core` & `sawhorse-core` | Add `.gaugeblock/` path resolution with legacy dotfile fallback | `cargo test -p storypole-core -p sawhorse-core` |\n| **S2** | `miter-storage`, `miter-engine`, `dado-core`, `joiner-core` | Add `.gaugeblock/` path resolution for Redb, Dado patterns, and Rabbet spool | `cargo test -p miter-engine -p dado-core -p joiner-core` |\n| **S3** | `benchwork-core` | Implement `MigrationEngine` (discovery, consolidation, atomic move, .gitignore scaffolding) | `cargo test -p benchwork-core` |\n| **S4** | CLI & UI integration | `benchwork migrate`, `gaugeblock` meta-CLI, `storypole migrate`, and Benchwork web UI banner | `cargo test -p benchwork-cli -p storypole-cli` |\n| **S5** | Suite dogfooding & docs | Execute migration on workspace, update `CONTRACTS.md`, `README.md`, and full Tier 3 check | `cargo nextest run --workspace` |\n",
+      "steps": [
+        {
+          "step_id": "S1",
+          "title": "storypole-core & sawhorse-core .gaugeblock/ path resolution with legacy fallback",
+          "target_files": [],
+          "verification_gate": "cargo test -p storypole-core -p sawhorse-core",
+          "completed": false
+        },
+        {
+          "step_id": "S2",
+          "title": "miter, dado, and joiner .gaugeblock/ path resolution for Redb, patterns, and spool",
+          "target_files": [],
+          "verification_gate": "cargo test -p miter-engine -p dado-core -p joiner-core",
+          "completed": false
+        },
+        {
+          "step_id": "S3",
+          "title": "benchwork-core MigrationEngine (discovery, consolidation, atomic move, gitignore)",
+          "target_files": [],
+          "verification_gate": "cargo test -p benchwork-core",
+          "completed": false
+        },
+        {
+          "step_id": "S4",
+          "title": "benchwork migrate, gaugeblock meta-CLI, storypole migrate, and Web UI banner",
+          "target_files": [],
+          "verification_gate": "cargo test -p benchwork-cli -p storypole-cli",
+          "completed": false
+        },
+        {
+          "step_id": "S5",
+          "title": "Suite dogfooding, contracts update, and workspace verification",
+          "target_files": [],
+          "verification_gate": "cargo nextest run --workspace",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".storypole/plans/GB-36.md",
+      "updated_at_epoch_ms": 1792866403011
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Implemented unified .gaugeblock/ directory resolution and MigrationEngine",
+      "verified_at_epoch_ms": 1792871247028,
+      "git_branch": "feat/gb-36-gaugeblock-unification",
+      "base_commit_sha": "6a59cbe07e69a3e8f2937a07ce1fa8e8ea7cd9f1",
+      "head_commit_sha": "bd8e1dba556af3e4ef97288ab16f2a519640a329",
+      "commit_shas": [
+        "bd8e1dba556af3e4ef97288ab16f2a519640a329"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792866032340,
+    "updated_at_epoch_ms": 1794037989899,
+    "archived_at_epoch_ms": 1794037989899
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+        "ticket_key": "GB-36",
+        "slug": "unified-gaugeblock-configuration-directory-strategy-and-state-consolidation-b4b474",
+        "title": "Unified .gaugeblock/ configuration directory strategy and state consolidation",
+        "description": "Consolidate scattered tool-specific hidden directories (.miter, .sawhorse, .benchwork, .rabbet, .storypole, .dado) into a unified .gaugeblock/ directory with hierarchical configuration cascading and backward-compatible migration.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": "storypole-core,benchwork-core",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792866032340,
+        "updated_at_epoch_ms": 1792866032340
+      }
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision": {
+        "decision_id": "cd195d08-c7f2-4f6c-8a44-3a69414fbd49",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "general",
+        "question": "How should standalone repositories parse and deserialize .gaugeblock/config.toml?",
+        "proposed_options": [
+          "section_isolated",
+          "shared_crate",
+          "sub_file_configs"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792866345867
+      },
+      "timestamp_ms": 1792866345867
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792866345867
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision_id": "cd195d08-c7f2-4f6c-8a44-3a69414fbd49",
+      "chosen_option": "section_isolated",
+      "rationale": "Each tool deserializes its own table from .gaugeblock/config.toml, ignoring unknown keys to maintain zero-coupling and Unix standalone value.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792866349277
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792866349277
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision": {
+        "decision_id": "e03ac949-3f26-46e9-8801-8c1b5aaf5a94",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "general",
+        "question": "When both .gaugeblock/config.toml and legacy configs exist, what is the precedence?",
+        "proposed_options": [
+          "unified_precedence",
+          "legacy_override",
+          "strict_error"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792866354463
+      },
+      "timestamp_ms": 1792866354463
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792866354463
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision_id": "e03ac949-3f26-46e9-8801-8c1b5aaf5a94",
+      "chosen_option": "unified_precedence",
+      "rationale": ".gaugeblock/config.toml takes precedence if the tool section is defined; fall back to legacy dotfiles if missing.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792866357125
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792866357125
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision": {
+        "decision_id": "c95c7596-7fb0-4787-ac67-3a7b1c11c011",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "general",
+        "question": "How should Git tracking and ignore rules be structured for .gaugeblock/?",
+        "proposed_options": [
+          "dual_layer",
+          "root_only",
+          "allowlist_only"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792866359650
+      },
+      "timestamp_ms": 1792866359650
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792866359650
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision_id": "c95c7596-7fb0-4787-ac67-3a7b1c11c011",
+      "chosen_option": "dual_layer",
+      "rationale": "Auto-scaffold .gaugeblock/.gitignore for SQLite/Redb/spool/worktrees/datasets and maintain root .gitignore rules.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792866363343
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792866363343
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision": {
+        "decision_id": "75b58ab5-08d1-4a8b-b168-642cc738f881",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "general",
+        "question": "Where should the 1-click migration command and UX live?",
+        "proposed_options": [
+          "benchwork_and_gaugeblock_and_individual",
+          "benchwork_only",
+          "meta_cli_only"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792866365870
+      },
+      "timestamp_ms": 1792866365870
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792866365870
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision_id": "75b58ab5-08d1-4a8b-b168-642cc738f881",
+      "chosen_option": "benchwork_and_gaugeblock_and_individual",
+      "rationale": "Provide benchwork migrate (with UI banner in Panel 1), a root gaugeblock meta-CLI (gaugeblock migrate), and per-tool migration commands (e.g., storypole migrate) for maximum flexibility.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792866368612
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792866368612
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision": {
+        "decision_id": "bdfe3590-83f4-48f5-b2fa-9f95e03d9a36",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "general",
+        "question": "How should migration handle filesystem changes and existing files?",
+        "proposed_options": [
+          "safe_move_with_dry_run",
+          "dry_run_mandatory",
+          "copy_only"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792866371662
+      },
+      "timestamp_ms": 1792866371662
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792866371662
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "decision_id": "bdfe3590-83f4-48f5-b2fa-9f95e03d9a36",
+      "chosen_option": "safe_move_with_dry_run",
+      "rationale": "Safe atomic move of legacy dirs/files into .gaugeblock/ with .bak backups on conflict, consolidating configs into .gaugeblock/config.toml, plus a --dry-run flag.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792866374429
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792866374429
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "plan": {
+        "summary": "Unified .gaugeblock/ Configuration Directory Strategy and State Consolidation",
+        "design_markdown": "# GB-36: Unified `.gaugeblock/` Configuration Directory Strategy and State Consolidation\n\n> **Status:** Ready / Specified  \n> **Target Scope:** `storypole-core`, `sawhorse-core`, `miter-storage`, `benchwork-core`, `benchwork-cli`, `workspace`  \n> **Key Architecture Decisions:** D1 (Section-Isolated Reading), D2 (Unified Precedence & Legacy Fallback), D3 (Dual-Layer Git Ignores), D4 (Triple Migration Entrypoints: Benchwork, Meta-CLI, & Per-Tool), D5 (Safe Move with `--dry-run` & Backups)\n\n---\n\n## 1. Executive Summary & Vision\n\nAs the `gaugeblock` suite expanded across 9 distinct tools (`miter`, `storypole`, `sawhorse`, `chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `rabbet`), tool-specific dotfiles and state directories began proliferating at the repository root:\n- `.storypole/` (`config.toml`, `ledger.jsonl`, `index.sqlite`, `plans/`)\n- `.miter/` (`config.toml`, `miter.redb`)\n- `sawhorse.toml` (and `.sawhorse/`)\n- `.dado/` (`patterns/`, `mixins/`)\n- `.rabbet/spool/` (`outbox.jsonl`)\n- `.benchwork/` (local telemetry, cache)\n\nThis scatter introduces root directory noise, fragmented gitignore configurations, redundant root configuration parsing, and poor developer ergonomics.\n\n`GB-36` establishes a unified `.gaugeblock/` workspace directory standard across all 9 suite tools:\n1. **Single Root Container (`.gaugeblock/`):** All tool-specific state, databases, outboxes, sandboxes, and configuration reside in a single, predictable directory.\n2. **Master Hierarchical Configuration (`.gaugeblock/config.toml`):** A single unified configuration file containing dedicated tables for each tool (`[storypole]`, `[sawhorse]`, `[miter]`, `[rabbet]`, `[docs]`).\n3. **Section-Isolated Reading:** Each tool parses only its own table from `.gaugeblock/config.toml` without depending on sibling tool crates or a monolithic schema crate.\n4. **Transparent Backward Compatibility:** Tools check `.gaugeblock/` first, automatically falling back to legacy root dotfiles if `.gaugeblock/` has not yet been initialized.\n5. **Universal 1-Click Migration:** Available via `benchwork migrate` (with a Benchwork UI banner), a dedicated `gaugeblock` meta-CLI, and per-tool migration commands.\n\n---\n\n## 2. Directory Layout & Git Lifecycle\n\n```text\n.gaugeblock/\n├── .gitignore                      # Ephemeral ignore rules (sqlite, redb, spool, worktrees, datasets)\n├── config.toml                     # Master unified configuration (replaces scattered toml configs)\n├── docs.toml                       # 9-Document architecture mapping & policies (GB-18)\n├── storypole/\n│   ├── ledger.jsonl                # Git-tracked append-only task ledger & event stream\n│   ├── index.sqlite                # Derived query index (ephemeral / gitignored)\n│   └── plans/                      # Git-tracked rich Markdown execution plans\n├── miter/\n│   └── miter.redb                  # Symbol & AST graph database (ephemeral / gitignored)\n├── dado/\n│   ├── patterns/                   # Local pattern templates & overrides (git-tracked)\n│   └── mixins/                     # Custom mixin definitions (git-tracked)\n├── spool/\n│   └── outbox.jsonl                # Joiner telemetry outbox (ephemeral / gitignored)\n├── worktrees/                      # Miter / Joiner sandbox worktrees (ephemeral / gitignored)\n└── datasets/                       # Local parquets, training runs, cache shards (ephemeral / gitignored)\n```\n\n### Git Tracking & Dual-Layer Ignores (Decision D3)\nAn auto-scaffolded `.gaugeblock/.gitignore` marks ephemeral and volatile artifacts while committing essential project memory:\n```gitignore\n# Ephemeral SQLite indexes & locks\nstorypole/index.sqlite*\n# AST redb storage\nmiter/*.redb\n# Outbox spool telemetry\nspool/\n# Sandbox worktrees and test environments\nworktrees/\n# Cache shards and parquets\ndatasets/\n```\n\nWorkspace root `.gitignore` will also include:\n```gitignore\n.gaugeblock/storypole/index.sqlite*\n.gaugeblock/miter/*.redb\n.gaugeblock/spool/\n.gaugeblock/worktrees/\n.gaugeblock/datasets/\n```\n\n---\n\n## 3. Master Unified Configuration Schema (`.gaugeblock/config.toml`)\n\n```toml\n[gaugeblock]\nversion = \"0.1.0\"\nworkspace_name = \"neurosymbolic-suite\"\ntelemetry_opt_in = true\n\n[storypole]\nticket_prefix = \"GB\"\nclaim_ttl_minutes = 60\nauto_track_git_branches = true\n\n[sawhorse]\n[sawhorse.default_model]\nprovider = \"deepseek\"\nmodel_name = \"deepseek-coder\"\nbase_url = \"https://api.deepseek.com/v1\"\napi_key_env = \"DEEPSEEK_API_KEY\"\n\n[sawhorse.roles.oracle]\nprovider = \"anthropic\"\nmodel_name = \"claude-3-5-sonnet\"\n\n[miter]\nexclude = [\"target/**\", \"node_modules/**\"]\n\n[rabbet]\nhub_url = \"https://hub.gaugeblock.dev\"\nsync_interval_mins = 60\n```\n\n### Section-Isolated Reading (Decision D1 & D2)\nEach standalone tool deserializes its respective table from `.gaugeblock/config.toml`. For example:\n- `storypole-core` deserializes `#[derive(Deserialize)] struct ConfigFile { storypole: Option<StorypoleConfig> }`\n- `sawhorse-core` deserializes `#[derive(Deserialize)] struct ConfigFile { sawhorse: Option<SawhorseConfig> }`\n- If `.gaugeblock/config.toml` exists and contains the section, it is used.\n- If missing, it checks legacy paths (`.storypole/config.toml`, `sawhorse.toml`, etc.).\n\n---\n\n## 4. Migration Engine & Tooling Strategy (Decisions D4 & D5)\n\nThe migration logic is implemented as a reusable engine inside `benchwork-core::migration`:\n- **Detection:** Scans for `.storypole/`, `.miter/`, `sawhorse.toml`, `.dado/`, `.rabbet/spool/`.\n- **Atomic Move:** Moves existing directories into `.gaugeblock/` subdirectories (`.storypole` -> `.gaugeblock/storypole/`, etc.).\n- **Config Consolidation:** Reads legacy TOML files and generates a merged `.gaugeblock/config.toml`.\n- **Dual-Layer Gitignore:** Scaffolds `.gaugeblock/.gitignore` and updates root `.gitignore`.\n- **Safety:** Supports `--dry-run` and creates `.bak` backups before overwriting any collision.\n\n### Migration Entrypoints\n1. `benchwork migrate [--dry-run] [--force]`\n2. `benchwork` Web UI: Automatic banner in Panel 1 / Status bar: *\"Legacy dotfiles detected (.storypole, sawhorse.toml). Click to migrate to .gaugeblock/\"*.\n3. `gaugeblock migrate [--dry-run]`: Standalone root meta-CLI binary.\n4. Per-tool migration commands: `storypole migrate` and `sawhorse init --migrate`.\n\n---\n\n## 5. Execution Steps & Verification Gates\n\n| Step | Component | Focus | Verification Gate |\n|---|---|---|---|\n| **S1** | `storypole-core` & `sawhorse-core` | Add `.gaugeblock/` path resolution with legacy dotfile fallback | `cargo test -p storypole-core -p sawhorse-core` |\n| **S2** | `miter-storage`, `miter-engine`, `dado-core`, `joiner-core` | Add `.gaugeblock/` path resolution for Redb, Dado patterns, and Rabbet spool | `cargo test -p miter-engine -p dado-core -p joiner-core` |\n| **S3** | `benchwork-core` | Implement `MigrationEngine` (discovery, consolidation, atomic move, .gitignore scaffolding) | `cargo test -p benchwork-core` |\n| **S4** | CLI & UI integration | `benchwork migrate`, `gaugeblock` meta-CLI, `storypole migrate`, and Benchwork web UI banner | `cargo test -p benchwork-cli -p storypole-cli` |\n| **S5** | Suite dogfooding & docs | Execute migration on workspace, update `CONTRACTS.md`, `README.md`, and full Tier 3 check | `cargo nextest run --workspace` |\n",
+        "steps": [
+          {
+            "step_id": "S1",
+            "title": "storypole-core & sawhorse-core .gaugeblock/ path resolution with legacy fallback",
+            "target_files": [],
+            "verification_gate": "cargo test -p storypole-core -p sawhorse-core",
+            "completed": false
+          },
+          {
+            "step_id": "S2",
+            "title": "miter, dado, and joiner .gaugeblock/ path resolution for Redb, patterns, and spool",
+            "target_files": [],
+            "verification_gate": "cargo test -p miter-engine -p dado-core -p joiner-core",
+            "completed": false
+          },
+          {
+            "step_id": "S3",
+            "title": "benchwork-core MigrationEngine (discovery, consolidation, atomic move, gitignore)",
+            "target_files": [],
+            "verification_gate": "cargo test -p benchwork-core",
+            "completed": false
+          },
+          {
+            "step_id": "S4",
+            "title": "benchwork migrate, gaugeblock meta-CLI, storypole migrate, and Web UI banner",
+            "target_files": [],
+            "verification_gate": "cargo test -p benchwork-cli -p storypole-cli",
+            "completed": false
+          },
+          {
+            "step_id": "S5",
+            "title": "Suite dogfooding, contracts update, and workspace verification",
+            "target_files": [],
+            "verification_gate": "cargo nextest run --workspace",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".storypole/plans/GB-36.md",
+        "updated_at_epoch_ms": 1792866403011
+      },
+      "timestamp_ms": 1792866403011
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792866921458,
+        "lease_expires_at_epoch_ms": 1792870521458,
+        "git_branch": "feat/gb-36-gaugeblock-unification",
+        "base_commit_sha": "6a59cbe07e69a3e8f2937a07ce1fa8e8ea7cd9f1"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792866921458
+    },
+    {
+      "event": "task_verified",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Implemented unified .gaugeblock/ directory resolution and MigrationEngine",
+        "verified_at_epoch_ms": 1792871247028,
+        "git_branch": "feat/gb-36-gaugeblock-unification",
+        "base_commit_sha": "6a59cbe07e69a3e8f2937a07ce1fa8e8ea7cd9f1",
+        "head_commit_sha": "bd8e1dba556af3e4ef97288ab16f2a519640a329",
+        "commit_shas": [
+          "bd8e1dba556af3e4ef97288ab16f2a519640a329"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "b4b47467-95c8-42b2-8261-6b28ddcb8e55",
+      "status": "verified",
+      "timestamp_ms": 1794037989899
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "ticket": {
+    "id": "8181a586-aa86-40cd-9b2e-d880098fe920",
+    "ticket_key": "GB-220",
+    "slug": "split-the-two-files-gb-215-pushed-over-the-250-line-threshold-8181a5",
+    "title": "Split the two files GB-215 pushed over the 250-line threshold",
+    "description": "RESOLVED IN THE SAME SESSION as 0c62b3e, recorded because the violation was real and the record should exist: function_fill.rs reached 376 lines and handlers.rs 270 when GB-215 added declared-limit sizing and reasoning-effort plumbing. miter audit caught both. Split into function_fill/prepare.rs (123), function_fill_tests.rs (57) and fill_options.rs (48); function_fill.rs is now 205 and handlers.rs 244, audit reports zero violations suite-wide, and the layers gate stays clean.",
+    "kind": "tech_debt",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "joiner_core::function_fill,joiner_cli::handlers"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Split the two files GB-215 pushed over 250 lines: function_fill.rs 376 -> 205 with prepare.rs (123) and function_fill_tests.rs (57), handlers.rs 270 -> 244 with fill_options.rs (48). miter audit now reports zero violations across the workspace, the layer gate is clean, 20 tests pass, clippy and fmt green. Recorded as self-inflicted and fixed rather than silently dropped.",
+      "verified_at_epoch_ms": 1793368860986,
+      "git_branch": "main",
+      "base_commit_sha": "293d0b0b7278fc3b250b5daf7978cbe2fac68b15",
+      "head_commit_sha": "293d0b0b7278fc3b250b5daf7978cbe2fac68b15",
+      "commit_shas": [
+        "293d0b0b7278fc3b250b5daf7978cbe2fac68b15"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793368860692,
+    "updated_at_epoch_ms": 1794038019759,
+    "archived_at_epoch_ms": 1794038019759
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "8181a586-aa86-40cd-9b2e-d880098fe920",
+        "ticket_key": "GB-220",
+        "slug": "split-the-two-files-gb-215-pushed-over-the-250-line-threshold-8181a5",
+        "title": "Split the two files GB-215 pushed over the 250-line threshold",
+        "description": "RESOLVED IN THE SAME SESSION as 0c62b3e, recorded because the violation was real and the record should exist: function_fill.rs reached 376 lines and handlers.rs 270 when GB-215 added declared-limit sizing and reasoning-effort plumbing. miter audit caught both. Split into function_fill/prepare.rs (123), function_fill_tests.rs (57) and fill_options.rs (48); function_fill.rs is now 205 and handlers.rs 244, audit reports zero violations suite-wide, and the layers gate stays clean.",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "joiner_core::function_fill,joiner_cli::handlers"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793368860692,
+        "updated_at_epoch_ms": 1793368860692
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_verified",
+      "task_id": "8181a586-aa86-40cd-9b2e-d880098fe920",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Split the two files GB-215 pushed over 250 lines: function_fill.rs 376 -> 205 with prepare.rs (123) and function_fill_tests.rs (57), handlers.rs 270 -> 244 with fill_options.rs (48). miter audit now reports zero violations across the workspace, the layer gate is clean, 20 tests pass, clippy and fmt green. Recorded as self-inflicted and fixed rather than silently dropped.",
+        "verified_at_epoch_ms": 1793368860986,
+        "git_branch": "main",
+        "base_commit_sha": "293d0b0b7278fc3b250b5daf7978cbe2fac68b15",
+        "head_commit_sha": "293d0b0b7278fc3b250b5daf7978cbe2fac68b15",
+        "commit_shas": [
+          "293d0b0b7278fc3b250b5daf7978cbe2fac68b15"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "8181a586-aa86-40cd-9b2e-d880098fe920",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953203468
+    },
+    {
+      "event": "task_archived",
+      "task_id": "8181a586-aa86-40cd-9b2e-d880098fe920",
+      "status": "verified",
+      "timestamp_ms": 1794038019759
+    }
+  ]
+}

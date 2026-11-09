@@ -1,0 +1,176 @@
+{
+  "ticket": {
+    "id": "ca593364-ccca-4561-ac6b-2a9322c64ced",
+    "ticket_key": "GB-180",
+    "slug": "native-frontend-toolchain-vite-8-rolldown-oxc-typescript-7-tsgo-and-rust-dev-profile-tuning-benchmarked-per-slice-ca5933",
+    "title": "Native frontend toolchain (Vite 8 Rolldown/Oxc, TypeScript 7/tsgo) and Rust dev-profile tuning, benchmarked per slice",
+    "description": "Upgrade benchwork/web to the native frontend toolchain and tune the Rust dev/test profiles, measuring every step SEQUENTIALLY under Law 12 against the GB-71 baseline of 29.32s for tsc -b plus vite build under Bun (npm was 27.58s). Every slice records cold and warm timings on this machine, with tool versions and cache state, in the commit message, this task and benchwork docs. SLICE 1 - TypeScript: (a) set incremental true, skipLibCheck true and tsBuildInfoFile ./node_modules/.tmp/tsconfig.tsbuildinfo, then measure cold versus warm tsc -b; (b) move to the native compiler - TypeScript 7 if published as typescript@7, otherwise @typescript/native-preview (tsgo) since peer ranges may pin typescript 5/6 - and measure cold versus warm typecheck. SLICE 2 - Vite 8 native bundling: upgrade vite to ^8.1 (or step through rolldown-vite first if the jump spans Vite 7); migrate config keys (build.rollupOptions to build.rolldownOptions, manualChunks object form to codeSplitting.groups, optimizeDeps.esbuildOptions to optimizeDeps.rolldownOptions, top-level esbuild block to oxc); set build.reportCompressedSize false to skip post-bundle gzip; enable server.forwardConsole so client runtime errors reach the terminal for coding agents; then measure full bun run build cold and warm and confirm the production bundle loads. VERIFY each config rename against the installed Vite 8 documentation rather than assuming - the names above are expectations, not confirmed facts. SEPARATE PASS - Rust profile tuning: test [profile.dev] and [profile.test] with incremental false (so sccache can cache dev/test artefacts instead of the incremental units defeating it), debug 1 for line-tables-only and split-debuginfo unpacked; record before and after outfeed gate wall times and target directory size. Report regressions as plainly as wins.",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "benchwork-web",
+      "module_path": null,
+      "target_files": [
+        "benchwork/web/package.json,benchwork/web/tsconfig.json,benchwork/web/vite.config.ts,benchwork/Cargo.toml"
+      ],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+        "target_ticket_key": "GB-131",
+        "target_repo": "workspace"
+      },
+      {
+        "kind": "related_to",
+        "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
+        "target_ticket_key": "GB-189"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "Upgrade benchwork/web to native Vite 8 (Rolldown/Oxc) and TypeScript 7/tsgo, plus Rust dev-profile tuning, timing every slice cold and warm against the 29.32s GB-71 baseline",
+      "design_markdown": "# Task Plan: GB-180 — Native Frontend Toolchain + Rust Dev-Profile Tuning\n\n> **Key:** `GB-180` **Scope:** `benchwork/web`, `benchwork/Cargo.toml` **Status:** Planned\n\n## 1. Baseline (measured under GB-71, Law 12)\n\n| Phase | npm | Bun | Toolchain |\n|:--|--:|--:|:--|\n| install, cold cache | 27.89 s | 13.21 s | npm 12.0.2 / Bun 1.4.4 |\n| install, warm cache | 15.22 s | 1.13 s | same |\n| build (`tsc -b` + `vite build`) | 27.58 s | **29.32 s** | TypeScript 5.7, Vite 6 |\n\nEnvironment: macOS Apple silicon, Node 24.21.0. Timed phases run **sequentially**; parallel runs were\nshown to produce noise when `GB-71` was first measured.\n\n## 2. Method (every slice, every time)\n\n1. `rm -rf node_modules` for a cold phase, keep it for the warm phase.\n2. Time with `/usr/bin/time -p sh -c '<commands>'` so one number covers the whole phase.\n3. Record: platform, tool versions, `bun.lock` state, cold/warm, and the exact commands.\n4. Write it in three places - commit message, this ticket, and `benchwork/CONTRIBUTING.md`.\n\n## 3. Slices, each independently measured and committed\n\n| # | Change | Risk |\n|:--|:--|:--|\n| 3.1 | `incremental`, `skipLibCheck`, `tsBuildInfoFile` in `tsconfig` | low |\n| 3.2 | Native typecheck: `typescript@7` if published, else `@typescript/native-preview` (`tsgo`) | medium - peer ranges may pin 5/6 |\n| 3.3 | `vite@^8.1` via `rolldown-vite` first if the jump spans Vite 7 | medium |\n| 3.4 | Config key migration: `rollupOptions`→`rolldownOptions`, `manualChunks`→`codeSplitting.groups`, `esbuildOptions`→`rolldownOptions`, `esbuild`→`oxc` | medium |\n| 3.5 | `build.reportCompressedSize: false`, `server.forwardConsole: true` | low |\n| 3.6 | Rust `[profile.dev]`/`[profile.test]`: `incremental = false`, `debug = 1`, `split-debuginfo = \"unpacked\"` | medium |\n\n**Config names in 3.4 are expectations, not verified facts.** Each rename is checked against the\ninstalled Vite 8 documentation before the commit that claims it.\n\n## 4. Acceptance\n\n* One table per slice: cold and warm, before and after, same machine.\n* `bun run build` still produces a bundle that loads (`bun run preview` + a Playwright smoke run).\n* `outfeed gate -d benchwork` green after every slice - this is a web change, but the gate also covers\n  docs and the Rust crates that consume `web/dist`.\n* Rust slice reports `outfeed gate` wall time and `target/` size before and after, and says plainly if\n  it regresses.\n",
+      "steps": [
+        {
+          "step_id": "1",
+          "title": "TypeScript incremental build info",
+          "target_files": [],
+          "verification_gate": "tsc cold vs warm recorded",
+          "completed": false
+        },
+        {
+          "step_id": "2",
+          "title": "Native typecheck (typescript 7 or tsgo)",
+          "target_files": [],
+          "verification_gate": "cold vs warm typecheck recorded",
+          "completed": false
+        },
+        {
+          "step_id": "3",
+          "title": "Vite 8 with Rolldown/Oxc config migration",
+          "target_files": [],
+          "verification_gate": "bun run build cold and warm, bundle loads",
+          "completed": false
+        },
+        {
+          "step_id": "4",
+          "title": "Rust dev/test profile tuning",
+          "target_files": [],
+          "verification_gate": "outfeed gate wall time and target size before and after",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-180.md",
+      "updated_at_epoch_ms": 1793297983239
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793297968451,
+    "updated_at_epoch_ms": 1793306998132
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "ca593364-ccca-4561-ac6b-2a9322c64ced",
+        "ticket_key": "GB-180",
+        "slug": "native-frontend-toolchain-vite-8-rolldown-oxc-typescript-7-tsgo-and-rust-dev-profile-tuning-benchmarked-per-slice-ca5933",
+        "title": "Native frontend toolchain (Vite 8 Rolldown/Oxc, TypeScript 7/tsgo) and Rust dev-profile tuning, benchmarked per slice",
+        "description": "Upgrade benchwork/web to the native frontend toolchain and tune the Rust dev/test profiles, measuring every step SEQUENTIALLY under Law 12 against the GB-71 baseline of 29.32s for tsc -b plus vite build under Bun (npm was 27.58s). Every slice records cold and warm timings on this machine, with tool versions and cache state, in the commit message, this task and benchwork docs. SLICE 1 - TypeScript: (a) set incremental true, skipLibCheck true and tsBuildInfoFile ./node_modules/.tmp/tsconfig.tsbuildinfo, then measure cold versus warm tsc -b; (b) move to the native compiler - TypeScript 7 if published as typescript@7, otherwise @typescript/native-preview (tsgo) since peer ranges may pin typescript 5/6 - and measure cold versus warm typecheck. SLICE 2 - Vite 8 native bundling: upgrade vite to ^8.1 (or step through rolldown-vite first if the jump spans Vite 7); migrate config keys (build.rollupOptions to build.rolldownOptions, manualChunks object form to codeSplitting.groups, optimizeDeps.esbuildOptions to optimizeDeps.rolldownOptions, top-level esbuild block to oxc); set build.reportCompressedSize false to skip post-bundle gzip; enable server.forwardConsole so client runtime errors reach the terminal for coding agents; then measure full bun run build cold and warm and confirm the production bundle loads. VERIFY each config rename against the installed Vite 8 documentation rather than assuming - the names above are expectations, not confirmed facts. SEPARATE PASS - Rust profile tuning: test [profile.dev] and [profile.test] with incremental false (so sccache can cache dev/test artefacts instead of the incremental units defeating it), debug 1 for line-tables-only and split-debuginfo unpacked; record before and after outfeed gate wall times and target directory size. Report regressions as plainly as wins.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "benchwork-web",
+          "module_path": null,
+          "target_files": [
+            "benchwork/web/package.json,benchwork/web/tsconfig.json,benchwork/web/vite.config.ts,benchwork/Cargo.toml"
+          ],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793297968451,
+        "updated_at_epoch_ms": 1793297968451
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "ca593364-ccca-4561-ac6b-2a9322c64ced",
+      "plan": {
+        "summary": "Upgrade benchwork/web to native Vite 8 (Rolldown/Oxc) and TypeScript 7/tsgo, plus Rust dev-profile tuning, timing every slice cold and warm against the 29.32s GB-71 baseline",
+        "design_markdown": "# Task Plan: GB-180 — Native Frontend Toolchain + Rust Dev-Profile Tuning\n\n> **Key:** `GB-180` **Scope:** `benchwork/web`, `benchwork/Cargo.toml` **Status:** Planned\n\n## 1. Baseline (measured under GB-71, Law 12)\n\n| Phase | npm | Bun | Toolchain |\n|:--|--:|--:|:--|\n| install, cold cache | 27.89 s | 13.21 s | npm 12.0.2 / Bun 1.4.4 |\n| install, warm cache | 15.22 s | 1.13 s | same |\n| build (`tsc -b` + `vite build`) | 27.58 s | **29.32 s** | TypeScript 5.7, Vite 6 |\n\nEnvironment: macOS Apple silicon, Node 24.21.0. Timed phases run **sequentially**; parallel runs were\nshown to produce noise when `GB-71` was first measured.\n\n## 2. Method (every slice, every time)\n\n1. `rm -rf node_modules` for a cold phase, keep it for the warm phase.\n2. Time with `/usr/bin/time -p sh -c '<commands>'` so one number covers the whole phase.\n3. Record: platform, tool versions, `bun.lock` state, cold/warm, and the exact commands.\n4. Write it in three places - commit message, this ticket, and `benchwork/CONTRIBUTING.md`.\n\n## 3. Slices, each independently measured and committed\n\n| # | Change | Risk |\n|:--|:--|:--|\n| 3.1 | `incremental`, `skipLibCheck`, `tsBuildInfoFile` in `tsconfig` | low |\n| 3.2 | Native typecheck: `typescript@7` if published, else `@typescript/native-preview` (`tsgo`) | medium - peer ranges may pin 5/6 |\n| 3.3 | `vite@^8.1` via `rolldown-vite` first if the jump spans Vite 7 | medium |\n| 3.4 | Config key migration: `rollupOptions`→`rolldownOptions`, `manualChunks`→`codeSplitting.groups`, `esbuildOptions`→`rolldownOptions`, `esbuild`→`oxc` | medium |\n| 3.5 | `build.reportCompressedSize: false`, `server.forwardConsole: true` | low |\n| 3.6 | Rust `[profile.dev]`/`[profile.test]`: `incremental = false`, `debug = 1`, `split-debuginfo = \"unpacked\"` | medium |\n\n**Config names in 3.4 are expectations, not verified facts.** Each rename is checked against the\ninstalled Vite 8 documentation before the commit that claims it.\n\n## 4. Acceptance\n\n* One table per slice: cold and warm, before and after, same machine.\n* `bun run build` still produces a bundle that loads (`bun run preview` + a Playwright smoke run).\n* `outfeed gate -d benchwork` green after every slice - this is a web change, but the gate also covers\n  docs and the Rust crates that consume `web/dist`.\n* Rust slice reports `outfeed gate` wall time and `target/` size before and after, and says plainly if\n  it regresses.\n",
+        "steps": [
+          {
+            "step_id": "1",
+            "title": "TypeScript incremental build info",
+            "target_files": [],
+            "verification_gate": "tsc cold vs warm recorded",
+            "completed": false
+          },
+          {
+            "step_id": "2",
+            "title": "Native typecheck (typescript 7 or tsgo)",
+            "target_files": [],
+            "verification_gate": "cold vs warm typecheck recorded",
+            "completed": false
+          },
+          {
+            "step_id": "3",
+            "title": "Vite 8 with Rolldown/Oxc config migration",
+            "target_files": [],
+            "verification_gate": "bun run build cold and warm, bundle loads",
+            "completed": false
+          },
+          {
+            "step_id": "4",
+            "title": "Rust dev/test profile tuning",
+            "target_files": [],
+            "verification_gate": "outfeed gate wall time and target size before and after",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-180.md",
+        "updated_at_epoch_ms": 1793297983239
+      },
+      "timestamp_ms": 1793297983239
+    },
+    {
+      "event": "edge_added",
+      "task_id": "ca593364-ccca-4561-ac6b-2a9322c64ced",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+        "target_ticket_key": "GB-131",
+        "target_repo": "workspace"
+      },
+      "timestamp_ms": 1793306997863
+    },
+    {
+      "event": "edge_added",
+      "task_id": "ca593364-ccca-4561-ac6b-2a9322c64ced",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
+        "target_ticket_key": "GB-189"
+      },
+      "timestamp_ms": 1793306998132
+    }
+  ]
+}

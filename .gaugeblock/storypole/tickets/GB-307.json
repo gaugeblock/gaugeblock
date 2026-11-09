@@ -1,0 +1,81 @@
+{
+  "ticket": {
+    "id": "c86fcfae-7104-472d-8805-241447d78aa1",
+    "ticket_key": "GB-307",
+    "slug": "outfeed-gate-fail-fast-order-steps-by-historical-failure-rate-over-duration-c86fcf",
+    "title": "outfeed gate --fail-fast: order steps by historical failure rate over duration",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "outfeed_core::gate"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "SCOPE 2026-11-07, from plans/GB-243.md section 12.3. Second runtime consumer.\n\nWHAT: `outfeed gate --fail-fast` orders steps by historical `fail_probability / p50_duration`, so cheap checks that fail often (`docs`, `lockfiles`, `fmt`, `contracts`) run before the multi-second compiler passes (`clippy`, `nextest`).\n\nTHE QUESTION THIS ORDERING ANSWERS, stated so the implementation cannot drift: it is not about running the fastest checks first. It is about maximising the chance of an early failure per second spent. A 400 ms docs check that fails one run in five is worth more early than a 30 s clippy that fails one run in twenty, and the ratio is what expresses that.\n\nDEFAULT STAYS ORDERED AS TODAY. Reordering a gate is a behaviour change from the perspective of anyone reading gate output, and the ceremony order is deliberate (fmt before clippy before tests, so a formatting failure does not hide a type error). `--fail-fast` is therefore opt-in, and the flag name must not be the only place that is documented - the emitted output should say the order was computed and from what.\n\nCOLD START: with no history, fall back to the ceremony order rather than inventing a ranking. Print why (\"no history; using default order\"), because a silently different order that nobody can explain is the failure mode of every adaptive system.\n\nMEASUREMENT OBLIGATION UNDER LAW 12: this feature claims to save wall time. Before/after on the same machine, same inputs, recorded in the commit and in outfeed's perf document - and report it plainly if the saving does not materialise, because a reordering that costs more in lookup than it saves in early exit is a real possible outcome.\n\nDone when: `--fail-fast` reorders by the ratio when history exists, falls back to ceremony order and says so when it does not, the computed order and its inputs are visible in the output, and the wall-time claim has a measurement attached."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794091035306,
+    "updated_at_epoch_ms": 1794091055590
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "c86fcfae-7104-472d-8805-241447d78aa1",
+        "ticket_key": "GB-307",
+        "slug": "outfeed-gate-fail-fast-order-steps-by-historical-failure-rate-over-duration-c86fcf",
+        "title": "outfeed gate --fail-fast: order steps by historical failure rate over duration",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "outfeed_core::gate"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794091035306,
+        "updated_at_epoch_ms": 1794091035306
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "c86fcfae-7104-472d-8805-241447d78aa1",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "SCOPE 2026-11-07, from plans/GB-243.md section 12.3. Second runtime consumer.\n\nWHAT: `outfeed gate --fail-fast` orders steps by historical `fail_probability / p50_duration`, so cheap checks that fail often (`docs`, `lockfiles`, `fmt`, `contracts`) run before the multi-second compiler passes (`clippy`, `nextest`).\n\nTHE QUESTION THIS ORDERING ANSWERS, stated so the implementation cannot drift: it is not about running the fastest checks first. It is about maximising the chance of an early failure per second spent. A 400 ms docs check that fails one run in five is worth more early than a 30 s clippy that fails one run in twenty, and the ratio is what expresses that.\n\nDEFAULT STAYS ORDERED AS TODAY. Reordering a gate is a behaviour change from the perspective of anyone reading gate output, and the ceremony order is deliberate (fmt before clippy before tests, so a formatting failure does not hide a type error). `--fail-fast` is therefore opt-in, and the flag name must not be the only place that is documented - the emitted output should say the order was computed and from what.\n\nCOLD START: with no history, fall back to the ceremony order rather than inventing a ranking. Print why (\"no history; using default order\"), because a silently different order that nobody can explain is the failure mode of every adaptive system.\n\nMEASUREMENT OBLIGATION UNDER LAW 12: this feature claims to save wall time. Before/after on the same machine, same inputs, recorded in the commit and in outfeed's perf document - and report it plainly if the saving does not materialise, because a reordering that costs more in lookup than it saves in early exit is a real possible outcome.\n\nDone when: `--fail-fast` reorders by the ratio when history exists, falls back to ceremony order and says so when it does not, the computed order and its inputs are visible in the output, and the wall-time claim has a measurement attached."
+      ],
+      "timestamp_ms": 1794091055590
+    }
+  ]
+}

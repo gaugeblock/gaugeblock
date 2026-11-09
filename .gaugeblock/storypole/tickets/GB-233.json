@@ -1,0 +1,136 @@
+{
+  "ticket": {
+    "id": "94a630c8-795b-4d71-9918-7182b29946c0",
+    "ticket_key": "GB-233",
+    "slug": "miter-deps-still-misses-a-dependency-referenced-only-by-a-qualified-path-in-some-files-94a630",
+    "title": "miter deps still misses a dependency referenced only by a qualified path in some files",
+    "description": "GB-232 fixed the module-name collision, which removed four false positives. One case survives and is measured: outfeed-core declares reqwest and uses it only as `reqwest::blocking::get(&url)` and `reqwest::StatusCode::NOT_FOUND` in src/index_poll.rs, with no `use reqwest` anywhere - and `miter deps --path . --unused` still lists outfeed-core/reqwest.\n\nThis is the last item in GB-201 and the only one that would be destructive to act on: parquet was the same shape and turned out to be masked by a module name, but reqwest has no same-named module in outfeed-core, so the qualified-path branch is not firing for this file. Worth noting the diagnostic risk: a grep loop I wrote to verify candidates reported 0 hits for reqwest while a direct grep found two lines, so the harness needs a counted result (wc -l) rather than an exit code before any future purge trusts it.\n\nNEXT: reproduce with src/index_poll.rs as the fixture - if import_roots_in_source finds reqwest there, the loss is in the walk or the filter; if it does not, the stripper is eating the file (the same suspicion that was wrong for batten-core but may be right here, since index_poll.rs also has cfg-gated code).",
+    "kind": "bug",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_engine::analysis::deps::imports"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "A char literal holding a double quote no longer blinds the stripper. code_only handled string and raw-string literals but not char literals, so `line.split(chr(39)+chr(34)+chr(39))` in outfeed-core/src/index_poll.rs was read as an apostrophe followed by a string opener; the stripper consumed everything to the next quote and every later reference vanished. reqwest::blocking::get at lines 63 and 71 was therefore reported as an unused dependency. skip_char_literal now distinguishes escaped literals, single-char literals including the quote-containing one, and lifetimes. Measured before: import_roots_in_source on that file returned chrono and semver and nothing after line 42. After: reqwest at 63 and 71, and miter deps --unused dropped from 4 to 3 with only the documented candle keeps left. Three earlier hypotheses had been refuted by measurement - path scan, module-name filter (GB-232), and the walk - before printing the roots of the real file pointed at the stripper. Gate: clippy -D warnings, 183 tests, fmt green.",
+      "verified_at_epoch_ms": 1793408079990,
+      "git_branch": "main",
+      "base_commit_sha": "1927d0de97135a8d67cbb4799e594f65b5640497",
+      "head_commit_sha": "1927d0de97135a8d67cbb4799e594f65b5640497",
+      "commit_shas": [
+        "1927d0de97135a8d67cbb4799e594f65b5640497"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793404423800,
+    "updated_at_epoch_ms": 1794038021099,
+    "archived_at_epoch_ms": 1794038021099
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "94a630c8-795b-4d71-9918-7182b29946c0",
+        "ticket_key": "GB-233",
+        "slug": "miter-deps-still-misses-a-dependency-referenced-only-by-a-qualified-path-in-some-files-94a630",
+        "title": "miter deps still misses a dependency referenced only by a qualified path in some files",
+        "description": "GB-232 fixed the module-name collision, which removed four false positives. One case survives and is measured: outfeed-core declares reqwest and uses it only as `reqwest::blocking::get(&url)` and `reqwest::StatusCode::NOT_FOUND` in src/index_poll.rs, with no `use reqwest` anywhere - and `miter deps --path . --unused` still lists outfeed-core/reqwest.\n\nThis is the last item in GB-201 and the only one that would be destructive to act on: parquet was the same shape and turned out to be masked by a module name, but reqwest has no same-named module in outfeed-core, so the qualified-path branch is not firing for this file. Worth noting the diagnostic risk: a grep loop I wrote to verify candidates reported 0 hits for reqwest while a direct grep found two lines, so the harness needs a counted result (wc -l) rather than an exit code before any future purge trusts it.\n\nNEXT: reproduce with src/index_poll.rs as the fixture - if import_roots_in_source finds reqwest there, the loss is in the walk or the filter; if it does not, the stripper is eating the file (the same suspicion that was wrong for batten-core but may be right here, since index_poll.rs also has cfg-gated code).",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_engine::analysis::deps::imports"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793404423800,
+        "updated_at_epoch_ms": 1793404423800
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "94a630c8-795b-4d71-9918-7182b29946c0",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793408079834,
+        "lease_expires_at_epoch_ms": 1793411679834,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "94a630c8-795b-4d71-9918-7182b29946c0",
+      "from": "triage",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793408079834
+    },
+    {
+      "event": "task_verified",
+      "task_id": "94a630c8-795b-4d71-9918-7182b29946c0",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "A char literal holding a double quote no longer blinds the stripper. code_only handled string and raw-string literals but not char literals, so `line.split(chr(39)+chr(34)+chr(39))` in outfeed-core/src/index_poll.rs was read as an apostrophe followed by a string opener; the stripper consumed everything to the next quote and every later reference vanished. reqwest::blocking::get at lines 63 and 71 was therefore reported as an unused dependency. skip_char_literal now distinguishes escaped literals, single-char literals including the quote-containing one, and lifetimes. Measured before: import_roots_in_source on that file returned chrono and semver and nothing after line 42. After: reqwest at 63 and 71, and miter deps --unused dropped from 4 to 3 with only the documented candle keeps left. Three earlier hypotheses had been refuted by measurement - path scan, module-name filter (GB-232), and the walk - before printing the roots of the real file pointed at the stripper. Gate: clippy -D warnings, 183 tests, fmt green.",
+        "verified_at_epoch_ms": 1793408079990,
+        "git_branch": "main",
+        "base_commit_sha": "1927d0de97135a8d67cbb4799e594f65b5640497",
+        "head_commit_sha": "1927d0de97135a8d67cbb4799e594f65b5640497",
+        "commit_shas": [
+          "1927d0de97135a8d67cbb4799e594f65b5640497"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "94a630c8-795b-4d71-9918-7182b29946c0",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953207142
+    },
+    {
+      "event": "task_archived",
+      "task_id": "94a630c8-795b-4d71-9918-7182b29946c0",
+      "status": "verified",
+      "timestamp_ms": 1794038021099
+    }
+  ]
+}

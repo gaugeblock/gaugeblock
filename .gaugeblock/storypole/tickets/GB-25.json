@@ -1,0 +1,111 @@
+{
+  "ticket": {
+    "id": "b91f614d-543f-429e-afd3-438ee5dd6998",
+    "ticket_key": "GB-25",
+    "slug": "capture-short-commit-ref-and-respect-verifier-summary-in-verificationreceipt-b91f61",
+    "title": "Capture short commit ref and respect verifier/summary in VerificationReceipt",
+    "description": "Add commit_ref to VerificationReceipt across storypole-core and CONTRACTS.md, auto-populate with short git hash (git rev-parse --short HEAD), and wire CLI and MCP --verifier / --summary arguments into verify_task instead of hardcoding 'manual'.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "storypole-core",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "storypole,verification,git,contracts"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "VerificationReceipt includes optional commit_ref with 7-character git commit hash,storypole verify and storypole_verify MCP respect passed --verifier and --summary arguments,defaults to short HEAD commit when verifying in a git repository"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Completed in storypole upgrade with multi-commit VerificationReceipt and Git branch tracking",
+      "verified_at_epoch_ms": 1792859948451,
+      "git_branch": "feat/storypole-plan-and-gb18-spec",
+      "base_commit_sha": "1f3ce7495b99a20865f12540c9a553824461d780",
+      "head_commit_sha": "2d2740245432ac437653150b7a2a0cf57fdac43c",
+      "commit_shas": [
+        "2d2740245432ac437653150b7a2a0cf57fdac43c"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792733256748,
+    "updated_at_epoch_ms": 1794037987950,
+    "archived_at_epoch_ms": 1794037987950
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "b91f614d-543f-429e-afd3-438ee5dd6998",
+        "ticket_key": "GB-25",
+        "slug": "capture-short-commit-ref-and-respect-verifier-summary-in-verificationreceipt-b91f61",
+        "title": "Capture short commit ref and respect verifier/summary in VerificationReceipt",
+        "description": "Add commit_ref to VerificationReceipt across storypole-core and CONTRACTS.md, auto-populate with short git hash (git rev-parse --short HEAD), and wire CLI and MCP --verifier / --summary arguments into verify_task instead of hardcoding 'manual'.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "storypole-core",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "storypole,verification,git,contracts"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "VerificationReceipt includes optional commit_ref with 7-character git commit hash,storypole verify and storypole_verify MCP respect passed --verifier and --summary arguments,defaults to short HEAD commit when verifying in a git repository"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792733256748,
+        "updated_at_epoch_ms": 1792733256748
+      }
+    },
+    {
+      "event": "task_verified",
+      "task_id": "b91f614d-543f-429e-afd3-438ee5dd6998",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Completed in storypole upgrade with multi-commit VerificationReceipt and Git branch tracking",
+        "verified_at_epoch_ms": 1792859948451,
+        "git_branch": "feat/storypole-plan-and-gb18-spec",
+        "base_commit_sha": "1f3ce7495b99a20865f12540c9a553824461d780",
+        "head_commit_sha": "2d2740245432ac437653150b7a2a0cf57fdac43c",
+        "commit_shas": [
+          "2d2740245432ac437653150b7a2a0cf57fdac43c"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "b91f614d-543f-429e-afd3-438ee5dd6998",
+      "status": "verified",
+      "timestamp_ms": 1794037987950
+    }
+  ]
+}

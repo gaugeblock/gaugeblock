@@ -1,0 +1,130 @@
+{
+  "ticket": {
+    "id": "d747957d-ec95-430c-971b-ec6e1f24f22a",
+    "ticket_key": "GB-29",
+    "slug": "synchronize-benchwork-typescript-wire-contracts-with-updated-storypole-schemas-d74795",
+    "title": "Synchronize Benchwork TypeScript wire contracts with updated Storypole schemas",
+    "description": "Update benchwork/web/src/types.ts and API client to align with CONTRACTS.md Section 2: add TaskPlan, PlanStep, AgentClaim, and update VerificationReceipt with git_branch, base_commit_sha, head_commit_sha, commit_shas, and TaskNode with plan and active_claim.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork,contracts,typescript,types"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "types.ts contains PlanStep, TaskPlan, and AgentClaim interfaces;VerificationReceipt in types.ts includes git lineage fields and commit_shas;TaskNode interface includes plan?: TaskPlan and active_claim?: AgentClaim"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Synchronized TypeScript wire contracts (TaskPlan, PlanStep, AgentClaim, VerificationReceipt git fields) and benchwork-core claim API",
+      "verified_at_epoch_ms": 1792860774365,
+      "git_branch": "feat/gb-29-sync-wire-contracts",
+      "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "commit_shas": [
+        "d077715a40cf1fe0f23fea84cd151072305bad74"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792859985516,
+    "updated_at_epoch_ms": 1794037988484,
+    "archived_at_epoch_ms": 1794037988484
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "d747957d-ec95-430c-971b-ec6e1f24f22a",
+        "ticket_key": "GB-29",
+        "slug": "synchronize-benchwork-typescript-wire-contracts-with-updated-storypole-schemas-d74795",
+        "title": "Synchronize Benchwork TypeScript wire contracts with updated Storypole schemas",
+        "description": "Update benchwork/web/src/types.ts and API client to align with CONTRACTS.md Section 2: add TaskPlan, PlanStep, AgentClaim, and update VerificationReceipt with git_branch, base_commit_sha, head_commit_sha, commit_shas, and TaskNode with plan and active_claim.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork,contracts,typescript,types"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "types.ts contains PlanStep, TaskPlan, and AgentClaim interfaces;VerificationReceipt in types.ts includes git lineage fields and commit_shas;TaskNode interface includes plan?: TaskPlan and active_claim?: AgentClaim"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792859985516,
+        "updated_at_epoch_ms": 1792859985516
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "d747957d-ec95-430c-971b-ec6e1f24f22a",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792860244190,
+        "lease_expires_at_epoch_ms": 1792863844190,
+        "git_branch": "feat/gb-29-sync-wire-contracts",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "d747957d-ec95-430c-971b-ec6e1f24f22a",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792860244190
+    },
+    {
+      "event": "task_verified",
+      "task_id": "d747957d-ec95-430c-971b-ec6e1f24f22a",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Synchronized TypeScript wire contracts (TaskPlan, PlanStep, AgentClaim, VerificationReceipt git fields) and benchwork-core claim API",
+        "verified_at_epoch_ms": 1792860774365,
+        "git_branch": "feat/gb-29-sync-wire-contracts",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "commit_shas": [
+          "d077715a40cf1fe0f23fea84cd151072305bad74"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "d747957d-ec95-430c-971b-ec6e1f24f22a",
+      "status": "verified",
+      "timestamp_ms": 1794037988484
+    }
+  ]
+}

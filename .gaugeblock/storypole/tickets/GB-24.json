@@ -1,0 +1,77 @@
+{
+  "ticket": {
+    "id": "faee381c-6088-4f64-a499-fd789334ece6",
+    "ticket_key": "GB-24",
+    "slug": "track-upstream-releases-for-pest-axum-and-crypto-common-to-unpin-transitive-dependencies-faee38",
+    "title": "Track upstream releases for pest, axum, and crypto-common to unpin transitive dependencies",
+    "description": "Evaluated 2026-10-28: pest 2.9.5, axum 0.8.9 and crypto-common 0.2.2 are the current upstream releases; the suite already tracks axum 0.8, so remaining work is unpinning the transitive pest/crypto-common constraints once the dependent crates publish compatible releases.",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": "workspace",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "deps,upstream"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1792729487438,
+    "updated_at_epoch_ms": 1793176861735
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "faee381c-6088-4f64-a499-fd789334ece6",
+        "ticket_key": "GB-24",
+        "slug": "track-upstream-releases-for-pest-axum-and-crypto-common-to-unpin-transitive-dependencies-faee38",
+        "title": "Track upstream releases for pest, axum, and crypto-common to unpin transitive dependencies",
+        "description": "pest 2.9 pins psm = =0.1.24, axum 0.8 pins matchit = =0.8.4, and crypto-common 0.1 pins generic-array = =0.14.7. Track upstream patch/minor releases to unblock cargo update.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": "workspace",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "deps,upstream"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792729487438,
+        "updated_at_epoch_ms": 1792729487438
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "faee381c-6088-4f64-a499-fd789334ece6",
+      "title": null,
+      "description": "Evaluated 2026-10-28: pest 2.9.5, axum 0.8.9 and crypto-common 0.2.2 are the current upstream releases; the suite already tracks axum 0.8, so remaining work is unpinning the transitive pest/crypto-common constraints once the dependent crates publish compatible releases.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793176861735
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "ticket": {
+    "id": "48f1ab1a-e738-4b00-a212-ed09992dab87",
+    "ticket_key": "GB-150",
+    "slug": "track-cargo-lock-in-every-member-repository-and-remove-the-silent-git-add-trap-it-creates-48f1ab",
+    "title": "Track Cargo.lock in every member repository and remove the silent git-add trap it creates",
+    "description": "Audit 2026-10-28: six repositories ignore their lockfile (storypole:4, sawhorse:4, batten:4, joiner:3, benchwork:4, rabbet:4 - each written as 'Cargo.lock ' with a trailing space, which git trims so the pattern still matches), while five already track it (miter, chalkline, dado, outfeed, common). The harness root .gitignore also lists Cargo.lock even though the root has no Cargo manifest. Two consequences. (1) Reproducibility: every suite member is a binary/tool, where Cargo's own guidance is to commit the lockfile; a fresh clone of the six untracked repos resolves whatever versions exist that day, so a published upstream breaking change silently alters a user's build. (2) Operational trap: 'git add -A <dir> Cargo.lock' aborts with 'paths are ignored' and stages NOTHING, and a following 'git commit -q' then fails with no output - it silently produced no-op merges twice today (batten 33a6286 and storypole 5ffb991 had to be re-committed by hand). Proposed fix: drop the Cargo.lock line from the six member .gitignore files (and the root one), git add + commit the lockfile in each of those six as chore(<repo>): track Cargo.lock, then add scripts/check-lockfiles.sh asserting every repository containing Cargo.toml also tracks Cargo.lock, wire it into the Tier 3 gate, and record in AGENTS.md that 'git add <dir> <ignored-path>' aborts the whole staging operation. Acceptance: git ls-files --error-unmatch Cargo.lock succeeds in all eleven repositories, the check script exits 0, and the Tier 3 gate list names it.",
+    "kind": "tech_debt",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [
+        ".gitignore,storypole/.gitignore,sawhorse/.gitignore,batten/.gitignore,joiner/.gitignore,benchwork/.gitignore,rabbet/.gitignore,scripts"
+      ],
+      "target_symbols": [],
+      "labels": [
+        "reproducibility,release-hygiene"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "cline",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "All eleven repositories now track a fresh Cargo.lock. Six had it ignored (storypole, sawhorse, batten, joiner, benchwork, rabbet) and three tracked a stale one (chalkline, dado, outfeed); each repo carries its own chore commit. scripts/check-lockfiles.sh asserts both conditions via git ls-files plus cargo metadata --locked and reports 11/11, is wired into the Tier 3 gate in AGENTS.md, and AGENTS.md now records that an ignored path aborts the whole git add so a quiet commit can be a no-op.",
+      "verified_at_epoch_ms": 1793230400896,
+      "git_branch": "main",
+      "base_commit_sha": "bdce7af273ec53fa7d01a5dc779364fe57d800e8",
+      "head_commit_sha": "bdce7af273ec53fa7d01a5dc779364fe57d800e8",
+      "commit_shas": [
+        "bdce7af273ec53fa7d01a5dc779364fe57d800e8"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793229653311,
+    "updated_at_epoch_ms": 1794038009788,
+    "archived_at_epoch_ms": 1794038009788
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "48f1ab1a-e738-4b00-a212-ed09992dab87",
+        "ticket_key": "GB-150",
+        "slug": "track-cargo-lock-in-every-member-repository-and-remove-the-silent-git-add-trap-it-creates-48f1ab",
+        "title": "Track Cargo.lock in every member repository and remove the silent git-add trap it creates",
+        "description": "Audit 2026-10-28: six repositories ignore their lockfile (storypole:4, sawhorse:4, batten:4, joiner:3, benchwork:4, rabbet:4 - each written as 'Cargo.lock ' with a trailing space, which git trims so the pattern still matches), while five already track it (miter, chalkline, dado, outfeed, common). The harness root .gitignore also lists Cargo.lock even though the root has no Cargo manifest. Two consequences. (1) Reproducibility: every suite member is a binary/tool, where Cargo's own guidance is to commit the lockfile; a fresh clone of the six untracked repos resolves whatever versions exist that day, so a published upstream breaking change silently alters a user's build. (2) Operational trap: 'git add -A <dir> Cargo.lock' aborts with 'paths are ignored' and stages NOTHING, and a following 'git commit -q' then fails with no output - it silently produced no-op merges twice today (batten 33a6286 and storypole 5ffb991 had to be re-committed by hand). Proposed fix: drop the Cargo.lock line from the six member .gitignore files (and the root one), git add + commit the lockfile in each of those six as chore(<repo>): track Cargo.lock, then add scripts/check-lockfiles.sh asserting every repository containing Cargo.toml also tracks Cargo.lock, wire it into the Tier 3 gate, and record in AGENTS.md that 'git add <dir> <ignored-path>' aborts the whole staging operation. Acceptance: git ls-files --error-unmatch Cargo.lock succeeds in all eleven repositories, the check script exits 0, and the Tier 3 gate list names it.",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [
+            ".gitignore,storypole/.gitignore,sawhorse/.gitignore,batten/.gitignore,joiner/.gitignore,benchwork/.gitignore,rabbet/.gitignore,scripts"
+          ],
+          "target_symbols": [],
+          "labels": [
+            "reproducibility,release-hygiene"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793229653311,
+        "updated_at_epoch_ms": 1793229653311
+      },
+      "captured_by_agent": "cline",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_verified",
+      "task_id": "48f1ab1a-e738-4b00-a212-ed09992dab87",
+      "receipt": {
+        "verifier": "cline",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "All eleven repositories now track a fresh Cargo.lock. Six had it ignored (storypole, sawhorse, batten, joiner, benchwork, rabbet) and three tracked a stale one (chalkline, dado, outfeed); each repo carries its own chore commit. scripts/check-lockfiles.sh asserts both conditions via git ls-files plus cargo metadata --locked and reports 11/11, is wired into the Tier 3 gate in AGENTS.md, and AGENTS.md now records that an ignored path aborts the whole git add so a quiet commit can be a no-op.",
+        "verified_at_epoch_ms": 1793230400896,
+        "git_branch": "main",
+        "base_commit_sha": "bdce7af273ec53fa7d01a5dc779364fe57d800e8",
+        "head_commit_sha": "bdce7af273ec53fa7d01a5dc779364fe57d800e8",
+        "commit_shas": [
+          "bdce7af273ec53fa7d01a5dc779364fe57d800e8"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "48f1ab1a-e738-4b00-a212-ed09992dab87",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793289288162
+    },
+    {
+      "event": "task_archived",
+      "task_id": "48f1ab1a-e738-4b00-a212-ed09992dab87",
+      "status": "verified",
+      "timestamp_ms": 1794038009788
+    }
+  ]
+}

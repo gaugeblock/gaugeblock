@@ -1,0 +1,81 @@
+{
+  "ticket": {
+    "id": "94cf616d-5180-4e17-ac4d-73f7aaf41a27",
+    "ticket_key": "GB-309",
+    "slug": "storypole-handoff-populate-the-context-packet-from-telemetry-spans-by-task-key-94cf61",
+    "title": "storypole handoff: populate the context packet from telemetry spans by task key",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::handlers::lifecycle_cmds"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "SCOPE 2026-11-07, from plans/GB-243.md section 12.3. Fourth runtime consumer.\n\nWHAT: `storypole handoff <KEY>` currently asks the operator to summarise what happened. Populate the handoff packet from spans matching `task_key`: MCP tools called, files inspected, the last `outfeed gate` step statuses, wall time elapsed, and `sawhorse` tokens consumed.\n\nWHY THIS IS THE HIGHEST-VALUE OF THE FOUR: a handoff is written exactly when an agent ran out of context or time, which is the moment a human summary is least reliable and most expensive. The spans already recorded every one of those facts truthfully; asking for them again is asking a tired process to remember what a file knows.\n\nWHAT MUST NOT HAPPEN: the generated section must be distinguishable from what a human wrote. A handoff packet that silently mixes measured facts with recalled ones is worse than either alone, because the reader cannot tell which claims to trust. So the packet carries a clearly-labelled generated block with its provenance (span count, window, and the task key it filtered on).\n\nHONEST EMPTINESS: if there are no spans for the key - the task predates the recorder, or was done in a terminal without telemetry - the block says so and says what that means, rather than rendering empty sections that read as \"nothing happened\".\n\nMECHANISM NOTE: the packet is built by the CLI reading the sqlite index, so the same rules as GB-306 apply - a missing index, an empty window or a locked database degrades to \"no generated section\", never to a failed handoff. Handing off must not be blockable by an observability file.\n\nDone when: a handoff for a task with recorded spans includes tools, files, gate statuses, elapsed wall time and tokens, labelled as generated with its provenance; a handoff for a task without spans says so explicitly; and neither case can fail the command."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794091040515,
+    "updated_at_epoch_ms": 1794091070452
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "94cf616d-5180-4e17-ac4d-73f7aaf41a27",
+        "ticket_key": "GB-309",
+        "slug": "storypole-handoff-populate-the-context-packet-from-telemetry-spans-by-task-key-94cf61",
+        "title": "storypole handoff: populate the context packet from telemetry spans by task key",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_cli::handlers::lifecycle_cmds"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794091040515,
+        "updated_at_epoch_ms": 1794091040515
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "94cf616d-5180-4e17-ac4d-73f7aaf41a27",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "SCOPE 2026-11-07, from plans/GB-243.md section 12.3. Fourth runtime consumer.\n\nWHAT: `storypole handoff <KEY>` currently asks the operator to summarise what happened. Populate the handoff packet from spans matching `task_key`: MCP tools called, files inspected, the last `outfeed gate` step statuses, wall time elapsed, and `sawhorse` tokens consumed.\n\nWHY THIS IS THE HIGHEST-VALUE OF THE FOUR: a handoff is written exactly when an agent ran out of context or time, which is the moment a human summary is least reliable and most expensive. The spans already recorded every one of those facts truthfully; asking for them again is asking a tired process to remember what a file knows.\n\nWHAT MUST NOT HAPPEN: the generated section must be distinguishable from what a human wrote. A handoff packet that silently mixes measured facts with recalled ones is worse than either alone, because the reader cannot tell which claims to trust. So the packet carries a clearly-labelled generated block with its provenance (span count, window, and the task key it filtered on).\n\nHONEST EMPTINESS: if there are no spans for the key - the task predates the recorder, or was done in a terminal without telemetry - the block says so and says what that means, rather than rendering empty sections that read as \"nothing happened\".\n\nMECHANISM NOTE: the packet is built by the CLI reading the sqlite index, so the same rules as GB-306 apply - a missing index, an empty window or a locked database degrades to \"no generated section\", never to a failed handoff. Handing off must not be blockable by an observability file.\n\nDone when: a handoff for a task with recorded spans includes tools, files, gate statuses, elapsed wall time and tokens, labelled as generated with its provenance; a handoff for a task without spans says so explicitly; and neither case can fail the command."
+      ],
+      "timestamp_ms": 1794091070452
+    }
+  ]
+}

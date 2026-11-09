@@ -1,0 +1,118 @@
+{
+  "ticket": {
+    "id": "c535c148-1531-4c2d-9435-804e78755482",
+    "ticket_key": "GB-1",
+    "slug": "phase-2-sawhorse-provider-agnostic-3-mode-llm-runtime-c535c1",
+    "title": "Phase 2: sawhorse — Provider-Agnostic 3-Mode LLM Runtime",
+    "description": "Provider-Agnostic 3-Mode LLM Runtime supporting local, in-house, and OpenAI-compatible models.",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "sawhorse-core",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1792649114262,
+      "git_branch": null,
+      "base_commit_sha": null,
+      "head_commit_sha": null,
+      "commit_shas": [],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792645196479,
+    "updated_at_epoch_ms": 1794037955868,
+    "archived_at_epoch_ms": 1794037955868
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "c535c148-1531-4c2d-9435-804e78755482",
+        "ticket_key": "GB-1",
+        "slug": "phase-2-sawhorse-provider-agnostic-3-mode-llm-runtime-c535c1",
+        "title": "Phase 2: sawhorse — Provider-Agnostic 3-Mode LLM Runtime",
+        "description": "Provider-Agnostic 3-Mode LLM Runtime supporting local, in-house, and OpenAI-compatible models.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "sawhorse-core",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792645196479,
+        "updated_at_epoch_ms": 1792645196479
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "c535c148-1531-4c2d-9435-804e78755482",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792647917764,
+        "lease_expires_at_epoch_ms": 1792651517764,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "c535c148-1531-4c2d-9435-804e78755482",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792647917764
+    },
+    {
+      "event": "task_verified",
+      "task_id": "c535c148-1531-4c2d-9435-804e78755482",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1792649114262,
+        "git_branch": null,
+        "base_commit_sha": null,
+        "head_commit_sha": null,
+        "commit_shas": [],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "c535c148-1531-4c2d-9435-804e78755482",
+      "status": "verified",
+      "timestamp_ms": 1794037955868
+    }
+  ]
+}

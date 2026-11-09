@@ -1,0 +1,88 @@
+{
+  "ticket": {
+    "id": "530449bf-a4a8-4019-a5f6-3e542b935e7d",
+    "ticket_key": "GB-287",
+    "slug": "chalkline-root-workspace-cargo-nextest-run-discovers-0-tests-unless-packages-are-named-530449",
+    "title": "chalkline root workspace: cargo nextest run discovers 0 tests unless packages are named",
+    "description": "",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "chalkline_cli::handlers"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "INVALID - my mistake, not a repo defect. Closed same day.\n\nI filed this after `cargo nextest run` at the chalkline root reported '0 tests across 1 binary' and exited 4. The configured verification chain never does that: chalkline's verification_commands, and the fleet-wide map in the root config, both run `cargo nextest run --workspace`. Verified now: with --workspace the same repo reports 29 tests run, 29 passed.\n\nSo the workspace is fine and the gate was never weak. What failed was my ad-hoc invocation, and then my reporting of it as a defect. This is the third self-inflicted ticket today after GB-281 (a measurement error) and the withdrawn GB-279 blocker (read a table key and inferred a record). The common shape: an unexpected result was written down as a fact about the system without first checking that my command could have produced a different result."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794031737768,
+    "updated_at_epoch_ms": 1794032971968,
+    "archived_at_epoch_ms": 1794032971968
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "530449bf-a4a8-4019-a5f6-3e542b935e7d",
+        "ticket_key": "GB-287",
+        "slug": "chalkline-root-workspace-cargo-nextest-run-discovers-0-tests-unless-packages-are-named-530449",
+        "title": "chalkline root workspace: cargo nextest run discovers 0 tests unless packages are named",
+        "description": "",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "chalkline_cli::handlers"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794031737768,
+        "updated_at_epoch_ms": 1794031737768
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "530449bf-a4a8-4019-a5f6-3e542b935e7d",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "INVALID - my mistake, not a repo defect. Closed same day.\n\nI filed this after `cargo nextest run` at the chalkline root reported '0 tests across 1 binary' and exited 4. The configured verification chain never does that: chalkline's verification_commands, and the fleet-wide map in the root config, both run `cargo nextest run --workspace`. Verified now: with --workspace the same repo reports 29 tests run, 29 passed.\n\nSo the workspace is fine and the gate was never weak. What failed was my ad-hoc invocation, and then my reporting of it as a defect. This is the third self-inflicted ticket today after GB-281 (a measurement error) and the withdrawn GB-279 blocker (read a table key and inferred a record). The common shape: an unexpected result was written down as a fact about the system without first checking that my command could have produced a different result."
+      ],
+      "timestamp_ms": 1794032971426
+    },
+    {
+      "event": "task_archived",
+      "task_id": "530449bf-a4a8-4019-a5f6-3e542b935e7d",
+      "status": "triage",
+      "timestamp_ms": 1794032971968
+    }
+  ]
+}

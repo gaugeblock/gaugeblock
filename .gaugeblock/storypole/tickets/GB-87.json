@@ -1,0 +1,158 @@
+{
+  "ticket": {
+    "id": "d08dd60b-2c27-467b-a6db-dc02b5238242",
+    "ticket_key": "GB-87",
+    "slug": "core-foundations-9-doc-architecture-miter-storypole-and-sawhorse-d08dd6",
+    "title": "Core Foundations 9-Doc Architecture: miter, storypole, and sawhorse",
+    "description": "Standardize READMEs to 9-section template, scaffold missing 9-docs (CONTRIBUTING, ARCHITECTURE, SPEC, AGENTS), resolve CHANGELOG unreleased drift, and pass chalkline docs check for miter, storypole, and sawhorse.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": "miter,storypole,sawhorse",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "parent_epic",
+        "target_id": "b8bcaa0f-5c8d-42cb-88b5-c23d9f0a0180",
+        "target_ticket_key": "GB-86",
+        "target_repo": "workspace"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "Core Foundations 9-Doc Architecture: miter, storypole, and sawhorse",
+      "design_markdown": "# GB-87: Core Foundations 9-Doc Architecture: miter, storypole, and sawhorse\n\n## Scope\nMember repositories: `miter`, `storypole`, `sawhorse`.\n\n## Execution Steps\n1. **Branch Isolation:**\n   - Create and checkout `docs/readme-standardization` in `miter`, `storypole`, and `sawhorse`.\n2. **miter:**\n   - Run `chalkline docs scaffold -d miter` to establish `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SPEC.md`.\n   - Update `miter/README.md` to ensure crisp cross-links and correct version badge (`0.1.0-beta.2`).\n   - Add `## [Unreleased]` section to `miter/CHANGELOG.md`.\n   - Verify with `chalkline docs check -d miter` (0 missing, 0 drifted).\n3. **storypole:**\n   - Run `chalkline docs scaffold -d storypole` to establish `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SPEC.md`, `AGENTS.md`.\n   - Upgrade `storypole/README.md` from placeholder reservation to full 9-section production guide with CLI and MCP references (`0.1.0-beta.3`).\n   - Add `## [Unreleased]` section to `storypole/CHANGELOG.md`.\n   - Verify with `chalkline docs check -d storypole` (0 missing, 0 drifted).\n4. **sawhorse:**\n   - Run `chalkline docs scaffold -d sawhorse` to establish `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SPEC.md`, `AGENTS.md`.\n   - Update `sawhorse/README.md` to standardized 9-section template, updating version badge to `0.1.0-beta.4`.\n   - Add `## [Unreleased]` section to `sawhorse/CHANGELOG.md`.\n   - Verify with `chalkline docs check -d sawhorse` (0 missing, 0 drifted).\n5. **Atomic Commits:**\n   - Commit in each repository with conventional commits: `docs(<repo>): standardize README and establish 9-doc architecture`.\n",
+      "steps": [],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-87.md",
+      "updated_at_epoch_ms": 1793067038254
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "agent-antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Standardized READMEs, scaffolded 9-doc suites, resolved CHANGELOG drift, and certified 0 missing 0 drifted with chalkline docs check across miter, storypole, and sawhorse",
+      "verified_at_epoch_ms": 1793067227292,
+      "git_branch": "docs/readme-standardization",
+      "base_commit_sha": "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7",
+      "head_commit_sha": "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7",
+      "commit_shas": [
+        "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793066947892,
+    "updated_at_epoch_ms": 1794037973512,
+    "archived_at_epoch_ms": 1794037973512
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "d08dd60b-2c27-467b-a6db-dc02b5238242",
+        "ticket_key": "GB-87",
+        "slug": "core-foundations-9-doc-architecture-miter-storypole-and-sawhorse-d08dd6",
+        "title": "Core Foundations 9-Doc Architecture: miter, storypole, and sawhorse",
+        "description": "Standardize READMEs to 9-section template, scaffold missing 9-docs (CONTRIBUTING, ARCHITECTURE, SPEC, AGENTS), resolve CHANGELOG unreleased drift, and pass chalkline docs check for miter, storypole, and sawhorse.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": "miter,storypole,sawhorse",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793066947892,
+        "updated_at_epoch_ms": 1793066947892
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "d08dd60b-2c27-467b-a6db-dc02b5238242",
+      "edge": {
+        "kind": "parent_epic",
+        "target_id": "b8bcaa0f-5c8d-42cb-88b5-c23d9f0a0180",
+        "target_ticket_key": "GB-86",
+        "target_repo": "workspace"
+      },
+      "timestamp_ms": 1793066963584
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "d08dd60b-2c27-467b-a6db-dc02b5238242",
+      "plan": {
+        "summary": "Core Foundations 9-Doc Architecture: miter, storypole, and sawhorse",
+        "design_markdown": "# GB-87: Core Foundations 9-Doc Architecture: miter, storypole, and sawhorse\n\n## Scope\nMember repositories: `miter`, `storypole`, `sawhorse`.\n\n## Execution Steps\n1. **Branch Isolation:**\n   - Create and checkout `docs/readme-standardization` in `miter`, `storypole`, and `sawhorse`.\n2. **miter:**\n   - Run `chalkline docs scaffold -d miter` to establish `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SPEC.md`.\n   - Update `miter/README.md` to ensure crisp cross-links and correct version badge (`0.1.0-beta.2`).\n   - Add `## [Unreleased]` section to `miter/CHANGELOG.md`.\n   - Verify with `chalkline docs check -d miter` (0 missing, 0 drifted).\n3. **storypole:**\n   - Run `chalkline docs scaffold -d storypole` to establish `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SPEC.md`, `AGENTS.md`.\n   - Upgrade `storypole/README.md` from placeholder reservation to full 9-section production guide with CLI and MCP references (`0.1.0-beta.3`).\n   - Add `## [Unreleased]` section to `storypole/CHANGELOG.md`.\n   - Verify with `chalkline docs check -d storypole` (0 missing, 0 drifted).\n4. **sawhorse:**\n   - Run `chalkline docs scaffold -d sawhorse` to establish `CONTRIBUTING.md`, `ARCHITECTURE.md`, `SPEC.md`, `AGENTS.md`.\n   - Update `sawhorse/README.md` to standardized 9-section template, updating version badge to `0.1.0-beta.4`.\n   - Add `## [Unreleased]` section to `sawhorse/CHANGELOG.md`.\n   - Verify with `chalkline docs check -d sawhorse` (0 missing, 0 drifted).\n5. **Atomic Commits:**\n   - Commit in each repository with conventional commits: `docs(<repo>): standardize README and establish 9-doc architecture`.\n",
+        "steps": [],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-87.md",
+        "updated_at_epoch_ms": 1793067038254
+      },
+      "timestamp_ms": 1793067038254
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "d08dd60b-2c27-467b-a6db-dc02b5238242",
+      "claim": {
+        "agent_id": "agent-antigravity",
+        "claimed_at_epoch_ms": 1793067046796,
+        "lease_expires_at_epoch_ms": 1793070646796,
+        "git_branch": "docs/readme-standardization",
+        "base_commit_sha": "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "d08dd60b-2c27-467b-a6db-dc02b5238242",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by agent-antigravity",
+      "timestamp_ms": 1793067046796
+    },
+    {
+      "event": "task_verified",
+      "task_id": "d08dd60b-2c27-467b-a6db-dc02b5238242",
+      "receipt": {
+        "verifier": "agent-antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Standardized READMEs, scaffolded 9-doc suites, resolved CHANGELOG drift, and certified 0 missing 0 drifted with chalkline docs check across miter, storypole, and sawhorse",
+        "verified_at_epoch_ms": 1793067227292,
+        "git_branch": "docs/readme-standardization",
+        "base_commit_sha": "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7",
+        "head_commit_sha": "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7",
+        "commit_shas": [
+          "dc9aacfc38d40d6ba2ae62e1452ed2ac969a89d7"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "d08dd60b-2c27-467b-a6db-dc02b5238242",
+      "status": "verified",
+      "timestamp_ms": 1794037973512
+    }
+  ]
+}

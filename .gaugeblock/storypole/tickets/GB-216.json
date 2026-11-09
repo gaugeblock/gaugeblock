@@ -1,0 +1,146 @@
+{
+  "ticket": {
+    "id": "664bd275-d042-46f1-814f-c8336994da9a",
+    "ticket_key": "GB-216",
+    "slug": "wire-the-local-spool-into-rabbet-so-a-gold-trace-can-be-mined-without-a-server-664bd2",
+    "title": "rabbet ingest --spool: reach the local spool from the CLI",
+    "description": "IN PROGRESS. Two Gold pairs now exist in .gaugeblock/spool/outbox.jsonl (33 records, 2 gold) and nothing could read them locally: serve was the only ingress, admin stats opened a ./rabbet.db that does not exist, and no subcommand mentioned the spool.\n\nDESIGN, transport rather than a second gate: `rabbet ingest --spool <file> --db-path <db>` reads JSON lines, deserialises SpoolEntry envelopes, and hands them to `rabbet_core::gate::process_ingest_batch` - the same four stages the HTTP endpoint runs (SHA-256 verification, PII re-scrub, structural validation, idempotent insert). A local shortcut that skipped them would let a trace into the corpus that the public path would reject.\n\nChoices worth recording: a malformed line is counted and skipped rather than aborting the import, because one bad record must not block a corpus, but it must not vanish silently either; client_version is stamped from CARGO_PKG_VERSION so rows record which binary ingested them; db-path defaults to rabbet.db with the same RABBET_DB_PATH env override serve uses, which is the documented-answer half of the original ticket.\n\nVerified so far: clippy -D warnings green on rabbet-cli. Test run in progress (rabbet-core pulls the full arrow/parquet stack).",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "rabbet_cli,rabbet_core"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "rabbet ingest --spool <file> --db-path <db> closes the gap: local spool envelopes now reach the master store without a server, through the same four-stage gate as the HTTP path (hash verification, PII re-scrub, structural validation, idempotent insert). Verified live against the real spool: 33 records, 0 malformed, 33 accepted, 0 rejected, 0 duplicates. Downstream that was previously unreachable now runs: mine-patterns discovers 1 candidate with 2 examples, and export-parquet writes hole_filler_sft.parquet 16 rows, hole_filler_dpo.parquet 2 rows, router_sft.parquet 0 rows plus a dataset card. The DPO rows carry prompt/chosen/rejected with the scope signature and a real rejected attempt; the chosen side is still the <filled> placeholder, filed separately. Gate: clippy -D warnings and 13 tests green.",
+      "verified_at_epoch_ms": 1793391352183,
+      "git_branch": "main",
+      "base_commit_sha": "4ab6b929f4b8483233ca00fbc899b163d56ab533",
+      "head_commit_sha": "4ab6b929f4b8483233ca00fbc899b163d56ab533",
+      "commit_shas": [
+        "4ab6b929f4b8483233ca00fbc899b163d56ab533"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793364477321,
+    "updated_at_epoch_ms": 1794038018793,
+    "archived_at_epoch_ms": 1794038018793
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "664bd275-d042-46f1-814f-c8336994da9a",
+        "ticket_key": "GB-216",
+        "slug": "wire-the-local-spool-into-rabbet-so-a-gold-trace-can-be-mined-without-a-server-664bd2",
+        "title": "Wire the local spool into rabbet so a Gold trace can be mined without a server",
+        "description": "A Gold trace now lands in .gaugeblock/spool/outbox.jsonl (verified: tier gold, filled_holes, verification.typecheck_passed, rejected_attempt with real code). Nothing downstream can read it locally: `rabbet admin stats` opens ./rabbet.db, which does not exist, and no rabbet subcommand references the spool or outbox at all - ingestion is only reachable through `rabbet serve`. So `mine-patterns` and `export-parquet` cannot be run from the CLI against the spool, and the DPO shard stays empty even though a Gold pair exists. Needs a `rabbet ingest --spool <path>` (or an admin equivalent) that reads SpoolEntry envelopes and writes master SQLite, plus a documented db-path default that matches where serve writes.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "rabbet_cli,rabbet_core"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793364477321,
+        "updated_at_epoch_ms": 1793364477321
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "664bd275-d042-46f1-814f-c8336994da9a",
+      "title": "rabbet ingest --spool: reach the local spool from the CLI",
+      "description": "IN PROGRESS. Two Gold pairs now exist in .gaugeblock/spool/outbox.jsonl (33 records, 2 gold) and nothing could read them locally: serve was the only ingress, admin stats opened a ./rabbet.db that does not exist, and no subcommand mentioned the spool.\n\nDESIGN, transport rather than a second gate: `rabbet ingest --spool <file> --db-path <db>` reads JSON lines, deserialises SpoolEntry envelopes, and hands them to `rabbet_core::gate::process_ingest_batch` - the same four stages the HTTP endpoint runs (SHA-256 verification, PII re-scrub, structural validation, idempotent insert). A local shortcut that skipped them would let a trace into the corpus that the public path would reject.\n\nChoices worth recording: a malformed line is counted and skipped rather than aborting the import, because one bad record must not block a corpus, but it must not vanish silently either; client_version is stamped from CARGO_PKG_VERSION so rows record which binary ingested them; db-path defaults to rabbet.db with the same RABBET_DB_PATH env override serve uses, which is the documented-answer half of the original ticket.\n\nVerified so far: clippy -D warnings green on rabbet-cli. Test run in progress (rabbet-core pulls the full arrow/parquet stack).",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793390948549
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "664bd275-d042-46f1-814f-c8336994da9a",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793391352104,
+        "lease_expires_at_epoch_ms": 1793394952104,
+        "git_branch": "feat/gb-216-ingest-spool",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "664bd275-d042-46f1-814f-c8336994da9a",
+      "from": "deferred",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793391352104
+    },
+    {
+      "event": "task_verified",
+      "task_id": "664bd275-d042-46f1-814f-c8336994da9a",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "rabbet ingest --spool <file> --db-path <db> closes the gap: local spool envelopes now reach the master store without a server, through the same four-stage gate as the HTTP path (hash verification, PII re-scrub, structural validation, idempotent insert). Verified live against the real spool: 33 records, 0 malformed, 33 accepted, 0 rejected, 0 duplicates. Downstream that was previously unreachable now runs: mine-patterns discovers 1 candidate with 2 examples, and export-parquet writes hole_filler_sft.parquet 16 rows, hole_filler_dpo.parquet 2 rows, router_sft.parquet 0 rows plus a dataset card. The DPO rows carry prompt/chosen/rejected with the scope signature and a real rejected attempt; the chosen side is still the <filled> placeholder, filed separately. Gate: clippy -D warnings and 13 tests green.",
+        "verified_at_epoch_ms": 1793391352183,
+        "git_branch": "main",
+        "base_commit_sha": "4ab6b929f4b8483233ca00fbc899b163d56ab533",
+        "head_commit_sha": "4ab6b929f4b8483233ca00fbc899b163d56ab533",
+        "commit_shas": [
+          "4ab6b929f4b8483233ca00fbc899b163d56ab533"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "664bd275-d042-46f1-814f-c8336994da9a",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953200199
+    },
+    {
+      "event": "task_archived",
+      "task_id": "664bd275-d042-46f1-814f-c8336994da9a",
+      "status": "verified",
+      "timestamp_ms": 1794038018793
+    }
+  ]
+}

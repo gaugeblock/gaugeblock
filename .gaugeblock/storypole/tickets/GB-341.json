@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
+    "ticket_key": "GB-341",
+    "slug": "a-verified-task-cannot-be-reopened-1497f1",
+    "title": "A Verified task cannot be reopened",
+    "description": "storypole update has no status flag and no verb moves a task out of Verified: claim only works on claimable states, unarchive only restores archived, defer only defers. GB-57 is the case in hand, Verified with 0 of 6 plan steps and a manual unscoped receipt, and the only way to correct the record was to file a superseding epic (GB-328). Reopening should be explicit, should record who reopened the task and why, and should keep the old receipt rather than delete it, because a false receipt is itself evidence.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::handlers::lifecycle_cmds"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794167037094,
+    "updated_at_epoch_ms": 1794167037094
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
+        "ticket_key": "GB-341",
+        "slug": "a-verified-task-cannot-be-reopened-1497f1",
+        "title": "A Verified task cannot be reopened",
+        "description": "storypole update has no status flag and no verb moves a task out of Verified: claim only works on claimable states, unarchive only restores archived, defer only defers. GB-57 is the case in hand, Verified with 0 of 6 plan steps and a manual unscoped receipt, and the only way to correct the record was to file a superseding epic (GB-328). Reopening should be explicit, should record who reopened the task and why, and should keep the old receipt rather than delete it, because a false receipt is itself evidence.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_cli::handlers::lifecycle_cmds"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794167037094,
+        "updated_at_epoch_ms": 1794167037094
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

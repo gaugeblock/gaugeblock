@@ -1,0 +1,126 @@
+{
+  "ticket": {
+    "id": "adf8ea6d-d3de-4f17-8a2f-7b49bd087825",
+    "ticket_key": "GB-16",
+    "slug": "realign-panel-3-as-educational-neurosymbolic-x-ray-and-move-synthesis-triggers-to-backlog-adf8ea",
+    "title": "Realign Panel 3 as educational neurosymbolic X-ray and move synthesis triggers to backlog",
+    "description": "Transform Panel 3 into an educational, diagnostic neurosymbolic lab illustrating Dado structural templates, Batten CFG grammar masks, and Joiner live hole filling, removing isolated run inputs.",
+    "kind": "refactor",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork,xray,synthesis,panel-3"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "cargo test",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n",
+      "verified_at_epoch_ms": 1792865099056,
+      "git_branch": "feat/gb-16-panel-3-xray",
+      "base_commit_sha": "da29b365e5a7e0cda9addaf517427efd56cbe512",
+      "head_commit_sha": "da29b365e5a7e0cda9addaf517427efd56cbe512",
+      "commit_shas": [
+        "da29b365e5a7e0cda9addaf517427efd56cbe512"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792709184659,
+    "updated_at_epoch_ms": 1794037987315,
+    "archived_at_epoch_ms": 1794037987315
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "adf8ea6d-d3de-4f17-8a2f-7b49bd087825",
+        "ticket_key": "GB-16",
+        "slug": "realign-panel-3-as-educational-neurosymbolic-x-ray-and-move-synthesis-triggers-to-backlog-adf8ea",
+        "title": "Realign Panel 3 as educational neurosymbolic X-ray and move synthesis triggers to backlog",
+        "description": "Transform Panel 3 into an educational, diagnostic neurosymbolic lab illustrating Dado structural templates, Batten CFG grammar masks, and Joiner live hole filling, removing isolated run inputs.",
+        "kind": "refactor",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork,xray,synthesis,panel-3"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792709184659,
+        "updated_at_epoch_ms": 1792709184659
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "adf8ea6d-d3de-4f17-8a2f-7b49bd087825",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792864981334,
+        "lease_expires_at_epoch_ms": 1792868581334,
+        "git_branch": "feat/gb-16-panel-3-xray",
+        "base_commit_sha": "da29b365e5a7e0cda9addaf517427efd56cbe512"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "adf8ea6d-d3de-4f17-8a2f-7b49bd087825",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792864981334
+    },
+    {
+      "event": "task_verified",
+      "task_id": "adf8ea6d-d3de-4f17-8a2f-7b49bd087825",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "cargo test",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n",
+        "verified_at_epoch_ms": 1792865099056,
+        "git_branch": "feat/gb-16-panel-3-xray",
+        "base_commit_sha": "da29b365e5a7e0cda9addaf517427efd56cbe512",
+        "head_commit_sha": "da29b365e5a7e0cda9addaf517427efd56cbe512",
+        "commit_shas": [
+          "da29b365e5a7e0cda9addaf517427efd56cbe512"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "adf8ea6d-d3de-4f17-8a2f-7b49bd087825",
+      "status": "verified",
+      "timestamp_ms": 1794037987315
+    }
+  ]
+}

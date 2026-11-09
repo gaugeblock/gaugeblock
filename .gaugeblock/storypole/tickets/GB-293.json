@@ -1,0 +1,118 @@
+{
+  "ticket": {
+    "id": "4428fc9c-d672-46f7-b6fc-1946b788b1b2",
+    "ticket_key": "GB-293",
+    "slug": "benchwork-flight-recorder-reads-one-repository-s-telemetry-so-suite-spans-never-reach-the-panel-4428fc",
+    "title": "Benchwork flight recorder reads one repository's telemetry, so suite spans never reach the panel",
+    "description": "",
+    "kind": "bug",
+    "status": "in_progress",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_cli::daemon::routes_telemetry"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "READ SIDE LANDED 2026-11-07, commit 8cf754e (benchwork-core). The set of telemetry logs is now a property of the workspace instead of the daemon's working directory.\n\nWHAT EXISTS NOW: telemetry_event_paths(suite_root) returns the suite root's own log plus one per member repository, whether or not each file exists. Existing is not required on purpose - a caller must be able to say \"this member has no spans yet\" separately from \"this member is not in the set\", and an empty vector for a missing member is how a twelve-repository suite comes to look like a one-repository suite.\n\nWHAT REMAINS, and it is the half that makes the panel work: routes_telemetry still calls its own events_path() and tails one file. Wiring it to this set means one tailer per path, a repo label on each span so the panel can say where it came from, and a decision about the SSE shape when twelve files are being appended to at once. That is a daemon change and was deliberately not bundled into a contract commit.\n\nHONEST STATUS OF THE TEST: the two new tests pass and are multi-repository, but unlike the other three GB-305 instances they are NOT reversion-proven - the function is new and the defect lives in the daemon, not in it. They pin the contract rather than demonstrate a fixed bug, and calling them a regression test for GB-293 would overstate what they prove.\n\nWHAT STILL BLOCKS A USEFUL PANEL, unchanged and worth restating because it is the reason this stays a contract rather than an urgent fix: only sawhorse emits spans (GB-294), and two spans exist in the whole tree. Aggregation makes the panel honest about twelve repositories; it does not make it interesting. The order that produces a working panel is emission first (GB-297, GB-298), then wiring, then the four surfaces (GB-310)."
+    ],
+    "plan": null,
+    "active_claim": {
+      "agent_id": "cline-agent",
+      "claimed_at_epoch_ms": 1794106125498,
+      "lease_expires_at_epoch_ms": 1794109725498,
+      "git_branch": "feat/gb-293-telemetry-aggregation",
+      "base_commit_sha": null
+    },
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794038093190,
+    "updated_at_epoch_ms": 1794106125498
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "4428fc9c-d672-46f7-b6fc-1946b788b1b2",
+        "ticket_key": "GB-293",
+        "slug": "benchwork-flight-recorder-reads-one-repository-s-telemetry-so-suite-spans-never-reach-the-panel-4428fc",
+        "title": "Benchwork flight recorder reads one repository's telemetry, so suite spans never reach the panel",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "benchwork_cli::daemon::routes_telemetry"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794038093190,
+        "updated_at_epoch_ms": 1794038093190
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "4428fc9c-d672-46f7-b6fc-1946b788b1b2",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "MEASURED 2026-11-06. Benchwork shows no telemetry because the flight recorder reads exactly one file: the canonical telemetry log of the repository the daemon was started in.\n\nEvidence:\n  events_path() in benchwork-cli/src/daemon/routes_telemetry.rs resolves GaugeblockPaths::discover(current_dir()) once and returns paths.telemetry_events(). One path, fixed at startup.\n  The suite is twelve independent git repositories, so discover() yields a different .gaugeblock per repository by design (GB-189).\n  Only one telemetry log exists anywhere in the tree: sawhorse/.gaugeblock/telemetry/events.jsonl, containing two spans. The suite root has no .gaugeblock/telemetry directory at all.\n  Both spans were produced by sawhorse while running inside its own repository, so the daemon at the root cannot see them.\n\nThat last line is the whole bug: the writer resolves the workspace per invocation, the reader resolves it once at startup, and in a multi-repository suite those are different workspaces. It is not a panel defect and not a wiring defect - the channel is right, the aggregation is missing.\n\nDirections, for the sprint rather than for now:\n  1. The daemon subscribes to WorkspaceTopology membership and tails every member's .gaugeblock/telemetry/events.jsonl, tagging spans with the repo they came from. Cheap, keeps the per-repo file as the channel, makes the panel a suite view.\n  2. A suite-level sink that every producer writes to, resolved from the meta-harness root. Better for cross-repo traces (a gate run that touches five repos is one trace), but it moves the canonical path decision and needs the trace id to survive across repositories.\nOption 1 first: it needs no change to any producer and answers the question the panel is being asked. Option 2 is the one to take if cross-repo traces become the point.\n\nAlso observed: benchwork archive-all --status verified reported 'would archive 0' immediately after the CLI archived 221 tasks, which is correct behaviour for an unarchived-only filter and is how I confirmed the archive had landed. The daemon's store view is not stale."
+      ],
+      "timestamp_ms": 1794038099821
+    },
+    {
+      "event": "task_updated",
+      "task_id": "4428fc9c-d672-46f7-b6fc-1946b788b1b2",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "READ SIDE LANDED 2026-11-07, commit 8cf754e (benchwork-core). The set of telemetry logs is now a property of the workspace instead of the daemon's working directory.\n\nWHAT EXISTS NOW: telemetry_event_paths(suite_root) returns the suite root's own log plus one per member repository, whether or not each file exists. Existing is not required on purpose - a caller must be able to say \"this member has no spans yet\" separately from \"this member is not in the set\", and an empty vector for a missing member is how a twelve-repository suite comes to look like a one-repository suite.\n\nWHAT REMAINS, and it is the half that makes the panel work: routes_telemetry still calls its own events_path() and tails one file. Wiring it to this set means one tailer per path, a repo label on each span so the panel can say where it came from, and a decision about the SSE shape when twelve files are being appended to at once. That is a daemon change and was deliberately not bundled into a contract commit.\n\nHONEST STATUS OF THE TEST: the two new tests pass and are multi-repository, but unlike the other three GB-305 instances they are NOT reversion-proven - the function is new and the defect lives in the daemon, not in it. They pin the contract rather than demonstrate a fixed bug, and calling them a regression test for GB-293 would overstate what they prove.\n\nWHAT STILL BLOCKS A USEFUL PANEL, unchanged and worth restating because it is the reason this stays a contract rather than an urgent fix: only sawhorse emits spans (GB-294), and two spans exist in the whole tree. Aggregation makes the panel honest about twelve repositories; it does not make it interesting. The order that produces a working panel is emission first (GB-297, GB-298), then wiring, then the four surfaces (GB-310)."
+      ],
+      "timestamp_ms": 1794104225069
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "4428fc9c-d672-46f7-b6fc-1946b788b1b2",
+      "claim": {
+        "agent_id": "cline-agent",
+        "claimed_at_epoch_ms": 1794106125498,
+        "lease_expires_at_epoch_ms": 1794109725498,
+        "git_branch": "feat/gb-293-telemetry-aggregation",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "4428fc9c-d672-46f7-b6fc-1946b788b1b2",
+      "from": "triage",
+      "to": "in_progress",
+      "reason": "Claimed by cline-agent",
+      "timestamp_ms": 1794106125498
+    }
+  ]
+}

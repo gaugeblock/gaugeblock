@@ -1,0 +1,273 @@
+{
+  "ticket": {
+    "id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+    "ticket_key": "GB-76",
+    "slug": "refactor-scripts-bootstrap-sh-and-suite-setup-scripts-to-wrap-outfeed-clone-and-install-9aea90",
+    "title": "Refactor scripts/bootstrap.sh and suite setup scripts to wrap outfeed clone and install",
+    "description": "Update scripts/bootstrap.sh and related bootstrap helpers to delegate directly to outfeed clone with fallback bootstrapping, aligning all suite lifecycle operations under outfeed CLI.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": "workspace",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "scripts,bootstrap,wrapper,outfeed"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "d928e3f5-5943-43be-897a-76c44de13c0e",
+        "target_ticket_key": "GB-74",
+        "target_repo": "outfeed"
+      }
+    ],
+    "decisions": [
+      {
+        "decision_id": "4325dade-9ed6-4afa-bc2b-f5306456c52f",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "architecture",
+        "question": "What is the orchestration strategy for workspace bootstrapping and scripts?",
+        "proposed_options": [
+          "native_outfeed_commands_with_thin_script_wrappers",
+          "heavyweight_standalone_shell_scripts"
+        ],
+        "chosen_option": "native_outfeed_commands_with_thin_script_wrappers",
+        "rationale": "All suite lifecycle operations belong in the dogfooded outfeed CLI. Shell scripts are reduced to thin bootstrap wrappers that delegate directly to outfeed.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1793042668505
+      }
+    ],
+    "acceptance_criteria": [
+      "scripts/bootstrap.sh delegates directly to outfeed clone"
+    ],
+    "plan": {
+      "summary": "Refactor scripts/bootstrap.sh and suite setup scripts to wrap outfeed clone and install",
+      "design_markdown": "# GB-76: Refactor scripts/bootstrap.sh and Suite Setup Scripts to Wrap Outfeed Clone and Install\n\n## Objective\nProvide an idempotent, ergonomic entrypoint `scripts/bootstrap.sh` for new and existing developer environments in the `gaugeblock` meta-harness. The script bootstraps the seed `outfeed` CLI binary, and delegates repository cloning, dependency resolution, suite binary installation, and MCP server configuration directly to `outfeed clone` and `outfeed install`.\n\n## Architecture & Invariants\n1. **Submodule-Free Workspace (`suite.lock`):**\n   - In accordance with the inherited architecture decision, member repositories are cloned as independent checkouts.\n   - Pinned tags or commits defined in `suite.lock` can be automatically applied via `--locked`.\n2. **Deterministic Seed Bootstrap:**\n   - If `outfeed` is not already installed on `PATH`, `bootstrap.sh` verifies `cargo` and compiles `outfeed/crates/outfeed-cli` into `~/.cargo/bin`.\n3. **Delegation to Dogfood CLI:**\n   - Workflows delegate to `outfeed clone --all --install --sync-mcp` and `outfeed sync`.\n   - Supports flag forwarding: `--protocol <ssh|https>`, `--locked`, `--no-install`, `--no-sync-mcp`, `--dry-run`, `--json`.\n\n## Execution Plan\n1. Create `scripts/bootstrap.sh` with robust error handling (`set -euo pipefail`), prerequisite checks, outfeed compilation fallback, and option parsing.\n2. Ensure `scripts/bootstrap.sh` has executable permissions (`chmod +x`).\n3. Refactor `scripts/install-suite.sh` to leverage `outfeed install --all` and `outfeed` built-in MCP sync capabilities.\n4. Dogfood `scripts/bootstrap.sh --help` and dry-run execution.\n5. Verify clean execution across workspace and finalize Storypole verification receipt.\n",
+      "steps": [
+        {
+          "step_id": "1",
+          "title": "Implement scripts/bootstrap.sh with prerequisite check and outfeed clone delegation",
+          "target_files": [],
+          "verification_gate": "test -x scripts/bootstrap.sh && ./scripts/bootstrap.sh --help",
+          "completed": false
+        },
+        {
+          "step_id": "2",
+          "title": "Align scripts/install-suite.sh with outfeed bootstrap and install orchestration",
+          "target_files": [],
+          "verification_gate": "./scripts/install-suite.sh --help",
+          "completed": false
+        },
+        {
+          "step_id": "3",
+          "title": "Verify bootstrap and installation suite dogfooding",
+          "target_files": [],
+          "verification_gate": "./scripts/bootstrap.sh --dry-run",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-76.md",
+      "updated_at_epoch_ms": 1793044401752
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "agent-antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Added scripts/bootstrap.sh wrapper delegating to outfeed clone and install, with locked pinning, protocol selection, dry-run mode, and updated install-suite.sh help handling",
+      "verified_at_epoch_ms": 1793044494100,
+      "git_branch": "feat/gb-76-bootstrap-wrapper",
+      "base_commit_sha": "d7aa30fb853ca0564c40be31c9bbd0d73d270dbe",
+      "head_commit_sha": "a433b585e728988220f5f23204afbb3b4c5191a3",
+      "commit_shas": [
+        "a433b585e728988220f5f23204afbb3b4c5191a3"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793042538529,
+    "updated_at_epoch_ms": 1794037993496,
+    "archived_at_epoch_ms": 1794037993496
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+        "ticket_key": "GB-76",
+        "slug": "refactor-scripts-bootstrap-sh-and-suite-setup-scripts-to-wrap-outfeed-clone-and-install-9aea90",
+        "title": "Refactor scripts/bootstrap.sh and suite setup scripts to wrap outfeed clone and install",
+        "description": "Update scripts/bootstrap.sh and related bootstrap helpers to delegate directly to outfeed clone with fallback bootstrapping, aligning all suite lifecycle operations under outfeed CLI.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": "workspace",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "scripts,bootstrap,wrapper,outfeed"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "scripts/bootstrap.sh delegates directly to outfeed clone"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793042538529,
+        "updated_at_epoch_ms": 1793042538529
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "d928e3f5-5943-43be-897a-76c44de13c0e",
+        "target_ticket_key": "GB-74",
+        "target_repo": "outfeed"
+      },
+      "timestamp_ms": 1793042553282
+    },
+    {
+      "event": "status_changed",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-74",
+      "timestamp_ms": 1793042553282
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "decision": {
+        "decision_id": "4325dade-9ed6-4afa-bc2b-f5306456c52f",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "architecture",
+        "question": "What is the orchestration strategy for workspace bootstrapping and scripts?",
+        "proposed_options": [
+          "native_outfeed_commands_with_thin_script_wrappers",
+          "heavyweight_standalone_shell_scripts"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1793042650738
+      },
+      "timestamp_ms": 1793042650738
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "decision_id": "4325dade-9ed6-4afa-bc2b-f5306456c52f",
+      "chosen_option": "native_outfeed_commands_with_thin_script_wrappers",
+      "rationale": "All suite lifecycle operations belong in the dogfooded outfeed CLI. Shell scripts are reduced to thin bootstrap wrappers that delegate directly to outfeed.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1793042668505
+    },
+    {
+      "event": "status_changed",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-74 verified",
+      "timestamp_ms": 1793043802471
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "claim": {
+        "agent_id": "agent-antigravity",
+        "claimed_at_epoch_ms": 1793044380431,
+        "lease_expires_at_epoch_ms": 1793047980431,
+        "git_branch": "feat/gb-76-bootstrap-wrapper",
+        "base_commit_sha": "d7aa30fb853ca0564c40be31c9bbd0d73d270dbe"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by agent-antigravity",
+      "timestamp_ms": 1793044380431
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "plan": {
+        "summary": "Refactor scripts/bootstrap.sh and suite setup scripts to wrap outfeed clone and install",
+        "design_markdown": "# GB-76: Refactor scripts/bootstrap.sh and Suite Setup Scripts to Wrap Outfeed Clone and Install\n\n## Objective\nProvide an idempotent, ergonomic entrypoint `scripts/bootstrap.sh` for new and existing developer environments in the `gaugeblock` meta-harness. The script bootstraps the seed `outfeed` CLI binary, and delegates repository cloning, dependency resolution, suite binary installation, and MCP server configuration directly to `outfeed clone` and `outfeed install`.\n\n## Architecture & Invariants\n1. **Submodule-Free Workspace (`suite.lock`):**\n   - In accordance with the inherited architecture decision, member repositories are cloned as independent checkouts.\n   - Pinned tags or commits defined in `suite.lock` can be automatically applied via `--locked`.\n2. **Deterministic Seed Bootstrap:**\n   - If `outfeed` is not already installed on `PATH`, `bootstrap.sh` verifies `cargo` and compiles `outfeed/crates/outfeed-cli` into `~/.cargo/bin`.\n3. **Delegation to Dogfood CLI:**\n   - Workflows delegate to `outfeed clone --all --install --sync-mcp` and `outfeed sync`.\n   - Supports flag forwarding: `--protocol <ssh|https>`, `--locked`, `--no-install`, `--no-sync-mcp`, `--dry-run`, `--json`.\n\n## Execution Plan\n1. Create `scripts/bootstrap.sh` with robust error handling (`set -euo pipefail`), prerequisite checks, outfeed compilation fallback, and option parsing.\n2. Ensure `scripts/bootstrap.sh` has executable permissions (`chmod +x`).\n3. Refactor `scripts/install-suite.sh` to leverage `outfeed install --all` and `outfeed` built-in MCP sync capabilities.\n4. Dogfood `scripts/bootstrap.sh --help` and dry-run execution.\n5. Verify clean execution across workspace and finalize Storypole verification receipt.\n",
+        "steps": [
+          {
+            "step_id": "1",
+            "title": "Implement scripts/bootstrap.sh with prerequisite check and outfeed clone delegation",
+            "target_files": [],
+            "verification_gate": "test -x scripts/bootstrap.sh && ./scripts/bootstrap.sh --help",
+            "completed": false
+          },
+          {
+            "step_id": "2",
+            "title": "Align scripts/install-suite.sh with outfeed bootstrap and install orchestration",
+            "target_files": [],
+            "verification_gate": "./scripts/install-suite.sh --help",
+            "completed": false
+          },
+          {
+            "step_id": "3",
+            "title": "Verify bootstrap and installation suite dogfooding",
+            "target_files": [],
+            "verification_gate": "./scripts/bootstrap.sh --dry-run",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-76.md",
+        "updated_at_epoch_ms": 1793044401752
+      },
+      "timestamp_ms": 1793044401752
+    },
+    {
+      "event": "task_verified",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "receipt": {
+        "verifier": "agent-antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Added scripts/bootstrap.sh wrapper delegating to outfeed clone and install, with locked pinning, protocol selection, dry-run mode, and updated install-suite.sh help handling",
+        "verified_at_epoch_ms": 1793044494100,
+        "git_branch": "feat/gb-76-bootstrap-wrapper",
+        "base_commit_sha": "d7aa30fb853ca0564c40be31c9bbd0d73d270dbe",
+        "head_commit_sha": "a433b585e728988220f5f23204afbb3b4c5191a3",
+        "commit_shas": [
+          "a433b585e728988220f5f23204afbb3b4c5191a3"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "9aea90ff-1089-43d4-a94b-aa1af5288fe9",
+      "status": "verified",
+      "timestamp_ms": 1794037993496
+    }
+  ]
+}

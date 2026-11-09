@@ -1,0 +1,328 @@
+{
+  "ticket": {
+    "id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+    "ticket_key": "GB-129",
+    "slug": "bootstrap-gaugeblock-common-and-extract-gaugeblock-contracts-for-contracts-md-2f6e3c",
+    "title": "Bootstrap gaugeblock/common and extract gaugeblock-contracts for CONTRACTS.md",
+    "description": "Create gaugeblock/common workspace repository and extract gaugeblock-contracts containing pure serde wire types matching CONTRACTS.md. Decouple downstream tools from rusqlite, reqwest, and tree-sitter.",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "contracts,types,gaugeblock-common"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "parent_epic",
+        "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+        "target_ticket_key": "GB-128",
+        "target_repo": "workspace"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "gaugeblock-contracts builds in < 1.5s with zero heavy dependencies,Wire types derive serde::Serialize and Deserialize,All 10 tools can consume contracts without compiling upstream engines"
+    ],
+    "plan": {
+      "summary": "Bootstrap gaugeblock/common and extract gaugeblock-contracts",
+      "design_markdown": "# Task Plan: GB-129 — Bootstrap gaugeblock/common and Extract gaugeblock-contracts for CONTRACTS.md\n\n> **Task Key:** `GB-129`  \n> **Parent Epic:** `GB-128`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Problem Statement\nCurrently, downstream crates (`chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `outfeed`) link monolithic `-core` engines (`storypole-core`, `sawhorse-core`, `miter-engine`) merely to access shared wire types defined in `CONTRACTS.md`. This transitively pulls in bundled C SQLite, reqwest/rustls, and tree-sitter grammars into every downstream crate's build and publish cycle.\n\n---\n\n## 2. Technical Blueprint\n1. Create `common/` workspace repository with `crates/gaugeblock-contracts`.\n2. Extract pure serde wire types matching `CONTRACTS.md`:\n   * `miter`: `Language`, `SymbolBinding`, `LexicalScope`, `VerificationReport`\n   * `storypole`: `Task`, `TaskKind`, `TaskScope`, `StorypoleConfig`, `DecisionRecord`\n   * `sawhorse`: `InferenceRequest`, `InferenceResponse`, `ModelRole`\n   * `outfeed`: `ReleasePlan`, `CommitInfo`, `BumpType`, `SuiteLock`\n   * `dado` & `batten`: `PatternDeclaration`, `GrammarSpec`, `TokenMask`\n3. Map `gaugeblock-contracts` in `.cargo/config.toml` `[patch.crates-io]`.\n4. Repoint downstream crates to consume `gaugeblock-contracts`.\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Scaffold `gaugeblock/common` workspace and `gaugeblock-contracts` crate.\n* **Step 2:** Port wire types from `CONTRACTS.md` with pure serde derivations.\n* **Step 3:** Repoint downstream crates and verify with `cargo check --workspace`.\n* **Step 4:** Tier 3 workspace verification (`cargo nextest run --workspace`).\n",
+      "steps": [
+        {
+          "step_id": "1",
+          "title": "Scaffold common workspace and gaugeblock-contracts crate",
+          "target_files": [],
+          "verification_gate": "cargo check -p gaugeblock-contracts",
+          "completed": false
+        },
+        {
+          "step_id": "2",
+          "title": "Port wire types from CONTRACTS.md with pure serde derivations",
+          "target_files": [],
+          "verification_gate": "cargo check -p gaugeblock-contracts",
+          "completed": false
+        },
+        {
+          "step_id": "3",
+          "title": "Repoint downstream crates and verify with cargo check",
+          "target_files": [],
+          "verification_gate": "cargo check --workspace",
+          "completed": false
+        },
+        {
+          "step_id": "4",
+          "title": "Tier 3 workspace verification",
+          "target_files": [],
+          "verification_gate": "cargo nextest run --workspace",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-129.md",
+      "updated_at_epoch_ms": 1793170540100
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "cline",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Epic complete: GB-141 (scaffold + outfeed domain), GB-142 (all five contract domains, closed with GB-144/GB-145) and GB-143 (all six members repointed, 5ffb991) are verified. gaugeblock/common is a standalone repository with a 9-document set, gaugeblock-contracts carries 42 pure-serde wire types with 24 wire tests, and every member builds against it: outfeed, batten, sawhorse, dado, miter and storypole. CONTRACTS.md was reconciled with the implementations (VerificationReceipt, TaskKind, TaskStatus, LedgerEvent, DadoPattern, Language) before the repoint.",
+      "verified_at_epoch_ms": 1793229530150,
+      "git_branch": "main",
+      "base_commit_sha": "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2",
+      "head_commit_sha": "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2",
+      "commit_shas": [
+        "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793170368090,
+    "updated_at_epoch_ms": 1794037999279,
+    "archived_at_epoch_ms": 1794037999279
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+        "ticket_key": "GB-129",
+        "slug": "bootstrap-gaugeblock-common-and-extract-gaugeblock-contracts-for-contracts-md-2f6e3c",
+        "title": "Bootstrap gaugeblock/common and extract gaugeblock-contracts for CONTRACTS.md",
+        "description": "Create gaugeblock/common workspace repository and extract gaugeblock-contracts containing pure serde wire types matching CONTRACTS.md. Decouple downstream tools from rusqlite, reqwest, and tree-sitter.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "contracts,types,gaugeblock-common"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "gaugeblock-contracts builds in < 1.5s with zero heavy dependencies,Wire types derive serde::Serialize and Deserialize,All 10 tools can consume contracts without compiling upstream engines"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793170368090,
+        "updated_at_epoch_ms": 1793170368090
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+      "edge": {
+        "kind": "parent_epic",
+        "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+        "target_ticket_key": "GB-128",
+        "target_repo": "workspace"
+      },
+      "timestamp_ms": 1793170384650
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+      "plan": {
+        "summary": "Bootstrap gaugeblock/common and extract gaugeblock-contracts",
+        "design_markdown": "# Task Plan: GB-129 — Bootstrap gaugeblock/common and Extract gaugeblock-contracts for CONTRACTS.md\n\n> **Task Key:** `GB-129`  \n> **Parent Epic:** `GB-128`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Problem Statement\nCurrently, downstream crates (`chalkline`, `dado`, `batten`, `joiner`, `benchwork`, `outfeed`) link monolithic `-core` engines (`storypole-core`, `sawhorse-core`, `miter-engine`) merely to access shared wire types defined in `CONTRACTS.md`. This transitively pulls in bundled C SQLite, reqwest/rustls, and tree-sitter grammars into every downstream crate's build and publish cycle.\n\n---\n\n## 2. Technical Blueprint\n1. Create `common/` workspace repository with `crates/gaugeblock-contracts`.\n2. Extract pure serde wire types matching `CONTRACTS.md`:\n   * `miter`: `Language`, `SymbolBinding`, `LexicalScope`, `VerificationReport`\n   * `storypole`: `Task`, `TaskKind`, `TaskScope`, `StorypoleConfig`, `DecisionRecord`\n   * `sawhorse`: `InferenceRequest`, `InferenceResponse`, `ModelRole`\n   * `outfeed`: `ReleasePlan`, `CommitInfo`, `BumpType`, `SuiteLock`\n   * `dado` & `batten`: `PatternDeclaration`, `GrammarSpec`, `TokenMask`\n3. Map `gaugeblock-contracts` in `.cargo/config.toml` `[patch.crates-io]`.\n4. Repoint downstream crates to consume `gaugeblock-contracts`.\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Scaffold `gaugeblock/common` workspace and `gaugeblock-contracts` crate.\n* **Step 2:** Port wire types from `CONTRACTS.md` with pure serde derivations.\n* **Step 3:** Repoint downstream crates and verify with `cargo check --workspace`.\n* **Step 4:** Tier 3 workspace verification (`cargo nextest run --workspace`).\n",
+        "steps": [
+          {
+            "step_id": "1",
+            "title": "Scaffold common workspace and gaugeblock-contracts crate",
+            "target_files": [],
+            "verification_gate": "cargo check -p gaugeblock-contracts",
+            "completed": false
+          },
+          {
+            "step_id": "2",
+            "title": "Port wire types from CONTRACTS.md with pure serde derivations",
+            "target_files": [],
+            "verification_gate": "cargo check -p gaugeblock-contracts",
+            "completed": false
+          },
+          {
+            "step_id": "3",
+            "title": "Repoint downstream crates and verify with cargo check",
+            "target_files": [],
+            "verification_gate": "cargo check --workspace",
+            "completed": false
+          },
+          {
+            "step_id": "4",
+            "title": "Tier 3 workspace verification",
+            "target_files": [],
+            "verification_gate": "cargo nextest run --workspace",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-129.md",
+        "updated_at_epoch_ms": 1793170540100
+      },
+      "timestamp_ms": 1793170540100
+    },
+    {
+      "event": "task_split",
+      "parent_task_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+      "spawned_children": [
+        {
+          "id": "7ed2836e-8876-4655-a1c0-35dbe6d36f9a",
+          "ticket_key": "GB-141",
+          "slug": "scaffold-gaugeblock-common-and-land-gaugeblock-contracts-with-the-outfeed-wire-domain-7ed283",
+          "title": "Scaffold gaugeblock/common and land gaugeblock-contracts with the outfeed wire domain",
+          "description": "Subtask of Epic GB-129",
+          "kind": "feature",
+          "status": "ready",
+          "priority": 2,
+          "scope": {
+            "repo": "workspace",
+            "crate_name": null,
+            "module_path": null,
+            "target_files": [],
+            "target_symbols": [],
+            "labels": [
+              "contracts,types,gaugeblock-common"
+            ]
+          },
+          "edges": [
+            {
+              "kind": "parent_epic",
+              "target_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+              "target_ticket_key": "GB-129",
+              "target_repo": "workspace"
+            }
+          ],
+          "decisions": [],
+          "acceptance_criteria": [],
+          "plan": null,
+          "active_claim": null,
+          "latest_handoff": null,
+          "verification_receipt": null,
+          "created_at_epoch_ms": 1793218934444,
+          "updated_at_epoch_ms": 1793218934444
+        },
+        {
+          "id": "70b1eb64-354c-438d-bea8-03e189a2c983",
+          "ticket_key": "GB-142",
+          "slug": "extend-gaugeblock-contracts-with-the-miter-storypole-sawhorse-dado-and-batten-wire-domains-70b1eb",
+          "title": "Extend gaugeblock-contracts with the miter, storypole, sawhorse, dado and batten wire domains",
+          "description": "Subtask of Epic GB-129",
+          "kind": "feature",
+          "status": "blocked",
+          "priority": 2,
+          "scope": {
+            "repo": "workspace",
+            "crate_name": null,
+            "module_path": null,
+            "target_files": [],
+            "target_symbols": [],
+            "labels": [
+              "contracts,types,gaugeblock-common"
+            ]
+          },
+          "edges": [
+            {
+              "kind": "parent_epic",
+              "target_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+              "target_ticket_key": "GB-129",
+              "target_repo": "workspace"
+            },
+            {
+              "kind": "blocked_by",
+              "target_id": "7ed2836e-8876-4655-a1c0-35dbe6d36f9a"
+            }
+          ],
+          "decisions": [],
+          "acceptance_criteria": [],
+          "plan": null,
+          "active_claim": null,
+          "latest_handoff": null,
+          "verification_receipt": null,
+          "created_at_epoch_ms": 1793218934444,
+          "updated_at_epoch_ms": 1793218934444
+        },
+        {
+          "id": "a5aa7383-42e8-4529-a289-1cc654761cac",
+          "ticket_key": "GB-143",
+          "slug": "repoint-downstream-crates-onto-gaugeblock-contracts-and-remove-the-duplicated-definitions-a5aa73",
+          "title": "Repoint downstream crates onto gaugeblock-contracts and remove the duplicated definitions",
+          "description": "Subtask of Epic GB-129",
+          "kind": "feature",
+          "status": "blocked",
+          "priority": 2,
+          "scope": {
+            "repo": "workspace",
+            "crate_name": null,
+            "module_path": null,
+            "target_files": [],
+            "target_symbols": [],
+            "labels": [
+              "contracts,types,gaugeblock-common"
+            ]
+          },
+          "edges": [
+            {
+              "kind": "parent_epic",
+              "target_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+              "target_ticket_key": "GB-129",
+              "target_repo": "workspace"
+            },
+            {
+              "kind": "blocked_by",
+              "target_id": "70b1eb64-354c-438d-bea8-03e189a2c983"
+            }
+          ],
+          "decisions": [],
+          "acceptance_criteria": [],
+          "plan": null,
+          "active_claim": null,
+          "latest_handoff": null,
+          "verification_receipt": null,
+          "created_at_epoch_ms": 1793218934444,
+          "updated_at_epoch_ms": 1793218934444
+        }
+      ],
+      "timestamp_ms": 1793218934444
+    },
+    {
+      "event": "task_verified",
+      "task_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+      "receipt": {
+        "verifier": "cline",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Epic complete: GB-141 (scaffold + outfeed domain), GB-142 (all five contract domains, closed with GB-144/GB-145) and GB-143 (all six members repointed, 5ffb991) are verified. gaugeblock/common is a standalone repository with a 9-document set, gaugeblock-contracts carries 42 pure-serde wire types with 24 wire tests, and every member builds against it: outfeed, batten, sawhorse, dado, miter and storypole. CONTRACTS.md was reconciled with the implementations (VerificationReceipt, TaskKind, TaskStatus, LedgerEvent, DadoPattern, Language) before the repoint.",
+        "verified_at_epoch_ms": 1793229530150,
+        "git_branch": "main",
+        "base_commit_sha": "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2",
+        "head_commit_sha": "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2",
+        "commit_shas": [
+          "4fe19a16d12cdc6674b2a2ec8c3981899fcf1bc2"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+      "status": "verified",
+      "timestamp_ms": 1794037999279
+    }
+  ]
+}

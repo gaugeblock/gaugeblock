@@ -1,0 +1,140 @@
+{
+  "ticket": {
+    "id": "532873e2-ede7-4293-b2cb-446819f0a603",
+    "ticket_key": "GB-107",
+    "slug": "elevate-meta-harness-root-documentation-to-first-class-best-practice-532873",
+    "title": "Elevate Meta-Harness Root Documentation to first-class best practice",
+    "description": "Transform root SPEC.md (formal wire contracts & multi-repo invariants), ARCHITECTURE.md (Mermaid subsystem topology & dataflow), DESIGN.md (ADRs for multi-repo architecture), and PRODUCT.md into authoritative specifications",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "parent_epic",
+        "target_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
+        "target_ticket_key": "GB-106",
+        "target_repo": "workspace"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Elevated root meta-harness 9-document architecture to gold standard: SPEC invariants and state machines, ARCHITECTURE Mermaid topology, PRODUCT 10-repo ecosystem, README comparative tables, and chalkline 9-doc compliance",
+      "verified_at_epoch_ms": 1793154050612,
+      "git_branch": "feat/phase-2-foundation-docs",
+      "base_commit_sha": "a6d4ed6d610741342dc409630a658f2a91466a16",
+      "head_commit_sha": "af3fa9d88df5207ec8bddc110b12ede4314b9016",
+      "commit_shas": [
+        "af3fa9d88df5207ec8bddc110b12ede4314b9016"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793149822000,
+    "updated_at_epoch_ms": 1794037976761,
+    "archived_at_epoch_ms": 1794037976761
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "532873e2-ede7-4293-b2cb-446819f0a603",
+        "ticket_key": "GB-107",
+        "slug": "elevate-meta-harness-root-documentation-to-first-class-best-practice-532873",
+        "title": "Elevate Meta-Harness Root Documentation to first-class best practice",
+        "description": "Transform root SPEC.md (formal wire contracts & multi-repo invariants), ARCHITECTURE.md (Mermaid subsystem topology & dataflow), DESIGN.md (ADRs for multi-repo architecture), and PRODUCT.md into authoritative specifications",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793149822000,
+        "updated_at_epoch_ms": 1793149822000
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "532873e2-ede7-4293-b2cb-446819f0a603",
+      "edge": {
+        "kind": "parent_epic",
+        "target_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
+        "target_ticket_key": "GB-106",
+        "target_repo": "workspace"
+      },
+      "timestamp_ms": 1793149826003
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "532873e2-ede7-4293-b2cb-446819f0a603",
+      "claim": {
+        "agent_id": "agent-antigravity",
+        "claimed_at_epoch_ms": 1793153858184,
+        "lease_expires_at_epoch_ms": 1793157458184,
+        "git_branch": "feat/phase-2-foundation-docs",
+        "base_commit_sha": "a6d4ed6d610741342dc409630a658f2a91466a16"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "532873e2-ede7-4293-b2cb-446819f0a603",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by agent-antigravity",
+      "timestamp_ms": 1793153858184
+    },
+    {
+      "event": "task_verified",
+      "task_id": "532873e2-ede7-4293-b2cb-446819f0a603",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Elevated root meta-harness 9-document architecture to gold standard: SPEC invariants and state machines, ARCHITECTURE Mermaid topology, PRODUCT 10-repo ecosystem, README comparative tables, and chalkline 9-doc compliance",
+        "verified_at_epoch_ms": 1793154050612,
+        "git_branch": "feat/phase-2-foundation-docs",
+        "base_commit_sha": "a6d4ed6d610741342dc409630a658f2a91466a16",
+        "head_commit_sha": "af3fa9d88df5207ec8bddc110b12ede4314b9016",
+        "commit_shas": [
+          "af3fa9d88df5207ec8bddc110b12ede4314b9016"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "532873e2-ede7-4293-b2cb-446819f0a603",
+      "status": "verified",
+      "timestamp_ms": 1794037976761
+    }
+  ]
+}

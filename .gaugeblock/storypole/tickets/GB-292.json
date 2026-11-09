@@ -1,0 +1,88 @@
+{
+  "ticket": {
+    "id": "1b7ea6b4-3448-4500-aa2f-8c4e064a21bf",
+    "ticket_key": "GB-292",
+    "slug": "common-had-no-verification-chain-entry-so-its-tasks-verified-with-the-workspace-chain-and-no-cargo-checks-1b7ea6",
+    "title": "common had no verification chain entry, so its tasks verified with the workspace chain and no cargo checks",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::config"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "DONE 2026-11-06. `miter audit` is now in the verification chain, and the investigation changed what I thought the ticket was.\n\nThe record, since the question was whether audit had been gated before: it never was. `git log -S 'miter audit'` across all twelve repositories finds it only in miter's own documentation commits (README and ARCHITECTURE describing the command) and in this session's ledger notes. It appears in no verification_commands history. So the rule lived in documentation and in habit, never in a chain - which is exactly why it was repaired by hand twice: GB-220 split two files pushed over by GB-215, and GB-291 split nine, seven of which this session pushed over.\n\nWhat changed:\n- the generator (default_verification_commands in storypole-cli) emits `miter audit --path . --threshold 250` between nextest and the docs check, with the two incidents recorded beside it so the next reader knows why it is there\n- all eleven configs carry it: ten member repositories commit their own, and the root map carries the workspace chain\n- AGENTS.md names it in Tier 2, Tier 3 and the commit step, so the documented matrix and the executed chain finally agree\n\nProof it bites rather than assumed: `miter audit --path storypole --threshold 250` exits 0 and the same command at --threshold 200 exits 1, so a && chain stops on it.\n\nSeparate gap found while wiring it: `common` is a member repository with no entry in the verification map. Verifying a common-scoped task matched the repo name, found nothing, and fell through to `default` - the workspace chain, which runs contracts, lockfiles, audit and docs but no cargo commands at all. Common's crates were never compile-gated by verify. A chain entry now exists.\n\nAlso confirmed in passing: the root git add was aborted by the ignored member paths and staged nothing, which is the GB-150 failure mode recorded in AGENTS.md law 6. Caught by reading the output rather than assuming the commit landed; the member configs were committed in their own repositories instead.\n\nGates: docs 108/108 0 drifted, contracts 0 drift, 11/11 lockfiles, layers clean (1 lateral), storypole 64 tests green, config check --workspace 10 repositories 0 findings."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794036581757,
+    "updated_at_epoch_ms": 1794036586041,
+    "archived_at_epoch_ms": 1794036586041
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "1b7ea6b4-3448-4500-aa2f-8c4e064a21bf",
+        "ticket_key": "GB-292",
+        "slug": "common-had-no-verification-chain-entry-so-its-tasks-verified-with-the-workspace-chain-and-no-cargo-checks-1b7ea6",
+        "title": "common had no verification chain entry, so its tasks verified with the workspace chain and no cargo checks",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::config"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794036581757,
+        "updated_at_epoch_ms": 1794036581757
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "1b7ea6b4-3448-4500-aa2f-8c4e064a21bf",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "DONE 2026-11-06. `miter audit` is now in the verification chain, and the investigation changed what I thought the ticket was.\n\nThe record, since the question was whether audit had been gated before: it never was. `git log -S 'miter audit'` across all twelve repositories finds it only in miter's own documentation commits (README and ARCHITECTURE describing the command) and in this session's ledger notes. It appears in no verification_commands history. So the rule lived in documentation and in habit, never in a chain - which is exactly why it was repaired by hand twice: GB-220 split two files pushed over by GB-215, and GB-291 split nine, seven of which this session pushed over.\n\nWhat changed:\n- the generator (default_verification_commands in storypole-cli) emits `miter audit --path . --threshold 250` between nextest and the docs check, with the two incidents recorded beside it so the next reader knows why it is there\n- all eleven configs carry it: ten member repositories commit their own, and the root map carries the workspace chain\n- AGENTS.md names it in Tier 2, Tier 3 and the commit step, so the documented matrix and the executed chain finally agree\n\nProof it bites rather than assumed: `miter audit --path storypole --threshold 250` exits 0 and the same command at --threshold 200 exits 1, so a && chain stops on it.\n\nSeparate gap found while wiring it: `common` is a member repository with no entry in the verification map. Verifying a common-scoped task matched the repo name, found nothing, and fell through to `default` - the workspace chain, which runs contracts, lockfiles, audit and docs but no cargo commands at all. Common's crates were never compile-gated by verify. A chain entry now exists.\n\nAlso confirmed in passing: the root git add was aborted by the ignored member paths and staged nothing, which is the GB-150 failure mode recorded in AGENTS.md law 6. Caught by reading the output rather than assuming the commit landed; the member configs were committed in their own repositories instead.\n\nGates: docs 108/108 0 drifted, contracts 0 drift, 11/11 lockfiles, layers clean (1 lateral), storypole 64 tests green, config check --workspace 10 repositories 0 findings."
+      ],
+      "timestamp_ms": 1794036585841
+    },
+    {
+      "event": "task_archived",
+      "task_id": "1b7ea6b4-3448-4500-aa2f-8c4e064a21bf",
+      "status": "triage",
+      "timestamp_ms": 1794036586041
+    }
+  ]
+}

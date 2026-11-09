@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "92404397-0026-46c7-b7df-ac5e6b57da0c",
+    "ticket_key": "GB-235",
+    "slug": "migrate-the-miter-mcp-typed-protocol-onto-gaugeblock-mcp-924043",
+    "title": "Migrate the miter MCP typed protocol onto gaugeblock-mcp",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_mcp::protocol"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793422655594,
+    "updated_at_epoch_ms": 1793422655594
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "92404397-0026-46c7-b7df-ac5e6b57da0c",
+        "ticket_key": "GB-235",
+        "slug": "migrate-the-miter-mcp-typed-protocol-onto-gaugeblock-mcp-924043",
+        "title": "Migrate the miter MCP typed protocol onto gaugeblock-mcp",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_mcp::protocol"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793422655594,
+        "updated_at_epoch_ms": 1793422655594
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

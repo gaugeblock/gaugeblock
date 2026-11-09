@@ -1,0 +1,88 @@
+{
+  "ticket": {
+    "id": "7347281f-534e-4005-b2fb-8f4b1c12e873",
+    "ticket_key": "GB-282",
+    "slug": "sweep-the-suite-for-code-that-names-the-moved-documents-by-root-path-734728",
+    "title": "Sweep the suite for code that names the moved documents by root path",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_core::spec_studio"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "DONE 2026-11-06 the same day it was filed. Sweep of the whole suite for code naming the moved documents by root path found two real sites, both in benchwork-core, both fixed: spec_studio read SPEC.md, ARCHITECTURE.md and DESIGN.md from the root (primary_spec became None, so the studio showed nothing) and capabilities.rs probed root_path.join(candidate) for all nine (the capabilities endpoint understated the repository). Both now resolve through spec_studio::resolve_doc, which checks root then docs/.\n\nEverything else checked and clean: no include_str!/include_bytes! over documents anywhere; the TypeScript panel refers to document KEYS rather than paths, so bundle lookups are unaffected; chalkline was never root-only because it is config-driven; no shell scripts name the moved files.\n\nWhy neither was caught by a test: both degrade to 'not found' rather than failing, which is the same silence-as-success pattern the rest of this session removed. The general lesson: a file move is a breaking change for every string literal that names the file, and grep for those literals is the migration's actual test."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794030047294,
+    "updated_at_epoch_ms": 1794030102950,
+    "archived_at_epoch_ms": 1794030102950
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "7347281f-534e-4005-b2fb-8f4b1c12e873",
+        "ticket_key": "GB-282",
+        "slug": "sweep-the-suite-for-code-that-names-the-moved-documents-by-root-path-734728",
+        "title": "Sweep the suite for code that names the moved documents by root path",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "benchwork_core::spec_studio"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794030047294,
+        "updated_at_epoch_ms": 1794030047294
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "7347281f-534e-4005-b2fb-8f4b1c12e873",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "DONE 2026-11-06 the same day it was filed. Sweep of the whole suite for code naming the moved documents by root path found two real sites, both in benchwork-core, both fixed: spec_studio read SPEC.md, ARCHITECTURE.md and DESIGN.md from the root (primary_spec became None, so the studio showed nothing) and capabilities.rs probed root_path.join(candidate) for all nine (the capabilities endpoint understated the repository). Both now resolve through spec_studio::resolve_doc, which checks root then docs/.\n\nEverything else checked and clean: no include_str!/include_bytes! over documents anywhere; the TypeScript panel refers to document KEYS rather than paths, so bundle lookups are unaffected; chalkline was never root-only because it is config-driven; no shell scripts name the moved files.\n\nWhy neither was caught by a test: both degrade to 'not found' rather than failing, which is the same silence-as-success pattern the rest of this session removed. The general lesson: a file move is a breaking change for every string literal that names the file, and grep for those literals is the migration's actual test."
+      ],
+      "timestamp_ms": 1794030102662
+    },
+    {
+      "event": "task_archived",
+      "task_id": "7347281f-534e-4005-b2fb-8f4b1c12e873",
+      "status": "triage",
+      "timestamp_ms": 1794030102950
+    }
+  ]
+}

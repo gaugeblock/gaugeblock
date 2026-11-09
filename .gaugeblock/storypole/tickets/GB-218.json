@@ -1,0 +1,148 @@
+{
+  "ticket": {
+    "id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+    "ticket_key": "GB-218",
+    "slug": "publish-an-independent-models-catalog-crate-models-dev-curated-cline-feed-3f27e5",
+    "title": "Publish an independent models-catalog crate (models.dev + curated Cline feed)",
+    "description": "DONE: published as models-catalog 0.1.0 on crates.io (repo colinwolff/models-catalog, MIT OR Apache-2.0, edition 2024, MSRV 1.85). Verified against the constraints recorded when this ticket was filed: pure-sync core available with default-features = false plus the bundled snapshot (no runtime, no network, no disk); reqwest/tokio/directories/flate2/clap/rand all optional behind reqwest-client, disk-spool, bundled and cli features; injectable spool dir with no forced global singleton; upstream parity harness documented in docs/NORMALIZATION_AND_PARITY.md. It also ships two things the suite needs and did not plan for: resolve_gateway_max_output_tokens (the 32k cap, 1,024 reserve and reasoning floor) and a requires_streaming flag from the curated overlay. Integration tracked in GB-217.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Published to crates.io with a version that can be depended on",
+      "Offline/sync path needs no runtime, network or disk"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Published: models-catalog 0.1.0 on crates.io, MIT OR Apache-2.0, edition 2024, MSRV 1.85. Constraints met - default-features = false yields a pure synchronous parser/lookup with the bundled snapshot and no reqwest/tokio/directories; cache and spool paths are injected; parity harness documented. Ships resolve_gateway_max_output_tokens and a requires_streaming flag, both of which the suite will consume in GB-217.",
+      "verified_at_epoch_ms": 1793375373581,
+      "git_branch": "main",
+      "base_commit_sha": "bf9ed096bac71f5b6f422f164e858d82ec5da808",
+      "head_commit_sha": "bf9ed096bac71f5b6f422f164e858d82ec5da808",
+      "commit_shas": [
+        "bf9ed096bac71f5b6f422f164e858d82ec5da808"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793367153135,
+    "updated_at_epoch_ms": 1794038019314,
+    "archived_at_epoch_ms": 1794038019314
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+        "ticket_key": "GB-218",
+        "slug": "publish-an-independent-models-catalog-crate-models-dev-curated-cline-feed-3f27e5",
+        "title": "Publish an independent models-catalog crate (models.dev + curated Cline feed)",
+        "description": "EXTERNAL DELIVERABLE, owned outside the meta-harness. A published crate that parses https://models.dev/api.json and the curated Cline feed, so the suite stops hand-declaring limits and stops scraping docs for the ClinePass set. Consumed later by GB-217.\n\nConfirmed inputs (measured): models.dev/api.json answers 200 in ~1.1s, 5.9MB, 233 providers, carries limit.context/limit.input/limit.output plus reasoning_options, and includes a cline-pass provider with 18 entries. The curated feed https://api.cline.bot/api/v1/ai/cline/recommended-models answers 200 with {recommended, free, clinePass, clineCloud} and 15 clinePass ids including the exact wire id in use.\n\nINTEGRATION CONSTRAINTS, each with the reason it matters:\n1. Core is offline: pure parse/lookup with no runtime and no I/O; fetching behind a feature. The suite Tier 2/3 gates must never touch the network.\n2. The curated feed is undocumented and advisory, never a hard dependency: last-known snapshot wins, absence degrades to no answer. Entitlement drives a label, never a spend gate.\n3. Cache directory and single-flight coalescing are injected, not ambient: no hardcoded cache path, no process-wide singleton, so tests stay deterministic and nothing collides with the canonical .gaugeblock directory.\n4. Bundle a trimmed snapshot (id -> limits/efforts/modalities), not the raw 5.9MB payload, so offline and CI users get stable data.\n5. Return facts, not policy: normalisation and lookup live in the crate; the choice of budget and effort stays in sawhorse where the contracts and tests are. Successor rule for the suite is config override > catalog > default.\n6. Do not model provider config (base URLs, auth env names, fallbacks); ProviderConfig owns those and duplication drifts. Expose limits, modalities, effort options, curated membership.\n7. Suite-compatible hygiene: edition 2024, thiserror, no unwrap in library paths, files under 250 lines.\n\nThe parity harness belongs here as a scheduled job comparing upstream schema keys, failing only when keys disappear rather than when models are added.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793367153135,
+        "updated_at_epoch_ms": 1793367153135
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+      "title": null,
+      "description": "DONE: published as models-catalog 0.1.0 on crates.io (repo colinwolff/models-catalog, MIT OR Apache-2.0, edition 2024, MSRV 1.85). Verified against the constraints recorded when this ticket was filed: pure-sync core available with default-features = false plus the bundled snapshot (no runtime, no network, no disk); reqwest/tokio/directories/flate2/clap/rand all optional behind reqwest-client, disk-spool, bundled and cli features; injectable spool dir with no forced global singleton; upstream parity harness documented in docs/NORMALIZATION_AND_PARITY.md. It also ships two things the suite needs and did not plan for: resolve_gateway_max_output_tokens (the 32k cap, 1,024 reserve and reasoning floor) and a requires_streaming flag from the curated overlay. Integration tracked in GB-217.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Published to crates.io with a version that can be depended on",
+        "Offline/sync path needs no runtime, network or disk"
+      ],
+      "timestamp_ms": 1793375373236
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793375373454,
+        "lease_expires_at_epoch_ms": 1793378973454,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+      "from": "deferred",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793375373454
+    },
+    {
+      "event": "task_verified",
+      "task_id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Published: models-catalog 0.1.0 on crates.io, MIT OR Apache-2.0, edition 2024, MSRV 1.85. Constraints met - default-features = false yields a pure synchronous parser/lookup with the bundled snapshot and no reqwest/tokio/directories; cache and spool paths are injected; parity harness documented. Ships resolve_gateway_max_output_tokens and a requires_streaming flag, both of which the suite will consume in GB-217.",
+        "verified_at_epoch_ms": 1793375373581,
+        "git_branch": "main",
+        "base_commit_sha": "bf9ed096bac71f5b6f422f164e858d82ec5da808",
+        "head_commit_sha": "bf9ed096bac71f5b6f422f164e858d82ec5da808",
+        "commit_shas": [
+          "bf9ed096bac71f5b6f422f164e858d82ec5da808"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953188453
+    },
+    {
+      "event": "task_archived",
+      "task_id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+      "status": "verified",
+      "timestamp_ms": 1794038019314
+    }
+  ]
+}

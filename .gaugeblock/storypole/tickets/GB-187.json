@@ -1,0 +1,146 @@
+{
+  "ticket": {
+    "id": "53d0a3e1-5f25-4e36-9cfb-3d17b96e32fb",
+    "ticket_key": "GB-187",
+    "slug": "incremental-compilation-was-never-disabled-env-cargo-incremental-is-invisible-to-cargo-53d0a3",
+    "title": "Incremental compilation was never disabled: [env] CARGO_INCREMENTAL is invisible to cargo",
+    "description": "The .cargo/config.toml file sets CARGO_INCREMENTAL=0 under [env], but [env] only populates the environment of the processes cargo spawns (rustc, build scripts); cargo reads CARGO_INCREMENTAL from its own process environment, so incremental compilation stayed on and target/debug/incremental refilled to 1.3 GB in a single session. Measured on this machine: cargo check -p storypole-core after touching lib.rs wrote 4.1 MB of incremental artefacts in 1.67 s; with [build] incremental = false it wrote 0 B in 3.90 s. The disk risk is real (ENOSPC has broken the tool layer twice) and the 2.2 s cost is per-crate recheck, absorbed by sccache on the dependency graph.",
+    "kind": "bug",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": null,
+      "crate_name": "workspace",
+      "module_path": null,
+      "target_files": [
+        ".cargo/config.toml"
+      ],
+      "target_symbols": [],
+      "labels": [
+        "disk",
+        "build"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "measured-config-change",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "incremental dir stays 0B after touching lib.rs and cargo check; 3.90s vs 1.67s recorded; numbers in commit, CONTRIBUTING 1.4 and GB-187",
+      "verified_at_epoch_ms": 1793305171263,
+      "git_branch": "fix/gb-187-incremental-off",
+      "base_commit_sha": "1efb6a599d78e33468a506c4846f03eee333198d",
+      "head_commit_sha": "b2ac2f6b579f0d86ace31de833973a0098983545",
+      "commit_shas": [
+        "c0397da37d70bec6fa4a476a35008131a3e12581",
+        "e7b889b3566b42e2a5df6ebd78eabe274bf56832",
+        "b2f75a1a1adca27317d3f446da114e735afa2db0",
+        "b2ac2f6b579f0d86ace31de833973a0098983545"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793305111786,
+    "updated_at_epoch_ms": 1794038002162,
+    "archived_at_epoch_ms": 1794038002162
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "53d0a3e1-5f25-4e36-9cfb-3d17b96e32fb",
+        "ticket_key": "GB-187",
+        "slug": "incremental-compilation-was-never-disabled-env-cargo-incremental-is-invisible-to-cargo-53d0a3",
+        "title": "Incremental compilation was never disabled: [env] CARGO_INCREMENTAL is invisible to cargo",
+        "description": "The .cargo/config.toml file sets CARGO_INCREMENTAL=0 under [env], but [env] only populates the environment of the processes cargo spawns (rustc, build scripts); cargo reads CARGO_INCREMENTAL from its own process environment, so incremental compilation stayed on and target/debug/incremental refilled to 1.3 GB in a single session. Measured on this machine: cargo check -p storypole-core after touching lib.rs wrote 4.1 MB of incremental artefacts in 1.67 s; with [build] incremental = false it wrote 0 B in 3.90 s. The disk risk is real (ENOSPC has broken the tool layer twice) and the 2.2 s cost is per-crate recheck, absorbed by sccache on the dependency graph.",
+        "kind": "bug",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": null,
+          "crate_name": "workspace",
+          "module_path": null,
+          "target_files": [
+            ".cargo/config.toml"
+          ],
+          "target_symbols": [],
+          "labels": [
+            "disk",
+            "build"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793305111786,
+        "updated_at_epoch_ms": 1793305111786
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "53d0a3e1-5f25-4e36-9cfb-3d17b96e32fb",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793305117382,
+        "lease_expires_at_epoch_ms": 1793308717382,
+        "git_branch": "fix/gb-187-incremental-off",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "53d0a3e1-5f25-4e36-9cfb-3d17b96e32fb",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793305117382
+    },
+    {
+      "event": "task_verified",
+      "task_id": "53d0a3e1-5f25-4e36-9cfb-3d17b96e32fb",
+      "receipt": {
+        "verifier": "measured-config-change",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "incremental dir stays 0B after touching lib.rs and cargo check; 3.90s vs 1.67s recorded; numbers in commit, CONTRIBUTING 1.4 and GB-187",
+        "verified_at_epoch_ms": 1793305171263,
+        "git_branch": "fix/gb-187-incremental-off",
+        "base_commit_sha": "1efb6a599d78e33468a506c4846f03eee333198d",
+        "head_commit_sha": "b2ac2f6b579f0d86ace31de833973a0098983545",
+        "commit_shas": [
+          "c0397da37d70bec6fa4a476a35008131a3e12581",
+          "e7b889b3566b42e2a5df6ebd78eabe274bf56832",
+          "b2f75a1a1adca27317d3f446da114e735afa2db0",
+          "b2ac2f6b579f0d86ace31de833973a0098983545"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "53d0a3e1-5f25-4e36-9cfb-3d17b96e32fb",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953198198
+    },
+    {
+      "event": "task_archived",
+      "task_id": "53d0a3e1-5f25-4e36-9cfb-3d17b96e32fb",
+      "status": "verified",
+      "timestamp_ms": 1794038002162
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "ticket": {
+    "id": "7691534b-718b-4f8c-842f-bd6580e136d1",
+    "ticket_key": "GB-19",
+    "slug": "install-full-cli-mcp-suite-configure-antigravity-mcp-settings-and-update-agent-directives-for-dogfooding-and-bug-tracking-769153",
+    "title": "Install full CLI/MCP suite, configure Antigravity MCP settings, and update agent directives for dogfooding and bug tracking",
+    "description": "Build and install all 9 binaries to ~/.cargo/bin via scripts/install-suite.sh, configure MCP servers in Antigravity, and update AGENTS.md, README.md, and CONTRIBUTING.md to mandate storypole bug logging and ban target/ binary execution in agent workflows.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": null,
+      "crate_name": "workspace",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1792716932756,
+      "git_branch": null,
+      "base_commit_sha": null,
+      "head_commit_sha": null,
+      "commit_shas": [],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792710477230,
+    "updated_at_epoch_ms": 1794037957460,
+    "archived_at_epoch_ms": 1794037957460
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "7691534b-718b-4f8c-842f-bd6580e136d1",
+        "ticket_key": "GB-19",
+        "slug": "install-full-cli-mcp-suite-configure-antigravity-mcp-settings-and-update-agent-directives-for-dogfooding-and-bug-tracking-769153",
+        "title": "Install full CLI/MCP suite, configure Antigravity MCP settings, and update agent directives for dogfooding and bug tracking",
+        "description": "Build and install all 9 binaries to ~/.cargo/bin via scripts/install-suite.sh, configure MCP servers in Antigravity, and update AGENTS.md, README.md, and CONTRIBUTING.md to mandate storypole bug logging and ban target/ binary execution in agent workflows.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": null,
+          "crate_name": "workspace",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792710477230,
+        "updated_at_epoch_ms": 1792710477230
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "7691534b-718b-4f8c-842f-bd6580e136d1",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792710485772,
+        "lease_expires_at_epoch_ms": 1792714085772,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "7691534b-718b-4f8c-842f-bd6580e136d1",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792710485772
+    },
+    {
+      "event": "task_verified",
+      "task_id": "7691534b-718b-4f8c-842f-bd6580e136d1",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1792716932756,
+        "git_branch": null,
+        "base_commit_sha": null,
+        "head_commit_sha": null,
+        "commit_shas": [],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "7691534b-718b-4f8c-842f-bd6580e136d1",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793289296380
+    },
+    {
+      "event": "task_archived",
+      "task_id": "7691534b-718b-4f8c-842f-bd6580e136d1",
+      "status": "verified",
+      "timestamp_ms": 1794037957460
+    }
+  ]
+}

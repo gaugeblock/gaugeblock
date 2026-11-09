@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "3ed8f691-9637-4d54-8942-d49628567407",
+    "ticket_key": "GB-249",
+    "slug": "gates-and-doc-checks-should-take-a-baseline-rev-so-pre-existing-drift-is-not-confused-with-mine-3ed8f6",
+    "title": "Gates and doc checks should take a --baseline rev so pre-existing drift is not confused with mine",
+    "description": "Observed 2026-11-06: after touching a crate I could not tell whether a fmt failure or a docs drift was mine or already on main. I answered it with a git stash round-trip and a manual re-run, twice (dado fmt drift, common docs drift), and once by checking out HEAD~1 files in place. Both are slow and easy to get wrong. 'chalkline docs check --baseline <rev>' and 'outfeed gate --baseline <rev>' would report which findings are new since that revision, which is the only question an agent or a reviewer actually has. It would also make a red gate on main actionable ('this one is pre-existing, file it') instead of a guess.",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "gate,docs,outfeed,chalkline,agent-ergonomics"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793948501987,
+    "updated_at_epoch_ms": 1793948501987
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "3ed8f691-9637-4d54-8942-d49628567407",
+        "ticket_key": "GB-249",
+        "slug": "gates-and-doc-checks-should-take-a-baseline-rev-so-pre-existing-drift-is-not-confused-with-mine-3ed8f6",
+        "title": "Gates and doc checks should take a --baseline rev so pre-existing drift is not confused with mine",
+        "description": "Observed 2026-11-06: after touching a crate I could not tell whether a fmt failure or a docs drift was mine or already on main. I answered it with a git stash round-trip and a manual re-run, twice (dado fmt drift, common docs drift), and once by checking out HEAD~1 files in place. Both are slow and easy to get wrong. 'chalkline docs check --baseline <rev>' and 'outfeed gate --baseline <rev>' would report which findings are new since that revision, which is the only question an agent or a reviewer actually has. It would also make a red gate on main actionable ('this one is pre-existing, file it') instead of a guess.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "gate,docs,outfeed,chalkline,agent-ergonomics"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793948501987,
+        "updated_at_epoch_ms": 1793948501987
+      },
+      "captured_by_agent": "cline",
+      "discovered_from_task_id": null
+    }
+  ]
+}

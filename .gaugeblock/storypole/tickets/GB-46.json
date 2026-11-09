@@ -1,0 +1,647 @@
+{
+  "ticket": {
+    "id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+    "ticket_key": "GB-46",
+    "slug": "suite-aware-chat-harness-context-injection-engine-and-generative-ui-copilot-rail-df1785",
+    "title": "Suite-aware chat harness, context injection engine, and Generative UI Copilot rail",
+    "description": "Implements a persistent, view-aware Chat Copilot rail across all 4 benchwork panels powered by @assistant-ui/react on the frontend and a Rust agent harness (chat_harness) in benchwork-core. Includes a mandatory Phase 0 investigation of assistant-ui/mastra-hitl, block/goose, zed-industries/zed, and cline/cline, followed by implementation of automatic <gaugeblock_environment> context injection, @// command expansion, in-process suite traversal tools, and human-in-the-loop Generative UI mutation cards.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-core, benchwork-cli, chalkline-core, web",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork, chat-harness, context-engineering, assistant-ui, copilot, generative-ui"
+      ]
+    },
+    "edges": [],
+    "decisions": [
+      {
+        "decision_id": "65ca5914-5725-4d88-8627-779aa3d9c945",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "architecture",
+        "question": "Which frontend generative UI library should be used for human-in-the-loop tool cards?",
+        "proposed_options": [
+          "@assistant-ui/react",
+          "custom-react"
+        ],
+        "chosen_option": "@assistant-ui/react",
+        "rationale": "Use @assistant-ui/react (useExternalStoreRuntime + makeAssistantToolUI) modeled after assistant-ui/mastra-hitl so backend tool proposals (propose_decision_hole, propose_doc_patch, propose_task_plan) map cleanly to modular React approval cards while keeping every .tsx file strictly <= 250 LOC.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792980731626
+      },
+      {
+        "decision_id": "3bed7f92-b500-40e0-99ea-fe6bb31f6998",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "architecture",
+        "question": "How should the Chat Copilot layout and viewport integration be structured across Benchwork panels?",
+        "proposed_options": [
+          "persistent-collapsible-rail",
+          "floating-modal-overlay",
+          "dedicated-panel-tab"
+        ],
+        "chosen_option": "persistent-collapsible-rail",
+        "rationale": "Make the Chat Copilot a persistent, collapsible right-hand split rail in App.tsx across all 4 panels that automatically receives the active panel's UiViewportContext.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792980745110
+      },
+      {
+        "decision_id": "f73a95a3-2fcc-4a3a-8803-07e807b06cf4",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "architecture",
+        "question": "What context injection strategy should be used to provide suite awareness to the agent?",
+        "proposed_options": [
+          "3-tier-context-injection",
+          "raw-system-prompt-only",
+          "client-side-context-only"
+        ],
+        "chosen_option": "3-tier-context-injection",
+        "rationale": "1. Tier A (Pinned Session Identity): Repo overview, 9-Doc Separation of Concerns boundaries, Mermaid formatting guardrails, and AGENTS.md laws (modeled after Zed's crates/agent/src/templates/system_prompt.hbs). 2. Tier B (Per-Turn <gaugeblock_environment> XML Envelope): Deterministic ~250-token snapshot of active branch, viewport focus, .gaugeblock/storypole/ counts, .gaugeblock/docs.toml drift status, and active sawhorse model role (modeled after Cline's getEnvironmentDetails). 3. Tier C (Explicit @-Mentions & /-Commands): Deterministic Rust expansion of @task:<KEY>, @doc:<ARCHETYPE>, @symbol:<NAME>, @crate:<NAME>, /grill-me, /disentangle, and /plan <KEY>.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792980765708
+      },
+      {
+        "decision_id": "dab19161-45af-47a6-b85f-01c687f43dad",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "architecture",
+        "question": "How should tool execution boundaries and human-in-the-loop approvals be partitioned?",
+        "proposed_options": [
+          "auto-read-vs-staged-proposal",
+          "unrestricted-tool-execution",
+          "manual-approval-all-tools"
+        ],
+        "chosen_option": "auto-read-vs-staged-proposal",
+        "rationale": "Read-only suite tools (miter_inspect_scope, storypole_query_tasks, chalkline_check_drift, dado_preview_contract) execute automatically inside the Rust ReAct loop; state-mutating tools (propose_decision_hole, propose_doc_patch, propose_task_plan, trigger_joiner_run) emit staged ToolProposal payloads requiring explicit human approval in the UI.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792980795204
+      },
+      {
+        "decision_id": "25ef1be6-0970-4b30-a6c8-d641532d19f1",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "architecture",
+        "question": "How should tool parsing handle differing model capabilities and local GGUF serialization quirks?",
+        "proposed_options": [
+          "resilient-single-model-tool-parsing",
+          "strict-json-only",
+          "regex-xml-only"
+        ],
+        "chosen_option": "resilient-single-model-tool-parsing",
+        "rationale": "Support both native JSON tool calling and deterministic <tool_call> XML fallback, plus serde stringified-JSON recovery (deserialize_maybe_stringified modeled after Zed's crates/agent/src/tools.rs) so Single-Model Mode and local GGUF models never fail on nested tool arguments.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792980801727
+      },
+      {
+        "decision_id": "30d07488-ede8-4d57-bed9-dd6c5e7a6836",
+        "parent_decision_id": null,
+        "status": "resolved",
+        "category": "architecture",
+        "question": "How should chat threads be persisted, indexed, and integrated with telemetry training spools?",
+        "proposed_options": [
+          "hybrid-jsonl-sqlite-spool",
+          "pure-jsonl-only",
+          "pure-sqlite-only"
+        ],
+        "chosen_option": "hybrid-jsonl-sqlite-spool",
+        "rationale": "Dual Storage in .gaugeblock/chat/: Source of truth is .gaugeblock/chat/threads.jsonl (append-only ChatLedgerEvent stream); derived fast cache is .gaugeblock/chat/index.sqlite (git-ignored, indexing threads, entity associations, pending proposals, FTS5). When proposals are resolved: approved as-is emits Silver SFT trace to .gaugeblock/spool/outbox.jsonl; edited/rejected emits Gold DPO preference pair for rabbet (planner_dpo.parquet). Dynamic prompts in .gaugeblock/prompts/*.md and [🔍 X-Ray] toggle in CopilotRail.tsx.",
+        "resolved_by": "user",
+        "updated_at_epoch_ms": 1792981610994
+      }
+    ],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "Suite-aware chat harness, context injection engine, and Generative UI Copilot rail",
+      "design_markdown": "# Plan: GB-46 — Suite-Aware Chat Harness, Context Injection Engine, and Generative UI Copilot Rail\n\n> **Task Key:** `GB-46`  \n> **Title:** Suite-aware chat harness, context injection engine, and Generative UI Copilot rail  \n> **Crates:** `benchwork-core`, `benchwork-cli`, `chalkline-core`, `web`  \n> **Status:** Ready (Plan Attached)  \n> **Primary References:** `@assistant-ui/react` (`assistant-ui/mastra-hitl`), `block/goose`, `zed-industries/zed`, `cline/cline`  \n\n---\n\n## 1. Executive Summary & Problem Statement\n\nBenchwork provides a visual multi-panel workbench (Panel 1: Architecture & Docs, Panel 2: Backlog & Task Inspector, Panel 3: Synthesis & X-Ray, Panel 4: Foundry & Telemetry), but conversational AI currently resets on tab switching and lacks live workspace context awareness.\n\nThis specification defines the **Suite-Aware Chat Harness, Context Injection Engine, and Generative UI Copilot Rail**:\n1. **Persistent Copilot Rail:** A persistent, collapsible right-hand split rail in `App.tsx` across all 4 panels powered by `@assistant-ui/react` (`useExternalStoreRuntime`), maintaining thread continuity and view context.\n2. **3-Tier Context Injection Engine:** Pinned session identity (AGENTS.md, Mermaid rules, 9-Doc matrix), per-turn `<gaugeblock_environment>` XML radar envelope, and deterministic `@task:`, `@doc:`, `@symbol:`, `@crate:`, `/grill-me`, `/disentangle`, `/plan` expansions.\n3. **8-Tool Dual-Partitioned Suite Traversal:** 4 Auto-Read tools executed autonomously within the Rust ReAct loop, and 4 Interactive Proposal tools emitting staged `ToolProposal` events requiring human approval cards.\n4. **Generative UI Mutation Cards:** Modular React approval cards built with `makeAssistantToolUI` for decision holes, doc patches, and task plans.\n5. **Resilient Dual-Mode Tool Parsing:** Native JSON tool calling with `<tool_call>` XML fallback and serde `deserialize_maybe_stringified` recovery for local GGUF / Single-Model Mode compatibility.\n6. **Dual-Storage & Telemetry Training Spool:** Append-only `.gaugeblock/chat/threads.jsonl` with fast derived `.gaugeblock/chat/index.sqlite`, and automatic Silver SFT / Gold DPO spooling to `.gaugeblock/spool/outbox.jsonl` upon human proposal resolution.\n7. **Zero-Recompile Prompts & X-Ray:** Runtime prompt templates in `.gaugeblock/prompts/*.md` and a live `[🔍 X-Ray]` turn inspector toggle in `CopilotRail.tsx`.\n\n---\n\n## 2. Resolved Architectural Decisions (`TaskDecision`s)\n\n* **D1 (Frontend Generative UI Library):** Use `@assistant-ui/react` (`useExternalStoreRuntime` + `makeAssistantToolUI`) modeled after `assistant-ui/mastra-hitl` so backend tool proposals (`propose_decision_hole`, `propose_doc_patch`, `propose_task_plan`) map cleanly to modular React approval cards while keeping every `.tsx` file strictly ≤ 250 LOC.\n* **D2 (Persistent Copilot Layout):** Make the Chat Copilot a persistent, collapsible right-hand split rail in `App.tsx` across all 4 panels that automatically receives the active panel's `UiViewportContext`.\n* **D3 (3-Tier Context Injection Strategy):**\n  1. *Tier A (Pinned Session Identity):* Repo overview, 9-Doc Separation of Concerns boundaries, Mermaid formatting guardrails, and `AGENTS.md` laws (modeled after Zed's `crates/agent/src/templates/system_prompt.hbs`).\n  2. *Tier B (Per-Turn `<gaugeblock_environment>` XML Envelope):* Deterministic ~250-token snapshot of active branch, viewport focus, `.gaugeblock/storypole/` counts, `.gaugeblock/docs.toml` drift status, and active `sawhorse` model role (modeled after Cline's `getEnvironmentDetails`).\n  3. *Tier C (Explicit `@`-Mentions & `/`-Commands):* Deterministic Rust expansion of `@task:<KEY>`, `@doc:<ARCHETYPE>`, `@symbol:<NAME>`, `@crate:<NAME>`, `/grill-me`, `/disentangle`, and `/plan <KEY>`.\n* **D4 (Auto-Read vs. Staged Proposal Tool Boundary):** Read-only suite tools (`miter_inspect_scope`, `storypole_query_tasks`, `chalkline_check_drift`, `dado_preview_contract`) execute automatically inside the Rust ReAct loop; state-mutating tools (`propose_decision_hole`, `propose_doc_patch`, `propose_task_plan`, `trigger_joiner_run`) emit staged `ToolProposal` payloads requiring explicit human approval in the UI.\n* **D5 (Resilient Single-Model Tool Parsing):** Support both native JSON tool calling and deterministic `<tool_call>` XML fallback, plus serde stringified-JSON recovery (`deserialize_maybe_stringified` modeled after Zed's `crates/agent/src/tools.rs`) so Single-Model Mode and local GGUF models never fail on nested tool arguments.\n* **D6 (Dual Storage, SFT/DPO Spooling & Zero-Recompile Prompts):** Dual Storage in `.gaugeblock/chat/` (source of truth: `threads.jsonl`; derived fast cache: `index.sqlite`). When proposals are resolved in the UI: approved as-is emits Silver SFT trace to `.gaugeblock/spool/outbox.jsonl`; edited/rejected emits Gold DPO preference pair for rabbet (`planner_dpo.parquet`). Dynamic prompt templates loaded from `.gaugeblock/prompts/*.md` and a live `[🔍 X-Ray]` turn inspector toggle in `CopilotRail.tsx`.\n\n---\n\n## Section A: Phase 0 — Reference Architecture Investigation & Pattern Extraction (`Step H0`)\n\n### 1. Frontend HITL Tool Cards & External Store Runtime (`assistant-ui`)\n* **Repository:** `https://github.com/assistant-ui/mastra-hitl`\n  * **File:** `components/tools/human-in-the-loop.tsx`\n  * **Core Primitive:** `makeAssistantToolUI({ toolName, render })`\n  ```tsx\n  export const DecisionToolUi = makeAssistantToolUI<DecisionArgs, DecisionResult>({\n    toolName: \"propose_decision_hole\",\n    render: ({ args, result, status, addResult }) => {\n      if (status.type === \"complete\") {\n        return <ResolvedDecisionCard args={args} result={result} />;\n      }\n      return (\n        <PendingDecisionCard\n          args={args}\n          onApprove={(chosen) => addResult({ approved: true, chosen })}\n          onReject={() => addResult({ approved: false })}\n        />\n      );\n    },\n  });\n  ```\n* **Documentation:** `https://www.assistant-ui.com/docs/cloud/runtimes`\n  * **Primitive:** `useExternalStoreRuntime`\n  * Bridges custom `messages` store from `benchwork-cli` Axum backend into standard `ThreadMessageLike` items.\n  * Handles asynchronous `onNew` stream reader over `/api/v1/chat/stream`.\n\n### 2. Rust Inner Agent Loop & Axum Streaming (`block/goose`)\n* **Agent Loop:** `https://github.com/block/goose/blob/main/crates/goose/src/agents/agent.rs` (`Agent::reply_internal`)\n  * Turn limits enforced via `max_turns: u32 = 10` preventing infinite tool execution loops.\n  * Cancellation token checks (`tokio_util::sync::CancellationToken`) on every streaming chunk.\n* **Wire Protocol Contract (SSE Stream):**\n  Bridged from Axum to frontend over `text/event-stream`:\n  ```text\n  event: text_delta\n  data: {\"delta\": \"Analyzing AST dependencies...\"}\n\n  event: tool_call_start\n  data: {\"call_id\": \"call_123\", \"tool_name\": \"storypole_query_tasks\"}\n\n  event: tool_result\n  data: {\"call_id\": \"call_123\", \"output\": {\"tasks\": [...]}}\n\n  event: tool_proposal\n  data: {\"proposal_id\": \"prop_456\", \"tool_name\": \"propose_task_plan\", \"payload\": {...}}\n\n  event: done\n  data: {\"total_tokens\": 820, \"turn_id\": \"turn_789\"}\n  ```\n\n### 3. System Prompt Rules & Resilient Tool Deserialization (`zed-industries/zed`)\n* **System Prompt Guardrails:** `crates/agent/src/templates/system_prompt.hbs`\n  * Enforces orthogonal document boundaries (9-Doc Matrix), Mermaid syntax rules (strictly valid diagram types, quoted labels), and `AGENTS.md` laws.\n* **Resilient Deserialization Helper:** `crates/agent/src/tools.rs`\n  ```rust\n  pub fn deserialize_maybe_stringified<'de, T, D>(deserializer: D) -> Result<T, D::Error>\n  where\n      T: serde::de::DeserializeOwned,\n      D: serde::Deserializer<'de>,\n  {\n      let raw_value = serde_json::Value::deserialize(deserializer)\n          .map_err(|e| serde::de::Error::custom(format!(\"invalid JSON: {e}\")))?;\n      \n      match T::deserialize(&raw_value) {\n          Ok(val) => Ok(val),\n          Err(orig_err) => {\n              let Some(s) = raw_value.as_str() else {\n                  return Err(serde::de::Error::custom(orig_err));\n              };\n              serde_json::from_str(s).map_err(serde::de::Error::custom)\n          }\n      }\n  }\n  ```\n\n### 4. Per-Turn Environment Radar Envelope (`cline/cline`)\n* **Guide & Implementation:** `https://cline.bot/blog/system-prompt` & `getEnvironmentDetails` (`cline/cline#4364`)\n* **Format:** Bounded strictly to ~200–250 tokens and tail-injected onto the user turn:\n  ```xml\n  <gaugeblock_environment>\n    <active_branch>feat/gb-19-chat-harness</active_branch>\n    <active_panel>Panel2_Backlog</active_panel>\n    <focused_task>GB-46</focused_task>\n    <storypole_summary ready=\"3\" in_progress=\"1\" blocked=\"0\" />\n    <docs_drift status=\"clean\" checked_docs=\"9\" />\n    <sawhorse_role model=\"deepseek-v4.1-flash\" active_preset=\"universal\" />\n  </gaugeblock_environment>\n  ```\n\n### 5. Dual Storage & Telemetry Training Spool\n* **Disk Layout:**\n  * `.gaugeblock/chat/threads.jsonl`: Append-only event log (`ThreadCreated`, `MessageAppended`, `ToolExecuted`, `ProposalCreated`, `ProposalResolved`).\n  * `.gaugeblock/chat/index.sqlite`: Fast query cache (git-ignored) for thread lists, FTS5 message search, and proposal lookup.\n  * `.gaugeblock/spool/outbox.jsonl`: Spools user approvals/rejections:\n    * **Silver SFT:** Approved proposals logged with user intent + prompt + clean output.\n    * **Gold DPO:** Edited/rejected proposals logged with prompt, rejected payload, and user-edited accepted payload for fine-tuning via `rabbet` (`planner_dpo.parquet`).\n* **Zero-Recompile Prompts & X-Ray:**\n  * Dynamic prompt templates loaded from `.gaugeblock/prompts/*.md` (with built-in fallback).\n  * `[🔍 X-Ray]` turn inspector toggle in `CopilotRail.tsx` allowing developers to inspect exact assembled context and token budgets per turn.\n\n---\n\n## Section B: Architecture Overview, File Layout (All Files ≤ 250 LOC) & 8-Tool Matrix\n\n### 1. File Layout & Modularity Constraints\n\nStrictly complying with the Hard 250-Line File Limit in `AGENTS.md`:\n\n```text\ncrates/benchwork-core/src/chat_harness/\n├── mod.rs                        # (< 140 LOC) Session state & threads.jsonl + index.sqlite engine\n├── context_injector.rs           # (< 210 LOC) <gaugeblock_environment> builder & @// symbol expansion\n├── tool_registry.rs              # (< 230 LOC) 8-tool schema definitions, deserialize_maybe_stringified\n├── orchestrator.rs               # (< 230 LOC) ReAct loop, sawhorse-core stream runner, SSE events\n└── telemetry_spool.rs            # (< 180 LOC) Silver SFT & Gold DPO event serializer to outbox.jsonl\n\ncrates/benchwork-cli/src/daemon/\n└── routes_chat.rs                # (< 190 LOC) Axum handlers: /stream, /apply-proposal, /autocomplete\n\nweb/src/chat/\n├── CopilotRail.tsx               # (< 190 LOC) Persistent collapsible split rail wrapper with [🔍 X-Ray]\n├── useBenchworkChat.ts           # (< 170 LOC) useExternalStoreRuntime adapter & SSE event consumer\n├── AutocompletePillBar.tsx       # (< 140 LOC) Floating pill bar for @task, @doc, @symbol, /commands\n├── XRayInspector.tsx             # (< 150 LOC) View assembled context envelope & token metrics\n└── tools/\n    ├── DecisionToolUi.tsx        # (< 160 LOC) makeAssistantToolUI approval card for propose_decision_hole\n    ├── DocPatchToolUi.tsx        # (< 160 LOC) makeAssistantToolUI approval card for propose_doc_patch\n    └── PlanProposalToolUi.tsx    # (< 160 LOC) makeAssistantToolUI approval card for propose_task_plan\n```\n\n### 2. The 8-Tool Suite Traversal Matrix\n\n| Category | Tool Name | Scope & Authority | Emitted Event / Execution |\n| :--- | :--- | :--- | :--- |\n| **Auto-Read** | `miter_inspect_scope` | Inspect AST symbols, skeletons, references, and impact | Autonomous execution within ReAct loop; returns raw JSON/markdown |\n| **Auto-Read** | `storypole_query_tasks` | Query backlog tasks, statuses, blockers, and claims | Autonomous execution within ReAct loop; returns task list |\n| **Auto-Read** | `chalkline_check_drift` | Run doc verification against `docs.toml` | Autonomous execution within ReAct loop; returns drift violations |\n| **Auto-Read** | `dado_preview_contract` | Preview AST pattern contract and typed holes | Autonomous execution within ReAct loop; returns rendered contract |\n| **Proposal** | `propose_decision_hole` | Propose architectural question and options for Storypole | Emits `ToolProposal(DecisionHole)` -> renders `DecisionToolUi` card |\n| **Proposal** | `propose_doc_patch` | Propose targeted markdown patch to managed doc | Emits `ToolProposal(DocPatch)` -> renders `DocPatchToolUi` diff card |\n| **Proposal** | `propose_task_plan` | Propose structured `TaskPlan` with atomic `PlanStep`s | Emits `ToolProposal(TaskPlan)` -> renders `PlanProposalToolUi` card |\n| **Proposal** | `trigger_joiner_run` | Stage neurosymbolic synthesis pass | Emits `ToolProposal(JoinerRun)` -> renders Joiner confirmation card |\n\n---\n\n## Section C: Ordered `PlanStep` Checklist & Verification Gates\n\n### `[x] H0`: Reference Architecture Investigation & Pattern Extraction\n* **Goal:** Inspect reference repos (`assistant-ui/mastra-hitl`, `block/goose`, `zed-industries/zed`, `cline/cline`) and document extracted patterns, wire formats, serde helpers, and telemetry spooling.\n* **Status:** Complete. Interface contracts, Serde helpers, SSE protocols, and DPO/SFT spool specifications captured in Section A.\n\n### `[ ] H1`: Core Context Injector, Tool Registry & Telemetry Spool\n* **Goal:** Implement `chat_harness/context_injector.rs`, `tool_registry.rs`, and `telemetry_spool.rs` in `benchwork-core`.\n* **Details:**\n  * Build `<gaugeblock_environment>` XML block generator (~250 tokens).\n  * Build `@task:`, `@doc:`, `@symbol:`, `@crate:`, `/grill-me`, `/disentangle`, `/plan` expander.\n  * Implement 8-tool schema registry with `deserialize_maybe_stringified`.\n  * Implement Silver SFT and Gold DPO spool emitter to `.gaugeblock/spool/outbox.jsonl`.\n* **Verification Gate:** `cargo test -p benchwork-core --lib chat_harness` passes with unit tests for XML generation, symbol expansion, serde resilience, and spooling.\n\n### `[ ] H2`: Multi-Step Orchestrator & Axum SSE Endpoints\n* **Goal:** Implement `chat_harness/orchestrator.rs` in `benchwork-core` and `routes_chat.rs` in `benchwork-cli`.\n* **Details:**\n  * Multi-turn ReAct loop over `sawhorse-core` streaming interface with max turn limits.\n  * Dual-mode tool parsing (native JSON + `<tool_call>` XML fallback).\n  * Emit SSE events: `text_delta`, `tool_call_start`, `tool_result`, `tool_proposal`, `done`.\n  * Support `POST /api/v1/chat/stream`, `POST /api/v1/chat/apply-proposal`, `GET /api/v1/chat/autocomplete`.\n* **Verification Gate:** `cargo test -p benchwork-cli --lib daemon::routes_chat` and `cargo check -p benchwork-cli`.\n\n### `[ ] H3`: Frontend Copilot Rail, External Store Runtime & X-Ray Inspector\n* **Goal:** Build `web/src/chat/CopilotRail.tsx`, `useBenchworkChat.ts`, `AutocompletePillBar.tsx`, and `XRayInspector.tsx`.\n* **Details:**\n  * Integrate `@assistant-ui/react` via `useExternalStoreRuntime`.\n  * Mount persistent collapsible rail in `App.tsx` passing active panel viewport context.\n  * Autocomplete popover for `@` mentions and `/` commands.\n  * Add `[🔍 X-Ray]` turn inspector toggle.\n* **Verification Gate:** `npm run build` in `web/` succeeds; all TypeScript definitions pass strict checking.\n\n### `[ ] H4`: Generative UI Tool Cards & End-to-End Verification\n* **Goal:** Implement `DecisionToolUi.tsx`, `DocPatchToolUi.tsx`, and `PlanProposalToolUi.tsx` via `makeAssistantToolUI`.\n* **Details:**\n  * Interactive approval buttons trigger backend `/api/v1/chat/apply-proposal` and resume agent stream.\n  * Verify end-to-end flows for `/grill-me`, `/plan`, doc patch, and spooling to `.gaugeblock/spool/outbox.jsonl`.\n  * Ensure every `.tsx` and `.rs` file remains strictly ≤ 250 LOC.\n* **Verification Gate:** Full Tier 3 verification: `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`, `npm run build` in `web/`.\n",
+      "steps": [
+        {
+          "step_id": "H0",
+          "title": "Phase 0: Reference Architecture Investigation & Pattern Extraction",
+          "target_files": [],
+          "verification_gate": "Complete. Interface contracts, Serde helpers, SSE protocols, and DPO/SFT spool specifications captured in Section A",
+          "completed": false
+        },
+        {
+          "step_id": "H1",
+          "title": "Core Context Injector, Tool Registry & Telemetry Spool",
+          "target_files": [],
+          "verification_gate": "cargo test -p benchwork-core --lib chat_harness",
+          "completed": false
+        },
+        {
+          "step_id": "H2",
+          "title": "Multi-Step Orchestrator & Axum SSE Endpoints",
+          "target_files": [],
+          "verification_gate": "cargo test -p benchwork-cli --lib daemon::routes_chat",
+          "completed": false
+        },
+        {
+          "step_id": "H3",
+          "title": "Frontend Copilot Rail, External Store Runtime & X-Ray Inspector",
+          "target_files": [],
+          "verification_gate": "npm run build in web/",
+          "completed": false
+        },
+        {
+          "step_id": "H4",
+          "title": "Generative UI Tool Cards & End-to-End Verification",
+          "target_files": [],
+          "verification_gate": "Tier 3 workspace verification & end-to-end flow checks",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-46.md",
+      "updated_at_epoch_ms": 1792981676839
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Implemented suite-aware chat harness in benchwork-core, Axum SSE streaming and proposal endpoints in benchwork-cli, assistant-ui external store runtime Copilot rail and HITL mutation cards in React web UI",
+      "verified_at_epoch_ms": 1792983515742,
+      "git_branch": "feat/gb-46-chat-harness",
+      "base_commit_sha": "5842977d8de11b1d5ca8a834b7e6c0f2d8f126d5",
+      "head_commit_sha": "5842977d8de11b1d5ca8a834b7e6c0f2d8f126d5",
+      "commit_shas": [
+        "5842977d8de11b1d5ca8a834b7e6c0f2d8f126d5"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792980717899,
+    "updated_at_epoch_ms": 1794037960757,
+    "archived_at_epoch_ms": 1794037960757
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+        "ticket_key": "GB-46",
+        "slug": "suite-aware-chat-harness-context-injection-engine-and-generative-ui-copilot-rail-df1785",
+        "title": "Suite-aware chat harness, context injection engine, and Generative UI Copilot rail",
+        "description": "Implements a persistent, view-aware Chat Copilot rail across all 4 benchwork panels powered by @assistant-ui/react on the frontend and a Rust agent harness (chat_harness) in benchwork-core. Includes a mandatory Phase 0 investigation of assistant-ui/mastra-hitl, block/goose, zed-industries/zed, and cline/cline, followed by implementation of automatic <gaugeblock_environment> context injection, @// command expansion, in-process suite traversal tools, and human-in-the-loop Generative UI mutation cards.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-core, benchwork-cli, chalkline-core, web",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork, chat-harness, context-engineering, assistant-ui, copilot, generative-ui"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792980717899,
+        "updated_at_epoch_ms": 1792980717899
+      }
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision": {
+        "decision_id": "65ca5914-5725-4d88-8627-779aa3d9c945",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "architecture",
+        "question": "Which frontend generative UI library should be used for human-in-the-loop tool cards?",
+        "proposed_options": [
+          "@assistant-ui/react",
+          "custom-react"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792980728155
+      },
+      "timestamp_ms": 1792980728155
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792980728155
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision_id": "65ca5914-5725-4d88-8627-779aa3d9c945",
+      "chosen_option": "@assistant-ui/react",
+      "rationale": "Use @assistant-ui/react (useExternalStoreRuntime + makeAssistantToolUI) modeled after assistant-ui/mastra-hitl so backend tool proposals (propose_decision_hole, propose_doc_patch, propose_task_plan) map cleanly to modular React approval cards while keeping every .tsx file strictly <= 250 LOC.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792980731626
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792980731626
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision": {
+        "decision_id": "3bed7f92-b500-40e0-99ea-fe6bb31f6998",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "architecture",
+        "question": "How should the Chat Copilot layout and viewport integration be structured across Benchwork panels?",
+        "proposed_options": [
+          "persistent-collapsible-rail",
+          "floating-modal-overlay",
+          "dedicated-panel-tab"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792980742088
+      },
+      "timestamp_ms": 1792980742088
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792980742088
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision_id": "3bed7f92-b500-40e0-99ea-fe6bb31f6998",
+      "chosen_option": "persistent-collapsible-rail",
+      "rationale": "Make the Chat Copilot a persistent, collapsible right-hand split rail in App.tsx across all 4 panels that automatically receives the active panel's UiViewportContext.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792980745110
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792980745110
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision": {
+        "decision_id": "f73a95a3-2fcc-4a3a-8803-07e807b06cf4",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "architecture",
+        "question": "What context injection strategy should be used to provide suite awareness to the agent?",
+        "proposed_options": [
+          "3-tier-context-injection",
+          "raw-system-prompt-only",
+          "client-side-context-only"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792980751265
+      },
+      "timestamp_ms": 1792980751265
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792980751265
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision_id": "f73a95a3-2fcc-4a3a-8803-07e807b06cf4",
+      "chosen_option": "3-tier-context-injection",
+      "rationale": "1. Tier A (Pinned Session Identity): Repo overview, 9-Doc Separation of Concerns boundaries, Mermaid formatting guardrails, and AGENTS.md laws (modeled after Zed's crates/agent/src/templates/system_prompt.hbs). 2. Tier B (Per-Turn <gaugeblock_environment> XML Envelope): Deterministic ~250-token snapshot of active branch, viewport focus, .gaugeblock/storypole/ counts, .gaugeblock/docs.toml drift status, and active sawhorse model role (modeled after Cline's getEnvironmentDetails). 3. Tier C (Explicit @-Mentions & /-Commands): Deterministic Rust expansion of @task:<KEY>, @doc:<ARCHETYPE>, @symbol:<NAME>, @crate:<NAME>, /grill-me, /disentangle, and /plan <KEY>.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792980765708
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792980765708
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision": {
+        "decision_id": "dab19161-45af-47a6-b85f-01c687f43dad",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "architecture",
+        "question": "How should tool execution boundaries and human-in-the-loop approvals be partitioned?",
+        "proposed_options": [
+          "auto-read-vs-staged-proposal",
+          "unrestricted-tool-execution",
+          "manual-approval-all-tools"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792980792157
+      },
+      "timestamp_ms": 1792980792157
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792980792157
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision_id": "dab19161-45af-47a6-b85f-01c687f43dad",
+      "chosen_option": "auto-read-vs-staged-proposal",
+      "rationale": "Read-only suite tools (miter_inspect_scope, storypole_query_tasks, chalkline_check_drift, dado_preview_contract) execute automatically inside the Rust ReAct loop; state-mutating tools (propose_decision_hole, propose_doc_patch, propose_task_plan, trigger_joiner_run) emit staged ToolProposal payloads requiring explicit human approval in the UI.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792980795204
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792980795204
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision": {
+        "decision_id": "25ef1be6-0970-4b30-a6c8-d641532d19f1",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "architecture",
+        "question": "How should tool parsing handle differing model capabilities and local GGUF serialization quirks?",
+        "proposed_options": [
+          "resilient-single-model-tool-parsing",
+          "strict-json-only",
+          "regex-xml-only"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792980799186
+      },
+      "timestamp_ms": 1792980799186
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792980799186
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision_id": "25ef1be6-0970-4b30-a6c8-d641532d19f1",
+      "chosen_option": "resilient-single-model-tool-parsing",
+      "rationale": "Support both native JSON tool calling and deterministic <tool_call> XML fallback, plus serde stringified-JSON recovery (deserialize_maybe_stringified modeled after Zed's crates/agent/src/tools.rs) so Single-Model Mode and local GGUF models never fail on nested tool arguments.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792980801727
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792980801727
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "plan": {
+        "summary": "Suite-aware chat harness, context injection engine, and Generative UI Copilot rail",
+        "design_markdown": "# Plan: GB-46 — Suite-Aware Chat Harness, Context Injection Engine, and Generative UI Copilot Rail\n\n> **Task Key:** `GB-46`  \n> **Title:** Suite-aware chat harness, context injection engine, and Generative UI Copilot rail  \n> **Crates:** `benchwork-core`, `benchwork-cli`, `chalkline-core`, `web`  \n> **Status:** Ready (Plan Attached)  \n> **Primary References:** `@assistant-ui/react` (`assistant-ui/mastra-hitl`), `block/goose`, `zed-industries/zed`, `cline/cline`  \n\n---\n\n## 1. Executive Summary & Problem Statement\n\nBenchwork currently provides a visual multi-panel workbench (Panel 1: Architecture & Docs, Panel 2: Backlog & Task Inspector, Panel 3: Synthesis & X-Ray, Panel 4: Foundry & Telemetry), but AI chat is isolated and lacks unified workspace context awareness. Switching between panels does not maintain continuous conversational context, and the assistant lacks real-time knowledge of the active panel viewport, open document archetypes, selected tasks, or suite-wide drift.\n\nThis specification defines the **Suite-Aware Chat Harness, Context Injection Engine, and Generative UI Copilot Rail**:\n1. **Persistent Copilot Rail:** A persistent, collapsible right-hand split rail in `App.tsx` across all 4 panels powered by `@assistant-ui/react` (`useExternalStoreRuntime`), maintaining thread continuity and view context.\n2. **3-Tier Context Injection Engine:** Pinned session identity (AGENTS.md, Mermaid rules, 9-Doc matrix), per-turn `<gaugeblock_environment>` XML radar envelope, and deterministic `@task:`, `@doc:`, `@symbol:`, `@crate:`, `/grill-me`, `/disentangle`, `/plan` expansions.\n3. **8-Tool Dual-Partitioned Suite Traversal:** 4 Auto-Read tools executed autonomously within the Rust ReAct loop, and 4 Interactive Proposal tools emitting staged `ToolProposal` events requiring human approval cards.\n4. **Generative UI Mutation Cards:** Modular React approval cards built with `makeAssistantToolUI` for decision holes, doc patches, and task plans.\n5. **Resilient Dual-Mode Tool Parsing:** Native JSON tool calling with `<tool_call>` XML fallback and serde `deserialize_maybe_stringified` recovery for local GGUF / Single-Model Mode compatibility.\n\n---\n\n## 2. Resolved Architectural Decisions (`TaskDecision`s)\n\n* **D1 (Frontend Generative UI Library):** Use `@assistant-ui/react` (`useExternalStoreRuntime` + `makeAssistantToolUI`) modeled after `assistant-ui/mastra-hitl` so backend tool proposals (`propose_decision_hole`, `propose_doc_patch`, `propose_task_plan`) map cleanly to modular React approval cards while keeping every `.tsx` file strictly ≤ 250 LOC.\n* **D2 (Persistent Copilot Layout):** Make the Chat Copilot a persistent, collapsible right-hand split rail in `App.tsx` across all 4 panels that automatically receives the active panel's `UiViewportContext`.\n* **D3 (3-Tier Context Injection Strategy):**\n  1. *Tier A (Pinned Session Identity):* Repo overview, 9-Doc Separation of Concerns boundaries, Mermaid formatting guardrails, and `AGENTS.md` laws (modeled after Zed's `crates/agent/src/templates/system_prompt.hbs`).\n  2. *Tier B (Per-Turn `<gaugeblock_environment>` XML Envelope):* Deterministic ~250-token snapshot of active branch, viewport focus, `.gaugeblock/storypole/` counts, `.gaugeblock/docs.toml` drift status, and active `sawhorse` model role (modeled after Cline's `getEnvironmentDetails`).\n  3. *Tier C (Explicit `@`-Mentions & `/`-Commands):* Deterministic Rust expansion of `@task:<KEY>`, `@doc:<ARCHETYPE>`, `@symbol:<NAME>`, `@crate:<NAME>`, `/grill-me`, `/disentangle`, and `/plan <KEY>`.\n* **D4 (Auto-Read vs. Staged Proposal Tool Boundary):** Read-only suite tools (`miter_inspect_scope`, `storypole_query_tasks`, `chalkline_check_drift`, `dado_preview_contract`) execute automatically inside the Rust ReAct loop; state-mutating tools (`propose_decision_hole`, `propose_doc_patch`, `propose_task_plan`, `trigger_joiner_run`) emit staged `ToolProposal` payloads requiring explicit human approval in the UI.\n* **D5 (Resilient Single-Model Tool Parsing):** Support both native JSON tool calling and deterministic `<tool_call>` XML fallback, plus serde stringified-JSON recovery (`deserialize_maybe_stringified` modeled after Zed's `crates/agent/src/tools.rs`) so Single-Model Mode and local GGUF models never fail on nested tool arguments.\n\n---\n\n## Section A: Phase 0 — Reference Architecture Investigation & Pattern Extraction (`Step H0`)\n\nBefore implementing code in Steps H1–H4, the implementing agent MUST inspect these specific open-source files/docs and extract design patterns:\n\n### 1. Frontend HITL Tool Cards & External Store Runtime (`assistant-ui`)\n* **Repository:** `https://github.com/assistant-ui/mastra-hitl`\n  * Inspect `components/tools/human-in-the-loop.tsx` for `makeAssistantToolUI({ toolName, render: ({ args, result, status, addResult }) => ... })`.\n  * Pattern: Render interactive card with pending approval state, parameters display, \"Approve & Execute\" / \"Reject\" triggers calling `addResult(...)`.\n* **Documentation:** `https://www.assistant-ui.com/docs/cloud/runtimes` and `https://github.com/assistant-ui/assistant-ui/discussions/2366`\n  * Pattern: `useExternalStoreRuntime` for custom backend threads persisted in `.gaugeblock/chat/threads.jsonl`.\n  * Pattern: Client-side message streaming synchronization, optimistic user message append, and status handling (`in_progress`, `requires_action`, `complete`).\n\n### 2. Rust Inner Agent Loop & Axum Streaming (`block/goose`)\n* **Agent Loop:** `https://github.com/block/goose/blob/main/crates/goose/src/agents/agent.rs`\n  * Pattern: `Agent::reply_internal` turn management, loop limit protection (e.g. max 10 tool iterations per turn), cancellation token checks, and accumulator for multi-step reasoning.\n* **Retry & Validation Hooks:** `https://github.com/block/goose/blob/main/crates/goose/src/agents/retry.rs`\n  * Pattern: Deterministic error classification and self-correction prompts on malformed model outputs before escalating to user.\n* **Axum Web Bridge:** `https://github.com/block/goose/blob/main/crates/goose-cli/src/commands/web.rs`\n  * Pattern: Bridging asynchronous Rust agent streams to Server-Sent Events (`axum::response::sse::Event`) consumed by React clients.\n\n### 3. System Prompt Rules & Resilient Tool Deserialization (`zed-industries/zed`)\n* **System Prompt Template:** `https://github.com/zed-industries/zed/blob/main/crates/agent/src/templates/system_prompt.hbs`\n  * Pattern: Strict behavioral rules, worktree context boundaries, and Mermaid diagram formatting instructions to eliminate rendering defects.\n* **Compile-Time Tool Macro & Serde Recovery:** `https://github.com/zed-industries/zed/blob/main/crates/agent/src/tools.rs`\n  * Pattern: `deserialize_maybe_stringified` — Serde helper that deserializes fields which may arrive either as a raw JSON object/array or as a stringified JSON string emitted by certain models or quantized GGUFs.\n\n### 4. Per-Turn Environment Radar Envelope (`cline/cline`)\n* **Architecture Guide:** `https://cline.bot/blog/system-prompt`\n* **Environment Extraction:** `https://github.com/cline/cline/issues/4364` (`getEnvironmentDetails`)\n  * Pattern: Compact `<gaugeblock_environment>` XML block appended to the latest user message or system turn containing active branch, active file/panel, dirty Git status, Storypole task metrics, and doc drift status, constrained strictly to ~200-250 tokens.\n\n---\n\n## Section B: Architecture Overview, File Layout (All Files ≤ 250 LOC) & 8-Tool Matrix\n\n### 1. File Layout & Modularity Constraints\n\nStrictly complying with the Hard 250-Line File Limit in `AGENTS.md`:\n\n```text\ncrates/benchwork-core/src/chat_harness/\n├── mod.rs                        # (< 120 LOC) Module exports, ThreadId, HarnessConfig, threads.jsonl store\n├── context_injector.rs           # (< 210 LOC) <gaugeblock_environment> builder & @// symbol expansion engine\n├── tool_registry.rs              # (< 230 LOC) 8-tool schema definitions, deserialize_maybe_stringified, dispatch\n└── orchestrator.rs               # (< 230 LOC) ReAct loop, sawhorse-core stream runner, SSE event generator\n\ncrates/benchwork-cli/src/daemon/\n└── routes_chat.rs                # (< 190 LOC) Axum handlers: /api/v1/chat/stream, /apply-proposal, /autocomplete\n\nweb/src/chat/\n├── CopilotRail.tsx               # (< 190 LOC) Persistent collapsible split rail wrapper in App.tsx\n├── useBenchworkChat.ts           # (< 170 LOC) useExternalStoreRuntime adapter & SSE event consumer\n├── AutocompletePillBar.tsx       # (< 140 LOC) Floating pill bar for @task, @doc, @symbol, /commands\n└── tools/\n    ├── DecisionToolUi.tsx        # (< 160 LOC) makeAssistantToolUI approval card for propose_decision_hole\n    ├── DocPatchToolUi.tsx        # (< 160 LOC) makeAssistantToolUI approval card for propose_doc_patch\n    └── PlanProposalToolUi.tsx    # (< 160 LOC) makeAssistantToolUI approval card for propose_task_plan\n```\n\n### 2. The 8-Tool Suite Traversal Matrix\n\nTools are divided into two strictly enforced categories:\n\n| Category | Tool Name | Scope & Authority | Emitted Event / Execution |\n| :--- | :--- | :--- | :--- |\n| **Auto-Read** | `miter_inspect_scope` | Inspect AST symbols, skeletons, references, and impact | Autonomous execution within ReAct loop; returns raw JSON/markdown |\n| **Auto-Read** | `storypole_query_tasks` | Query backlog tasks, statuses, blockers, and claims | Autonomous execution within ReAct loop; returns task list |\n| **Auto-Read** | `chalkline_check_drift` | Run doc verification against `docs.toml` | Autonomous execution within ReAct loop; returns drift violations |\n| **Auto-Read** | `dado_preview_contract` | Preview AST pattern contract and typed holes | Autonomous execution within ReAct loop; returns rendered contract |\n| **Proposal** | `propose_decision_hole` | Propose architectural question and options for Storypole | Emits `ToolProposal(DecisionHole)` -> renders `DecisionToolUi` card |\n| **Proposal** | `propose_doc_patch` | Propose targeted markdown patch to managed doc | Emits `ToolProposal(DocPatch)` -> renders `DocPatchToolUi` diff card |\n| **Proposal** | `propose_task_plan` | Propose structured `TaskPlan` with atomic `PlanStep`s | Emits `ToolProposal(TaskPlan)` -> renders `PlanProposalToolUi` card |\n| **Proposal** | `trigger_joiner_run` | Stage neurosymbolic synthesis pass | Emits `ToolProposal(JoinerRun)` -> renders Joiner confirmation card |\n\n---\n\n## Section C: Ordered `PlanStep` Checklist & Verification Gates\n\n### `H0`: Reference Architecture Investigation & Pattern Extraction\n* **Goal:** Inspect reference repos (`assistant-ui/mastra-hitl`, `block/goose`, `zed-industries/zed`, `cline/cline`) and document extracted patterns.\n* **Verification Gate:** Verification checklist recorded in task handoff notes matching Section A interface contracts.\n\n### `H1`: Core Context Injector & Tool Registry\n* **Goal:** Implement `chat_harness/context_injector.rs` and `tool_registry.rs` in `benchwork-core`.\n* **Details:**\n  * Build `<gaugeblock_environment>` XML block generator (~250 tokens).\n  * Build `@task:`, `@doc:`, `@symbol:`, `@crate:`, `/grill-me`, `/disentangle`, `/plan` expander.\n  * Implement 8-tool schema registry with `deserialize_maybe_stringified`.\n* **Verification Gate:** `cargo test -p benchwork-core --lib chat_harness` passes with unit tests for XML generation, symbol expansion, and serde resilience.\n\n### `H2`: Multi-Step Orchestrator & Axum SSE Endpoints\n* **Goal:** Implement `chat_harness/orchestrator.rs` in `benchwork-core` and `routes_chat.rs` in `benchwork-cli`.\n* **Details:**\n  * Multi-turn ReAct loop over `sawhorse-core` streaming interface.\n  * Emit SSE events: `TextDelta`, `ToolCallStart`, `ToolResult`, `ToolProposal`, `Done`.\n  * Support `POST /api/v1/chat/stream`, `POST /api/v1/chat/apply-proposal`, `GET /api/v1/chat/autocomplete`.\n* **Verification Gate:** `cargo test -p benchwork-cli --lib daemon::routes_chat` and `cargo check -p benchwork-cli`.\n\n### `H3`: Frontend Copilot Rail & External Store Runtime\n* **Goal:** Build `web/src/chat/CopilotRail.tsx`, `useBenchworkChat.ts`, and `AutocompletePillBar.tsx`.\n* **Details:**\n  * Integrate `@assistant-ui/react` via `useExternalStoreRuntime`.\n  * Mount persistent collapsible rail in `App.tsx` passing active panel viewport context.\n  * Autocomplete popover for `@` mentions and `/` commands.\n* **Verification Gate:** `npm run build` in `web/` succeeds; all TypeScript definitions pass strict checking.\n\n### `H4`: Generative UI Tool Cards & End-to-End Verification\n* **Goal:** Implement `DecisionToolUi.tsx`, `DocPatchToolUi.tsx`, and `PlanProposalToolUi.tsx` via `makeAssistantToolUI`.\n* **Details:**\n  * Interactive approval buttons trigger backend `/api/v1/chat/apply-proposal`.\n  * Verify end-to-end flows for `/grill-me`, `/plan`, and doc patch proposals.\n  * Ensure every `.tsx` and `.rs` file remains strictly ≤ 250 LOC.\n* **Verification Gate:** Full Tier 3 verification: `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`, `npm run build` in `web/`.\n",
+        "steps": [
+          {
+            "step_id": "H0",
+            "title": "Phase 0: Reference Architecture Investigation & Pattern Extraction",
+            "target_files": [],
+            "verification_gate": "Verify interface contracts for SSE events, deserialize_maybe_stringified, and makeAssistantToolUI across 4 references",
+            "completed": false
+          },
+          {
+            "step_id": "H1",
+            "title": "Core Context Injector & Tool Registry",
+            "target_files": [],
+            "verification_gate": "cargo test -p benchwork-core --lib chat_harness",
+            "completed": false
+          },
+          {
+            "step_id": "H2",
+            "title": "Multi-Step Orchestrator & Axum SSE Endpoints",
+            "target_files": [],
+            "verification_gate": "cargo test -p benchwork-cli --lib daemon::routes_chat",
+            "completed": false
+          },
+          {
+            "step_id": "H3",
+            "title": "Frontend Copilot Rail & External Store Runtime",
+            "target_files": [],
+            "verification_gate": "npm run build in web/",
+            "completed": false
+          },
+          {
+            "step_id": "H4",
+            "title": "Generative UI Tool Cards & End-to-End Verification",
+            "target_files": [],
+            "verification_gate": "Tier 3 workspace verification & end-to-end flow checks",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-46.md",
+        "updated_at_epoch_ms": 1792980846221
+      },
+      "timestamp_ms": 1792980846221
+    },
+    {
+      "event": "decision_raised",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision": {
+        "decision_id": "30d07488-ede8-4d57-bed9-dd6c5e7a6836",
+        "parent_decision_id": null,
+        "status": "pending",
+        "category": "architecture",
+        "question": "How should chat threads be persisted, indexed, and integrated with telemetry training spools?",
+        "proposed_options": [
+          "hybrid-jsonl-sqlite-spool",
+          "pure-jsonl-only",
+          "pure-sqlite-only"
+        ],
+        "chosen_option": null,
+        "rationale": null,
+        "resolved_by": null,
+        "updated_at_epoch_ms": 1792981606998
+      },
+      "timestamp_ms": 1792981606998
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Pending architectural decision required",
+      "timestamp_ms": 1792981606998
+    },
+    {
+      "event": "decision_resolved",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "decision_id": "30d07488-ede8-4d57-bed9-dd6c5e7a6836",
+      "chosen_option": "hybrid-jsonl-sqlite-spool",
+      "rationale": "Dual Storage in .gaugeblock/chat/: Source of truth is .gaugeblock/chat/threads.jsonl (append-only ChatLedgerEvent stream); derived fast cache is .gaugeblock/chat/index.sqlite (git-ignored, indexing threads, entity associations, pending proposals, FTS5). When proposals are resolved: approved as-is emits Silver SFT trace to .gaugeblock/spool/outbox.jsonl; edited/rejected emits Gold DPO preference pair for rabbet (planner_dpo.parquet). Dynamic prompts in .gaugeblock/prompts/*.md and [🔍 X-Ray] toggle in CopilotRail.tsx.",
+      "resolved_by": "user",
+      "spawned_followup": null,
+      "appended_criterion": null,
+      "timestamp_ms": 1792981610994
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "All pending decisions and dependencies satisfied",
+      "timestamp_ms": 1792981610994
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "plan": {
+        "summary": "Suite-aware chat harness, context injection engine, and Generative UI Copilot rail",
+        "design_markdown": "# Plan: GB-46 — Suite-Aware Chat Harness, Context Injection Engine, and Generative UI Copilot Rail\n\n> **Task Key:** `GB-46`  \n> **Title:** Suite-aware chat harness, context injection engine, and Generative UI Copilot rail  \n> **Crates:** `benchwork-core`, `benchwork-cli`, `chalkline-core`, `web`  \n> **Status:** Ready (Plan Attached)  \n> **Primary References:** `@assistant-ui/react` (`assistant-ui/mastra-hitl`), `block/goose`, `zed-industries/zed`, `cline/cline`  \n\n---\n\n## 1. Executive Summary & Problem Statement\n\nBenchwork provides a visual multi-panel workbench (Panel 1: Architecture & Docs, Panel 2: Backlog & Task Inspector, Panel 3: Synthesis & X-Ray, Panel 4: Foundry & Telemetry), but conversational AI currently resets on tab switching and lacks live workspace context awareness.\n\nThis specification defines the **Suite-Aware Chat Harness, Context Injection Engine, and Generative UI Copilot Rail**:\n1. **Persistent Copilot Rail:** A persistent, collapsible right-hand split rail in `App.tsx` across all 4 panels powered by `@assistant-ui/react` (`useExternalStoreRuntime`), maintaining thread continuity and view context.\n2. **3-Tier Context Injection Engine:** Pinned session identity (AGENTS.md, Mermaid rules, 9-Doc matrix), per-turn `<gaugeblock_environment>` XML radar envelope, and deterministic `@task:`, `@doc:`, `@symbol:`, `@crate:`, `/grill-me`, `/disentangle`, `/plan` expansions.\n3. **8-Tool Dual-Partitioned Suite Traversal:** 4 Auto-Read tools executed autonomously within the Rust ReAct loop, and 4 Interactive Proposal tools emitting staged `ToolProposal` events requiring human approval cards.\n4. **Generative UI Mutation Cards:** Modular React approval cards built with `makeAssistantToolUI` for decision holes, doc patches, and task plans.\n5. **Resilient Dual-Mode Tool Parsing:** Native JSON tool calling with `<tool_call>` XML fallback and serde `deserialize_maybe_stringified` recovery for local GGUF / Single-Model Mode compatibility.\n6. **Dual-Storage & Telemetry Training Spool:** Append-only `.gaugeblock/chat/threads.jsonl` with fast derived `.gaugeblock/chat/index.sqlite`, and automatic Silver SFT / Gold DPO spooling to `.gaugeblock/spool/outbox.jsonl` upon human proposal resolution.\n7. **Zero-Recompile Prompts & X-Ray:** Runtime prompt templates in `.gaugeblock/prompts/*.md` and a live `[🔍 X-Ray]` turn inspector toggle in `CopilotRail.tsx`.\n\n---\n\n## 2. Resolved Architectural Decisions (`TaskDecision`s)\n\n* **D1 (Frontend Generative UI Library):** Use `@assistant-ui/react` (`useExternalStoreRuntime` + `makeAssistantToolUI`) modeled after `assistant-ui/mastra-hitl` so backend tool proposals (`propose_decision_hole`, `propose_doc_patch`, `propose_task_plan`) map cleanly to modular React approval cards while keeping every `.tsx` file strictly ≤ 250 LOC.\n* **D2 (Persistent Copilot Layout):** Make the Chat Copilot a persistent, collapsible right-hand split rail in `App.tsx` across all 4 panels that automatically receives the active panel's `UiViewportContext`.\n* **D3 (3-Tier Context Injection Strategy):**\n  1. *Tier A (Pinned Session Identity):* Repo overview, 9-Doc Separation of Concerns boundaries, Mermaid formatting guardrails, and `AGENTS.md` laws (modeled after Zed's `crates/agent/src/templates/system_prompt.hbs`).\n  2. *Tier B (Per-Turn `<gaugeblock_environment>` XML Envelope):* Deterministic ~250-token snapshot of active branch, viewport focus, `.gaugeblock/storypole/` counts, `.gaugeblock/docs.toml` drift status, and active `sawhorse` model role (modeled after Cline's `getEnvironmentDetails`).\n  3. *Tier C (Explicit `@`-Mentions & `/`-Commands):* Deterministic Rust expansion of `@task:<KEY>`, `@doc:<ARCHETYPE>`, `@symbol:<NAME>`, `@crate:<NAME>`, `/grill-me`, `/disentangle`, and `/plan <KEY>`.\n* **D4 (Auto-Read vs. Staged Proposal Tool Boundary):** Read-only suite tools (`miter_inspect_scope`, `storypole_query_tasks`, `chalkline_check_drift`, `dado_preview_contract`) execute automatically inside the Rust ReAct loop; state-mutating tools (`propose_decision_hole`, `propose_doc_patch`, `propose_task_plan`, `trigger_joiner_run`) emit staged `ToolProposal` payloads requiring explicit human approval in the UI.\n* **D5 (Resilient Single-Model Tool Parsing):** Support both native JSON tool calling and deterministic `<tool_call>` XML fallback, plus serde stringified-JSON recovery (`deserialize_maybe_stringified` modeled after Zed's `crates/agent/src/tools.rs`) so Single-Model Mode and local GGUF models never fail on nested tool arguments.\n* **D6 (Dual Storage, SFT/DPO Spooling & Zero-Recompile Prompts):** Dual Storage in `.gaugeblock/chat/` (source of truth: `threads.jsonl`; derived fast cache: `index.sqlite`). When proposals are resolved in the UI: approved as-is emits Silver SFT trace to `.gaugeblock/spool/outbox.jsonl`; edited/rejected emits Gold DPO preference pair for rabbet (`planner_dpo.parquet`). Dynamic prompt templates loaded from `.gaugeblock/prompts/*.md` and a live `[🔍 X-Ray]` turn inspector toggle in `CopilotRail.tsx`.\n\n---\n\n## Section A: Phase 0 — Reference Architecture Investigation & Pattern Extraction (`Step H0`)\n\n### 1. Frontend HITL Tool Cards & External Store Runtime (`assistant-ui`)\n* **Repository:** `https://github.com/assistant-ui/mastra-hitl`\n  * **File:** `components/tools/human-in-the-loop.tsx`\n  * **Core Primitive:** `makeAssistantToolUI({ toolName, render })`\n  ```tsx\n  export const DecisionToolUi = makeAssistantToolUI<DecisionArgs, DecisionResult>({\n    toolName: \"propose_decision_hole\",\n    render: ({ args, result, status, addResult }) => {\n      if (status.type === \"complete\") {\n        return <ResolvedDecisionCard args={args} result={result} />;\n      }\n      return (\n        <PendingDecisionCard\n          args={args}\n          onApprove={(chosen) => addResult({ approved: true, chosen })}\n          onReject={() => addResult({ approved: false })}\n        />\n      );\n    },\n  });\n  ```\n* **Documentation:** `https://www.assistant-ui.com/docs/cloud/runtimes`\n  * **Primitive:** `useExternalStoreRuntime`\n  * Bridges custom `messages` store from `benchwork-cli` Axum backend into standard `ThreadMessageLike` items.\n  * Handles asynchronous `onNew` stream reader over `/api/v1/chat/stream`.\n\n### 2. Rust Inner Agent Loop & Axum Streaming (`block/goose`)\n* **Agent Loop:** `https://github.com/block/goose/blob/main/crates/goose/src/agents/agent.rs` (`Agent::reply_internal`)\n  * Turn limits enforced via `max_turns: u32 = 10` preventing infinite tool execution loops.\n  * Cancellation token checks (`tokio_util::sync::CancellationToken`) on every streaming chunk.\n* **Wire Protocol Contract (SSE Stream):**\n  Bridged from Axum to frontend over `text/event-stream`:\n  ```text\n  event: text_delta\n  data: {\"delta\": \"Analyzing AST dependencies...\"}\n\n  event: tool_call_start\n  data: {\"call_id\": \"call_123\", \"tool_name\": \"storypole_query_tasks\"}\n\n  event: tool_result\n  data: {\"call_id\": \"call_123\", \"output\": {\"tasks\": [...]}}\n\n  event: tool_proposal\n  data: {\"proposal_id\": \"prop_456\", \"tool_name\": \"propose_task_plan\", \"payload\": {...}}\n\n  event: done\n  data: {\"total_tokens\": 820, \"turn_id\": \"turn_789\"}\n  ```\n\n### 3. System Prompt Rules & Resilient Tool Deserialization (`zed-industries/zed`)\n* **System Prompt Guardrails:** `crates/agent/src/templates/system_prompt.hbs`\n  * Enforces orthogonal document boundaries (9-Doc Matrix), Mermaid syntax rules (strictly valid diagram types, quoted labels), and `AGENTS.md` laws.\n* **Resilient Deserialization Helper:** `crates/agent/src/tools.rs`\n  ```rust\n  pub fn deserialize_maybe_stringified<'de, T, D>(deserializer: D) -> Result<T, D::Error>\n  where\n      T: serde::de::DeserializeOwned,\n      D: serde::Deserializer<'de>,\n  {\n      let raw_value = serde_json::Value::deserialize(deserializer)\n          .map_err(|e| serde::de::Error::custom(format!(\"invalid JSON: {e}\")))?;\n      \n      match T::deserialize(&raw_value) {\n          Ok(val) => Ok(val),\n          Err(orig_err) => {\n              let Some(s) = raw_value.as_str() else {\n                  return Err(serde::de::Error::custom(orig_err));\n              };\n              serde_json::from_str(s).map_err(serde::de::Error::custom)\n          }\n      }\n  }\n  ```\n\n### 4. Per-Turn Environment Radar Envelope (`cline/cline`)\n* **Guide & Implementation:** `https://cline.bot/blog/system-prompt` & `getEnvironmentDetails` (`cline/cline#4364`)\n* **Format:** Bounded strictly to ~200–250 tokens and tail-injected onto the user turn:\n  ```xml\n  <gaugeblock_environment>\n    <active_branch>feat/gb-19-chat-harness</active_branch>\n    <active_panel>Panel2_Backlog</active_panel>\n    <focused_task>GB-46</focused_task>\n    <storypole_summary ready=\"3\" in_progress=\"1\" blocked=\"0\" />\n    <docs_drift status=\"clean\" checked_docs=\"9\" />\n    <sawhorse_role model=\"deepseek-v4.1-flash\" active_preset=\"universal\" />\n  </gaugeblock_environment>\n  ```\n\n### 5. Dual Storage & Telemetry Training Spool\n* **Disk Layout:**\n  * `.gaugeblock/chat/threads.jsonl`: Append-only event log (`ThreadCreated`, `MessageAppended`, `ToolExecuted`, `ProposalCreated`, `ProposalResolved`).\n  * `.gaugeblock/chat/index.sqlite`: Fast query cache (git-ignored) for thread lists, FTS5 message search, and proposal lookup.\n  * `.gaugeblock/spool/outbox.jsonl`: Spools user approvals/rejections:\n    * **Silver SFT:** Approved proposals logged with user intent + prompt + clean output.\n    * **Gold DPO:** Edited/rejected proposals logged with prompt, rejected payload, and user-edited accepted payload for fine-tuning via `rabbet` (`planner_dpo.parquet`).\n* **Zero-Recompile Prompts & X-Ray:**\n  * Dynamic prompt templates loaded from `.gaugeblock/prompts/*.md` (with built-in fallback).\n  * `[🔍 X-Ray]` turn inspector toggle in `CopilotRail.tsx` allowing developers to inspect exact assembled context and token budgets per turn.\n\n---\n\n## Section B: Architecture Overview, File Layout (All Files ≤ 250 LOC) & 8-Tool Matrix\n\n### 1. File Layout & Modularity Constraints\n\nStrictly complying with the Hard 250-Line File Limit in `AGENTS.md`:\n\n```text\ncrates/benchwork-core/src/chat_harness/\n├── mod.rs                        # (< 140 LOC) Session state & threads.jsonl + index.sqlite engine\n├── context_injector.rs           # (< 210 LOC) <gaugeblock_environment> builder & @// symbol expansion\n├── tool_registry.rs              # (< 230 LOC) 8-tool schema definitions, deserialize_maybe_stringified\n├── orchestrator.rs               # (< 230 LOC) ReAct loop, sawhorse-core stream runner, SSE events\n└── telemetry_spool.rs            # (< 180 LOC) Silver SFT & Gold DPO event serializer to outbox.jsonl\n\ncrates/benchwork-cli/src/daemon/\n└── routes_chat.rs                # (< 190 LOC) Axum handlers: /stream, /apply-proposal, /autocomplete\n\nweb/src/chat/\n├── CopilotRail.tsx               # (< 190 LOC) Persistent collapsible split rail wrapper with [🔍 X-Ray]\n├── useBenchworkChat.ts           # (< 170 LOC) useExternalStoreRuntime adapter & SSE event consumer\n├── AutocompletePillBar.tsx       # (< 140 LOC) Floating pill bar for @task, @doc, @symbol, /commands\n├── XRayInspector.tsx             # (< 150 LOC) View assembled context envelope & token metrics\n└── tools/\n    ├── DecisionToolUi.tsx        # (< 160 LOC) makeAssistantToolUI approval card for propose_decision_hole\n    ├── DocPatchToolUi.tsx        # (< 160 LOC) makeAssistantToolUI approval card for propose_doc_patch\n    └── PlanProposalToolUi.tsx    # (< 160 LOC) makeAssistantToolUI approval card for propose_task_plan\n```\n\n### 2. The 8-Tool Suite Traversal Matrix\n\n| Category | Tool Name | Scope & Authority | Emitted Event / Execution |\n| :--- | :--- | :--- | :--- |\n| **Auto-Read** | `miter_inspect_scope` | Inspect AST symbols, skeletons, references, and impact | Autonomous execution within ReAct loop; returns raw JSON/markdown |\n| **Auto-Read** | `storypole_query_tasks` | Query backlog tasks, statuses, blockers, and claims | Autonomous execution within ReAct loop; returns task list |\n| **Auto-Read** | `chalkline_check_drift` | Run doc verification against `docs.toml` | Autonomous execution within ReAct loop; returns drift violations |\n| **Auto-Read** | `dado_preview_contract` | Preview AST pattern contract and typed holes | Autonomous execution within ReAct loop; returns rendered contract |\n| **Proposal** | `propose_decision_hole` | Propose architectural question and options for Storypole | Emits `ToolProposal(DecisionHole)` -> renders `DecisionToolUi` card |\n| **Proposal** | `propose_doc_patch` | Propose targeted markdown patch to managed doc | Emits `ToolProposal(DocPatch)` -> renders `DocPatchToolUi` diff card |\n| **Proposal** | `propose_task_plan` | Propose structured `TaskPlan` with atomic `PlanStep`s | Emits `ToolProposal(TaskPlan)` -> renders `PlanProposalToolUi` card |\n| **Proposal** | `trigger_joiner_run` | Stage neurosymbolic synthesis pass | Emits `ToolProposal(JoinerRun)` -> renders Joiner confirmation card |\n\n---\n\n## Section C: Ordered `PlanStep` Checklist & Verification Gates\n\n### `[x] H0`: Reference Architecture Investigation & Pattern Extraction\n* **Goal:** Inspect reference repos (`assistant-ui/mastra-hitl`, `block/goose`, `zed-industries/zed`, `cline/cline`) and document extracted patterns, wire formats, serde helpers, and telemetry spooling.\n* **Status:** Complete. Interface contracts, Serde helpers, SSE protocols, and DPO/SFT spool specifications captured in Section A.\n\n### `[ ] H1`: Core Context Injector, Tool Registry & Telemetry Spool\n* **Goal:** Implement `chat_harness/context_injector.rs`, `tool_registry.rs`, and `telemetry_spool.rs` in `benchwork-core`.\n* **Details:**\n  * Build `<gaugeblock_environment>` XML block generator (~250 tokens).\n  * Build `@task:`, `@doc:`, `@symbol:`, `@crate:`, `/grill-me`, `/disentangle`, `/plan` expander.\n  * Implement 8-tool schema registry with `deserialize_maybe_stringified`.\n  * Implement Silver SFT and Gold DPO spool emitter to `.gaugeblock/spool/outbox.jsonl`.\n* **Verification Gate:** `cargo test -p benchwork-core --lib chat_harness` passes with unit tests for XML generation, symbol expansion, serde resilience, and spooling.\n\n### `[ ] H2`: Multi-Step Orchestrator & Axum SSE Endpoints\n* **Goal:** Implement `chat_harness/orchestrator.rs` in `benchwork-core` and `routes_chat.rs` in `benchwork-cli`.\n* **Details:**\n  * Multi-turn ReAct loop over `sawhorse-core` streaming interface with max turn limits.\n  * Dual-mode tool parsing (native JSON + `<tool_call>` XML fallback).\n  * Emit SSE events: `text_delta`, `tool_call_start`, `tool_result`, `tool_proposal`, `done`.\n  * Support `POST /api/v1/chat/stream`, `POST /api/v1/chat/apply-proposal`, `GET /api/v1/chat/autocomplete`.\n* **Verification Gate:** `cargo test -p benchwork-cli --lib daemon::routes_chat` and `cargo check -p benchwork-cli`.\n\n### `[ ] H3`: Frontend Copilot Rail, External Store Runtime & X-Ray Inspector\n* **Goal:** Build `web/src/chat/CopilotRail.tsx`, `useBenchworkChat.ts`, `AutocompletePillBar.tsx`, and `XRayInspector.tsx`.\n* **Details:**\n  * Integrate `@assistant-ui/react` via `useExternalStoreRuntime`.\n  * Mount persistent collapsible rail in `App.tsx` passing active panel viewport context.\n  * Autocomplete popover for `@` mentions and `/` commands.\n  * Add `[🔍 X-Ray]` turn inspector toggle.\n* **Verification Gate:** `npm run build` in `web/` succeeds; all TypeScript definitions pass strict checking.\n\n### `[ ] H4`: Generative UI Tool Cards & End-to-End Verification\n* **Goal:** Implement `DecisionToolUi.tsx`, `DocPatchToolUi.tsx`, and `PlanProposalToolUi.tsx` via `makeAssistantToolUI`.\n* **Details:**\n  * Interactive approval buttons trigger backend `/api/v1/chat/apply-proposal` and resume agent stream.\n  * Verify end-to-end flows for `/grill-me`, `/plan`, doc patch, and spooling to `.gaugeblock/spool/outbox.jsonl`.\n  * Ensure every `.tsx` and `.rs` file remains strictly ≤ 250 LOC.\n* **Verification Gate:** Full Tier 3 verification: `cargo clippy --workspace --all-targets -- -D warnings`, `cargo nextest run --workspace`, `npm run build` in `web/`.\n",
+        "steps": [
+          {
+            "step_id": "H0",
+            "title": "Phase 0: Reference Architecture Investigation & Pattern Extraction",
+            "target_files": [],
+            "verification_gate": "Complete. Interface contracts, Serde helpers, SSE protocols, and DPO/SFT spool specifications captured in Section A",
+            "completed": false
+          },
+          {
+            "step_id": "H1",
+            "title": "Core Context Injector, Tool Registry & Telemetry Spool",
+            "target_files": [],
+            "verification_gate": "cargo test -p benchwork-core --lib chat_harness",
+            "completed": false
+          },
+          {
+            "step_id": "H2",
+            "title": "Multi-Step Orchestrator & Axum SSE Endpoints",
+            "target_files": [],
+            "verification_gate": "cargo test -p benchwork-cli --lib daemon::routes_chat",
+            "completed": false
+          },
+          {
+            "step_id": "H3",
+            "title": "Frontend Copilot Rail, External Store Runtime & X-Ray Inspector",
+            "target_files": [],
+            "verification_gate": "npm run build in web/",
+            "completed": false
+          },
+          {
+            "step_id": "H4",
+            "title": "Generative UI Tool Cards & End-to-End Verification",
+            "target_files": [],
+            "verification_gate": "Tier 3 workspace verification & end-to-end flow checks",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-46.md",
+        "updated_at_epoch_ms": 1792981676839
+      },
+      "timestamp_ms": 1792981676839
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792982216947,
+        "lease_expires_at_epoch_ms": 1792985816947,
+        "git_branch": "feat/gb-46-chat-harness",
+        "base_commit_sha": "5842977d8de11b1d5ca8a834b7e6c0f2d8f126d5"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792982216947
+    },
+    {
+      "event": "task_verified",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Implemented suite-aware chat harness in benchwork-core, Axum SSE streaming and proposal endpoints in benchwork-cli, assistant-ui external store runtime Copilot rail and HITL mutation cards in React web UI",
+        "verified_at_epoch_ms": 1792983515742,
+        "git_branch": "feat/gb-46-chat-harness",
+        "base_commit_sha": "5842977d8de11b1d5ca8a834b7e6c0f2d8f126d5",
+        "head_commit_sha": "5842977d8de11b1d5ca8a834b7e6c0f2d8f126d5",
+        "commit_shas": [
+          "5842977d8de11b1d5ca8a834b7e6c0f2d8f126d5"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "df178507-e53d-4f39-99ed-2b0649616a0b",
+      "status": "verified",
+      "timestamp_ms": 1794037960757
+    }
+  ]
+}

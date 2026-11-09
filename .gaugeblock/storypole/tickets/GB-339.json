@@ -1,0 +1,65 @@
+{
+  "ticket": {
+    "id": "a2c93716-87f4-4a7f-84ea-1844bdacdc74",
+    "ticket_key": "GB-339",
+    "slug": "emit-one-span-per-cli-invocation-across-the-suite-a2c937",
+    "title": "Emit one span per CLI invocation across the suite",
+    "description": "One of twelve tools emits spans and only for provider completions, so the panel observes inference and nothing else, while telemetry is meant to be suite-wide: observability plus the metadata half of the training corpus. Shape: one span per CLI invocation from a shared helper in gaugeblock-workspace called at each main boundary (binary, command, repo, branch, task_key when a claim is held, duration, status, first diagnostic), plus nested spans for sub-operations joined by trace_id and parent_span_id, which sawhorse already mints correctly. Payloads stay out by design: no prompt or completion text, and the join to the spool is span.task_key, so training data comes from spool records joined to spans rather than from the spans themselves. Retention becomes configurable (max_bytes, keep_rotations, retain) with raw logs untracked and rotated; tracked retained aggregates are a deliberate exception and stay disabled until more than one tool emits.",
+    "kind": "epic",
+    "status": "ready",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "gaugeblock-workspace",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "nine more tools emit; a task cost is answerable from spans alone; no span carries payload text; rotation leaves the raw log untracked and the aggregate tracked"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794167027143,
+    "updated_at_epoch_ms": 1794167027143
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "a2c93716-87f4-4a7f-84ea-1844bdacdc74",
+        "ticket_key": "GB-339",
+        "slug": "emit-one-span-per-cli-invocation-across-the-suite-a2c937",
+        "title": "Emit one span per CLI invocation across the suite",
+        "description": "One of twelve tools emits spans and only for provider completions, so the panel observes inference and nothing else, while telemetry is meant to be suite-wide: observability plus the metadata half of the training corpus. Shape: one span per CLI invocation from a shared helper in gaugeblock-workspace called at each main boundary (binary, command, repo, branch, task_key when a claim is held, duration, status, first diagnostic), plus nested spans for sub-operations joined by trace_id and parent_span_id, which sawhorse already mints correctly. Payloads stay out by design: no prompt or completion text, and the join to the spool is span.task_key, so training data comes from spool records joined to spans rather than from the spans themselves. Retention becomes configurable (max_bytes, keep_rotations, retain) with raw logs untracked and rotated; tracked retained aggregates are a deliberate exception and stay disabled until more than one tool emits.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "gaugeblock-workspace",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "nine more tools emit; a task cost is answerable from spans alone; no span carries payload text; rotation leaves the raw log untracked and the aggregate tracked"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794167027143,
+        "updated_at_epoch_ms": 1794167027143
+      }
+    }
+  ]
+}

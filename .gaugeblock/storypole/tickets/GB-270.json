@@ -1,0 +1,101 @@
+{
+  "ticket": {
+    "id": "9c68427a-d868-4955-b34d-db753ef4321e",
+    "ticket_key": "GB-270",
+    "slug": "evaluate-a-shared-process-execution-crate-probe-tool-availability-run-captured-extract-first-diagnostic-9c6842",
+    "title": "Evaluate a shared process-execution crate: probe tool availability, run captured, extract first diagnostic",
+    "description": "",
+    "kind": "spike",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "common::gaugeblock-process"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "ANALYSIS 2026-11-06 - and my recommendation is to NOT build this yet",
+      " with one exception.\\n\\nMeasured duplication: process spawning appears in outfeed (12 sites)",
+      " miter (4)",
+      " storypole (2)",
+      " joiner (2)",
+      " rabbet (1)",
+      " sawhorse (1) and common (1: gaugeblock-git). First-diagnostic extraction exists exactly once (outfeed gate/execute.rs::first_meaningful_line). So the repeated thing is not verification - it is probe/spawn/capture/classify/first-line",
+      " and gaugeblock-git is already the precedent for that living in common.\\n\\nWhy a shared VERIFICATION crate is wrong: the three tools answer different questions. storypole asks whether a task's configured gate passed and what receipt proves it; miter asks what the compilers say at AST-precise spans; outfeed asks whether each gate step passed and which line to show. Unifying the policy would force one shape on three questions",
+      " and the contract that matters (the receipt / SpoolEntry) already lives in gaugeblock-contracts.\\n\\nWhat WOULD justify a crate: tool availability probing plus captured execution plus first-diagnostic extraction",
+      " with >=2 consumers needing identical behaviour. Candidates are outfeed's cmd.rs and storypole's sh -c usage; miter produces structured diagnostics rather than text. Names considered: gaugeblock-process (recommended - says what it does); '-'development'/'coding' rejected as vague grab-bag names.\\n\\nBlocked on GB-269 being fixed first: if receipts record which command ran",
+      " the need for a shared runner becomes measurable rather than assumed."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794000363043,
+    "updated_at_epoch_ms": 1794000368832
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "9c68427a-d868-4955-b34d-db753ef4321e",
+        "ticket_key": "GB-270",
+        "slug": "evaluate-a-shared-process-execution-crate-probe-tool-availability-run-captured-extract-first-diagnostic-9c6842",
+        "title": "Evaluate a shared process-execution crate: probe tool availability, run captured, extract first diagnostic",
+        "description": "",
+        "kind": "spike",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "common::gaugeblock-process"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794000363043,
+        "updated_at_epoch_ms": 1794000363043
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "9c68427a-d868-4955-b34d-db753ef4321e",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "ANALYSIS 2026-11-06 - and my recommendation is to NOT build this yet",
+        " with one exception.\\n\\nMeasured duplication: process spawning appears in outfeed (12 sites)",
+        " miter (4)",
+        " storypole (2)",
+        " joiner (2)",
+        " rabbet (1)",
+        " sawhorse (1) and common (1: gaugeblock-git). First-diagnostic extraction exists exactly once (outfeed gate/execute.rs::first_meaningful_line). So the repeated thing is not verification - it is probe/spawn/capture/classify/first-line",
+        " and gaugeblock-git is already the precedent for that living in common.\\n\\nWhy a shared VERIFICATION crate is wrong: the three tools answer different questions. storypole asks whether a task's configured gate passed and what receipt proves it; miter asks what the compilers say at AST-precise spans; outfeed asks whether each gate step passed and which line to show. Unifying the policy would force one shape on three questions",
+        " and the contract that matters (the receipt / SpoolEntry) already lives in gaugeblock-contracts.\\n\\nWhat WOULD justify a crate: tool availability probing plus captured execution plus first-diagnostic extraction",
+        " with >=2 consumers needing identical behaviour. Candidates are outfeed's cmd.rs and storypole's sh -c usage; miter produces structured diagnostics rather than text. Names considered: gaugeblock-process (recommended - says what it does); '-'development'/'coding' rejected as vague grab-bag names.\\n\\nBlocked on GB-269 being fixed first: if receipts record which command ran",
+        " the need for a shared runner becomes measurable rather than assumed."
+      ],
+      "timestamp_ms": 1794000368832
+    }
+  ]
+}

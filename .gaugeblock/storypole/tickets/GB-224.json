@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "2621c073-be26-4ffd-9715-d945f7543ddc",
+    "ticket_key": "GB-224",
+    "slug": "the-fill-prompt-does-not-tell-the-model-which-crates-the-scratch-crate-depends-on-2621c0",
+    "title": "The fill prompt does not tell the model which crates the scratch crate depends on",
+    "description": "Observed immediately after GB-217 step 4 removed the transport failure: the Gold-path fill now returns a candidate that imports unicode_segmentation, which /tmp/gb-gold-crate does not depend on, so verification fails with \"compile: unresolved import unicode_segmentation\" and HoleFillFailed. The model is not wrong to reach for that crate - counting graphemes in Rust usually does use it - but the prompt never says what is available, so every retry makes the same mistake and no rejected_attempt becomes a repaired Gold pair.\n\nTWO FIXES, both cheap: (1) include the scratch crate declared dependencies in the prompt, or (2) add common dependencies to the fixture crate so a reasonable solution compiles. Either way the assertion is the same: a fill of grapheme_count against a crate that can express it produces tier gold rather than HoleFillFailed. This is the last known blocker between a working transport and a non-empty DPO shard.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "joiner_core::function_fill"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793377774005,
+    "updated_at_epoch_ms": 1793377774005
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "2621c073-be26-4ffd-9715-d945f7543ddc",
+        "ticket_key": "GB-224",
+        "slug": "the-fill-prompt-does-not-tell-the-model-which-crates-the-scratch-crate-depends-on-2621c0",
+        "title": "The fill prompt does not tell the model which crates the scratch crate depends on",
+        "description": "Observed immediately after GB-217 step 4 removed the transport failure: the Gold-path fill now returns a candidate that imports unicode_segmentation, which /tmp/gb-gold-crate does not depend on, so verification fails with \"compile: unresolved import unicode_segmentation\" and HoleFillFailed. The model is not wrong to reach for that crate - counting graphemes in Rust usually does use it - but the prompt never says what is available, so every retry makes the same mistake and no rejected_attempt becomes a repaired Gold pair.\n\nTWO FIXES, both cheap: (1) include the scratch crate declared dependencies in the prompt, or (2) add common dependencies to the fixture crate so a reasonable solution compiles. Either way the assertion is the same: a fill of grapheme_count against a crate that can express it produces tier gold rather than HoleFillFailed. This is the last known blocker between a working transport and a non-empty DPO shard.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "joiner_core::function_fill"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793377774005,
+        "updated_at_epoch_ms": 1793377774005
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    }
+  ]
+}

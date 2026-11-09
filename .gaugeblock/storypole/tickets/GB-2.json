@@ -1,0 +1,148 @@
+{
+  "ticket": {
+    "id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+    "ticket_key": "GB-2",
+    "slug": "phase-3-chalkline-grill-me-spec-planner-dag-compiler-b55ceb",
+    "title": "Phase 3: chalkline — /grill-me Spec Planner & DAG Compiler",
+    "description": "Interactive spec generation and automatic storypole task DAG compiler.",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "chalkline-core",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "c535c148-1531-4c2d-9435-804e78755482"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1792655466595,
+      "git_branch": null,
+      "base_commit_sha": null,
+      "head_commit_sha": null,
+      "commit_shas": [],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792645196496,
+    "updated_at_epoch_ms": 1794037956236,
+    "archived_at_epoch_ms": 1794037956236
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+        "ticket_key": "GB-2",
+        "slug": "phase-3-chalkline-grill-me-spec-planner-dag-compiler-b55ceb",
+        "title": "Phase 3: chalkline — /grill-me Spec Planner & DAG Compiler",
+        "description": "Interactive spec generation and automatic storypole task DAG compiler.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "chalkline-core",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792645196496,
+        "updated_at_epoch_ms": 1792645196496
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "c535c148-1531-4c2d-9435-804e78755482"
+      },
+      "timestamp_ms": 1792645201720
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-1",
+      "timestamp_ms": 1792645201720
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-1 verified",
+      "timestamp_ms": 1792649114262
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792655466191,
+        "lease_expires_at_epoch_ms": 1792659066191,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792655466191
+    },
+    {
+      "event": "task_verified",
+      "task_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1792655466595,
+        "git_branch": null,
+        "base_commit_sha": null,
+        "head_commit_sha": null,
+        "commit_shas": [],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "b55ceb22-9abd-4fc8-a397-bf027737fb84",
+      "status": "verified",
+      "timestamp_ms": 1794037956236
+    }
+  ]
+}

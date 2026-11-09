@@ -1,0 +1,148 @@
+{
+  "ticket": {
+    "id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+    "ticket_key": "GB-7",
+    "slug": "phase-8-rabbet-telemetry-corpus-hub-open-weight-foundry-c0ce77",
+    "title": "Phase 8: rabbet — Telemetry Corpus Hub & Open-Weight Foundry",
+    "description": "Telemetry Corpus Hub and fine-tuning foundry.",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "rabbet-core",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "523354d3-a66e-41f4-a941-0945841842ce"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1792708486784,
+      "git_branch": null,
+      "base_commit_sha": null,
+      "head_commit_sha": null,
+      "commit_shas": [],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792645196566,
+    "updated_at_epoch_ms": 1794037985441,
+    "archived_at_epoch_ms": 1794037985441
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+        "ticket_key": "GB-7",
+        "slug": "phase-8-rabbet-telemetry-corpus-hub-open-weight-foundry-c0ce77",
+        "title": "Phase 8: rabbet — Telemetry Corpus Hub & Open-Weight Foundry",
+        "description": "Telemetry Corpus Hub and fine-tuning foundry.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "rabbet-core",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792645196566,
+        "updated_at_epoch_ms": 1792645196566
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "523354d3-a66e-41f4-a941-0945841842ce"
+      },
+      "timestamp_ms": 1792645201844
+    },
+    {
+      "event": "status_changed",
+      "task_id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-5",
+      "timestamp_ms": 1792645201844
+    },
+    {
+      "event": "status_changed",
+      "task_id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-5 verified",
+      "timestamp_ms": 1792698851843
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792708481203,
+        "lease_expires_at_epoch_ms": 1792712081203,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792708481203
+    },
+    {
+      "event": "task_verified",
+      "task_id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1792708486784,
+        "git_branch": null,
+        "base_commit_sha": null,
+        "head_commit_sha": null,
+        "commit_shas": [],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "c0ce7764-eaa4-4291-bb6c-d81f1934de99",
+      "status": "verified",
+      "timestamp_ms": 1794037985441
+    }
+  ]
+}

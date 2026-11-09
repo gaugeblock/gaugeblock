@@ -1,0 +1,323 @@
+{
+  "ticket": {
+    "id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+    "ticket_key": "GB-238",
+    "slug": "nine-entities-drift-across-rust-and-typescript-32-fields-disagree-miter-contracts-check-now-fails-on-them-91aa34",
+    "title": "Fifteen fields still disagree across Rust and TypeScript, in three entities that each need a decision",
+    "description": "PROGRESS 2026-10-30. From 9 entities / 33 fields: the comparator fixes (GB-239) removed the nesting false positives and the declared secret, class A mirrored 3 fields (4857c03: task_edge, task_node now clean) and 1eaec01 mirrored AnonymizedSynthesisTrace properly - verification/task_key/head_commit_sha plus VerificationReport and CompilerDiagnostic interfaces, since two of those are nested structs rather than fields. Measured 18 -> 15, and that entity drops out of the report.\n\nREMAINING 15 lines in 3 entities, and all three need a decision rather than a copy:\n\nchat_message (7) - Rust content/timestamp_ms/token_count versus TypeScript text/timestamp/latency_ms/model_used. Rust is the persisted shape in .gaugeblock/chat/threads.jsonl; TypeScript is render state. Options: rename the UI fields, add a mapper at the fetch boundary (recommended - text/latencyMs/modelUsed are display concerns a rename would drag into the wire format), or declare genuinely different types and stop matching the names.\n\ndado_pattern (3) - canonical_example_fills and required_imports exist only in Rust, `domain` only in TypeScript. Stale in both directions, so one side must gain and the other must lose.\n\ntyped_hole (5) - ast_node_kind (Rust) versus kind (TypeScript) is a rename of one field, not two drifts; max_tokens and allow_literals are Rust-only; description is TypeScript-only. Deciding the canonical spelling settles three of the five.",
+    "kind": "bug",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_core::chat_harness::ChatMessage,storypole_core::model::task,gaugeblock_contracts"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Mirror anonymized_synthesis_trace including a VerificationReport interface, then re-measure",
+      "Decide chat_message: rename, mapper, or distinct types - with the decision recorded, since the Rust side is persisted data and the TS side is render state",
+      "Resolve dado_pattern in both directions and typed_hole (rename plus the two missing fields)",
+      "miter contracts --check passes with only the declared api_key exception"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": {
+      "recorded_by_agent": "cline",
+      "timestamp_ms": 1793461761014,
+      "completed_items": [
+        "anonymized_synthesis_trace mirrored in 1eaec01 with its nested VerificationReport and CompilerDiagnostic interfaces; measured 18 -> 15 drift lines and the entity drops out. Verified entities rose 35 -> 37 because the two new interfaces are themselves cross-referenced. tsc --noEmit clean."
+      ],
+      "remaining_items": [
+        "15 lines in 3 entities, each blocked on a decision rather than on effort: chat_message needs rename-vs-mapper-vs-distinct-types (recommend mapper, since Rust is persisted and TS is render state); dado_pattern is stale in both directions so one side gains and one loses; typed_hole needs a canonical spelling for ast_node_kind vs kind, which settles three of its five lines."
+      ],
+      "last_error_or_blocker": "Owner decision on the three, specifically chat_message: a rename pushes UI vocabulary into the persisted wire format, a mapper keeps them separate at the cost of a translation layer.",
+      "git_ref": "1eaec01",
+      "dirty_files": []
+    },
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1793464381096,
+      "git_branch": "main",
+      "base_commit_sha": "34666572d5c8e61e7139f486aeefea518dc56754",
+      "head_commit_sha": "34666572d5c8e61e7139f486aeefea518dc56754",
+      "commit_shas": [
+        "34666572d5c8e61e7139f486aeefea518dc56754"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793430002154,
+    "updated_at_epoch_ms": 1794038022201,
+    "archived_at_epoch_ms": 1794038022201
+  },
+  "events": [
+    {
+      "event": "handoff_recorded",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793457251090,
+        "completed_items": [
+          "Criterion 1 met: all 9 entities classified against the actual sources, not the report. TypeScript sides are all in benchwork/web/src and the file header declares them wire contracts, so the comparison is legitimate rather than a name collision. 33 lines reconcile exactly into: 5 stale-mirror fields (add to TS, Rust canonical), 16 diverged fields needing a canonical-spelling decision (chat_message, typed_hole, dado_pattern), 11 structural false positives (docs_config, workspace_capabilities - nesting, not drift), 1 deliberate security asymmetry (role_override_config.api_key must stay Rust-only). Criterion 3 filed as GB-239 with the two comparator defects and the reduction from 33 to 21 lines it should produce."
+        ],
+        "remaining_items": [
+          "Criterion 2, in two separable pieces. (a) The 5 stale-mirror fields are mechanical but need a TypeScript toolchain check: adding a required field to an interface breaks every object literal that constructs it, so each addition has to be followed by tsc over benchwork/web. (b) The 16 diverged fields need a decision per entity before any rename: chat_message has content vs text and timestamp_ms vs timestamp, where the Rust side is the persisted ledger shape and the TS side is what the UI renders, so aligning may mean a mapper rather than a rename."
+        ],
+        "last_error_or_blocker": "None. Note that the gate is red on contracts until GB-239 lands: 12 of the 33 lines cannot be satisfied by any code change, so criterion 2 alone cannot turn it green.",
+        "git_ref": "3648091",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "handoff_recorded",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793461643170,
+        "completed_items": [
+          "Class A partly done and measured: 4857c03 mirrored TaskEdge.target_ticket_key, TaskEdge.target_repo and TaskNode.archived_at_epoch_ms into benchwork/web, tsc --noEmit clean, and miter contracts went 20 -> 18 with task_edge and task_node dropping out of the report entirely. Corrected the filing: anonymized_synthesis_trace is NOT mechanical - its verification field is a nested VerificationReport struct, so it needs a second interface plus its diagnostics child."
+        ],
+        "remaining_items": [
+          "18 lines in 4 entities. anonymized_synthesis_trace: 2 trivial Option<String> fields plus the nested VerificationReport mirror. chat_message: the decision case - Rust is the persisted ledger shape, TypeScript is render state, so rename vs mapper vs distinct types. dado_pattern: stale in both directions. typed_hole: ast_node_kind vs kind is a rename, plus two Rust-only and one TypeScript-only field."
+        ],
+        "last_error_or_blocker": "None. Every remaining line is real drift; the gate cannot go green until these 18 are resolved or declared, and declaring them would be wrong - none is a secret or a nesting artifact.",
+        "git_ref": "4857c03",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "handoff_recorded",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793461761014,
+        "completed_items": [
+          "anonymized_synthesis_trace mirrored in 1eaec01 with its nested VerificationReport and CompilerDiagnostic interfaces; measured 18 -> 15 drift lines and the entity drops out. Verified entities rose 35 -> 37 because the two new interfaces are themselves cross-referenced. tsc --noEmit clean."
+        ],
+        "remaining_items": [
+          "15 lines in 3 entities, each blocked on a decision rather than on effort: chat_message needs rename-vs-mapper-vs-distinct-types (recommend mapper, since Rust is persisted and TS is render state); dado_pattern is stale in both directions so one side gains and one loses; typed_hole needs a canonical spelling for ast_node_kind vs kind, which settles three of its five lines."
+        ],
+        "last_error_or_blocker": "Owner decision on the three, specifically chat_message: a rename pushes UI vocabulary into the persisted wire format, a mapper keeps them separate at the cost of a translation layer.",
+        "git_ref": "1eaec01",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+        "ticket_key": "GB-238",
+        "slug": "nine-entities-drift-across-rust-and-typescript-32-fields-disagree-miter-contracts-check-now-fails-on-them-91aa34",
+        "title": "Nine entities drift across Rust and TypeScript: 32 fields disagree (miter contracts --check now fails on them)",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "benchwork_core::chat_harness::ChatMessage,storypole_core::model::task,gaugeblock_contracts"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793430002154,
+        "updated_at_epoch_ms": 1793430002154
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793430014174,
+        "lease_expires_at_epoch_ms": 1793433614174,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "from": "triage",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793430014174
+    },
+    {
+      "event": "task_updated",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "title": null,
+      "description": "Measured 2026-10-30 with miter contracts over the suite index: 35 verified multi-language entities, 9 with drift, 32 field-level disagreements. Entities: anonymized_synthesis_trace, chat_message, dado_pattern, docs_config, role_override_config, task_edge, task_node, typed_hole, workspace_capabilities. The first one checked by hand is real, not a parser artifact: benchwork-core ChatMessage has id/role/content/timestamp_ms/token_count while benchwork/web/src/chat/types.ts has id/role/text/timestamp/latencyMs/modelUsed, so the wire names themselves differ (content vs text, timestamp_ms vs timestamp). Two different things may be tangled here and they need separating before any code changes: pairs that are genuinely one wire contract drifted apart (should be aligned), and pairs that merely share a name across a Rust ledger record and a TypeScript UI state model (the checker matches by entity name, so those are false obligations).",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Classify all 9 entities as real wire drift or same-name-different-purpose, with the classification recorded",
+        "Align the real ones, deciding which side is canonical for each",
+        "Decide whether the checker should compare every same-named type or only entities declared as contracts, and make false obligations impossible rather than permanently allowlisted"
+      ],
+      "timestamp_ms": 1793430014273
+    },
+    {
+      "event": "task_updated",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "title": "Nine entities drift across Rust and TypeScript: 33 fields disagree (miter contracts --check fails on them)",
+      "description": "Measured 2026-10-30 with miter contracts over a FRESH suite index: 35 verified multi-language entities, 9 with drift, 33 field-level disagreements. The ticket was filed as 32 fields and the difference is itself a finding: the index was three days stale when the count was taken, and after miter index . it grew to 33, i.e. the stale index was hiding a drift as well as symbols (GB-237). Entities: anonymized_synthesis_trace, chat_message, dado_pattern, docs_config, role_override_config, task_edge, task_node, typed_hole, workspace_capabilities. The one checked by hand is real, not a parser artifact: benchwork-core ChatMessage has id/role/content/timestamp_ms/token_count while benchwork/web/src/chat/types.ts has id/role/text/timestamp/latencyMs/modelUsed, so the wire names themselves differ (content vs text, timestamp_ms vs timestamp). Two things may be tangled and need separating before code changes: pairs that are genuinely one wire contract drifted apart, and pairs that merely share a name between a Rust ledger record and a TypeScript UI state model - the checker matches on entity name, so those are false obligations.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793430069617
+    },
+    {
+      "event": "task_updated",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "title": null,
+      "description": "CLASSIFIED 2026-10-30. 9 entities / 33 fields, all TypeScript sides in benchwork/web/src, whose header declares them \"wire contract interfaces matching benchwork-core\" - so they are deliberate mirrors, not UI-local state, and the comparison is legitimate. The 9 split into four kinds, and the count reconciles exactly (2+1+2+7+5+4+9+2+1 = 33):\n\nA. STALE MIRROR - Rust gained field(s), TS never followed. Add to TS, Rust canonical (5 fields). task_edge: target_repo, target_ticket_key. task_node: archived_at_epoch_ms. anonymized_synthesis_trace: task_key, verification.\n\nB. DIVERGED - both sides changed, names differ; needs a per-entity decision on the canonical spelling (16 fields). chat_message: Rust content/timestamp_ms/token_count vs TS text/timestamp/latency_ms/model_used. typed_hole: Rust ast_node_kind/max_tokens/allow_literals vs TS kind/description - note ast_node_kind vs kind is a rename, not an omission. dado_pattern: Rust canonical_example_fills/required_imports vs TS domain.\n\nC. STRUCTURAL FALSE POSITIVE - the checker compares top-level fields only, so a nested Rust struct inlined in TS reads as missing fields (11 fields). docs_config: Rust nests the nine doc entries under DocumentEntries while TS inlines them in DocsConfig.docs. workspace_capabilities: TS nests spec_docs { primary_spec_present, detected_files }, Rust mirrors that nesting, yet both fields are reported missing. These are not drift and must not be \"fixed\" by editing either side.\n\nD. DELIBERATE ASYMMETRY - role_override_config.api_key exists in Rust and must NOT exist in TypeScript: it is a secret and the browser has no business receiving it (1 field). Adding it to satisfy the checker would be a security regression.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793457221941
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793461632969,
+        "lease_expires_at_epoch_ms": 1793465232969,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793461632969
+    },
+    {
+      "event": "task_updated",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "title": "Eighteen fields still disagree across Rust and TypeScript, in four entities",
+      "description": "PROGRESS 2026-10-30. Original filing: 9 entities / 32-33 fields. After the comparator fixes (GB-239) the nesting false positives and the declared secret are gone, leaving 20 real lines; class A is now partly done (benchwork 4857c03 mirrored TaskEdge.target_ticket_key, TaskEdge.target_repo and TaskNode.archived_at_epoch_ms, measured 20 -> 18 with task_edge and task_node dropping out of the report entirely).\n\nREMAINING 18 lines in 4 entities, none of them mechanical:\n\nanonymized_synthesis_trace (3): head_commit_sha, task_key, verification. The first two are Option<String> and trivial; `verification` is a nested VerificationReport struct (ast_valid, typecheck_passed, tests_passed, duration_ms, diagnostics[], ...), so mirroring it means a second interface and its diagnostics child - which is why this entity is not class A after all.\n\nchat_message (7): Rust content/timestamp_ms/token_count versus TypeScript text/timestamp/latency_ms/model_used. This is the decision case: Rust is the persisted ledger shape in .gaugeblock/chat/threads.jsonl, TypeScript is what the UI renders, and the honest options are (a) rename the UI fields, (b) add a mapper at the fetch boundary and let the UI keep its own vocabulary, or (c) declare them different types. Note the entity name matching is what pairs them at all.\n\ndado_pattern (3): canonical_example_fills and required_imports exist only in Rust; `domain` exists only in TypeScript. Bidirectional, so at least one side is stale in both directions.\n\ntyped_hole (5): ast_node_kind versus `kind` is a rename, plus max_tokens and allow_literals missing from TypeScript and `description` missing from Rust.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Mirror anonymized_synthesis_trace including a VerificationReport interface, then re-measure",
+        "Decide chat_message: rename, mapper, or distinct types - with the decision recorded, since the Rust side is persisted data and the TS side is render state",
+        "Resolve dado_pattern in both directions and typed_hole (rename plus the two missing fields)",
+        "miter contracts --check passes with only the declared api_key exception"
+      ],
+      "timestamp_ms": 1793461633056
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793461750397,
+        "lease_expires_at_epoch_ms": 1793465350397,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793461750397
+    },
+    {
+      "event": "task_updated",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "title": "Fifteen fields still disagree across Rust and TypeScript, in three entities that each need a decision",
+      "description": "PROGRESS 2026-10-30. From 9 entities / 33 fields: the comparator fixes (GB-239) removed the nesting false positives and the declared secret, class A mirrored 3 fields (4857c03: task_edge, task_node now clean) and 1eaec01 mirrored AnonymizedSynthesisTrace properly - verification/task_key/head_commit_sha plus VerificationReport and CompilerDiagnostic interfaces, since two of those are nested structs rather than fields. Measured 18 -> 15, and that entity drops out of the report.\n\nREMAINING 15 lines in 3 entities, and all three need a decision rather than a copy:\n\nchat_message (7) - Rust content/timestamp_ms/token_count versus TypeScript text/timestamp/latency_ms/model_used. Rust is the persisted shape in .gaugeblock/chat/threads.jsonl; TypeScript is render state. Options: rename the UI fields, add a mapper at the fetch boundary (recommended - text/latencyMs/modelUsed are display concerns a rename would drag into the wire format), or declare genuinely different types and stop matching the names.\n\ndado_pattern (3) - canonical_example_fills and required_imports exist only in Rust, `domain` only in TypeScript. Stale in both directions, so one side must gain and the other must lose.\n\ntyped_hole (5) - ast_node_kind (Rust) versus kind (TypeScript) is a rename of one field, not two drifts; max_tokens and allow_literals are Rust-only; description is TypeScript-only. Deciding the canonical spelling settles three of the five.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793461750579
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793464381008,
+        "lease_expires_at_epoch_ms": 1793467981008,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793464381008
+    },
+    {
+      "event": "task_verified",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793464381096,
+        "git_branch": "main",
+        "base_commit_sha": "34666572d5c8e61e7139f486aeefea518dc56754",
+        "head_commit_sha": "34666572d5c8e61e7139f486aeefea518dc56754",
+        "commit_shas": [
+          "34666572d5c8e61e7139f486aeefea518dc56754"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953205689
+    },
+    {
+      "event": "task_archived",
+      "task_id": "91aa346b-75e9-4a53-b8f8-d46fd71d8d20",
+      "status": "verified",
+      "timestamp_ms": 1794038022201
+    }
+  ]
+}

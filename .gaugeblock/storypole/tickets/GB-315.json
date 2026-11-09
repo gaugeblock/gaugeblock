@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "ad54b611-58a5-4edf-9b83-6ce79afe2313",
+    "ticket_key": "GB-315",
+    "slug": "universal-symbols-counts-duplicate-ids-so-n-universal-overstates-what-the-table-holds-ad54b6",
+    "title": "universal_symbols() counts duplicate ids, so 'N universal' overstates what the table holds",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_engine::store::Engine::add_universal_symbols"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794107579649,
+    "updated_at_epoch_ms": 1794107579649
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "ad54b611-58a5-4edf-9b83-6ce79afe2313",
+        "ticket_key": "GB-315",
+        "slug": "universal-symbols-counts-duplicate-ids-so-n-universal-overstates-what-the-table-holds-ad54b6",
+        "title": "universal_symbols() counts duplicate ids, so 'N universal' overstates what the table holds",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_engine::store::Engine::add_universal_symbols"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794107579649,
+        "updated_at_epoch_ms": 1794107579649
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

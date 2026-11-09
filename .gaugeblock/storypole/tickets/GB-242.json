@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "b4858fb6-c809-404c-b867-132d4a63b167",
+    "ticket_key": "GB-242",
+    "slug": "storypole-error-taxonomy-has-no-neutral-variant-so-plan-step-errors-render-with-a-misleading-prefix-b4858f",
+    "title": "storypole error taxonomy has no neutral variant, so plan-step errors render with a misleading prefix",
+    "description": "",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::error::StorypoleError"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793470011080,
+    "updated_at_epoch_ms": 1793470011080
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "b4858fb6-c809-404c-b867-132d4a63b167",
+        "ticket_key": "GB-242",
+        "slug": "storypole-error-taxonomy-has-no-neutral-variant-so-plan-step-errors-render-with-a-misleading-prefix-b4858f",
+        "title": "storypole error taxonomy has no neutral variant, so plan-step errors render with a misleading prefix",
+        "description": "",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::error::StorypoleError"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793470011080,
+        "updated_at_epoch_ms": 1793470011080
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "ticket": {
+    "id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+    "ticket_key": "GB-32",
+    "slug": "interactive-task-mutation-and-scope-editing-in-benchwork-task-inspector-86f8f2",
+    "title": "Interactive task mutation and scope editing in Benchwork task inspector",
+    "description": "Enable inline or modal editing in the Task Briefing Drawer and Inspector: edit task title, description, priority (P1-P5), scope (repo, crate, module, target files, symbols, labels), and acceptance criteria, persisted via benchwork backend calling storypole update.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork,inspector,mutations,ui"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "d747957d-ec95-430c-971b-ec6e1f24f22a"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Inspector provides Edit mode toggle for task title, description, and priority;Scope editor supports multi-value chip input for files, symbols, and labels;Acceptance criteria list supports adding, editing, and deleting items;Backend exposes /api/tasks/:id/update endpoint invoking storypole mutation"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Added /api/v1/dag/:id/update endpoint, UpdateTaskParams in benchwork-core, and InspectorEditModal with multi-value chip inputs and criteria list editing",
+      "verified_at_epoch_ms": 1792861677355,
+      "git_branch": "feat/gb-32-task-mutation-inspector",
+      "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "commit_shas": [
+        "d077715a40cf1fe0f23fea84cd151072305bad74"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792860002976,
+    "updated_at_epoch_ms": 1794037989045,
+    "archived_at_epoch_ms": 1794037989045
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+        "ticket_key": "GB-32",
+        "slug": "interactive-task-mutation-and-scope-editing-in-benchwork-task-inspector-86f8f2",
+        "title": "Interactive task mutation and scope editing in Benchwork task inspector",
+        "description": "Enable inline or modal editing in the Task Briefing Drawer and Inspector: edit task title, description, priority (P1-P5), scope (repo, crate, module, target files, symbols, labels), and acceptance criteria, persisted via benchwork backend calling storypole update.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork,inspector,mutations,ui"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "Inspector provides Edit mode toggle for task title, description, and priority;Scope editor supports multi-value chip input for files, symbols, and labels;Acceptance criteria list supports adding, editing, and deleting items;Backend exposes /api/tasks/:id/update endpoint invoking storypole mutation"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792860002976,
+        "updated_at_epoch_ms": 1792860002976
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "d747957d-ec95-430c-971b-ec6e1f24f22a"
+      },
+      "timestamp_ms": 1792860024191
+    },
+    {
+      "event": "status_changed",
+      "task_id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-29",
+      "timestamp_ms": 1792860024191
+    },
+    {
+      "event": "status_changed",
+      "task_id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-29 verified",
+      "timestamp_ms": 1792860774365
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792861371464,
+        "lease_expires_at_epoch_ms": 1792864971464,
+        "git_branch": "feat/gb-32-task-mutation-inspector",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792861371464
+    },
+    {
+      "event": "task_verified",
+      "task_id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Added /api/v1/dag/:id/update endpoint, UpdateTaskParams in benchwork-core, and InspectorEditModal with multi-value chip inputs and criteria list editing",
+        "verified_at_epoch_ms": 1792861677355,
+        "git_branch": "feat/gb-32-task-mutation-inspector",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "commit_shas": [
+          "d077715a40cf1fe0f23fea84cd151072305bad74"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "86f8f2b7-e847-4423-986a-ea0c0133a25e",
+      "status": "verified",
+      "timestamp_ms": 1794037989045
+    }
+  ]
+}

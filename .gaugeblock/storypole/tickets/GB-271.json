@@ -1,0 +1,89 @@
+{
+  "ticket": {
+    "id": "073fc5d8-59a3-4d3c-b3d9-19e373d2bb85",
+    "ticket_key": "GB-271",
+    "slug": "outfeed-install-resolves-the-crate-path-relative-to-cwd-so-running-it-inside-a-member-repo-fails-073fc5",
+    "title": "outfeed install resolves the crate path relative to cwd, so running it inside a member repo fails",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "outfeed_core::install"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "DONE 2026-11-06 (outfeed commit). outfeed_core::install::discover_suite_root walks ancestors until every SUITE_TOOLS repository has a Cargo.toml",
+      " and the CLI uses it when --dir is absent. An explicit --dir is still honoured verbatim.\\n\\nVerified from the failing position rather than a convenient one: 'cd benchwork && outfeed install benchwork --debug' now resolves the crate path and reports 'up-to-date by version; pass --force to rebuild from source' (exit 0) instead of 'Crate path does not exist: ./benchwork/crates/benchwork-cli' (exit 1 with the old binary left in place). Tier 2: fmt clean",
+      " clippy -D warnings clean",
+      " outfeed-core tests green.\\n\\nWhy it mattered beyond the error: the failure was quiet about the important part. Exit 1 said the path was wrong; nothing said the binary had not changed",
+      " so the natural next step was to retry the command rather than to notice the build never happened."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794002487686,
+    "updated_at_epoch_ms": 1794005459254
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "073fc5d8-59a3-4d3c-b3d9-19e373d2bb85",
+        "ticket_key": "GB-271",
+        "slug": "outfeed-install-resolves-the-crate-path-relative-to-cwd-so-running-it-inside-a-member-repo-fails-073fc5",
+        "title": "outfeed install resolves the crate path relative to cwd, so running it inside a member repo fails",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "outfeed_core::install"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794002487686,
+        "updated_at_epoch_ms": 1794002487686
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "073fc5d8-59a3-4d3c-b3d9-19e373d2bb85",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "DONE 2026-11-06 (outfeed commit). outfeed_core::install::discover_suite_root walks ancestors until every SUITE_TOOLS repository has a Cargo.toml",
+        " and the CLI uses it when --dir is absent. An explicit --dir is still honoured verbatim.\\n\\nVerified from the failing position rather than a convenient one: 'cd benchwork && outfeed install benchwork --debug' now resolves the crate path and reports 'up-to-date by version; pass --force to rebuild from source' (exit 0) instead of 'Crate path does not exist: ./benchwork/crates/benchwork-cli' (exit 1 with the old binary left in place). Tier 2: fmt clean",
+        " clippy -D warnings clean",
+        " outfeed-core tests green.\\n\\nWhy it mattered beyond the error: the failure was quiet about the important part. Exit 1 said the path was wrong; nothing said the binary had not changed",
+        " so the natural next step was to retry the command rather than to notice the build never happened."
+      ],
+      "timestamp_ms": 1794005459254
+    }
+  ]
+}

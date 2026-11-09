@@ -1,0 +1,130 @@
+{
+  "ticket": {
+    "id": "6d89cb12-c3f3-4384-8d48-0d567e2fafe3",
+    "ticket_key": "GB-33",
+    "slug": "add-dependency-linking-and-task-splitting-controls-to-benchwork-backlog-views-6d89cb",
+    "title": "Add dependency linking and task splitting controls to Benchwork backlog views",
+    "description": "Add UI controls to connect tasks with directed dependency edges (BlockedBy, RelatedTo, ParentEpic) and split oversized tasks into parent Epics and child subtasks directly from Panel 2.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork,dag,edges,split,ui"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Task inspector includes Link Dependency button with type selector and task picker;Split Task action creates parent Epic and child subtasks with inherited scope;DAG graph and Kanban views automatically update upon linking or splitting"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "cargo-test",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Verified Link and Split DAG controls and inspector clipboard integration in benchwork",
+      "verified_at_epoch_ms": 1792862513467,
+      "git_branch": "feat/gb-33-link-split-dag-ui",
+      "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "commit_shas": [
+        "d077715a40cf1fe0f23fea84cd151072305bad74"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792860014094,
+    "updated_at_epoch_ms": 1794038006060,
+    "archived_at_epoch_ms": 1794038006060
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "6d89cb12-c3f3-4384-8d48-0d567e2fafe3",
+        "ticket_key": "GB-33",
+        "slug": "add-dependency-linking-and-task-splitting-controls-to-benchwork-backlog-views-6d89cb",
+        "title": "Add dependency linking and task splitting controls to Benchwork backlog views",
+        "description": "Add UI controls to connect tasks with directed dependency edges (BlockedBy, RelatedTo, ParentEpic) and split oversized tasks into parent Epics and child subtasks directly from Panel 2.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 3,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork,dag,edges,split,ui"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "Task inspector includes Link Dependency button with type selector and task picker;Split Task action creates parent Epic and child subtasks with inherited scope;DAG graph and Kanban views automatically update upon linking or splitting"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792860014094,
+        "updated_at_epoch_ms": 1792860014094
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "6d89cb12-c3f3-4384-8d48-0d567e2fafe3",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792861690574,
+        "lease_expires_at_epoch_ms": 1792865290574,
+        "git_branch": "feat/gb-33-link-split-dag-ui",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "6d89cb12-c3f3-4384-8d48-0d567e2fafe3",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792861690574
+    },
+    {
+      "event": "task_verified",
+      "task_id": "6d89cb12-c3f3-4384-8d48-0d567e2fafe3",
+      "receipt": {
+        "verifier": "cargo-test",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Verified Link and Split DAG controls and inspector clipboard integration in benchwork",
+        "verified_at_epoch_ms": 1792862513467,
+        "git_branch": "feat/gb-33-link-split-dag-ui",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "commit_shas": [
+          "d077715a40cf1fe0f23fea84cd151072305bad74"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "6d89cb12-c3f3-4384-8d48-0d567e2fafe3",
+      "status": "verified",
+      "timestamp_ms": 1794038006060
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "ticket": {
+    "id": "ef214ce6-8125-45fc-baa3-9bcd2f240298",
+    "ticket_key": "GB-190",
+    "slug": "standardize-profile-release-codegen-units-across-the-10-roots-measured-ef214c",
+    "title": "Standardize [profile.release] codegen-units across the 10 roots, measured",
+    "description": "Measured, and the premise was wrong. All ten roots pin opt-level 3 + lto thin + codegen-units 1, and a stale plan claimed the single CGU cost 3x-5x release build time. Cold cargo build --release -p outfeed-cli with RUSTC_WRAPPER cleared (sccache reported 0 compile requests, proving the bypass) and target/release removed between runs, macOS 12.7.6 x86_64, cargo 1.99.1, sequential: codegen-units = 1 gave 395.58 s and 9,371,408 B; default 16 gave 398.03 s and 11,099,512 B (+18.4% binary). Wall time is dominated by dependency codegen plus the thin-LTO link, not per-crate CGU splitting, so the change would have bought 0.6% (inside noise) for 1.7 MB. Decision: keep codegen-units = 1 in all ten roots, no code change; numbers recorded in CONTRIBUTING.md section 1.5 and in the closing commit. Re-test only if lto moves to fat or false, or a binary changes shape materially.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": null,
+      "crate_name": "workspace",
+      "module_path": null,
+      "target_files": [
+        "miter/Cargo.toml",
+        "storypole/Cargo.toml",
+        "sawhorse/Cargo.toml",
+        "chalkline/Cargo.toml",
+        "dado/Cargo.toml",
+        "batten/Cargo.toml",
+        "joiner/Cargo.toml",
+        "benchwork/Cargo.toml",
+        "outfeed/Cargo.toml",
+        "rabbet/Cargo.toml"
+      ],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "f2dca008-bfc7-4eae-b92f-5142ab632b3f",
+        "target_ticket_key": "GB-8",
+        "target_repo": "gaugeblock"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Cold release build of outfeed-cli timed with RUSTC_WRAPPER empty for codegen-units = 1 and 16, plus binary size for both",
+      "Numbers recorded in the commit, on this ticket and in a durable doc (CONTRIBUTING.md or PERF.md)",
+      "Every one of the 10 roots ends on the same [profile.release] without silently diverging"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "measured-cold-release-build",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "codegen-units 1: 395.58 s / 9,371,408 B; default 16: 398.03 s / 11,099,512 B (+18.4%); RUSTC_WRAPPER cleared with sccache at 0 compile requests; decision: keep the pin in all ten roots, numbers in CONTRIBUTING 1.5",
+      "verified_at_epoch_ms": 1793310784495,
+      "git_branch": "docs/gb-190-codegen-units-measured",
+      "base_commit_sha": "1efb6a599d78e33468a506c4846f03eee333198d",
+      "head_commit_sha": "d850f83c2a81c72331b9cef9b1bae033df25b9e0",
+      "commit_shas": [
+        "c0397da37d70bec6fa4a476a35008131a3e12581",
+        "e7b889b3566b42e2a5df6ebd78eabe274bf56832",
+        "b2f75a1a1adca27317d3f446da114e735afa2db0",
+        "b2ac2f6b579f0d86ace31de833973a0098983545",
+        "dada2ac927457fd48e56a0c18d5fd9f6b33e4f1d",
+        "93a1af3c5e3fd1a72bf26104766c86272ee7c281",
+        "227ce2eea204561171e344f3281951562018471e",
+        "39bc55cf212ccde0816ed02ecd665cd69ecfb89f",
+        "d850f83c2a81c72331b9cef9b1bae033df25b9e0"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793306946029,
+    "updated_at_epoch_ms": 1794038002908,
+    "archived_at_epoch_ms": 1794038002908
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "ef214ce6-8125-45fc-baa3-9bcd2f240298",
+        "ticket_key": "GB-190",
+        "slug": "standardize-profile-release-codegen-units-across-the-10-roots-measured-ef214c",
+        "title": "Standardize [profile.release] codegen-units across the 10 roots, measured",
+        "description": "All ten root manifests pin opt-level = 3, lto = thin and codegen-units = 1, which serializes codegen per crate. GB-131 plan asserted a 3x-5x release slowdown but nothing was ever timed, so this ticket exists to measure before changing anything (law 12): cold release build of outfeed-cli with RUSTC_WRAPPER cleared, codegen-units = 1 versus the default 16, same machine, sequential, recording wall time and final binary size. A worse runtime is a real result too - if the trade is bad, keep 1 for tagged releases via a dedicated release-dist profile and let local release builds use the default.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": null,
+          "crate_name": "workspace",
+          "module_path": null,
+          "target_files": [
+            "miter/Cargo.toml",
+            "storypole/Cargo.toml",
+            "sawhorse/Cargo.toml",
+            "chalkline/Cargo.toml",
+            "dado/Cargo.toml",
+            "batten/Cargo.toml",
+            "joiner/Cargo.toml",
+            "benchwork/Cargo.toml",
+            "outfeed/Cargo.toml",
+            "rabbet/Cargo.toml"
+          ],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "Cold release build of outfeed-cli timed with RUSTC_WRAPPER empty for codegen-units = 1 and 16, plus binary size for both",
+          "Numbers recorded in the commit, on this ticket and in a durable doc (CONTRIBUTING.md or PERF.md)",
+          "Every one of the 10 roots ends on the same [profile.release] without silently diverging"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793306946029,
+        "updated_at_epoch_ms": 1793306946029
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "ef214ce6-8125-45fc-baa3-9bcd2f240298",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "f2dca008-bfc7-4eae-b92f-5142ab632b3f",
+        "target_ticket_key": "GB-8",
+        "target_repo": "gaugeblock"
+      },
+      "timestamp_ms": 1793306998407
+    },
+    {
+      "event": "task_updated",
+      "task_id": "ef214ce6-8125-45fc-baa3-9bcd2f240298",
+      "title": null,
+      "description": "Measured, and the premise was wrong. All ten roots pin opt-level 3 + lto thin + codegen-units 1, and a stale plan claimed the single CGU cost 3x-5x release build time. Cold cargo build --release -p outfeed-cli with RUSTC_WRAPPER cleared (sccache reported 0 compile requests, proving the bypass) and target/release removed between runs, macOS 12.7.6 x86_64, cargo 1.99.1, sequential: codegen-units = 1 gave 395.58 s and 9,371,408 B; default 16 gave 398.03 s and 11,099,512 B (+18.4% binary). Wall time is dominated by dependency codegen plus the thin-LTO link, not per-crate CGU splitting, so the change would have bought 0.6% (inside noise) for 1.7 MB. Decision: keep codegen-units = 1 in all ten roots, no code change; numbers recorded in CONTRIBUTING.md section 1.5 and in the closing commit. Re-test only if lto moves to fat or false, or a binary changes shape materially.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793310766135
+    },
+    {
+      "event": "task_verified",
+      "task_id": "ef214ce6-8125-45fc-baa3-9bcd2f240298",
+      "receipt": {
+        "verifier": "measured-cold-release-build",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "codegen-units 1: 395.58 s / 9,371,408 B; default 16: 398.03 s / 11,099,512 B (+18.4%); RUSTC_WRAPPER cleared with sccache at 0 compile requests; decision: keep the pin in all ten roots, numbers in CONTRIBUTING 1.5",
+        "verified_at_epoch_ms": 1793310784495,
+        "git_branch": "docs/gb-190-codegen-units-measured",
+        "base_commit_sha": "1efb6a599d78e33468a506c4846f03eee333198d",
+        "head_commit_sha": "d850f83c2a81c72331b9cef9b1bae033df25b9e0",
+        "commit_shas": [
+          "c0397da37d70bec6fa4a476a35008131a3e12581",
+          "e7b889b3566b42e2a5df6ebd78eabe274bf56832",
+          "b2f75a1a1adca27317d3f446da114e735afa2db0",
+          "b2ac2f6b579f0d86ace31de833973a0098983545",
+          "dada2ac927457fd48e56a0c18d5fd9f6b33e4f1d",
+          "93a1af3c5e3fd1a72bf26104766c86272ee7c281",
+          "227ce2eea204561171e344f3281951562018471e",
+          "39bc55cf212ccde0816ed02ecd665cd69ecfb89f",
+          "d850f83c2a81c72331b9cef9b1bae033df25b9e0"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "ef214ce6-8125-45fc-baa3-9bcd2f240298",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953247605
+    },
+    {
+      "event": "task_archived",
+      "task_id": "ef214ce6-8125-45fc-baa3-9bcd2f240298",
+      "status": "verified",
+      "timestamp_ms": 1794038002908
+    }
+  ]
+}

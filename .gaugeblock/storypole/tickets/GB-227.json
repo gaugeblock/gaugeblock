@@ -1,0 +1,136 @@
+{
+  "ticket": {
+    "id": "2c1766d1-37a1-4353-8e93-58c0215c9120",
+    "ticket_key": "GB-227",
+    "slug": "the-ingest-gate-accepts-a-trace-whose-hole-body-is-a-placeholder-2c1766",
+    "title": "The ingest gate accepts a trace whose hole body is a placeholder",
+    "description": "RESOLVED in the same session as commit 3b42a20. Seven spool records reached the corpus with chosen set to the literal <filled>, because the gate validated the scope signature and the presence of evidence but never looked at whether a hole body carried an expression. Joiner stopped sending placeholders under GB-225, but the receiving side needs the counterpart guard since any producer can hand the corpus an untrainable pair, and a dataset that admits one trains on it. The structural stage now rejects an empty or placeholder hole body and names the hole. Measured: 40 spool records -> 33 accepted, 7 rejected by name (add, human_bytes, smallest_window, grapheme_count); DPO shard went 2 rows -> 0, then to 1 real row after a fresh Gold fill. Gate: clippy -D warnings and 13 tests green.",
+    "kind": "bug",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "rabbet_core::gate::validator"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "The structural stage now rejects a trace whose filled hole body is empty or the <filled> placeholder, naming the hole, so the corpus cannot accept an untrainable pair from any producer (the HTTP path runs the same gate). Measured on the current spool: 40 records, 33 accepted, 7 rejected by name - add, human_bytes, smallest_window, grapheme_count. Consequence recorded deliberately: the DPO shard dropped from 2 rows to 0 at that point, because both rows were pairs whose chosen side carried no code. After a fresh four-run yield measurement (3 Silver, 1 Gold, all with real bodies) the shards are SFT 16 rows and DPO 1 row with real delegating code. Numbers and the five-defect chain are recorded in .gaugeblock/storypole/plans/GB-213.md.",
+      "verified_at_epoch_ms": 1793395570936,
+      "git_branch": "main",
+      "base_commit_sha": "41119929796d6bed75754b2fac2bf73dbcade524",
+      "head_commit_sha": "41119929796d6bed75754b2fac2bf73dbcade524",
+      "commit_shas": [
+        "41119929796d6bed75754b2fac2bf73dbcade524"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793395564252,
+    "updated_at_epoch_ms": 1794038020694,
+    "archived_at_epoch_ms": 1794038020694
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "2c1766d1-37a1-4353-8e93-58c0215c9120",
+        "ticket_key": "GB-227",
+        "slug": "the-ingest-gate-accepts-a-trace-whose-hole-body-is-a-placeholder-2c1766",
+        "title": "The ingest gate accepts a trace whose hole body is a placeholder",
+        "description": "RESOLVED in the same session as commit 3b42a20. Seven spool records reached the corpus with chosen set to the literal <filled>, because the gate validated the scope signature and the presence of evidence but never looked at whether a hole body carried an expression. Joiner stopped sending placeholders under GB-225, but the receiving side needs the counterpart guard since any producer can hand the corpus an untrainable pair, and a dataset that admits one trains on it. The structural stage now rejects an empty or placeholder hole body and names the hole. Measured: 40 spool records -> 33 accepted, 7 rejected by name (add, human_bytes, smallest_window, grapheme_count); DPO shard went 2 rows -> 0, then to 1 real row after a fresh Gold fill. Gate: clippy -D warnings and 13 tests green.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "rabbet_core::gate::validator"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793395564252,
+        "updated_at_epoch_ms": 1793395564252
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "2c1766d1-37a1-4353-8e93-58c0215c9120",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793395564478,
+        "lease_expires_at_epoch_ms": 1793399164478,
+        "git_branch": "fix/gb-227-reject-placeholders",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "2c1766d1-37a1-4353-8e93-58c0215c9120",
+      "from": "triage",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793395564478
+    },
+    {
+      "event": "task_verified",
+      "task_id": "2c1766d1-37a1-4353-8e93-58c0215c9120",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "The structural stage now rejects a trace whose filled hole body is empty or the <filled> placeholder, naming the hole, so the corpus cannot accept an untrainable pair from any producer (the HTTP path runs the same gate). Measured on the current spool: 40 records, 33 accepted, 7 rejected by name - add, human_bytes, smallest_window, grapheme_count. Consequence recorded deliberately: the DPO shard dropped from 2 rows to 0 at that point, because both rows were pairs whose chosen side carried no code. After a fresh four-run yield measurement (3 Silver, 1 Gold, all with real bodies) the shards are SFT 16 rows and DPO 1 row with real delegating code. Numbers and the five-defect chain are recorded in .gaugeblock/storypole/plans/GB-213.md.",
+        "verified_at_epoch_ms": 1793395570936,
+        "git_branch": "main",
+        "base_commit_sha": "41119929796d6bed75754b2fac2bf73dbcade524",
+        "head_commit_sha": "41119929796d6bed75754b2fac2bf73dbcade524",
+        "commit_shas": [
+          "41119929796d6bed75754b2fac2bf73dbcade524"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "2c1766d1-37a1-4353-8e93-58c0215c9120",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953176910
+    },
+    {
+      "event": "task_archived",
+      "task_id": "2c1766d1-37a1-4353-8e93-58c0215c9120",
+      "status": "verified",
+      "timestamp_ms": 1794038020694
+    }
+  ]
+}

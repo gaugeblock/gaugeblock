@@ -1,0 +1,93 @@
+{
+  "ticket": {
+    "id": "189405bf-a331-4dd7-a0fd-9ba0e2659949",
+    "ticket_key": "GB-298",
+    "slug": "create-gaugeblock-cli-one-entrypoint-wrapper-so-every-cli-invocation-emits-a-span-189405",
+    "title": "Create gaugeblock-cli: one entrypoint wrapper so every CLI invocation emits a span",
+    "description": "",
+    "kind": "refactor",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "gaugeblock_cli"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "MEASURED 2026-11-06, to decide whether this crate is worth existing. Answer: yes, but not for the reason its name suggests, and the scope should be narrower than 'a shared entrypoint'.\n\nLine counts across the ten binaries: miter 8, joiner 29, rabbet 29, benchwork 47, chalkline 47, batten 49, dado 57, outfeed 73, storypole 124, sawhorse 202. Total 665.\n\nA wrapper that absorbed the genuinely shared responsibilities would save perhaps 100-150 lines across the suite and would not touch the parts that make each binary big (sawhorse's 202 lines are its own command surface, storypole's 124 likewise).\n\nSo the case is NOT reduced line count. It is that the same three policies are re-implemented ten times and each is a correctness claim:\n  - telemetry: today zero binaries emit a span, and ten independent main() functions each have to remember to start and finish one (GB-294).\n  - exit codes and stderr routing: law 5 says logs never pollute stdout, because --json and --mcp modes parse it. Eight of the ten call Cli::parse and five declare #[tokio::main], so the runtime choice is also per-binary.\n  - json mode: the stdout/stderr split is a per-binary decision today.\n\nScope that follows from this: the crate owns 'run this handler, time it as a span, print its error to stderr, exit with the category's code, never write anything else to stdout'. It does NOT own clap structs, command enums or handler logic - those stay in the binaries, because they are the product, not boilerplate. That keeps adoption to a few lines per main and keeps the crate's surface small enough to be worth depending on.\n\nDependency note: the exit-code mapping wants the categories from GB-299. The wrapper can ship with a two-way mapping and adopt categories when they arrive, but it is worth knowing that the natural customer of the category taxonomy is this crate."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794078435206,
+    "updated_at_epoch_ms": 1794078685508
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "189405bf-a331-4dd7-a0fd-9ba0e2659949",
+        "ticket_key": "GB-298",
+        "slug": "create-gaugeblock-cli-one-entrypoint-wrapper-so-every-cli-invocation-emits-a-span-189405",
+        "title": "Create gaugeblock-cli: one entrypoint wrapper so every CLI invocation emits a span",
+        "description": "",
+        "kind": "refactor",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "gaugeblock_cli"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794078435206,
+        "updated_at_epoch_ms": 1794078435206
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "189405bf-a331-4dd7-a0fd-9ba0e2659949",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "SCOPE 2026-11-06, from the suite-wide telemetry design (GB-294).\n\nTen CLI entrypoints exist - batten, benchwork, chalkline, dado, joiner, outfeed, rabbet, sawhorse, storypole, miter - and not one of them references gaugeblock-workspace, so none has a shared entrypoint to hang telemetry on. common/crates has contracts, git, inventory, mcp, security, syntax and workspace, and no CLI crate. MCP has had this seam since the beginning (gaugeblock-mcp, seven consumers); CLI never got one, and per-invocation telemetry is exactly the feature that needs it.\n\nShape: a gaugeblock-cli crate exposing a run wrapper. The binary supplies its clap struct and handler; the wrapper derives the tool name from argv[0], the command from the first non-flag argument, starts a span before dispatch and finishes it on every exit path. Adoption is a couple of lines per main.rs, which is the difference between ten implementations and one.\n\nWhat it is for beyond telemetry, since a wrapper should earn more than one customer:\n- the tool name is currently derived ad hoc in several places (telemetry, install staleness, MCP server naming), and a shared notion of 'which tool am I' would make those agree by construction\n- exit-code discipline: every CLI decides its own mapping from error to exit code today, and law 5's stderr routing is re-implemented per binary\n- --json and --mcp modes both need stdout kept clean; a wrapper can guarantee that once instead of trusting ten binaries to remember it\n\nTRAP, recorded because it silently deletes the most interesting data: SpanGuard writes on Drop only when finish was never called, and std::process::exit skips Drop. A CLI that exits explicitly - which several do, to set an exit code - loses its span unless the wrapper finishes it first. Every exit path, including panics and early returns, must flush before exiting.\n\nAlso: spans are per invocation, not per operation. '5 miter calls' is the aggregate the panel is asked for, so a call that returns in 40 ms counts.\n\nDoes not depend on GB-297 (the MCP seam) and is not blocked by it: the two halves are independent, and a tool that has both transports emits from both.\n\nDone when: running any of the ten binaries from a member repository appends one span with binary and command set, --json output is byte-identical to today, and a failing command records status=error with the first diagnostic line."
+      ],
+      "timestamp_ms": 1794078452646
+    },
+    {
+      "event": "task_updated",
+      "task_id": "189405bf-a331-4dd7-a0fd-9ba0e2659949",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "MEASURED 2026-11-06, to decide whether this crate is worth existing. Answer: yes, but not for the reason its name suggests, and the scope should be narrower than 'a shared entrypoint'.\n\nLine counts across the ten binaries: miter 8, joiner 29, rabbet 29, benchwork 47, chalkline 47, batten 49, dado 57, outfeed 73, storypole 124, sawhorse 202. Total 665.\n\nA wrapper that absorbed the genuinely shared responsibilities would save perhaps 100-150 lines across the suite and would not touch the parts that make each binary big (sawhorse's 202 lines are its own command surface, storypole's 124 likewise).\n\nSo the case is NOT reduced line count. It is that the same three policies are re-implemented ten times and each is a correctness claim:\n  - telemetry: today zero binaries emit a span, and ten independent main() functions each have to remember to start and finish one (GB-294).\n  - exit codes and stderr routing: law 5 says logs never pollute stdout, because --json and --mcp modes parse it. Eight of the ten call Cli::parse and five declare #[tokio::main], so the runtime choice is also per-binary.\n  - json mode: the stdout/stderr split is a per-binary decision today.\n\nScope that follows from this: the crate owns 'run this handler, time it as a span, print its error to stderr, exit with the category's code, never write anything else to stdout'. It does NOT own clap structs, command enums or handler logic - those stay in the binaries, because they are the product, not boilerplate. That keeps adoption to a few lines per main and keeps the crate's surface small enough to be worth depending on.\n\nDependency note: the exit-code mapping wants the categories from GB-299. The wrapper can ship with a two-way mapping and adopt categories when they arrive, but it is worth knowing that the natural customer of the category taxonomy is this crate."
+      ],
+      "timestamp_ms": 1794078685508
+    }
+  ]
+}

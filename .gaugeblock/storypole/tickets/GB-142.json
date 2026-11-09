@@ -1,0 +1,177 @@
+{
+  "ticket": {
+    "id": "70b1eb64-354c-438d-bea8-03e189a2c983",
+    "ticket_key": "GB-142",
+    "slug": "extend-gaugeblock-contracts-with-the-miter-storypole-sawhorse-dado-and-batten-wire-domains-70b1eb",
+    "title": "Extend gaugeblock-contracts with the miter, storypole, sawhorse, dado and batten wire domains",
+    "description": "Subtask of Epic GB-129",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "contracts,types,gaugeblock-common"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "parent_epic",
+        "target_id": "2f6e3cb9-3675-4a61-ad47-3d9f4591871f",
+        "target_ticket_key": "GB-129",
+        "target_repo": "workspace"
+      },
+      {
+        "kind": "blocked_by",
+        "target_id": "7ed2836e-8876-4655-a1c0-35dbe6d36f9a"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "cline",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Epic complete: both children verified — GB-144 (miter, dado/batten and sawhorse domains, common a7b49c0) and GB-145 (storypole task-graph and ledger domain, common fcc0d7b). gaugeblock-contracts now carries all five domains: 42 wire types mirrored from CONTRACTS.md with 19 wire-shape tests, fmt/clippy/nextest green and the 12-target docs audit clean.",
+      "verified_at_epoch_ms": 1793220851043,
+      "git_branch": "main",
+      "base_commit_sha": "642ebaa302e5e3d3c41195d9b67902266348c1b8",
+      "head_commit_sha": "642ebaa302e5e3d3c41195d9b67902266348c1b8",
+      "commit_shas": [
+        "642ebaa302e5e3d3c41195d9b67902266348c1b8"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793218934444,
+    "updated_at_epoch_ms": 1794038000584,
+    "archived_at_epoch_ms": 1794038000584
+  },
+  "events": [
+    {
+      "event": "status_changed",
+      "task_id": "70b1eb64-354c-438d-bea8-03e189a2c983",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-141 verified",
+      "timestamp_ms": 1793219293219
+    },
+    {
+      "event": "task_split",
+      "parent_task_id": "70b1eb64-354c-438d-bea8-03e189a2c983",
+      "spawned_children": [
+        {
+          "id": "a18d0530-f27d-452c-9338-3c6e94cf3e39",
+          "ticket_key": "GB-144",
+          "slug": "add-the-miter-sawhorse-dado-and-batten-wire-domains-to-gaugeblock-contracts-a18d05",
+          "title": "Add the miter, sawhorse, dado and batten wire domains to gaugeblock-contracts",
+          "description": "Subtask of Epic GB-142",
+          "kind": "feature",
+          "status": "ready",
+          "priority": 2,
+          "scope": {
+            "repo": "workspace",
+            "crate_name": null,
+            "module_path": null,
+            "target_files": [],
+            "target_symbols": [],
+            "labels": [
+              "contracts,types,gaugeblock-common"
+            ]
+          },
+          "edges": [
+            {
+              "kind": "parent_epic",
+              "target_id": "70b1eb64-354c-438d-bea8-03e189a2c983",
+              "target_ticket_key": "GB-142",
+              "target_repo": "workspace"
+            }
+          ],
+          "decisions": [],
+          "acceptance_criteria": [],
+          "plan": null,
+          "active_claim": null,
+          "latest_handoff": null,
+          "verification_receipt": null,
+          "created_at_epoch_ms": 1793219668710,
+          "updated_at_epoch_ms": 1793219668710
+        },
+        {
+          "id": "dbddbc48-c2d3-46cb-86c6-5978bf797a96",
+          "ticket_key": "GB-145",
+          "slug": "add-the-storypole-wire-domain-tasknode-taskplan-ledgerevent-to-gaugeblock-contracts-dbddbc",
+          "title": "Add the storypole wire domain (TaskNode, TaskPlan, LedgerEvent) to gaugeblock-contracts",
+          "description": "Subtask of Epic GB-142",
+          "kind": "feature",
+          "status": "blocked",
+          "priority": 2,
+          "scope": {
+            "repo": "workspace",
+            "crate_name": null,
+            "module_path": null,
+            "target_files": [],
+            "target_symbols": [],
+            "labels": [
+              "contracts,types,gaugeblock-common"
+            ]
+          },
+          "edges": [
+            {
+              "kind": "parent_epic",
+              "target_id": "70b1eb64-354c-438d-bea8-03e189a2c983",
+              "target_ticket_key": "GB-142",
+              "target_repo": "workspace"
+            },
+            {
+              "kind": "blocked_by",
+              "target_id": "a18d0530-f27d-452c-9338-3c6e94cf3e39"
+            }
+          ],
+          "decisions": [],
+          "acceptance_criteria": [],
+          "plan": null,
+          "active_claim": null,
+          "latest_handoff": null,
+          "verification_receipt": null,
+          "created_at_epoch_ms": 1793219668710,
+          "updated_at_epoch_ms": 1793219668710
+        }
+      ],
+      "timestamp_ms": 1793219668710
+    },
+    {
+      "event": "task_verified",
+      "task_id": "70b1eb64-354c-438d-bea8-03e189a2c983",
+      "receipt": {
+        "verifier": "cline",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Epic complete: both children verified — GB-144 (miter, dado/batten and sawhorse domains, common a7b49c0) and GB-145 (storypole task-graph and ledger domain, common fcc0d7b). gaugeblock-contracts now carries all five domains: 42 wire types mirrored from CONTRACTS.md with 19 wire-shape tests, fmt/clippy/nextest green and the 12-target docs audit clean.",
+        "verified_at_epoch_ms": 1793220851043,
+        "git_branch": "main",
+        "base_commit_sha": "642ebaa302e5e3d3c41195d9b67902266348c1b8",
+        "head_commit_sha": "642ebaa302e5e3d3c41195d9b67902266348c1b8",
+        "commit_shas": [
+          "642ebaa302e5e3d3c41195d9b67902266348c1b8"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "70b1eb64-354c-438d-bea8-03e189a2c983",
+      "status": "verified",
+      "timestamp_ms": 1794038000584
+    }
+  ]
+}

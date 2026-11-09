@@ -1,0 +1,93 @@
+{
+  "ticket": {
+    "id": "434c0d9d-04af-45f7-b588-55e839b826c5",
+    "ticket_key": "GB-294",
+    "slug": "only-sawhorse-emits-spans-the-flight-recorder-has-one-producer-so-a-wired-panel-still-looks-empty-434c0d",
+    "title": "Only sawhorse emits spans: the flight recorder has one producer, so a wired panel still looks empty",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "sawhorse_core::telemetry"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "RESCOPED 2026-11-06 after the design intent was stated: telemetry is meant to be suite-wide. Every tool - miter, joiner, batten, dado, storypole, chalkline, outfeed, sawhorse, benchwork - should emit a span per invocation, for BOTH transports (CLI and MCP), and benchwork aggregates them into something meaningful: how many miter calls, how many joiner calls, what failed, how long each took.\n\nMy earlier framing of this ticket was wrong in kind, not in detail. It read 'only sawhorse emits spans' as a state to describe. It is a gap against an intended design, and the design was one of the reasons logic moved into gaugeblock-mcp in the first place.\n\nThat also answers the granularity question I left open here: per invocation. '5 miter calls' is a count, so a span per call, not only for long-running operations. A short command is still a call somebody made, and the aggregate is the product.\n\nTHE TWO SEAMS, measured:\n\n1. MCP - already shared. common/crates/gaugeblock-mcp provides the generic loop (stdio.rs: dispatch, handle_line, serve) and seven server crates depend on it: batten, benchwork, chalkline, dado, joiner, outfeed, storypole. Instrumenting dispatch once covers all seven, in the one place that already owns 'a request arrived and was answered'.\n   The outlier is miter-mcp, which does not depend on gaugeblock-mcp at all and runs its own protocol loop. GB-235 already exists to migrate it; until that lands, miter is the one tool that would emit no MCP spans. Worth sequencing before calling this done.\n\n2. CLI - no shared seam exists. common/crates has contracts, git, inventory, mcp, security, syntax, workspace and no CLI crate, so every binary's main.rs is its own entrypoint. That is the case for a gaugeblock-cli crate: one wrapper that times the invocation, derives the tool name from argv[0] and the command from argv[1], and writes a span on exit. Adoption is a couple of lines per binary instead of an implementation per binary.\n\nIMPLEMENTATION TRAP worth recording before someone hits it: SpanGuard writes on Drop only if finish was never called, and a CLI that calls std::process::exit skips Drop entirely. The wrapper must finish the span explicitly on every exit path, including the error and early-return ones, or the spans that are most interesting - the failures - are exactly the ones that go missing.\n\nAlso required, not optional: nothing may reach stdout, because --json and --mcp modes parse it (law 5). The span goes to the file and nowhere else.\n\nNOT the same bug as GB-293. That one is the reader: benchwork tails one repository in a suite of twelve, so even perfect emission would be invisible. This one is the writer: two tools emit nothing today (nothing but sawhorse emits anything, and no CLI emits spans at all). Both are needed before the panel can mean anything, and fixing either alone produces a different flavour of empty.\n\nDone when: a CLI run of miter, joiner or dado, and an MCP tools/call to any of the seven shared servers, each produce a row; benchwork's aggregate view counts them per tool; and the counts survive the tools being run from inside member repositories rather than the suite root."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794038093392,
+    "updated_at_epoch_ms": 1794078431170
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "434c0d9d-04af-45f7-b588-55e839b826c5",
+        "ticket_key": "GB-294",
+        "slug": "only-sawhorse-emits-spans-the-flight-recorder-has-one-producer-so-a-wired-panel-still-looks-empty-434c0d",
+        "title": "Only sawhorse emits spans: the flight recorder has one producer, so a wired panel still looks empty",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "sawhorse_core::telemetry"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794038093392,
+        "updated_at_epoch_ms": 1794038093392
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "434c0d9d-04af-45f7-b588-55e839b826c5",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "MEASURED 2026-11-06. Span production is one call site: sawhorse-core/src/telemetry.rs record_completion, which emits spans for LLM completions only. Every other tool in the suite emits none.\n\nEvidence: grep for append_span / SpanGuard across all crates returns only gaugeblock-workspace (the library that defines them) and sawhorse-core (the one producer). Two spans exist in the whole tree, both binary=sawhorse, command=complete, status=error.\n\nConsequence: even after GB-293 makes the panel aggregate every repository, it will show a nearly empty view, and the spans it does show will all be error-classified because this environment has no inference credentials. A flight recorder with one noisy producer is indistinguishable, to a user, from a flight recorder that does not work - which is how it was reported.\n\nThe natural producers, each already instrumented with tracing and each a step a user would want to see in a waterfall:\n  outfeed gate and apply (the release pipeline: the longest-running, most failure-prone thing in the suite)\n  storypole verify (the chain whose silence was the recurring defect of this session)\n  miter index and verify (expensive, and their cost is a recorded concern under law 12)\n  chalkline docs check (runs in every verification chain)\n\nWorth deciding before implementing: whether a span per CLI invocation is the right granularity, or only for operations that already carry a trace id. Emitting one span per short command would flood the index and make the waterfall less useful than the current emptiness."
+      ],
+      "timestamp_ms": 1794038105529
+    },
+    {
+      "event": "task_updated",
+      "task_id": "434c0d9d-04af-45f7-b588-55e839b826c5",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "RESCOPED 2026-11-06 after the design intent was stated: telemetry is meant to be suite-wide. Every tool - miter, joiner, batten, dado, storypole, chalkline, outfeed, sawhorse, benchwork - should emit a span per invocation, for BOTH transports (CLI and MCP), and benchwork aggregates them into something meaningful: how many miter calls, how many joiner calls, what failed, how long each took.\n\nMy earlier framing of this ticket was wrong in kind, not in detail. It read 'only sawhorse emits spans' as a state to describe. It is a gap against an intended design, and the design was one of the reasons logic moved into gaugeblock-mcp in the first place.\n\nThat also answers the granularity question I left open here: per invocation. '5 miter calls' is a count, so a span per call, not only for long-running operations. A short command is still a call somebody made, and the aggregate is the product.\n\nTHE TWO SEAMS, measured:\n\n1. MCP - already shared. common/crates/gaugeblock-mcp provides the generic loop (stdio.rs: dispatch, handle_line, serve) and seven server crates depend on it: batten, benchwork, chalkline, dado, joiner, outfeed, storypole. Instrumenting dispatch once covers all seven, in the one place that already owns 'a request arrived and was answered'.\n   The outlier is miter-mcp, which does not depend on gaugeblock-mcp at all and runs its own protocol loop. GB-235 already exists to migrate it; until that lands, miter is the one tool that would emit no MCP spans. Worth sequencing before calling this done.\n\n2. CLI - no shared seam exists. common/crates has contracts, git, inventory, mcp, security, syntax, workspace and no CLI crate, so every binary's main.rs is its own entrypoint. That is the case for a gaugeblock-cli crate: one wrapper that times the invocation, derives the tool name from argv[0] and the command from argv[1], and writes a span on exit. Adoption is a couple of lines per binary instead of an implementation per binary.\n\nIMPLEMENTATION TRAP worth recording before someone hits it: SpanGuard writes on Drop only if finish was never called, and a CLI that calls std::process::exit skips Drop entirely. The wrapper must finish the span explicitly on every exit path, including the error and early-return ones, or the spans that are most interesting - the failures - are exactly the ones that go missing.\n\nAlso required, not optional: nothing may reach stdout, because --json and --mcp modes parse it (law 5). The span goes to the file and nowhere else.\n\nNOT the same bug as GB-293. That one is the reader: benchwork tails one repository in a suite of twelve, so even perfect emission would be invisible. This one is the writer: two tools emit nothing today (nothing but sawhorse emits anything, and no CLI emits spans at all). Both are needed before the panel can mean anything, and fixing either alone produces a different flavour of empty.\n\nDone when: a CLI run of miter, joiner or dado, and an MCP tools/call to any of the seven shared servers, each produce a row; benchwork's aggregate view counts them per tool; and the counts survive the tools being run from inside member repositories rather than the suite root."
+      ],
+      "timestamp_ms": 1794078431170
+    }
+  ]
+}

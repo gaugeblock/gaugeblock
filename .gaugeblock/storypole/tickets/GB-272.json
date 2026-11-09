@@ -1,0 +1,221 @@
+{
+  "ticket": {
+    "id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+    "ticket_key": "GB-272",
+    "slug": "storypole-verify-should-default-to-running-the-gate-with-manual-as-the-explicit-opt-out-d30dc8",
+    "title": "storypole verify should default to running the gate, with --manual as the explicit opt-out",
+    "description": "",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::handlers"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "MEASURED 2026-11-06",
+      " per law 12",
+      " because the flip was challenged as a performance regression and a claim without a number is a guess. Environment: darwin",
+      " stable toolchain",
+      " warm cargo cache",
+      " sequential runs.\\n\\nSuite-level chain (miter contracts + outfeed lockfiles + chalkline docs check --workspace): real 12.43s",
+      " user 4.63s",
+      " sys 4.59s. Repo-level chain (fmt + clippy + nextest + docs check on rabbet): real 84.76s - and that run included compiling rabbet-core and its deps from scratch",
+      " so it is an upper bound rather than steady state.\\n\\nMy earlier 'minutes' claim was wrong for the suite chain and too pessimistic; the honest figures are above. The framing that matters: the previous path returned in under a second while executing nothing",
+      " so this is not a regression against a baseline that measured work - it is the first measurement of work that was always supposed to happen. Cost is ordered cheapest-first inside each chain (fmt",
+      " then clippy",
+      " then tests",
+      " then docs) so the first failure is the cheapest one.\\n\\nRecorded in three places as law 12 requires: this criterion",
+      " the AGENTS.md Tier 2 entry",
+      " and commit 06936fb."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794106537976,
+      "git_branch": "main",
+      "base_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+      "head_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+      "commit_shas": [
+        "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1794002495038,
+    "updated_at_epoch_ms": 1794106537976
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+        "ticket_key": "GB-272",
+        "slug": "storypole-verify-should-default-to-running-the-gate-with-manual-as-the-explicit-opt-out-d30dc8",
+        "title": "storypole verify should default to running the gate, with --manual as the explicit opt-out",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_cli::handlers"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794002495038,
+        "updated_at_epoch_ms": 1794002495038
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "EVIDENCE 2026-11-06. 'storypole verify GB-243' returned in under 24 seconds with 'verifier: manual",
+        " exit_code: Some(0)' and ran nothing; the configured gate was only reached with --run",
+        " which is a flag an operator must remember. For a command whose entire purpose is certification",
+        " the safe default is the one that executes",
+        " and skipping execution should require saying so. Proposed: verify runs the configured command by default; --manual records a human attestation and its receipt says so plainly (it already labels 'manual'",
+        " which is honest but currently the default). Pairs with GB-269 (fallback visibility) and GB-268 (config population) - all three concern the same invariant: a receipt must never be stronger than the evidence behind it."
+      ],
+      "timestamp_ms": 1794002501265
+    },
+    {
+      "event": "task_updated",
+      "task_id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "DONE 2026-11-06 (storypole 06936fb)",
+        " on the quality-first ruling that a receipt saying exit_code 0 must mean something ran.\\n\\nBehaviour: 'storypole verify <KEY>' now executes the configured command. --manual records a human attestation instead and its receipt says so; --run is still accepted as a no-op for compatibility. BREAKING CHANGE recorded in the commit footer.\\n\\nSupporting fix found while testing: unscoped tasks - no crate",
+        " no repo",
+        " normal for harness-level work - never called verification_command_for at all",
+        " so a reserved 'default' entry was unreachable. Now the resolution chain ends with a non-matching probe that lands on 'default'",
+        " and root config carries one: 'miter contracts && outfeed lockfiles && chalkline docs check --workspace'.\\n\\nVERIFIED end to end: 'storypole verify GB-266' with no flags produced verifier: storypole-verify",
+        " exit_code: 0 - the suite chain ran. Tier 2: fmt clean",
+        " clippy -D warnings clean",
+        " 55/55.\\n\\nConsequence to expect: verification now takes as long as the repo's gate (fmt + clippy + nextest + docs",
+        " minutes on a cold cache) instead of returning instantly. That cost is the point - two defects today were found only because something finally ran."
+      ],
+      "timestamp_ms": 1794003673179
+    },
+    {
+      "event": "task_updated",
+      "task_id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "MEASURED 2026-11-06",
+        " per law 12",
+        " because the flip was challenged as a performance regression and a claim without a number is a guess. Environment: darwin",
+        " stable toolchain",
+        " warm cargo cache",
+        " sequential runs.\\n\\nSuite-level chain (miter contracts + outfeed lockfiles + chalkline docs check --workspace): real 12.43s",
+        " user 4.63s",
+        " sys 4.59s. Repo-level chain (fmt + clippy + nextest + docs check on rabbet): real 84.76s - and that run included compiling rabbet-core and its deps from scratch",
+        " so it is an upper bound rather than steady state.\\n\\nMy earlier 'minutes' claim was wrong for the suite chain and too pessimistic; the honest figures are above. The framing that matters: the previous path returned in under a second while executing nothing",
+        " so this is not a regression against a baseline that measured work - it is the first measurement of work that was always supposed to happen. Cost is ordered cheapest-first inside each chain (fmt",
+        " then clippy",
+        " then tests",
+        " then docs) so the first failure is the cheapest one.\\n\\nRecorded in three places as law 12 requires: this criterion",
+        " the AGENTS.md Tier 2 entry",
+        " and commit 06936fb."
+      ],
+      "timestamp_ms": 1794004005635
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+      "claim": {
+        "agent_id": "cline-agent",
+        "claimed_at_epoch_ms": 1794106280553,
+        "lease_expires_at_epoch_ms": 1794109880553,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+      "from": "deferred",
+      "to": "in_progress",
+      "reason": "Claimed by cline-agent",
+      "timestamp_ms": 1794106280553
+    },
+    {
+      "event": "task_verified",
+      "task_id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794106294496,
+        "git_branch": "feat/gb-305-multi-repo-gate",
+        "base_commit_sha": "60e855f32227d06d0ccf5e977b872c97fbb40431",
+        "head_commit_sha": "c123df9d54b50c4046a8327fc5bedd18995a1a52",
+        "commit_shas": [
+          "c123df9d54b50c4046a8327fc5bedd18995a1a52"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_verified",
+      "task_id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794106537976,
+        "git_branch": "main",
+        "base_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+        "head_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+        "commit_shas": [
+          "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    }
+  ]
+}

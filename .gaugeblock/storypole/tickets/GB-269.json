@@ -1,0 +1,117 @@
+{
+  "ticket": {
+    "id": "a7150097-ec17-4722-ac8c-0e23f5bae9c9",
+    "ticket_key": "GB-269",
+    "slug": "verify-falls-back-to-cargo-test-silently-so-a-weak-receipt-is-indistinguishable-from-a-configured-one-a71500",
+    "title": "verify falls back to cargo test silently, so a weak receipt is indistinguishable from a configured one",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::ops::verification"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "FIXED 2026-11-06 (storypole commit). No contract change was needed: VerificationReceipt already carries 'command' and 'verifier'. The fallback now states itself three ways - a stderr warning naming the scope",
+      " a verifier suffix ':cargo-test-fallback'",
+      " and a summary prefix '[fallback: no verification command configured; ran `cargo test`]'. The last one matters most because the receipt is what a later reader trusts",
+      " possibly months afterwards.\\n\\nThe fallback is retained on purpose: cargo is the only tool guaranteed in an individually cloned repo (law 2)",
+      " so a weaker default is defensible while an unlabeled one is not.\\n\\nVerified: fmt clean",
+      " clippy -D warnings clean",
+      " 55/55. NOT verified end-to-end: both the configured and fallback paths need one real 'storypole verify' run",
+      " and every repo now has a command configured",
+      " so the fallback path needs an unscoped or unconfigured task to exercise."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794000362791,
+    "updated_at_epoch_ms": 1794000691180
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "a7150097-ec17-4722-ac8c-0e23f5bae9c9",
+        "ticket_key": "GB-269",
+        "slug": "verify-falls-back-to-cargo-test-silently-so-a-weak-receipt-is-indistinguishable-from-a-configured-one-a71500",
+        "title": "verify falls back to cargo test silently, so a weak receipt is indistinguishable from a configured one",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::ops::verification"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794000362791,
+        "updated_at_epoch_ms": 1794000362791
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "a7150097-ec17-4722-ac8c-0e23f5bae9c9",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "ANALYSIS 2026-11-06. ops/verification/mod.rs resolves a command by crate name then repo name via config.verification_command_for()",
+        " and falls back to a hardcoded 'cargo test' when neither matches. Nothing records which happened",
+        " so a task verified against 'cargo test' alone produces the same shape of receipt as one that ran fmt",
+        " clippy",
+        " tests and docs. That is the third instance today of the same failure mode - silence that reads as success",
+        " alongside outfeed's 'up-to-date' and 'verifier: manual'.\\n\\nFIX: the receipt must carry the command that actually ran and whether it was configured or a fallback",
+        " and verify should say so on stderr when it falls back. Rationale for keeping the fallback rather than erroring: cargo is the only tool guaranteed present in an individually cloned repository (law 2)",
+        " and defaulting to a weaker check is defensible; presenting it as equivalent is not.\\n\\nDo NOT simply error on an unconfigured repo: that would make storypole unusable in a fresh clone",
+        " which is the exact scenario the fallback exists for."
+      ],
+      "timestamp_ms": 1794000368403
+    },
+    {
+      "event": "task_updated",
+      "task_id": "a7150097-ec17-4722-ac8c-0e23f5bae9c9",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "FIXED 2026-11-06 (storypole commit). No contract change was needed: VerificationReceipt already carries 'command' and 'verifier'. The fallback now states itself three ways - a stderr warning naming the scope",
+        " a verifier suffix ':cargo-test-fallback'",
+        " and a summary prefix '[fallback: no verification command configured; ran `cargo test`]'. The last one matters most because the receipt is what a later reader trusts",
+        " possibly months afterwards.\\n\\nThe fallback is retained on purpose: cargo is the only tool guaranteed in an individually cloned repo (law 2)",
+        " so a weaker default is defensible while an unlabeled one is not.\\n\\nVerified: fmt clean",
+        " clippy -D warnings clean",
+        " 55/55. NOT verified end-to-end: both the configured and fallback paths need one real 'storypole verify' run",
+        " and every repo now has a command configured",
+        " so the fallback path needs an unscoped or unconfigured task to exercise."
+      ],
+      "timestamp_ms": 1794000691180
+    }
+  ]
+}

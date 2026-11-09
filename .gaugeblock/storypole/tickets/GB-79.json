@@ -1,0 +1,115 @@
+{
+  "ticket": {
+    "id": "7f164577-2ead-4e15-ba2e-7f0d75065f70",
+    "ticket_key": "GB-79",
+    "slug": "workspacestore-sync-all-members-event-replay-ordering-and-distribute-event-synchronization-7f1645",
+    "title": "WorkspaceStore sync_all_members event replay ordering and distribute event synchronization",
+    "description": "WorkspaceStore sync_all_members event replay ordering and distribute event synchronization.\\n\\nEVIDENCE 2026-11-06 (measured while closing ten stale tickets): the SAME task id lives in both the root ledger and the owning member ledger - GB-28 is a655439f-8f4d-49d3-b24d-89f01fdfe164 in .gaugeblock/storypole/ledger.jsonl AND in storypole/.storypole/ledger.jsonl, and likewise GB-47/GB-48/GB-55 in outfeed, GB-34/GB-35/GB-37 in benchwork, GB-57 in storypole. 'storypole verify GB-28' at the harness root appended task_verified to the ROOT ledger only; the member replay still read ready, so the unified list, the benchwork DagBoard and every member-scoped view kept reporting the ticket as open while the root copy said verified. The fix that worked was to re-run the same verify with --dir <member> so the event landed in the owning ledger too, which leaves two receipts for one act. Distribution is one-way (task records are copied, later events are not), so any state transition performed through the wrong store silently diverges. Needs: sync_all_members to reconcile per-task event logs in timestamp order, and distribute to carry forward events that postdate the copy.\n\nABSORBED 2026-11-08 into GB-328, steps GB-329 and GB-330. The decision keeps the requirement this ticket names, replay in timestamp order with one-way distribution fixed, and removes its cause: tickets live one per file inside one owning repository, so there is no second copy to reconcile and no partial distribution to carry forward. The divergence recorded here is still the justification for the duplicate-uuid-is-corruption invariant (GB-330) and for the differential-replay gate (GB-331).",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 1,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::workspace::store::StorypoleWorkspaceStore::sync_all_members"
+      ],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "parent_epic",
+        "target_id": "32422c86-ccda-4983-afc1-07a2f7200806",
+        "target_ticket_key": "GB-328",
+        "target_repo": "storypole"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793059899030,
+    "updated_at_epoch_ms": 1794167036859
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "7f164577-2ead-4e15-ba2e-7f0d75065f70",
+        "ticket_key": "GB-79",
+        "slug": "workspacestore-sync-all-members-event-replay-ordering-and-distribute-event-synchronization-7f1645",
+        "title": "WorkspaceStore sync_all_members event replay ordering and distribute event synchronization",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::workspace::store::StorypoleWorkspaceStore::sync_all_members"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793059899030,
+        "updated_at_epoch_ms": 1793059899030
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "7f164577-2ead-4e15-ba2e-7f0d75065f70",
+      "title": null,
+      "description": "WorkspaceStore sync_all_members event replay ordering and distribute event synchronization.\\n\\nEVIDENCE 2026-11-06 (measured while closing ten stale tickets): the SAME task id lives in both the root ledger and the owning member ledger - GB-28 is a655439f-8f4d-49d3-b24d-89f01fdfe164 in .gaugeblock/storypole/ledger.jsonl AND in storypole/.storypole/ledger.jsonl, and likewise GB-47/GB-48/GB-55 in outfeed, GB-34/GB-35/GB-37 in benchwork, GB-57 in storypole. 'storypole verify GB-28' at the harness root appended task_verified to the ROOT ledger only; the member replay still read ready, so the unified list, the benchwork DagBoard and every member-scoped view kept reporting the ticket as open while the root copy said verified. The fix that worked was to re-run the same verify with --dir <member> so the event landed in the owning ledger too, which leaves two receipts for one act. Distribution is one-way (task records are copied, later events are not), so any state transition performed through the wrong store silently diverges. Needs: sync_all_members to reconcile per-task event logs in timestamp order, and distribute to carry forward events that postdate the copy.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793942222478
+    },
+    {
+      "event": "edge_added",
+      "task_id": "7f164577-2ead-4e15-ba2e-7f0d75065f70",
+      "edge": {
+        "kind": "parent_epic",
+        "target_id": "32422c86-ccda-4983-afc1-07a2f7200806",
+        "target_ticket_key": "GB-328",
+        "target_repo": "storypole"
+      },
+      "timestamp_ms": 1794167036646
+    },
+    {
+      "event": "task_updated",
+      "task_id": "7f164577-2ead-4e15-ba2e-7f0d75065f70",
+      "title": null,
+      "description": null,
+      "priority": 1,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794167036759
+    },
+    {
+      "event": "task_updated",
+      "task_id": "7f164577-2ead-4e15-ba2e-7f0d75065f70",
+      "title": null,
+      "description": "WorkspaceStore sync_all_members event replay ordering and distribute event synchronization.\\n\\nEVIDENCE 2026-11-06 (measured while closing ten stale tickets): the SAME task id lives in both the root ledger and the owning member ledger - GB-28 is a655439f-8f4d-49d3-b24d-89f01fdfe164 in .gaugeblock/storypole/ledger.jsonl AND in storypole/.storypole/ledger.jsonl, and likewise GB-47/GB-48/GB-55 in outfeed, GB-34/GB-35/GB-37 in benchwork, GB-57 in storypole. 'storypole verify GB-28' at the harness root appended task_verified to the ROOT ledger only; the member replay still read ready, so the unified list, the benchwork DagBoard and every member-scoped view kept reporting the ticket as open while the root copy said verified. The fix that worked was to re-run the same verify with --dir <member> so the event landed in the owning ledger too, which leaves two receipts for one act. Distribution is one-way (task records are copied, later events are not), so any state transition performed through the wrong store silently diverges. Needs: sync_all_members to reconcile per-task event logs in timestamp order, and distribute to carry forward events that postdate the copy.\n\nABSORBED 2026-11-08 into GB-328, steps GB-329 and GB-330. The decision keeps the requirement this ticket names, replay in timestamp order with one-way distribution fixed, and removes its cause: tickets live one per file inside one owning repository, so there is no second copy to reconcile and no partial distribution to carry forward. The divergence recorded here is still the justification for the duplicate-uuid-is-corruption invariant (GB-330) and for the differential-replay gate (GB-331).",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794167036859
+    }
+  ]
+}

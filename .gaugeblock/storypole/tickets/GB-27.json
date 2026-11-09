@@ -1,0 +1,207 @@
+{
+  "ticket": {
+    "id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+    "ticket_key": "GB-27",
+    "slug": "display-commit-ref-and-verifier-badge-in-benchwork-backlog-inspector-d8b6bf",
+    "title": "Display branch isolation, commit lineage, and verifier badges in Benchwork task inspector",
+    "description": "Update Benchwork Task Briefing Drawer, InspectorHandoffAndGate, and Kanban cards to render active branch claims, verification branch, base/head commit SHAs, atomic commit list pills, and verifier badges with git checkout helper.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork,inspector,verification,ui"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "b91f614d-543f-429e-afd3-438ee5dd6998"
+      },
+      {
+        "kind": "blocked_by",
+        "target_id": "d747957d-ec95-430c-971b-ec6e1f24f22a"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Task inspector renders git branch, base_commit_sha, and head_commit_sha in Verification Gate and Claim sections",
+      "Renders list of atomic commit pills with short SHA and copy/git navigation",
+      "Displays verifier badge with distinct styling for miter vs agent vs manual",
+      "Kanban and list view display branch pill on InProgress and Verified cards"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Rendered branch isolation, base/head commit SHAs, atomic commit list pills, and verifier badges across InspectorHandoffAndGate, KanbanBoardView, and TaskTableView",
+      "verified_at_epoch_ms": 1792860955769,
+      "git_branch": "feat/gb-27-branch-isolation-ui",
+      "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "commit_shas": [
+        "d077715a40cf1fe0f23fea84cd151072305bad74"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792733272075,
+    "updated_at_epoch_ms": 1794038005832,
+    "archived_at_epoch_ms": 1794038005832
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+        "ticket_key": "GB-27",
+        "slug": "display-commit-ref-and-verifier-badge-in-benchwork-backlog-inspector-d8b6bf",
+        "title": "Display commit ref and verifier badge in Benchwork backlog inspector",
+        "description": "Update Benchwork Task Briefing Drawer and InspectorHandoffAndGate component to display the short commit ref and verifier badge recorded in VerificationReceipt with copy/git navigation.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 3,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork,inspector,verification,ui"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "Task inspector renders commit_ref pill with mono font in Verification Gate section,displays verifier badge with distinct styling for miter vs agent vs manual"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792733272075,
+        "updated_at_epoch_ms": 1792733272075
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "b91f614d-543f-429e-afd3-438ee5dd6998"
+      },
+      "timestamp_ms": 1792733279435
+    },
+    {
+      "event": "status_changed",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-25",
+      "timestamp_ms": 1792733279435
+    },
+    {
+      "event": "status_changed",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-25 verified",
+      "timestamp_ms": 1792859948451
+    },
+    {
+      "event": "task_updated",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "title": "Display branch isolation, commit lineage, and verifier badges in Benchwork task inspector",
+      "description": "Update Benchwork Task Briefing Drawer, InspectorHandoffAndGate, and Kanban cards to render active branch claims, verification branch, base/head commit SHAs, atomic commit list pills, and verifier badges with git checkout helper.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Task inspector renders git branch, base_commit_sha, and head_commit_sha in Verification Gate and Claim sections",
+        "Renders list of atomic commit pills with short SHA and copy/git navigation",
+        "Displays verifier badge with distinct styling for miter vs agent vs manual",
+        "Kanban and list view display branch pill on InProgress and Verified cards"
+      ],
+      "timestamp_ms": 1792859972644
+    },
+    {
+      "event": "edge_added",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "d747957d-ec95-430c-971b-ec6e1f24f22a"
+      },
+      "timestamp_ms": 1792860024071
+    },
+    {
+      "event": "status_changed",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-29",
+      "timestamp_ms": 1792860024071
+    },
+    {
+      "event": "status_changed",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-29 verified",
+      "timestamp_ms": 1792860774365
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792860815516,
+        "lease_expires_at_epoch_ms": 1792864415516,
+        "git_branch": "feat/gb-27-branch-isolation-ui",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792860815516
+    },
+    {
+      "event": "task_verified",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Rendered branch isolation, base/head commit SHAs, atomic commit list pills, and verifier badges across InspectorHandoffAndGate, KanbanBoardView, and TaskTableView",
+        "verified_at_epoch_ms": 1792860955769,
+        "git_branch": "feat/gb-27-branch-isolation-ui",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "commit_shas": [
+          "d077715a40cf1fe0f23fea84cd151072305bad74"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "d8b6bf79-6aac-4330-a592-258adfab3a6e",
+      "status": "verified",
+      "timestamp_ms": 1794038005832
+    }
+  ]
+}

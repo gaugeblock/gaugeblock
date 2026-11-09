@@ -1,0 +1,160 @@
+{
+  "ticket": {
+    "id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+    "ticket_key": "GB-31",
+    "slug": "interactive-task-claim-with-branch-isolation-and-handoff-workflow-in-benchwork-ui-e275a0",
+    "title": "Interactive task claim with branch isolation and handoff workflow in Benchwork UI",
+    "description": "Add interactive Claim Task modal/actions to Panel 2 (Kanban & List views) allowing agents/users to claim a task, select or auto-create a dedicated feature branch (feat/<key>-<slug>), renew heartbeat lease, and record structured HandoffPackets on pause/fail.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork,claims,git,ui"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "d747957d-ec95-430c-971b-ec6e1f24f22a"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Claim modal prompts for agent_id and branch name with auto-generated slug;Calls storypole claim --branch under the hood to isolate git working tree;Task card and inspector show active claim countdown timer and agent badge;Handoff drawer allows recording completed/remaining items and dirty files"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "antigravity",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Added claim and handoff REST endpoints in daemon and interactive Claim and Handoff modals in Benchwork Inspector",
+      "verified_at_epoch_ms": 1792861360570,
+      "git_branch": "feat/gb-31-task-claim-handoff-ui",
+      "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+      "commit_shas": [
+        "d077715a40cf1fe0f23fea84cd151072305bad74"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792859997789,
+    "updated_at_epoch_ms": 1794037988868,
+    "archived_at_epoch_ms": 1794037988868
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+        "ticket_key": "GB-31",
+        "slug": "interactive-task-claim-with-branch-isolation-and-handoff-workflow-in-benchwork-ui-e275a0",
+        "title": "Interactive task claim with branch isolation and handoff workflow in Benchwork UI",
+        "description": "Add interactive Claim Task modal/actions to Panel 2 (Kanban & List views) allowing agents/users to claim a task, select or auto-create a dedicated feature branch (feat/<key>-<slug>), renew heartbeat lease, and record structured HandoffPackets on pause/fail.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork,claims,git,ui"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "Claim modal prompts for agent_id and branch name with auto-generated slug;Calls storypole claim --branch under the hood to isolate git working tree;Task card and inspector show active claim countdown timer and agent badge;Handoff drawer allows recording completed/remaining items and dirty files"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792859997789,
+        "updated_at_epoch_ms": 1792859997789
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "d747957d-ec95-430c-971b-ec6e1f24f22a"
+      },
+      "timestamp_ms": 1792860024140
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-29",
+      "timestamp_ms": 1792860024140
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-29 verified",
+      "timestamp_ms": 1792860774365
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792861149476,
+        "lease_expires_at_epoch_ms": 1792864749476,
+        "git_branch": "feat/gb-31-task-claim-handoff-ui",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792861149476
+    },
+    {
+      "event": "task_verified",
+      "task_id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+      "receipt": {
+        "verifier": "antigravity",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Added claim and handoff REST endpoints in daemon and interactive Claim and Handoff modals in Benchwork Inspector",
+        "verified_at_epoch_ms": 1792861360570,
+        "git_branch": "feat/gb-31-task-claim-handoff-ui",
+        "base_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "head_commit_sha": "d077715a40cf1fe0f23fea84cd151072305bad74",
+        "commit_shas": [
+          "d077715a40cf1fe0f23fea84cd151072305bad74"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "e275a0c2-a819-4aea-9bb0-06bb75a42057",
+      "status": "verified",
+      "timestamp_ms": 1794037988868
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "3779f45e-f040-4279-92b2-b9a3e10f6e57",
+    "ticket_key": "GB-241",
+    "slug": "pin-the-single-store-precedence-with-a-fixture-that-would-fail-against-the-old-workspace-first-read-3779f4",
+    "title": "Pin the single-store precedence with a fixture that would fail against the old workspace-first read",
+    "description": "",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_core::dag_service::query::load_tasks"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793469221259,
+    "updated_at_epoch_ms": 1793469221259
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "3779f45e-f040-4279-92b2-b9a3e10f6e57",
+        "ticket_key": "GB-241",
+        "slug": "pin-the-single-store-precedence-with-a-fixture-that-would-fail-against-the-old-workspace-first-read-3779f4",
+        "title": "Pin the single-store precedence with a fixture that would fail against the old workspace-first read",
+        "description": "",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "benchwork_core::dag_service::query::load_tasks"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793469221259,
+        "updated_at_epoch_ms": 1793469221259
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

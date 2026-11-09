@@ -1,0 +1,131 @@
+{
+  "ticket": {
+    "id": "ef02e678-09ac-47bb-a9f4-bc66bbfae37c",
+    "ticket_key": "GB-320",
+    "slug": "root-repositories-should-keep-only-the-markdown-files-tooling-expects-and-the-docs-audit-should-fail-when-an-unexpected-one-appears-ef02e6",
+    "title": "Root repositories should keep only the markdown files tooling expects, and the docs audit should fail when an unexpected one appears",
+    "description": "The root repository still carries all ten markdown files. GB-275 was marked Verified, and the docs audit was green the whole time, because .gaugeblock/docs.toml still declares the ROOT paths the audit then confirms exist. The check validated the configuration, not the outcome, so it could not detect that the migration never happened.\n\nThat is the same shape as GB-318: a gate whose input is the thing being changed. Nothing anywhere asserts what must NOT be at the root, so files can stay there indefinitely while twelve targets report CLEAN.\n\nPROPOSED ROOT SET (best practice, not tidiness):\n  README.md       crates.io readme and the first thing a visitor sees\n  CHANGELOG.md    conventional, and referenced by release tooling\n  CONTRIBUTING.md GitHub surfaces it in the new-issue and PR flows; ADR 0005 moved it in the member repos and should be corrected\n  AGENTS.md       agent tooling convention, and law 11 of the workspace rules\n  LICENSE         already at the root\n\nTO docs/:\n  ARCHITECTURE.md, CONTRACTS.md, DESIGN.md, PRODUCT.md, ROADMAP.md, SPEC.md\n\nWHY CONTRIBUTING MOVES BACK: the reference-document rule was applied by file count rather than by purpose. A contributing guide is read by GitHub, not only by a human browsing docs, so its conventional location is the root. That is a correction to ADR 0005, not a reversal.\n\nORDER OF WORK, because each step breaks something if done alone:\n 1. Grep every consumer for the six paths, in code and configuration, not only in prose (GB-282: probes that read root only report \"not found\" silently). CONTRACTS.md is cited by miter contracts and the chalkline docs configuration.\n 2. Move the six files, fix inbound and outbound relative links, update .gaugeblock/docs.toml.\n 3. Add the missing half of the check: the docs audit must fail when an UNEXPECTED markdown file sits at a repository root, not only when a configured path is absent. Without this, the same blindness can recur the moment someone adds a document.\n 4. Run chalkline docs check --workspace, and prove the new rule fails by adding a stray file at a root.",
+    "kind": "tech_debt",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "3cef40c5-0d42-43b9-b291-d89cef9c28a2",
+        "target_ticket_key": "GB-275"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794117960601,
+      "git_branch": "main",
+      "base_commit_sha": "380fcc8b60c3305ee56f240495ce2def360491ba",
+      "head_commit_sha": "380fcc8b60c3305ee56f240495ce2def360491ba",
+      "commit_shas": [
+        "380fcc8b60c3305ee56f240495ce2def360491ba"
+      ],
+      "repo": "gaugeblock",
+      "chain_key": "gaugeblock"
+    },
+    "created_at_epoch_ms": 1794109529589,
+    "updated_at_epoch_ms": 1794117960601
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "ef02e678-09ac-47bb-a9f4-bc66bbfae37c",
+        "ticket_key": "GB-320",
+        "slug": "root-repositories-should-keep-only-the-markdown-files-tooling-expects-and-the-docs-audit-should-fail-when-an-unexpected-one-appears-ef02e6",
+        "title": "Root repositories should keep only the markdown files tooling expects, and the docs audit should fail when an unexpected one appears",
+        "description": "The root repository still carries all ten markdown files. GB-275 was marked Verified, and the docs audit was green the whole time, because .gaugeblock/docs.toml still declares the ROOT paths the audit then confirms exist. The check validated the configuration, not the outcome, so it could not detect that the migration never happened.\n\nThat is the same shape as GB-318: a gate whose input is the thing being changed. Nothing anywhere asserts what must NOT be at the root, so files can stay there indefinitely while twelve targets report CLEAN.\n\nPROPOSED ROOT SET (best practice, not tidiness):\n  README.md       crates.io readme and the first thing a visitor sees\n  CHANGELOG.md    conventional, and referenced by release tooling\n  CONTRIBUTING.md GitHub surfaces it in the new-issue and PR flows; ADR 0005 moved it in the member repos and should be corrected\n  AGENTS.md       agent tooling convention, and law 11 of the workspace rules\n  LICENSE         already at the root\n\nTO docs/:\n  ARCHITECTURE.md, CONTRACTS.md, DESIGN.md, PRODUCT.md, ROADMAP.md, SPEC.md\n\nWHY CONTRIBUTING MOVES BACK: the reference-document rule was applied by file count rather than by purpose. A contributing guide is read by GitHub, not only by a human browsing docs, so its conventional location is the root. That is a correction to ADR 0005, not a reversal.\n\nORDER OF WORK, because each step breaks something if done alone:\n 1. Grep every consumer for the six paths, in code and configuration, not only in prose (GB-282: probes that read root only report \"not found\" silently). CONTRACTS.md is cited by miter contracts and the chalkline docs configuration.\n 2. Move the six files, fix inbound and outbound relative links, update .gaugeblock/docs.toml.\n 3. Add the missing half of the check: the docs audit must fail when an UNEXPECTED markdown file sits at a repository root, not only when a configured path is absent. Without this, the same blindness can recur the moment someone adds a document.\n 4. Run chalkline docs check --workspace, and prove the new rule fails by adding a stray file at a root.",
+        "kind": "tech_debt",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794109529589,
+        "updated_at_epoch_ms": 1794109529589
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "ef02e678-09ac-47bb-a9f4-bc66bbfae37c",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "3cef40c5-0d42-43b9-b291-d89cef9c28a2",
+        "target_ticket_key": "GB-275"
+      },
+      "timestamp_ms": 1794109535220
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "ef02e678-09ac-47bb-a9f4-bc66bbfae37c",
+      "claim": {
+        "agent_id": "cline-agent",
+        "claimed_at_epoch_ms": 1794117937333,
+        "lease_expires_at_epoch_ms": 1794121537333,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "ef02e678-09ac-47bb-a9f4-bc66bbfae37c",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline-agent",
+      "timestamp_ms": 1794117937333
+    },
+    {
+      "event": "task_verified",
+      "task_id": "ef02e678-09ac-47bb-a9f4-bc66bbfae37c",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794117960601,
+        "git_branch": "main",
+        "base_commit_sha": "380fcc8b60c3305ee56f240495ce2def360491ba",
+        "head_commit_sha": "380fcc8b60c3305ee56f240495ce2def360491ba",
+        "commit_shas": [
+          "380fcc8b60c3305ee56f240495ce2def360491ba"
+        ],
+        "repo": "gaugeblock",
+        "chain_key": "gaugeblock"
+      }
+    }
+  ]
+}

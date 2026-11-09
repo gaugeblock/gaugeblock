@@ -1,0 +1,148 @@
+{
+  "ticket": {
+    "id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+    "ticket_key": "GB-4",
+    "slug": "phase-5-batten-dynamic-scope-to-cfg-grammar-compiler-f8e8d4",
+    "title": "Phase 5: batten — Dynamic Scope-to-CFG Grammar Compiler",
+    "description": "Dynamic Scope-to-CFG Grammar Compiler.",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 1,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "batten-core",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "31007c6c-395f-4329-9787-790258706f23"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1792684165123,
+      "git_branch": null,
+      "base_commit_sha": null,
+      "head_commit_sha": null,
+      "commit_shas": [],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792645196523,
+    "updated_at_epoch_ms": 1794037956888,
+    "archived_at_epoch_ms": 1794037956888
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+        "ticket_key": "GB-4",
+        "slug": "phase-5-batten-dynamic-scope-to-cfg-grammar-compiler-f8e8d4",
+        "title": "Phase 5: batten — Dynamic Scope-to-CFG Grammar Compiler",
+        "description": "Dynamic Scope-to-CFG Grammar Compiler.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 1,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "batten-core",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792645196523,
+        "updated_at_epoch_ms": 1792645196523
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "31007c6c-395f-4329-9787-790258706f23"
+      },
+      "timestamp_ms": 1792645201742
+    },
+    {
+      "event": "status_changed",
+      "task_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+      "from": "ready",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-3",
+      "timestamp_ms": 1792645201742
+    },
+    {
+      "event": "status_changed",
+      "task_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-3 verified",
+      "timestamp_ms": 1792681931929
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792684161527,
+        "lease_expires_at_epoch_ms": 1792687761527,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792684161527
+    },
+    {
+      "event": "task_verified",
+      "task_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1792684165123,
+        "git_branch": null,
+        "base_commit_sha": null,
+        "head_commit_sha": null,
+        "commit_shas": [],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "f8e8d4ad-4f86-4e85-abbd-235e0cc93f98",
+      "status": "verified",
+      "timestamp_ms": 1794037956888
+    }
+  ]
+}

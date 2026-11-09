@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "a3c3ee9a-0375-4beb-9e4f-a453d3a9a56e",
+    "ticket_key": "GB-283",
+    "slug": "add-regex-to-miter-find-once-a-regex-dependency-is-an-explicit-decision-a3c3ee",
+    "title": "Add --regex to miter find once a regex dependency is an explicit decision",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_cli::find"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794031127954,
+    "updated_at_epoch_ms": 1794031127954
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "a3c3ee9a-0375-4beb-9e4f-a453d3a9a56e",
+        "ticket_key": "GB-283",
+        "slug": "add-regex-to-miter-find-once-a-regex-dependency-is-an-explicit-decision-a3c3ee",
+        "title": "Add --regex to miter find once a regex dependency is an explicit decision",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_cli::find"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794031127954,
+        "updated_at_epoch_ms": 1794031127954
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

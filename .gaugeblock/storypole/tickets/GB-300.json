@@ -1,0 +1,128 @@
+{
+  "ticket": {
+    "id": "db70f138-7322-4418-ae46-4613f10af22e",
+    "ticket_key": "GB-300",
+    "slug": "miter-impact-prints-duplicate-rows-for-one-affected-test-and-one-entrypoint-db70f1",
+    "title": "miter impact prints duplicate rows for one affected test and one entrypoint",
+    "description": "",
+    "kind": "bug",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_engine::analysis::impact"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "DONE 2026-11-06, commit 6abe71e (miter). Two measurement defects fixed, both found by using the tool to answer a real question rather than by reading it.\n\nGB-290, the serious one. path_roots_in_line treated every lowercase ident:: on a line as a crate root, so `outfeed_orchestrator::storypole::gather(..)` reported a dependency on a crate named storypole. That phantom edge surfaced in the layering gate and I renamed a module to make it go away. A measurement tool that invents findings is worse than one that misses them: a miss costs nothing until someone relies on it, while an invention produces work, and the work looked justified because the report was specific.\n\nOnly the first segment of a path names a crate now. The predicate distinguishes `a::b` (later segment) from `= ::b` (path root) by looking three characters back, and three regression tests hold it: a module segment is not a crate, a root-relative path still names its crate, and a single-segment call is still counted.\n\nGB-300. `miter impact` deduplicated by file:line:symbol - a call site - so a function reached from six sites inside another function was reported six times as an entrypoint, and the same test could appear twice. This output is what decides how large a refactor is, so a sixfold overcount makes a bounded change look unbounded. Tests and entrypoints now dedupe by symbol (the row means 'a thing to run or review'); transitive callers keep per-site detail, where the site is the fact.\n\nLive verification: `miter impact BenchworkError` lists run_in_process_synthesis once instead of six times, with 21 distinct affected tests and no repeats.\n\nGraph unchanged at 0 lateral, 155 downward, clean - which is the correct outcome rather than a null result: the resolver was manufacturing an edge the rename had already removed, and the rule now stops it returning.\n\nTier 2: fmt clean, clippy --workspace --all-targets -D warnings clean, 280 tests green, audit clean, docs 9 present 0 drifted."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 && chalkline docs check --workspace",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794079374760,
+      "git_branch": "main",
+      "base_commit_sha": "b9084c0f5cef4e1e6d72a528e9a62ed4342f558b",
+      "head_commit_sha": "b9084c0f5cef4e1e6d72a528e9a62ed4342f558b",
+      "commit_shas": [
+        "b9084c0f5cef4e1e6d72a528e9a62ed4342f558b"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1794078685713,
+    "updated_at_epoch_ms": 1794079374760
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "db70f138-7322-4418-ae46-4613f10af22e",
+        "ticket_key": "GB-300",
+        "slug": "miter-impact-prints-duplicate-rows-for-one-affected-test-and-one-entrypoint-db70f1",
+        "title": "miter impact prints duplicate rows for one affected test and one entrypoint",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_engine::analysis::impact"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794078685713,
+        "updated_at_epoch_ms": 1794078685713
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "db70f138-7322-4418-ae46-4613f10af22e",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "OBSERVED 2026-11-06 while using `miter impact BenchworkError` to size a refactor.\n\nThe same symbol is listed repeatedly in two sections:\n  run_in_process_synthesis appears 6 times in [Entrypoints & Handlers], all depth 1, same file.\n  test_task_archive_and_filtering and test_benchwork_workspace_rollup_and_mutation_routing each appear twice in [Affected Tests].\n\nThe likely cause is one row per call site rather than one row per symbol, which is defensible for a list of call sites but not for a list of tests to run or entrypoints to review - the RUN COMMAND is identical, so the duplicates carry no information.\n\nWhy it matters more than cosmetics: this output is used to decide how large a refactor is. Inflating the entrypoint count sixfold makes a small change look unbounded, and the honest inverse also happens - a reader who notices the duplication starts discounting the whole report, including the parts that are correct. The count should be the number of distinct things to run or review.\n\nFix shape: dedupe by symbol before rendering, and if per-call-site detail is wanted, put the site count in a column rather than a second row."
+      ],
+      "timestamp_ms": 1794078691964
+    },
+    {
+      "event": "task_updated",
+      "task_id": "db70f138-7322-4418-ae46-4613f10af22e",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "DONE 2026-11-06, commit 6abe71e (miter). Two measurement defects fixed, both found by using the tool to answer a real question rather than by reading it.\n\nGB-290, the serious one. path_roots_in_line treated every lowercase ident:: on a line as a crate root, so `outfeed_orchestrator::storypole::gather(..)` reported a dependency on a crate named storypole. That phantom edge surfaced in the layering gate and I renamed a module to make it go away. A measurement tool that invents findings is worse than one that misses them: a miss costs nothing until someone relies on it, while an invention produces work, and the work looked justified because the report was specific.\n\nOnly the first segment of a path names a crate now. The predicate distinguishes `a::b` (later segment) from `= ::b` (path root) by looking three characters back, and three regression tests hold it: a module segment is not a crate, a root-relative path still names its crate, and a single-segment call is still counted.\n\nGB-300. `miter impact` deduplicated by file:line:symbol - a call site - so a function reached from six sites inside another function was reported six times as an entrypoint, and the same test could appear twice. This output is what decides how large a refactor is, so a sixfold overcount makes a bounded change look unbounded. Tests and entrypoints now dedupe by symbol (the row means 'a thing to run or review'); transitive callers keep per-site detail, where the site is the fact.\n\nLive verification: `miter impact BenchworkError` lists run_in_process_synthesis once instead of six times, with 21 distinct affected tests and no repeats.\n\nGraph unchanged at 0 lateral, 155 downward, clean - which is the correct outcome rather than a null result: the resolver was manufacturing an edge the rename had already removed, and the rule now stops it returning.\n\nTier 2: fmt clean, clippy --workspace --all-targets -D warnings clean, 280 tests green, audit clean, docs 9 present 0 drifted."
+      ],
+      "timestamp_ms": 1794079355652
+    },
+    {
+      "event": "task_verified",
+      "task_id": "db70f138-7322-4418-ae46-4613f10af22e",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794079374760,
+        "git_branch": "main",
+        "base_commit_sha": "b9084c0f5cef4e1e6d72a528e9a62ed4342f558b",
+        "head_commit_sha": "b9084c0f5cef4e1e6d72a528e9a62ed4342f558b",
+        "commit_shas": [
+          "b9084c0f5cef4e1e6d72a528e9a62ed4342f558b"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    }
+  ]
+}

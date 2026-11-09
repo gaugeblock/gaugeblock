@@ -1,0 +1,130 @@
+{
+  "ticket": {
+    "id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+    "ticket_key": "GB-128",
+    "slug": "phase-3-suite-wide-contract-decoupling-common-crates-foundation-gaugeblock-common-cc76e2",
+    "title": "Phase 3: Suite-Wide Contract Decoupling & Common Crates Foundation (gaugeblock/common)",
+    "description": "Eliminate heavy core dependency contagion across the meta-harness by establishing the gaugeblock/common workspace repository, extracting gaugeblock-contracts, gaugeblock-mcp, and gaugeblock-git, and tuning Storypole SQLite I/O.",
+    "kind": "epic",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "architecture,modularization,contracts,gaugeblock-common"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "gaugeblock/common repository established with 3 member crates,CONTRACTS.md schemas implemented in gaugeblock-contracts,Downstream crates decoupled from rusqlite and reqwest"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "manual",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1793467608006,
+      "git_branch": "main",
+      "base_commit_sha": "1cdb1a92b3e25bb8b43b2420871f041e456ee8d5",
+      "head_commit_sha": "1cdb1a92b3e25bb8b43b2420871f041e456ee8d5",
+      "commit_shas": [
+        "1cdb1a92b3e25bb8b43b2420871f041e456ee8d5"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793170362031,
+    "updated_at_epoch_ms": 1794037999024,
+    "archived_at_epoch_ms": 1794037999024
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+        "ticket_key": "GB-128",
+        "slug": "phase-3-suite-wide-contract-decoupling-common-crates-foundation-gaugeblock-common-cc76e2",
+        "title": "Phase 3: Suite-Wide Contract Decoupling & Common Crates Foundation (gaugeblock/common)",
+        "description": "Eliminate heavy core dependency contagion across the meta-harness by establishing the gaugeblock/common workspace repository, extracting gaugeblock-contracts, gaugeblock-mcp, and gaugeblock-git, and tuning Storypole SQLite I/O.",
+        "kind": "epic",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "architecture,modularization,contracts,gaugeblock-common"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "gaugeblock/common repository established with 3 member crates,CONTRACTS.md schemas implemented in gaugeblock-contracts,Downstream crates decoupled from rusqlite and reqwest"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793170362031,
+        "updated_at_epoch_ms": 1793170362031
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793467607922,
+        "lease_expires_at_epoch_ms": 1793471207922,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793467607922
+    },
+    {
+      "event": "task_verified",
+      "task_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793467608006,
+        "git_branch": "main",
+        "base_commit_sha": "1cdb1a92b3e25bb8b43b2420871f041e456ee8d5",
+        "head_commit_sha": "1cdb1a92b3e25bb8b43b2420871f041e456ee8d5",
+        "commit_shas": [
+          "1cdb1a92b3e25bb8b43b2420871f041e456ee8d5"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+      "status": "verified",
+      "timestamp_ms": 1794037999024
+    }
+  ]
+}

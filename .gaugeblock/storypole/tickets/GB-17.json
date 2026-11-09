@@ -1,0 +1,202 @@
+{
+  "ticket": {
+    "id": "0867fca7-275e-495e-9fe1-9e9f23bb2292",
+    "ticket_key": "GB-17",
+    "slug": "add-interactive-provider-and-role-configuration-manager-for-sawhorse-toml-0867fc",
+    "title": "Add interactive provider and role configuration manager for sawhorse.toml",
+    "description": "Add POST /api/v1/hub/config in benchwork-core to read and mutate sawhorse.toml, providing an interactive provider modal in Panel 4 to configure In-House, Local GGUF, and Remote API modes with semantic role assignment.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "gaugeblock",
+      "crate_name": "benchwork-cli",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "benchwork,sawhorse,hub,panel-4"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": {
+      "summary": "Universal API Feature & Model Configuration Engine in benchwork",
+      "design_markdown": "# GB-17: Universal API Feature & Model Configuration Engine in `benchwork`\n\n> **Task Key:** `GB-17`  \n> **Repository/Crate:** `benchwork-core`, `benchwork-cli`, and `web/` (Panel 4)  \n> **Direct Dependencies:** `sawhorse-core`, `benchwork-core`, `axum`, `react`, `tailwind`  \n> **Hard Laws:** File length ≤ 250 LOC across ALL `.rs`, `.ts`, and `.tsx` files, zero `.unwrap()`/`.expect()` in Rust library crates (`thiserror`), branch isolation (`feat/gb-17-universal-api`), multi-commit tracking via `storypole verify`.\n\n---\n\n## 1. Executive Summary & Vision\n\nEnable comprehensive management of LLM providers and semantic role bindings directly within Benchwork Panel 4:\n1. **Single-Model / Universal Fallback Mode:** A top-level `[default_model]` configuration block where users can specify a single provider, model name, base URL, and API key environment variable. Any role (`Planner`, `System1Router`, `HoleFiller`, `Oracle`) not explicitly overridden inherits `default_model`.\n2. **Multi-Mode Support:**\n   - In-House / Local Candle Mode (Mode 1)\n   - Local GGUF / Ollama / Llama.cpp Mode (Mode 2)\n   - Remote API Mode (Mode 3: OpenAI, DeepSeek, Claude, Gemini) with automatic prompt-compiled grammar injection handling.\n3. **Interactive Industrial CAD Panel 4:**\n   - Universal Config Modal with live inference ping/latency checks.\n   - Per-role override accordion.\n   - Spool trace table for outbox inspection.\n\n---\n\n## 2. Architecture & REST Endpoints\n\n### Endpoints (`benchwork-cli/src/daemon/routes_config.rs` or `routes_synth.rs`):\n- `GET /api/v1/hub/config`: Reads `sawhorse.toml` (or defaults) returning model slots and universal fallback state.\n- `POST /api/v1/hub/config`: Validates and safely writes changes to `sawhorse.toml`, reloading runtime handles.\n- `POST /api/v1/hub/test-inference`: Lightweight ping verifying API key validity, connectivity, and latency.\n\n---\n\n## 3. Web UI Components (`web/src/panels/ModelTelemetryHub/`)\n\n- `ModelHubPanel.tsx` (< 200 LOC): Tab switcher between \"Model Configuration & Universal API\" and \"Telemetry Spool Outbox\".\n- `UniversalConfigModal.tsx` (< 220 LOC): Single model fallback toggle, provider dropdown, credentials, per-role overrides, and live test inference button.\n- `SpoolTraceTable.tsx` (< 210 LOC): DPO trace inspector, diff viewer, and outbox export actions.\n\n---\n\n## 4. Execution Steps & Verification Gates\n\n| Step | Component | Focus | Verification Gate |\n|---|---|---|---|\n| **S1** | `benchwork-core` | `sawhorse.toml` parsing, serialization, and universal fallback data structures | `cargo test -p benchwork-core` |\n| **S2** | `benchwork-cli` | REST routes `/api/v1/hub/config` and `/api/v1/hub/test-inference` | `cargo test -p benchwork-cli` |\n| **S3** | `benchwork/web` | Panel 4 `ModelHubPanel`, `UniversalConfigModal`, `SpoolTraceTable` UI overhaul | `npm run build` |\n| **S4** | Workspace | Full Tier 3 verification, 250 LOC check, and multi-commit branch verification | `storypole verify GB-17` |\n",
+      "steps": [
+        {
+          "step_id": "S1",
+          "title": "benchwork-core sawhorse.toml parsing, serialization, and universal fallback data structures",
+          "target_files": [],
+          "verification_gate": "cargo test -p benchwork-core",
+          "completed": false
+        },
+        {
+          "step_id": "S2",
+          "title": "benchwork-cli REST routes /api/v1/hub/config and /api/v1/hub/test-inference",
+          "target_files": [],
+          "verification_gate": "cargo test -p benchwork-cli",
+          "completed": false
+        },
+        {
+          "step_id": "S3",
+          "title": "benchwork/web Panel 4 ModelHubPanel, UniversalConfigModal, SpoolTraceTable UI overhaul",
+          "target_files": [],
+          "verification_gate": "npm run build",
+          "completed": false
+        },
+        {
+          "step_id": "S4",
+          "title": "Workspace verification, 250 LOC check, and multi-commit branch verification",
+          "target_files": [],
+          "verification_gate": "storypole verify GB-17",
+          "completed": false
+        }
+      ],
+      "plan_file_path": ".storypole/plans/GB-17.md",
+      "updated_at_epoch_ms": 1792861900524
+    },
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "cargo-test",
+      "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Universal API Feature & Model Configuration Engine in benchwork verified",
+      "verified_at_epoch_ms": 1792863362596,
+      "git_branch": "feat/gb-17-universal-api",
+      "base_commit_sha": "3aaf7ce4613a23d64b1e062c3ae986c36b371713",
+      "head_commit_sha": "3aaf7ce4613a23d64b1e062c3ae986c36b371713",
+      "commit_shas": [
+        "3aaf7ce4613a23d64b1e062c3ae986c36b371713"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1792709188191,
+    "updated_at_epoch_ms": 1794037987510,
+    "archived_at_epoch_ms": 1794037987510
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "0867fca7-275e-495e-9fe1-9e9f23bb2292",
+        "ticket_key": "GB-17",
+        "slug": "add-interactive-provider-and-role-configuration-manager-for-sawhorse-toml-0867fc",
+        "title": "Add interactive provider and role configuration manager for sawhorse.toml",
+        "description": "Add POST /api/v1/hub/config in benchwork-core to read and mutate sawhorse.toml, providing an interactive provider modal in Panel 4 to configure In-House, Local GGUF, and Remote API modes with semantic role assignment.",
+        "kind": "feature",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "gaugeblock",
+          "crate_name": "benchwork-cli",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "benchwork,sawhorse,hub,panel-4"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1792709188191,
+        "updated_at_epoch_ms": 1792709188191
+      }
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "0867fca7-275e-495e-9fe1-9e9f23bb2292",
+      "plan": {
+        "summary": "Universal API Feature & Model Configuration Engine in benchwork",
+        "design_markdown": "# GB-17: Universal API Feature & Model Configuration Engine in `benchwork`\n\n> **Task Key:** `GB-17`  \n> **Repository/Crate:** `benchwork-core`, `benchwork-cli`, and `web/` (Panel 4)  \n> **Direct Dependencies:** `sawhorse-core`, `benchwork-core`, `axum`, `react`, `tailwind`  \n> **Hard Laws:** File length ≤ 250 LOC across ALL `.rs`, `.ts`, and `.tsx` files, zero `.unwrap()`/`.expect()` in Rust library crates (`thiserror`), branch isolation (`feat/gb-17-universal-api`), multi-commit tracking via `storypole verify`.\n\n---\n\n## 1. Executive Summary & Vision\n\nEnable comprehensive management of LLM providers and semantic role bindings directly within Benchwork Panel 4:\n1. **Single-Model / Universal Fallback Mode:** A top-level `[default_model]` configuration block where users can specify a single provider, model name, base URL, and API key environment variable. Any role (`Planner`, `System1Router`, `HoleFiller`, `Oracle`) not explicitly overridden inherits `default_model`.\n2. **Multi-Mode Support:**\n   - In-House / Local Candle Mode (Mode 1)\n   - Local GGUF / Ollama / Llama.cpp Mode (Mode 2)\n   - Remote API Mode (Mode 3: OpenAI, DeepSeek, Claude, Gemini) with automatic prompt-compiled grammar injection handling.\n3. **Interactive Industrial CAD Panel 4:**\n   - Universal Config Modal with live inference ping/latency checks.\n   - Per-role override accordion.\n   - Spool trace table for outbox inspection.\n\n---\n\n## 2. Architecture & REST Endpoints\n\n### Endpoints (`benchwork-cli/src/daemon/routes_config.rs` or `routes_synth.rs`):\n- `GET /api/v1/hub/config`: Reads `sawhorse.toml` (or defaults) returning model slots and universal fallback state.\n- `POST /api/v1/hub/config`: Validates and safely writes changes to `sawhorse.toml`, reloading runtime handles.\n- `POST /api/v1/hub/test-inference`: Lightweight ping verifying API key validity, connectivity, and latency.\n\n---\n\n## 3. Web UI Components (`web/src/panels/ModelTelemetryHub/`)\n\n- `ModelHubPanel.tsx` (< 200 LOC): Tab switcher between \"Model Configuration & Universal API\" and \"Telemetry Spool Outbox\".\n- `UniversalConfigModal.tsx` (< 220 LOC): Single model fallback toggle, provider dropdown, credentials, per-role overrides, and live test inference button.\n- `SpoolTraceTable.tsx` (< 210 LOC): DPO trace inspector, diff viewer, and outbox export actions.\n\n---\n\n## 4. Execution Steps & Verification Gates\n\n| Step | Component | Focus | Verification Gate |\n|---|---|---|---|\n| **S1** | `benchwork-core` | `sawhorse.toml` parsing, serialization, and universal fallback data structures | `cargo test -p benchwork-core` |\n| **S2** | `benchwork-cli` | REST routes `/api/v1/hub/config` and `/api/v1/hub/test-inference` | `cargo test -p benchwork-cli` |\n| **S3** | `benchwork/web` | Panel 4 `ModelHubPanel`, `UniversalConfigModal`, `SpoolTraceTable` UI overhaul | `npm run build` |\n| **S4** | Workspace | Full Tier 3 verification, 250 LOC check, and multi-commit branch verification | `storypole verify GB-17` |\n",
+        "steps": [
+          {
+            "step_id": "S1",
+            "title": "benchwork-core sawhorse.toml parsing, serialization, and universal fallback data structures",
+            "target_files": [],
+            "verification_gate": "cargo test -p benchwork-core",
+            "completed": false
+          },
+          {
+            "step_id": "S2",
+            "title": "benchwork-cli REST routes /api/v1/hub/config and /api/v1/hub/test-inference",
+            "target_files": [],
+            "verification_gate": "cargo test -p benchwork-cli",
+            "completed": false
+          },
+          {
+            "step_id": "S3",
+            "title": "benchwork/web Panel 4 ModelHubPanel, UniversalConfigModal, SpoolTraceTable UI overhaul",
+            "target_files": [],
+            "verification_gate": "npm run build",
+            "completed": false
+          },
+          {
+            "step_id": "S4",
+            "title": "Workspace verification, 250 LOC check, and multi-commit branch verification",
+            "target_files": [],
+            "verification_gate": "storypole verify GB-17",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".storypole/plans/GB-17.md",
+        "updated_at_epoch_ms": 1792861900524
+      },
+      "timestamp_ms": 1792861900524
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "0867fca7-275e-495e-9fe1-9e9f23bb2292",
+      "claim": {
+        "agent_id": "antigravity",
+        "claimed_at_epoch_ms": 1792862883091,
+        "lease_expires_at_epoch_ms": 1792866483091,
+        "git_branch": "feat/gb-17-universal-api",
+        "base_commit_sha": "3aaf7ce4613a23d64b1e062c3ae986c36b371713"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "0867fca7-275e-495e-9fe1-9e9f23bb2292",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by antigravity",
+      "timestamp_ms": 1792862883091
+    },
+    {
+      "event": "task_verified",
+      "task_id": "0867fca7-275e-495e-9fe1-9e9f23bb2292",
+      "receipt": {
+        "verifier": "cargo-test",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Universal API Feature & Model Configuration Engine in benchwork verified",
+        "verified_at_epoch_ms": 1792863362596,
+        "git_branch": "feat/gb-17-universal-api",
+        "base_commit_sha": "3aaf7ce4613a23d64b1e062c3ae986c36b371713",
+        "head_commit_sha": "3aaf7ce4613a23d64b1e062c3ae986c36b371713",
+        "commit_shas": [
+          "3aaf7ce4613a23d64b1e062c3ae986c36b371713"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "0867fca7-275e-495e-9fe1-9e9f23bb2292",
+      "status": "verified",
+      "timestamp_ms": 1794037987510
+    }
+  ]
+}

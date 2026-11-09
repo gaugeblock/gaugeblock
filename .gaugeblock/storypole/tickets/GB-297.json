@@ -1,0 +1,81 @@
+{
+  "ticket": {
+    "id": "8631d70a-942d-4d7c-9e72-0111d221a737",
+    "ticket_key": "GB-297",
+    "slug": "emit-a-span-per-mcp-tools-call-in-gaugeblock-mcp-covering-all-seven-shared-servers-at-once-8631d7",
+    "title": "Emit a span per MCP tools/call in gaugeblock-mcp, covering all seven shared servers at once",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "gaugeblock_mcp::stdio::dispatch"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "SCOPE 2026-11-06, from the suite-wide telemetry design (GB-294).\n\nOne change covers seven servers: batten, benchwork, chalkline, dado, joiner, outfeed and storypole all depend on gaugeblock-mcp and share its generic loop. dispatch() in stdio.rs is the single point where 'a request arrived and was answered' is already known, so the span belongs there rather than in seven dispatchers.\n\nShape of the span: binary = the server's tool name, command = the MCP tool name from the request (not the JSON-RPC method, because every tools/call is the same method and the interesting question is which tool), duration from the request start, status from whether the response carried an error.\n\nTwo constraints that decide the implementation:\n- The trace id must come from the ambient environment when present, so a CLI that spawns an MCP server, or an agent that drives several tools, produces one trace rather than N unrelated ones. gaugeblock-workspace already has TRACE_ENV and ambient_trace_id for exactly this (GB-243).\n- Nothing may be written to stdout: this loop's stdout is the JSON-RPC channel. A stray line corrupts the protocol, and the failure looks like a client bug.\n\nmiter-mcp is not covered: it does not depend on gaugeblock-mcp and runs its own loop. GB-235 migrates it; until then miter emits no MCP spans, which for the most-used tool in the suite is the gap that matters most. Sequence GB-235 before or with this.\n\nDone when: a tools/call to any of the seven produces a row in that repository's telemetry log, with the tool name in `command`, and benchwork counts it (GB-293 is the reader)."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794078435011,
+    "updated_at_epoch_ms": 1794078440678
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "8631d70a-942d-4d7c-9e72-0111d221a737",
+        "ticket_key": "GB-297",
+        "slug": "emit-a-span-per-mcp-tools-call-in-gaugeblock-mcp-covering-all-seven-shared-servers-at-once-8631d7",
+        "title": "Emit a span per MCP tools/call in gaugeblock-mcp, covering all seven shared servers at once",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "gaugeblock_mcp::stdio::dispatch"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794078435011,
+        "updated_at_epoch_ms": 1794078435011
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "8631d70a-942d-4d7c-9e72-0111d221a737",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "SCOPE 2026-11-06, from the suite-wide telemetry design (GB-294).\n\nOne change covers seven servers: batten, benchwork, chalkline, dado, joiner, outfeed and storypole all depend on gaugeblock-mcp and share its generic loop. dispatch() in stdio.rs is the single point where 'a request arrived and was answered' is already known, so the span belongs there rather than in seven dispatchers.\n\nShape of the span: binary = the server's tool name, command = the MCP tool name from the request (not the JSON-RPC method, because every tools/call is the same method and the interesting question is which tool), duration from the request start, status from whether the response carried an error.\n\nTwo constraints that decide the implementation:\n- The trace id must come from the ambient environment when present, so a CLI that spawns an MCP server, or an agent that drives several tools, produces one trace rather than N unrelated ones. gaugeblock-workspace already has TRACE_ENV and ambient_trace_id for exactly this (GB-243).\n- Nothing may be written to stdout: this loop's stdout is the JSON-RPC channel. A stray line corrupts the protocol, and the failure looks like a client bug.\n\nmiter-mcp is not covered: it does not depend on gaugeblock-mcp and runs its own loop. GB-235 migrates it; until then miter emits no MCP spans, which for the most-used tool in the suite is the gap that matters most. Sequence GB-235 before or with this.\n\nDone when: a tools/call to any of the seven produces a row in that repository's telemetry log, with the tool name in `command`, and benchwork counts it (GB-293 is the reader)."
+      ],
+      "timestamp_ms": 1794078440678
+    }
+  ]
+}

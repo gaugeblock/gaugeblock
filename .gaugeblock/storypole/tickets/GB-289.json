@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "c8866a8c-2bef-4338-876a-fa86f903be41",
+    "ticket_key": "GB-289",
+    "slug": "outfeed-core-install-mod-rs-is-253-lines-over-the-250-limit-fold-into-the-gb-195-band-sweep-c8866a",
+    "title": "outfeed-core install/mod.rs is 253 lines, over the 250 limit (fold into the GB-195 band sweep)",
+    "description": "",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "outfeed_core::install"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794034045396,
+    "updated_at_epoch_ms": 1794034045396
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "c8866a8c-2bef-4338-876a-fa86f903be41",
+        "ticket_key": "GB-289",
+        "slug": "outfeed-core-install-mod-rs-is-253-lines-over-the-250-limit-fold-into-the-gb-195-band-sweep-c8866a",
+        "title": "outfeed-core install/mod.rs is 253 lines, over the 250 limit (fold into the GB-195 band sweep)",
+        "description": "",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "outfeed_core::install"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794034045396,
+        "updated_at_epoch_ms": 1794034045396
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

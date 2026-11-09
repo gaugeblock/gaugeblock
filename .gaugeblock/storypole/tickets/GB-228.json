@@ -1,0 +1,63 @@
+{
+  "ticket": {
+    "id": "375da37f-b36a-4bd0-936b-0e4b72c5f498",
+    "ticket_key": "GB-228",
+    "slug": "joiner-spool-quarantine-move-unusable-records-out-of-the-outbox-repeatably-375da3",
+    "title": "joiner spool quarantine: move unusable records out of the outbox repeatably",
+    "description": "The 7 legacy placeholder records were moved by a one-off script on 2026-10-30 (evidence in .gaugeblock/storypole/plans/GB-213.md). That was a recorded decision, not a tool: the next occurrence needs a repeatable, reviewed operation rather than an ad hoc python command, because editing an append-only telemetry log is exactly the kind of thing that should be a subcommand with a dry-run.\n\nScope: `joiner spool quarantine --dir <suite> [--dry-run]`, moving records whose filled_holes carry an empty body or the <filled> placeholder into .gaugeblock/spool/quarantine/<reason>-<date>.jsonl, printing count and hash, never deleting. Idempotent. Note the spool is gitignored, so the tool should also write a one-line summary somewhere tracked (ledger via storypole, or a sibling .md) or the event leaves no versioned trace.",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793396645752,
+    "updated_at_epoch_ms": 1793396645752
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "375da37f-b36a-4bd0-936b-0e4b72c5f498",
+        "ticket_key": "GB-228",
+        "slug": "joiner-spool-quarantine-move-unusable-records-out-of-the-outbox-repeatably-375da3",
+        "title": "joiner spool quarantine: move unusable records out of the outbox repeatably",
+        "description": "The 7 legacy placeholder records were moved by a one-off script on 2026-10-30 (evidence in .gaugeblock/storypole/plans/GB-213.md). That was a recorded decision, not a tool: the next occurrence needs a repeatable, reviewed operation rather than an ad hoc python command, because editing an append-only telemetry log is exactly the kind of thing that should be a subcommand with a dry-run.\n\nScope: `joiner spool quarantine --dir <suite> [--dry-run]`, moving records whose filled_holes carry an empty body or the <filled> placeholder into .gaugeblock/spool/quarantine/<reason>-<date>.jsonl, printing count and hash, never deleting. Idempotent. Note the spool is gitignored, so the tool should also write a one-line summary somewhere tracked (ledger via storypole, or a sibling .md) or the event leaves no versioned trace.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793396645752,
+        "updated_at_epoch_ms": 1793396645752
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    }
+  ]
+}

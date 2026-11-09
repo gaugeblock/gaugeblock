@@ -1,0 +1,63 @@
+{
+  "ticket": {
+    "id": "13b282de-65be-446e-ba55-5a7551e5216c",
+    "ticket_key": "GB-222",
+    "slug": "evaluate-a-suite-wide-reqwest-0-12-0-13-alignment-measured-13b282",
+    "title": "Evaluate a suite-wide reqwest 0.12 -> 0.13 alignment, measured",
+    "description": "Raised while adopting models-catalog (GB-217), whose default features pull reqwest 0.13 while sawhorse is on 0.12. DECISION: do NOT bump for that reason - GB-217 pins default-features = false, which removes the duplicate HTTP stack and keeps the library hermetic (no tokio, no directories, no ambient cache) in one move. Recorded here because the bump will be wanted eventually and it is a migration, not a version-number edit.\n\nMEASURED FACTS:\n- reqwest 0.13.5 is current and mainstream (22.5M downloads on that exact version); 0.12.28 is the newest 0.12. So 0.13 is not experimental.\n- The feature surface changed: 0.12 has rustls-tls, rustls-tls-webpki-roots, rustls-tls-native-roots and no-provider variants plus __rustls-ring; 0.13 has rustls, rustls-no-provider and __rustls-aws-lc-rs. Every `features = [\"rustls-tls\"]` in the suite must become `rustls`, and the TLS provider choice (ring vs aws-lc-rs) changes build time and platform story.\n- crates using reqwest today: sawhorse-core, outfeed-core (index_poll), and models-catalog if its client feature is ever enabled.\n\nWHEN TO DO IT: a security advisory touching 0.12, a required dependency that only supports 0.13 and cannot be feature-gated, or a dedicated dependency-alignment block. None holds today.\n\nSCOPE: one commit per repository with the full Tier 2 gate, plus a before/after on build time and binary size (law 12) since the TLS provider swap moves both.",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793375853009,
+    "updated_at_epoch_ms": 1793375853009
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "13b282de-65be-446e-ba55-5a7551e5216c",
+        "ticket_key": "GB-222",
+        "slug": "evaluate-a-suite-wide-reqwest-0-12-0-13-alignment-measured-13b282",
+        "title": "Evaluate a suite-wide reqwest 0.12 -> 0.13 alignment, measured",
+        "description": "Raised while adopting models-catalog (GB-217), whose default features pull reqwest 0.13 while sawhorse is on 0.12. DECISION: do NOT bump for that reason - GB-217 pins default-features = false, which removes the duplicate HTTP stack and keeps the library hermetic (no tokio, no directories, no ambient cache) in one move. Recorded here because the bump will be wanted eventually and it is a migration, not a version-number edit.\n\nMEASURED FACTS:\n- reqwest 0.13.5 is current and mainstream (22.5M downloads on that exact version); 0.12.28 is the newest 0.12. So 0.13 is not experimental.\n- The feature surface changed: 0.12 has rustls-tls, rustls-tls-webpki-roots, rustls-tls-native-roots and no-provider variants plus __rustls-ring; 0.13 has rustls, rustls-no-provider and __rustls-aws-lc-rs. Every `features = [\"rustls-tls\"]` in the suite must become `rustls`, and the TLS provider choice (ring vs aws-lc-rs) changes build time and platform story.\n- crates using reqwest today: sawhorse-core, outfeed-core (index_poll), and models-catalog if its client feature is ever enabled.\n\nWHEN TO DO IT: a security advisory touching 0.12, a required dependency that only supports 0.13 and cannot be feature-gated, or a dedicated dependency-alignment block. None holds today.\n\nSCOPE: one commit per repository with the full Tier 2 gate, plus a before/after on build time and binary size (law 12) since the TLS provider swap moves both.",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793375853009,
+        "updated_at_epoch_ms": 1793375853009
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    }
+  ]
+}

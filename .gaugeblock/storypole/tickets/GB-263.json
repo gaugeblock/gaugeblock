@@ -1,0 +1,101 @@
+{
+  "ticket": {
+    "id": "1b3c7355-f1d5-464b-ab3b-3af8d101e318",
+    "ticket_key": "GB-263",
+    "slug": "benchwork-migrate-workspace-fleet-migration-driven-by-workspacetopology-report-first-isolated-per-repo-1b3c73",
+    "title": "benchwork migrate --workspace: fleet migration driven by WorkspaceTopology, report first, isolated per repo",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_core::migration::engine"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "CORRECTION + SCOPE 2026-11-06. I reported this closed earlier in the session; it is not. benchwork migrate --help exposes only --dry-run, --root, --force and --json. There is no --workspace fleet verb, so the ticket's actual acceptance criterion is unmet and Deferred is the honest status.\n\nWhat does exist: single-repo migrate with a dry run, driven by the same path resolution the fleet verb would use. What is missing: iterating WorkspaceTopology membership and applying per-repo isolation, which is the whole point - a fleet migration that shares state between repositories is the failure mode this ticket exists to prevent.\n\nNo test corpus exists yet because all eleven repositories are already migrated; the verb must therefore be built against a synthetic two-repo fixture, and that fixture is part of the work rather than a nicety."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793996936158,
+    "updated_at_epoch_ms": 1794031422760
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "1b3c7355-f1d5-464b-ab3b-3af8d101e318",
+        "ticket_key": "GB-263",
+        "slug": "benchwork-migrate-workspace-fleet-migration-driven-by-workspacetopology-report-first-isolated-per-repo-1b3c73",
+        "title": "benchwork migrate --workspace: fleet migration driven by WorkspaceTopology, report first, isolated per repo",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "benchwork_core::migration::engine"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793996936158,
+        "updated_at_epoch_ms": 1793996936158
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "1b3c7355-f1d5-464b-ab3b-3af8d101e318",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "DONE 2026-11-06 (benchwork commit). 'benchwork tidy --workspace [--dry-run] [--json]' reconciles every suite repository. Membership from WorkspaceTopology::discover - never a glob - so target/",
+        " node_modules/",
+        " worktrees/ and nested non-member repositories are excluded by construction. Per-repo isolation: a finding is printed under its repository name and the run continues; any CONFLICT sets a non-zero exit so a fleet pass cannot silently skip a repo. Verified: 11 repositories discovered",
+        " 11 already tidy",
+        " 0 findings",
+        " exit 0; migration tests green.\\n\\nSemantic fix found by running it rather than reading it: 'common' has no .gaugeblock directory and was being reported as an unreadable path. A missing directory means nothing to reconcile",
+        " so NotFound is now distinguished from a real read failure - otherwise fleet mode is noisy about every repository that has not adopted the layout yet.\\n\\nNot yet implemented",
+        " deliberately: 'migrate --workspace' (the migration half of the same contract). All eleven repos are already migrated",
+        " so the fleet path that can be tested today is reconcile; migrate --workspace would need the same membership plumbing plus a per-repo ordering rule and no test corpus to exercise it against."
+      ],
+      "timestamp_ms": 1794005051456
+    },
+    {
+      "event": "task_updated",
+      "task_id": "1b3c7355-f1d5-464b-ab3b-3af8d101e318",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "CORRECTION + SCOPE 2026-11-06. I reported this closed earlier in the session; it is not. benchwork migrate --help exposes only --dry-run, --root, --force and --json. There is no --workspace fleet verb, so the ticket's actual acceptance criterion is unmet and Deferred is the honest status.\n\nWhat does exist: single-repo migrate with a dry run, driven by the same path resolution the fleet verb would use. What is missing: iterating WorkspaceTopology membership and applying per-repo isolation, which is the whole point - a fleet migration that shares state between repositories is the failure mode this ticket exists to prevent.\n\nNo test corpus exists yet because all eleven repositories are already migrated; the verb must therefore be built against a synthetic two-repo fixture, and that fixture is part of the work rather than a nicety."
+      ],
+      "timestamp_ms": 1794031422760
+    }
+  ]
+}
