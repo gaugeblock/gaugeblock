@@ -4,17 +4,17 @@
       "name": "gaugeblock (Harness)",
       "path": "."
     },
-    {
-      "name": "miter",
-      "path": "miter"
+        {
+      "name": "common",
+      "path": "common"
     },
     {
-      "name": "storypole",
-      "path": "storypole"
+      "name": "batten",
+      "path": "batten"
     },
     {
-      "name": "sawhorse",
-      "path": "sawhorse"
+      "name": "benchwork",
+      "path": "benchwork"
     },
     {
       "name": "chalkline",
@@ -25,24 +25,28 @@
       "path": "dado"
     },
     {
-      "name": "batten",
-      "path": "batten"
-    },
-    {
       "name": "joiner",
       "path": "joiner"
     },
     {
-      "name": "benchwork",
-      "path": "benchwork"
+      "name": "miter",
+      "path": "miter"
+    },
+    {
+      "name": "outfeed",
+      "path": "outfeed"
     },
     {
       "name": "rabbet",
       "path": "rabbet"
     },
     {
-      "name": "outfeed",
-      "path": "outfeed"
+      "name": "sawhorse",
+      "path": "sawhorse"
+    },
+    {
+      "name": "storypole",
+      "path": "storypole"
     }
   ],
   "settings": {
@@ -59,7 +63,9 @@
       "joiner/Cargo.toml",
       "benchwork/Cargo.toml",
       "rabbet/Cargo.toml",
-      "outfeed/Cargo.toml"
+      "outfeed/Cargo.toml",
+      "common/Cargo.toml"
+
     ],
     "git.scanRepositories": [
       "miter",
@@ -71,7 +77,8 @@
       "joiner",
       "benchwork",
       "rabbet",
-      "outfeed"
+      "outfeed",
+      "common"
     ]
   }
 }
