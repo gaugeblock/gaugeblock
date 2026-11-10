@@ -1,136 +1,154 @@
 {
-  "ticket": {
-    "id": "d07370cf-2d08-4ae2-bd14-636222527aad",
-    "ticket_key": "GB-232",
-    "slug": "miter-deps-calls-a-dependency-unused-when-it-is-only-referenced-by-a-fully-qualified-path-d07370",
-    "title": "miter deps calls a dependency unused when it is only referenced by a fully-qualified path",
-    "description": "Found the hard way during GB-201: batten-core declares `regex` and uses it as `regex::escape(id)` in src/grammar/regex.rs with no `use regex;` statement. The scanner reports the dependency as unused, and I acted on that report by demoting it to [dev-dependencies] - which failed to compile. The gate caught it, regex was restored, and the incidence is recorded in the batten commit.\n\nRoot cause: `collect_crate_imports` collects imports (use statements and `crate::`/`mod` paths), not qualified references. A dependency reached only through `extern_crate::item` therefore looks dead. That is the same class of over-reporting as GB-199 (fixture strings counted as references) but in the opposite direction, and it produces a false positive that a careful operator will act on destructively.\n\nSCOPE: while stripping literals and comments, also recognise `ident::` paths in expression position as a reference, so `regex::escape` counts. Then re-measure GB-201 - the current 34 unused includes at least this one false positive, and the real number is lower.",
-    "kind": "bug",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "miter_engine::analysis::deps::imports"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "A local module no longer hides a dependency of the same name. collect_crate_imports filtered any root ident that matched a module name declared in the crate, so batten-core mod regex; hid the regex crate and regex::escape(id) was discarded - I acted on that report by demoting the dependency, which failed to compile. The rule is now name plus context: hide only when the ident is not a declared dependency, since a local module named like a dependency is rare and the alternative failure mode is a destructive purge recommendation. Re-measured: unused declarations 34 -> 30, and the four that disappeared were all this same collision - batten-core/regex, miter-engine/hcl, rabbet-core/parquet and outfeed-core/semver. parquet had been flagged for manual review precisely because deleting it looked wrong; it was a false positive. Diagnosis recorded: three hypotheses (path scan, stripper, walk) were each refuted by a test, and only an instrumented run of the collector showed the missing key. Gate: clippy -D warnings, 181 tests, fmt green.",
-      "verified_at_epoch_ms": 1793400711195,
-      "git_branch": "main",
-      "base_commit_sha": "97203588477abbde86b67bc0411ba6e79e96d85e",
-      "head_commit_sha": "97203588477abbde86b67bc0411ba6e79e96d85e",
-      "commit_shas": [
-        "97203588477abbde86b67bc0411ba6e79e96d85e"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793399515705,
-    "updated_at_epoch_ms": 1794038020888,
-    "archived_at_epoch_ms": 1794038020888
-  },
   "events": [
     {
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793399515705,
+        "decisions": [],
+        "description": "Found the hard way during GB-201: batten-core declares `regex` and uses it as `regex::escape(id)` in src/grammar/regex.rs with no `use regex;` statement. The scanner reports the dependency as unused, and I acted on that report by demoting it to [dev-dependencies] - which failed to compile. The gate caught it, regex was restored, and the incidence is recorded in the batten commit.\n\nRoot cause: `collect_crate_imports` collects imports (use statements and `crate::`/`mod` paths), not qualified references. A dependency reached only through `extern_crate::item` therefore looks dead. That is the same class of over-reporting as MTR-18 (fixture strings counted as references) but in the opposite direction, and it produces a false positive that a careful operator will act on destructively.\n\nSCOPE: while stripping literals and comments, also recognise `ident::` paths in expression position as a reference, so `regex::escape` counts. Then re-measure GB-201 - the current 34 unused includes at least this one false positive, and the real number is lower.",
+        "edges": [],
         "id": "d07370cf-2d08-4ae2-bd14-636222527aad",
-        "ticket_key": "GB-232",
-        "slug": "miter-deps-calls-a-dependency-unused-when-it-is-only-referenced-by-a-fully-qualified-path-d07370",
-        "title": "miter deps calls a dependency unused when it is only referenced by a fully-qualified path",
-        "description": "Found the hard way during GB-201: batten-core declares `regex` and uses it as `regex::escape(id)` in src/grammar/regex.rs with no `use regex;` statement. The scanner reports the dependency as unused, and I acted on that report by demoting it to [dev-dependencies] - which failed to compile. The gate caught it, regex was restored, and the incidence is recorded in the batten commit.\n\nRoot cause: `collect_crate_imports` collects imports (use statements and `crate::`/`mod` paths), not qualified references. A dependency reached only through `extern_crate::item` therefore looks dead. That is the same class of over-reporting as GB-199 (fixture strings counted as references) but in the opposite direction, and it produces a false positive that a careful operator will act on destructively.\n\nSCOPE: while stripping literals and comments, also recognise `ident::` paths in expression position as a reference, so `regex::escape` counts. Then re-measure GB-201 - the current 34 unused includes at least this one false positive, and the real number is lower.",
         "kind": "bug",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "miter_engine::analysis::deps::imports"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793399515705,
-        "updated_at_epoch_ms": 1793399515705
-      },
-      "captured_by_agent": "agent",
-      "discovered_from_task_id": null
-    },
-    {
-      "event": "task_claimed",
-      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
-      "claim": {
-        "agent_id": "cline",
-        "claimed_at_epoch_ms": 1793400710898,
-        "lease_expires_at_epoch_ms": 1793404310898,
-        "git_branch": "fix/gb-232-module-name-masks-dependency",
-        "base_commit_sha": null
+        "slug": "miter-deps-calls-a-dependency-unused-when-it-is-only-referenced-by-a-fully-qualified-path-d07370",
+        "status": "triage",
+        "ticket_key": "GB-232",
+        "title": "miter deps calls a dependency unused when it is only referenced by a fully-qualified path",
+        "updated_at_epoch_ms": 1793399515705,
+        "verification_receipt": null
       }
     },
     {
+      "claim": {
+        "agent_id": "cline",
+        "base_commit_sha": null,
+        "claimed_at_epoch_ms": 1793400710898,
+        "git_branch": "fix/gb-232-module-name-masks-dependency",
+        "lease_expires_at_epoch_ms": 1793404310898
+      },
+      "event": "task_claimed",
+      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad"
+    },
+    {
       "event": "status_changed",
-      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
       "from": "triage",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793400710898
+      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
+      "timestamp_ms": 1793400710898,
+      "to": "in_progress"
     },
     {
       "event": "task_verified",
-      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "A local module no longer hides a dependency of the same name. collect_crate_imports filtered any root ident that matched a module name declared in the crate, so batten-core mod regex; hid the regex crate and regex::escape(id) was discarded - I acted on that report by demoting the dependency, which failed to compile. The rule is now name plus context: hide only when the ident is not a declared dependency, since a local module named like a dependency is rare and the alternative failure mode is a destructive purge recommendation. Re-measured: unused declarations 34 -> 30, and the four that disappeared were all this same collision - batten-core/regex, miter-engine/hcl, rabbet-core/parquet and outfeed-core/semver. parquet had been flagged for manual review precisely because deleting it looked wrong; it was a false positive. Diagnosis recorded: three hypotheses (path scan, stripper, walk) were each refuted by a test, and only an instrumented run of the collector showed the missing key. Gate: clippy -D warnings, 181 tests, fmt green.",
-        "verified_at_epoch_ms": 1793400711195,
-        "git_branch": "main",
         "base_commit_sha": "97203588477abbde86b67bc0411ba6e79e96d85e",
-        "head_commit_sha": "97203588477abbde86b67bc0411ba6e79e96d85e",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "97203588477abbde86b67bc0411ba6e79e96d85e"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "97203588477abbde86b67bc0411ba6e79e96d85e",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "A local module no longer hides a dependency of the same name. collect_crate_imports filtered any root ident that matched a module name declared in the crate, so batten-core mod regex; hid the regex crate and regex::escape(id) was discarded - I acted on that report by demoting the dependency, which failed to compile. The rule is now name plus context: hide only when the ident is not a declared dependency, since a local module named like a dependency is rare and the alternative failure mode is a destructive purge recommendation. Re-measured: unused declarations 34 -> 30, and the four that disappeared were all this same collision - batten-core/regex, miter-engine/hcl, rabbet-core/parquet and outfeed-core/semver. parquet had been flagged for manual review precisely because deleting it looked wrong; it was a false positive. Diagnosis recorded: three hypotheses (path scan, stripper, walk) were each refuted by a test, and only an instrumented run of the collector showed the missing key. Gate: clippy -D warnings, 181 tests, fmt green.",
+        "verified_at_epoch_ms": 1793400711195,
+        "verifier": "manual"
+      },
+      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad"
     },
     {
       "event": "status_changed",
-      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
       "from": "verified",
-      "to": "archived",
       "reason": "Archived out of active backlog",
-      "timestamp_ms": 1793953242226
+      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
+      "timestamp_ms": 1793953242226,
+      "to": "archived"
     },
     {
       "event": "task_archived",
-      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
       "status": "verified",
+      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
       "timestamp_ms": 1794038020888
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "df07c9b8-9e1d-4b4f-aa04-b97d29ed9dfa",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-18"
+      },
+      "event": "edge_added",
+      "task_id": "d07370cf-2d08-4ae2-bd14-636222527aad",
+      "timestamp_ms": 1794336146491
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038020888,
+    "created_at_epoch_ms": 1793399515705,
+    "decisions": [],
+    "description": "Found the hard way during GB-201: batten-core declares `regex` and uses it as `regex::escape(id)` in src/grammar/regex.rs with no `use regex;` statement. The scanner reports the dependency as unused, and I acted on that report by demoting it to [dev-dependencies] - which failed to compile. The gate caught it, regex was restored, and the incidence is recorded in the batten commit.\n\nRoot cause: `collect_crate_imports` collects imports (use statements and `crate::`/`mod` paths), not qualified references. A dependency reached only through `extern_crate::item` therefore looks dead. That is the same class of over-reporting as MTR-18 (fixture strings counted as references) but in the opposite direction, and it produces a false positive that a careful operator will act on destructively.\n\nSCOPE: while stripping literals and comments, also recognise `ident::` paths in expression position as a reference, so `regex::escape` counts. Then re-measure GB-201 - the current 34 unused includes at least this one false positive, and the real number is lower.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "df07c9b8-9e1d-4b4f-aa04-b97d29ed9dfa",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-18"
+      }
+    ],
+    "id": "d07370cf-2d08-4ae2-bd14-636222527aad",
+    "kind": "bug",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_engine::analysis::deps::imports"
+      ]
+    },
+    "slug": "miter-deps-calls-a-dependency-unused-when-it-is-only-referenced-by-a-fully-qualified-path-d07370",
+    "status": "verified",
+    "ticket_key": "GB-232",
+    "title": "miter deps calls a dependency unused when it is only referenced by a fully-qualified path",
+    "updated_at_epoch_ms": 1794038020888,
+    "verification_receipt": {
+      "base_commit_sha": "97203588477abbde86b67bc0411ba6e79e96d85e",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "97203588477abbde86b67bc0411ba6e79e96d85e"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "97203588477abbde86b67bc0411ba6e79e96d85e",
+      "repo": null,
+      "summary": "A local module no longer hides a dependency of the same name. collect_crate_imports filtered any root ident that matched a module name declared in the crate, so batten-core mod regex; hid the regex crate and regex::escape(id) was discarded - I acted on that report by demoting the dependency, which failed to compile. The rule is now name plus context: hide only when the ident is not a declared dependency, since a local module named like a dependency is rare and the alternative failure mode is a destructive purge recommendation. Re-measured: unused declarations 34 -> 30, and the four that disappeared were all this same collision - batten-core/regex, miter-engine/hcl, rabbet-core/parquet and outfeed-core/semver. parquet had been flagged for manual review precisely because deleting it looked wrong; it was a false positive. Diagnosis recorded: three hypotheses (path scan, stripper, walk) were each refuted by a test, and only an instrumented run of the collector showed the missing key. Gate: clippy -D warnings, 181 tests, fmt green.",
+      "verified_at_epoch_ms": 1793400711195,
+      "verifier": "manual"
+    }
+  }
 }

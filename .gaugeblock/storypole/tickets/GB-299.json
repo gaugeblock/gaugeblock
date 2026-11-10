@@ -1,93 +1,93 @@
 {
-  "ticket": {
-    "id": "fdd3969e-a04e-45f7-a0b1-873d23e081d0",
-    "ticket_key": "GB-299",
-    "slug": "gaugeblock-error-error-categories-and-one-code-mapping-instead-of-97-boundary-sites-stringifying-foreign-errors-fdd396",
-    "title": "gaugeblock-error: error categories and one code mapping, instead of 97 boundary sites stringifying foreign errors",
-    "description": "",
-    "kind": "refactor",
-    "status": "deferred",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "gaugeblock_contracts"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "MEASURED WITH MITER 2026-11-06, and it reverses my own earlier sequencing advice.\n\n`miter impact BenchworkError` (depth 4) reports three sections that matter here:\n  Affected tests: 6 distinct test symbols, so a refactor has a concrete verification set.\n  Entrypoints and handlers: run_in_process_synthesis in xray_service, plus the daemon's whole route layer - post_claim_task_handler, post_record_handoff_handler, post_update_task_handler, post_split_task_handler, post_archive_task_handler.\n  Construction sites by grep: benchwork-core 53, chalkline-core 3.\n\nSo the error type is not a leaf: it reaches the HTTP handlers, and in benchwork it is constructed in 53 places. I previously proposed benchwork-core as the natural pilot because it had the most sites; that was reasoning backwards. A pilot's job is to prove the shape cheaply and be abandoned cheaply if the shape is wrong, so it belongs in the crate with the smallest blast radius. Corrected plan:\n  1. Pilot in chalkline-core (3 construction sites, no daemon, no handler layer). Convert every site in one commit.\n  2. If the shape survives contact, take sawhorse or outfeed next (medium).\n  3. benchwork-core last: 53 sites plus a reachable handler layer is where a wrong shape becomes expensive.\nThe all-or-nothing gate still holds per crate. The change is only which crate goes first.\n\nCLONE EVIDENCE for the CLI half, with a caveat worth recording. `miter clones --min-lines 12 --similarity 0.85` puts benchwork-cli/main.rs and chalkline-cli/main.rs at 85.9 percent similarity, which is the boilerplate signal one would hope for - but the same run also pairs dado's main() with outfeed's parse_header at 85.2 percent, which is nonsense. That is GB-197 showing itself: the tool compares shape without a content dimension, so two functions that share a silhouette match even when they share nothing else. Conclusion used here: the structural similarity of the CLI entrypoints is real but this measurement is too noisy to quantify it. Direct counts are cleaner and are what the recommendation rests on."
-    ],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794078581814,
-    "updated_at_epoch_ms": 1794078679347
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "fdd3969e-a04e-45f7-a0b1-873d23e081d0",
-        "ticket_key": "GB-299",
-        "slug": "gaugeblock-error-error-categories-and-one-code-mapping-instead-of-97-boundary-sites-stringifying-foreign-errors-fdd396",
-        "title": "gaugeblock-error: error categories and one code mapping, instead of 97 boundary sites stringifying foreign errors",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794078581814,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "fdd3969e-a04e-45f7-a0b1-873d23e081d0",
         "kind": "refactor",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "gaugeblock_contracts"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794078581814,
-        "updated_at_epoch_ms": 1794078581814
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+        "slug": "gaugeblock-error-error-categories-and-one-code-mapping-instead-of-97-boundary-sites-stringifying-foreign-errors-fdd396",
+        "status": "deferred",
+        "ticket_key": "GB-299",
+        "title": "gaugeblock-error: error categories and one code mapping, instead of 97 boundary sites stringifying foreign errors",
+        "updated_at_epoch_ms": 1794078581814,
+        "verification_receipt": null
+      }
     },
     {
-      "event": "task_updated",
-      "task_id": "fdd3969e-a04e-45f7-a0b1-873d23e081d0",
-      "title": null,
-      "description": null,
-      "priority": null,
-      "scope": null,
       "acceptance_criteria": [
         "MEASURED 2026-11-06, in answer to whether a common error crate is warranted. Short version: yes, but not the crate the name suggests. A universal error enum would be a mistake; a small classification layer would not.\n\nWHAT IS ALREADY HEALTHY, so nobody deletes it:\n- 28 domain error enums, each with its own variants. They are genuinely different: TaskNotFound and InvalidWorkspace and Parse are not one thing wearing three names. Merging them would produce a god-enum whose every match arm is unreachable in most crates.\n- JSON-RPC codes are already centralised: gaugeblock-mcp::protocol::code (PARSE_ERROR, METHOD_NOT_FOUND, INVALID_PARAMS). A grep for literal \"-326xx\" codes in the seven *-mcp crates finds nothing, so that duplication does not exist yet.\n- Exit codes are barely a problem today: two process::exit sites in the whole suite, and anyhow at the binary boundary does the rest.\n\nWHAT IS ACTUALLY WRONG, and it is one thing: 97 boundary sites flatten a foreign error into a string.\n  BenchworkError::Storypole(e.to_string())     ChalklineError::Storypole(e.to_string())\n  BenchworkError::Workspace(e.to_string())     OutfeedError::Storypole(e.to_string())\nThe variants even name the product that failed - Storypole(String) appears 3 times, Sawhorse(String) twice - which is a taxonomy trying to exist inside String payloads. What is lost at each site: the error's own type, its category, its source chain, and any structure a caller could match on. What survives is prose.\n\nWHY THIS MATTERS NOW, not as tidying: three features in flight all need the same classification and each would otherwise invent it.\n  gaugeblock-cli (GB-298) needs a policy mapping error to exit code.\n  The MCP loop (GB-297) needs error to JSON-RPC code, and already has codes but no way to pick one from an arbitrary error.\n  Telemetry (GB-294) needs status error plus the first diagnostic line, which is exactly what the stringified boundary keeps and the structured one discards.\n\nPROPOSED SHAPE - a classification, not a replacement:\n1. An ErrorCategory with a closed set: NotFound, InvalidInput, Unavailable, ExternalTool, Io, Internal. Each crate keeps its enums and adds one fn category(&self).\n2. A Foreign payload type { product: &'static str, message: String, source: Option<Box<dyn Error + Send + Sync>> } to replace the e.to_string() variants, so a boundary records WHICH product failed and keeps the chain. Adoption is mechanical: Foreign::from_error(\"storypole\", e).\n3. One mapping table, error category to exit code and to JSON-RPC code, owned once and referenced by gaugeblock-cli and gaugeblock-mcp. gaugeblock-mcp already has the constants; this gives them a chooser.\n\nZERO DEPENDENCIES. Not serde, not thiserror, nothing. 28 crates would depend on it and a foundation crate that drags a serializer into a parser is a cost paid everywhere for a benefit used in three places.\n\nRISK, stated because it decides whether to start: a half-adopted error layer is worse than none - it produces a third representation alongside the enum variants and the strings. The gate to accept is per crate and all-or-nothing: convert every boundary site in one crate in one commit, or do not start that crate. benchwork-core alone has 38 construction sites, so it is the natural pilot and the natural proof.\n\nSequencing: after GB-298 exists to consume the category (otherwise this is a refactor with no customer), and before GB-297 needs to pick a JSON-RPC code. It does not block either."
       ],
-      "timestamp_ms": 1794078589026
-    },
-    {
-      "event": "task_updated",
-      "task_id": "fdd3969e-a04e-45f7-a0b1-873d23e081d0",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "fdd3969e-a04e-45f7-a0b1-873d23e081d0",
+      "timestamp_ms": 1794078589026,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
-        "MEASURED WITH MITER 2026-11-06, and it reverses my own earlier sequencing advice.\n\n`miter impact BenchworkError` (depth 4) reports three sections that matter here:\n  Affected tests: 6 distinct test symbols, so a refactor has a concrete verification set.\n  Entrypoints and handlers: run_in_process_synthesis in xray_service, plus the daemon's whole route layer - post_claim_task_handler, post_record_handoff_handler, post_update_task_handler, post_split_task_handler, post_archive_task_handler.\n  Construction sites by grep: benchwork-core 53, chalkline-core 3.\n\nSo the error type is not a leaf: it reaches the HTTP handlers, and in benchwork it is constructed in 53 places. I previously proposed benchwork-core as the natural pilot because it had the most sites; that was reasoning backwards. A pilot's job is to prove the shape cheaply and be abandoned cheaply if the shape is wrong, so it belongs in the crate with the smallest blast radius. Corrected plan:\n  1. Pilot in chalkline-core (3 construction sites, no daemon, no handler layer). Convert every site in one commit.\n  2. If the shape survives contact, take sawhorse or outfeed next (medium).\n  3. benchwork-core last: 53 sites plus a reachable handler layer is where a wrong shape becomes expensive.\nThe all-or-nothing gate still holds per crate. The change is only which crate goes first.\n\nCLONE EVIDENCE for the CLI half, with a caveat worth recording. `miter clones --min-lines 12 --similarity 0.85` puts benchwork-cli/main.rs and chalkline-cli/main.rs at 85.9 percent similarity, which is the boilerplate signal one would hope for - but the same run also pairs dado's main() with outfeed's parse_header at 85.2 percent, which is nonsense. That is GB-197 showing itself: the tool compares shape without a content dimension, so two functions that share a silhouette match even when they share nothing else. Conclusion used here: the structural similarity of the CLI entrypoints is real but this measurement is too noisy to quantify it. Direct counts are cleaner and are what the recommendation rests on."
+        "MEASURED WITH MITER 2026-11-06, and it reverses my own earlier sequencing advice.\n\n`miter impact BenchworkError` (depth 4) reports three sections that matter here:\n  Affected tests: 6 distinct test symbols, so a refactor has a concrete verification set.\n  Entrypoints and handlers: run_in_process_synthesis in xray_service, plus the daemon's whole route layer - post_claim_task_handler, post_record_handoff_handler, post_update_task_handler, post_split_task_handler, post_archive_task_handler.\n  Construction sites by grep: benchwork-core 53, chalkline-core 3.\n\nSo the error type is not a leaf: it reaches the HTTP handlers, and in benchwork it is constructed in 53 places. I previously proposed benchwork-core as the natural pilot because it had the most sites; that was reasoning backwards. A pilot's job is to prove the shape cheaply and be abandoned cheaply if the shape is wrong, so it belongs in the crate with the smallest blast radius. Corrected plan:\n  1. Pilot in chalkline-core (3 construction sites, no daemon, no handler layer). Convert every site in one commit.\n  2. If the shape survives contact, take sawhorse or outfeed next (medium).\n  3. benchwork-core last: 53 sites plus a reachable handler layer is where a wrong shape becomes expensive.\nThe all-or-nothing gate still holds per crate. The change is only which crate goes first.\n\nCLONE EVIDENCE for the CLI half, with a caveat worth recording. `miter clones --min-lines 12 --similarity 0.85` puts benchwork-cli/main.rs and chalkline-cli/main.rs at 85.9 percent similarity, which is the boilerplate signal one would hope for - but the same run also pairs dado's main() with outfeed's parse_header at 85.2 percent, which is nonsense. That is MTR-17 showing itself: the tool compares shape without a content dimension, so two functions that share a silhouette match even when they share nothing else. Conclusion used here: the structural similarity of the CLI entrypoints is real but this measurement is too noisy to quantify it. Direct counts are cleaner and are what the recommendation rests on."
       ],
-      "timestamp_ms": 1794078679347
+      "description": null,
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
+      "task_id": "fdd3969e-a04e-45f7-a0b1-873d23e081d0",
+      "timestamp_ms": 1794078679347,
+      "title": null
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "MEASURED WITH MITER 2026-11-06, and it reverses my own earlier sequencing advice.\n\n`miter impact BenchworkError` (depth 4) reports three sections that matter here:\n  Affected tests: 6 distinct test symbols, so a refactor has a concrete verification set.\n  Entrypoints and handlers: run_in_process_synthesis in xray_service, plus the daemon's whole route layer - post_claim_task_handler, post_record_handoff_handler, post_update_task_handler, post_split_task_handler, post_archive_task_handler.\n  Construction sites by grep: benchwork-core 53, chalkline-core 3.\n\nSo the error type is not a leaf: it reaches the HTTP handlers, and in benchwork it is constructed in 53 places. I previously proposed benchwork-core as the natural pilot because it had the most sites; that was reasoning backwards. A pilot's job is to prove the shape cheaply and be abandoned cheaply if the shape is wrong, so it belongs in the crate with the smallest blast radius. Corrected plan:\n  1. Pilot in chalkline-core (3 construction sites, no daemon, no handler layer). Convert every site in one commit.\n  2. If the shape survives contact, take sawhorse or outfeed next (medium).\n  3. benchwork-core last: 53 sites plus a reachable handler layer is where a wrong shape becomes expensive.\nThe all-or-nothing gate still holds per crate. The change is only which crate goes first.\n\nCLONE EVIDENCE for the CLI half, with a caveat worth recording. `miter clones --min-lines 12 --similarity 0.85` puts benchwork-cli/main.rs and chalkline-cli/main.rs at 85.9 percent similarity, which is the boilerplate signal one would hope for - but the same run also pairs dado's main() with outfeed's parse_header at 85.2 percent, which is nonsense. That is MTR-17 showing itself: the tool compares shape without a content dimension, so two functions that share a silhouette match even when they share nothing else. Conclusion used here: the structural similarity of the CLI entrypoints is real but this measurement is too noisy to quantify it. Direct counts are cleaner and are what the recommendation rests on."
+    ],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794078581814,
+    "decisions": [],
+    "description": "",
+    "edges": [],
+    "id": "fdd3969e-a04e-45f7-a0b1-873d23e081d0",
+    "kind": "refactor",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "gaugeblock_contracts"
+      ]
+    },
+    "slug": "gaugeblock-error-error-categories-and-one-code-mapping-instead-of-97-boundary-sites-stringifying-foreign-errors-fdd396",
+    "status": "deferred",
+    "ticket_key": "GB-299",
+    "title": "gaugeblock-error: error categories and one code mapping, instead of 97 boundary sites stringifying foreign errors",
+    "updated_at_epoch_ms": 1794078679347,
+    "verification_receipt": null
+  }
 }

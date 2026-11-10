@@ -1,173 +1,191 @@
 {
-  "ticket": {
-    "id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
-    "ticket_key": "GB-223",
-    "slug": "miter-contracts-prints-32-field-level-drift-lines-and-still-exits-0-96ffe6",
-    "title": "miter contracts prints 32 field-level drift lines and still exits 0",
-    "description": "Measured while verifying GB-221: `miter contracts` output ends with 32 lines of the form \"<entity> <field> in [rust] but missing in [typescript]\" (typed_hole, workspace_capabilities and others) and the process exits 0, so the Tier 3 gate step passes while drift is visible in its own output. A gate that reports a problem and returns success is not a gate - it is the same failure mode as GB-202 before GB-219 wired it in, and as the outfeed gate accepting a skipped step as a pass.\n\nThe 32 lines are pre-existing, not from GB-221: a targeted grep for reasoning in the same run returns 0 hits, so the ReasoningEffort change is contract-clean.\n\nTWO THINGS TO DECIDE: (1) should field-level drift fail the run, or only entity-level? Some drift may be expected where a language legitimately lacks a field, in which case it needs the same allowlist treatment GB-202 gave lateral edges - an entry with a ticket, not silence. (2) 35 entities verified versus 32 drift lines suggests the comparison is per-field across 3 languages and will need a stated policy rather than an implicit one.",
-    "kind": "bug",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "miter_cli::contracts"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Manual verification confirmed",
-      "verified_at_epoch_ms": 1793430382875,
-      "git_branch": "main",
-      "base_commit_sha": "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146",
-      "head_commit_sha": "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146",
-      "commit_shas": [
-        "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793376065094,
-    "updated_at_epoch_ms": 1794038020248,
-    "archived_at_epoch_ms": 1794038020248
-  },
   "events": [
     {
       "event": "handoff_recorded",
-      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "handoff": {
-        "recorded_by_agent": "cline",
-        "timestamp_ms": 1793430375939,
         "completed_items": [
           "Fixed in two commits. 3648091 miter-cli: added --check, extracted the verdict from the two renderers, 3 unit tests (drift without check describes, drift with check rejects, clean passes, singular not pluralised); also re-exported MissingFieldDrift which was public shape but unreachable by name. b851188 outfeed-core: the gate contracts step now passes --check. Verified against the installed binary: plain `miter contracts` exits 0 with the report, `--check` exits 1 with \"contract drift: 9 entities across 33 field(s)\"."
         ],
+        "dirty_files": [],
+        "git_ref": "b851188",
+        "last_error_or_blocker": "None. Note the field count moved 32 -> 33 between filing and fixing: the first count was taken against a three-day-stale index (GB-237), so the stale index was hiding a drift as well as symbols.",
+        "recorded_by_agent": "cline",
         "remaining_items": [
           "The gate is now honest and red, which is the point. GB-238 holds the work: 9 entities, 33 fields, and a design question - the checker matches on entity name, so some pairs are genuinely one drifted wire contract (benchwork ChatMessage: content/timestamp_ms vs text/timestamp) while others merely share a name between a Rust ledger record and a TypeScript UI model. Deciding which is which has to come before any field is renamed."
         ],
-        "last_error_or_blocker": "None. Note the field count moved 32 -> 33 between filing and fixing: the first count was taken against a three-day-stale index (GB-237), so the stale index was hiding a drift as well as symbols.",
-        "git_ref": "b851188",
-        "dirty_files": []
+        "timestamp_ms": 1793430375939
       },
-      "new_status": "ready"
+      "new_status": "ready",
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7"
     },
     {
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793376065094,
+        "decisions": [],
+        "description": "Measured while verifying GB-221: `miter contracts` output ends with 32 lines of the form \"<entity> <field> in [rust] but missing in [typescript]\" (typed_hole, workspace_capabilities and others) and the process exits 0, so the Tier 3 gate step passes while drift is visible in its own output. A gate that reports a problem and returns success is not a gate - it is the same failure mode as MTR-19 before GB-219 wired it in, and as the outfeed gate accepting a skipped step as a pass.\n\nThe 32 lines are pre-existing, not from GB-221: a targeted grep for reasoning in the same run returns 0 hits, so the ReasoningEffort change is contract-clean.\n\nTWO THINGS TO DECIDE: (1) should field-level drift fail the run, or only entity-level? Some drift may be expected where a language legitimately lacks a field, in which case it needs the same allowlist treatment MTR-19 gave lateral edges - an entry with a ticket, not silence. (2) 35 entities verified versus 32 drift lines suggests the comparison is per-field across 3 languages and will need a stated policy rather than an implicit one.",
+        "edges": [],
         "id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
-        "ticket_key": "GB-223",
-        "slug": "miter-contracts-prints-32-field-level-drift-lines-and-still-exits-0-96ffe6",
-        "title": "miter contracts prints 32 field-level drift lines and still exits 0",
-        "description": "Measured while verifying GB-221: `miter contracts` output ends with 32 lines of the form \"<entity> <field> in [rust] but missing in [typescript]\" (typed_hole, workspace_capabilities and others) and the process exits 0, so the Tier 3 gate step passes while drift is visible in its own output. A gate that reports a problem and returns success is not a gate - it is the same failure mode as GB-202 before GB-219 wired it in, and as the outfeed gate accepting a skipped step as a pass.\n\nThe 32 lines are pre-existing, not from GB-221: a targeted grep for reasoning in the same run returns 0 hits, so the ReasoningEffort change is contract-clean.\n\nTWO THINGS TO DECIDE: (1) should field-level drift fail the run, or only entity-level? Some drift may be expected where a language legitimately lacks a field, in which case it needs the same allowlist treatment GB-202 gave lateral edges - an entry with a ticket, not silence. (2) 35 entities verified versus 32 drift lines suggests the comparison is per-field across 3 languages and will need a stated policy rather than an implicit one.",
         "kind": "bug",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "miter_cli::contracts"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793376065094,
-        "updated_at_epoch_ms": 1793376065094
-      },
-      "captured_by_agent": "agent",
-      "discovered_from_task_id": null
+        "slug": "miter-contracts-prints-32-field-level-drift-lines-and-still-exits-0-96ffe6",
+        "status": "triage",
+        "ticket_key": "GB-223",
+        "title": "miter contracts prints 32 field-level drift lines and still exits 0",
+        "updated_at_epoch_ms": 1793376065094,
+        "verification_receipt": null
+      }
     },
     {
-      "event": "task_claimed",
-      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793428307103,
-        "lease_expires_at_epoch_ms": 1793431907103,
         "git_branch": null,
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793431907103
+      },
+      "event": "task_claimed",
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7"
     },
     {
       "event": "status_changed",
-      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "from": "triage",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793428307103
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
+      "timestamp_ms": 1793428307103,
+      "to": "in_progress"
     },
     {
-      "event": "task_claimed",
-      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793430382765,
-        "lease_expires_at_epoch_ms": 1793433982765,
         "git_branch": null,
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793433982765
+      },
+      "event": "task_claimed",
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7"
     },
     {
       "event": "status_changed",
-      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "from": "ready",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793430382765
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
+      "timestamp_ms": 1793430382765,
+      "to": "in_progress"
     },
     {
       "event": "task_verified",
-      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Manual verification confirmed",
-        "verified_at_epoch_ms": 1793430382875,
-        "git_branch": "main",
         "base_commit_sha": "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146",
-        "head_commit_sha": "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793430382875,
+        "verifier": "manual"
+      },
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7"
     },
     {
       "event": "status_changed",
-      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "from": "verified",
-      "to": "archived",
       "reason": "Archived out of active backlog",
-      "timestamp_ms": 1793953207658
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
+      "timestamp_ms": 1793953207658,
+      "to": "archived"
     },
     {
       "event": "task_archived",
-      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "status": "verified",
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
       "timestamp_ms": 1794038020248
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "1be1907f-adbe-458a-8c64-9c965144f2e5",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-19"
+      },
+      "event": "edge_added",
+      "task_id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
+      "timestamp_ms": 1794336146490
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038020248,
+    "created_at_epoch_ms": 1793376065094,
+    "decisions": [],
+    "description": "Measured while verifying GB-221: `miter contracts` output ends with 32 lines of the form \"<entity> <field> in [rust] but missing in [typescript]\" (typed_hole, workspace_capabilities and others) and the process exits 0, so the Tier 3 gate step passes while drift is visible in its own output. A gate that reports a problem and returns success is not a gate - it is the same failure mode as MTR-19 before GB-219 wired it in, and as the outfeed gate accepting a skipped step as a pass.\n\nThe 32 lines are pre-existing, not from GB-221: a targeted grep for reasoning in the same run returns 0 hits, so the ReasoningEffort change is contract-clean.\n\nTWO THINGS TO DECIDE: (1) should field-level drift fail the run, or only entity-level? Some drift may be expected where a language legitimately lacks a field, in which case it needs the same allowlist treatment MTR-19 gave lateral edges - an entry with a ticket, not silence. (2) 35 entities verified versus 32 drift lines suggests the comparison is per-field across 3 languages and will need a stated policy rather than an implicit one.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "1be1907f-adbe-458a-8c64-9c965144f2e5",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-19"
+      }
+    ],
+    "id": "96ffe6a9-451e-43be-8eb7-8c08c3d22af7",
+    "kind": "bug",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_cli::contracts"
+      ]
+    },
+    "slug": "miter-contracts-prints-32-field-level-drift-lines-and-still-exits-0-96ffe6",
+    "status": "verified",
+    "ticket_key": "GB-223",
+    "title": "miter contracts prints 32 field-level drift lines and still exits 0",
+    "updated_at_epoch_ms": 1794038020248,
+    "verification_receipt": {
+      "base_commit_sha": "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "1f971fdcdafaf8dfbe7e46d808bfcfc816d8e146",
+      "repo": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1793430382875,
+      "verifier": "manual"
+    }
+  }
 }

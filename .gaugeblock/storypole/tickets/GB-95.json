@@ -1,140 +1,140 @@
 {
-  "ticket": {
-    "id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
-    "ticket_key": "GB-95",
-    "slug": "synchronize-inferencerequest-contract-and-reasoningeffort-enum-in-contracts-md-15d80c",
-    "title": "Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md",
-    "description": "Update Section 5 in CONTRACTS.md to include pub reasoning_effort: Option<ReasoningEffort> and ReasoningEffort enum.",
-    "kind": "feature",
-    "status": "verified",
-    "priority": 1,
-    "scope": {
-      "repo": "workspace",
-      "crate_name": "contracts",
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": {
-      "summary": "Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md",
-      "design_markdown": "# GB-95: Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md\n\n## Context & Root Cause\nIn `sawhorse-core` (GB-81), `ReasoningEffort` enum and `reasoning_effort: Option<ReasoningEffort>` were added to `InferenceRequest`, but Section 5 in `CONTRACTS.md` was not updated to reflect this change.\n\n## Implementation Steps\n1. Update `CONTRACTS.md` Section 5:\n   - Add `ReasoningEffort` enum (`None`, `Low`, `Medium`, `High`).\n   - Add `pub reasoning_effort: Option<crate::ReasoningEffort>` to `InferenceRequest`.\n2. Commit atomically: `docs(contracts): synchronize InferenceRequest and ReasoningEffort in CONTRACTS.md`.\n",
-      "steps": [],
-      "plan_file_path": ".gaugeblock/storypole/plans/GB-95.md",
-      "updated_at_epoch_ms": 1793073521946
-    },
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "agent-antigravity",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Synchronized InferenceRequest, InferenceResponse, and ReasoningEffort in CONTRACTS.md Section 5",
-      "verified_at_epoch_ms": 1793073558436,
-      "git_branch": "main",
-      "base_commit_sha": "79f542e2ca6548fa13f2b229085c5183f86188a2",
-      "head_commit_sha": "c6c59ad187fd459caf3e999cae1875f171c3fecf",
-      "commit_shas": [
-        "c6c59ad187fd459caf3e999cae1875f171c3fecf"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793073497205,
-    "updated_at_epoch_ms": 1794037974889,
-    "archived_at_epoch_ms": 1794037974889
-  },
   "events": [
     {
       "event": "task_created",
       "task": {
-        "id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
-        "ticket_key": "GB-95",
-        "slug": "synchronize-inferencerequest-contract-and-reasoningeffort-enum-in-contracts-md-15d80c",
-        "title": "Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793073497205,
+        "decisions": [],
         "description": "Update Section 5 in CONTRACTS.md to include pub reasoning_effort: Option<ReasoningEffort> and ReasoningEffort enum.",
+        "edges": [],
+        "id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
         "kind": "feature",
-        "status": "ready",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 1,
         "scope": {
-          "repo": "workspace",
           "crate_name": "contracts",
+          "labels": [],
           "module_path": null,
+          "repo": "workspace",
           "target_files": [],
-          "target_symbols": [],
-          "labels": []
+          "target_symbols": []
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793073497205,
-        "updated_at_epoch_ms": 1793073497205
+        "slug": "synchronize-inferencerequest-contract-and-reasoningeffort-enum-in-contracts-md-15d80c",
+        "status": "ready",
+        "ticket_key": "GB-95",
+        "title": "Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md",
+        "updated_at_epoch_ms": 1793073497205,
+        "verification_receipt": null
       }
     },
     {
       "event": "plan_updated",
-      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
       "plan": {
-        "summary": "Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md",
-        "design_markdown": "# GB-95: Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md\n\n## Context & Root Cause\nIn `sawhorse-core` (GB-81), `ReasoningEffort` enum and `reasoning_effort: Option<ReasoningEffort>` were added to `InferenceRequest`, but Section 5 in `CONTRACTS.md` was not updated to reflect this change.\n\n## Implementation Steps\n1. Update `CONTRACTS.md` Section 5:\n   - Add `ReasoningEffort` enum (`None`, `Low`, `Medium`, `High`).\n   - Add `pub reasoning_effort: Option<crate::ReasoningEffort>` to `InferenceRequest`.\n2. Commit atomically: `docs(contracts): synchronize InferenceRequest and ReasoningEffort in CONTRACTS.md`.\n",
-        "steps": [],
+        "design_markdown": "# GB-95: Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md\n\n## Context & Root Cause\nIn `sawhorse-core` (SH-5), `ReasoningEffort` enum and `reasoning_effort: Option<ReasoningEffort>` were added to `InferenceRequest`, but Section 5 in `CONTRACTS.md` was not updated to reflect this change.\n\n## Implementation Steps\n1. Update `CONTRACTS.md` Section 5:\n   - Add `ReasoningEffort` enum (`None`, `Low`, `Medium`, `High`).\n   - Add `pub reasoning_effort: Option<crate::ReasoningEffort>` to `InferenceRequest`.\n2. Commit atomically: `docs(contracts): synchronize InferenceRequest and ReasoningEffort in CONTRACTS.md`.\n",
         "plan_file_path": ".gaugeblock/storypole/plans/GB-95.md",
+        "steps": [],
+        "summary": "Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md",
         "updated_at_epoch_ms": 1793073521946
       },
+      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
       "timestamp_ms": 1793073521946
     },
     {
-      "event": "task_claimed",
-      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
       "claim": {
         "agent_id": "agent-antigravity",
+        "base_commit_sha": "79f542e2ca6548fa13f2b229085c5183f86188a2",
         "claimed_at_epoch_ms": 1793073526049,
-        "lease_expires_at_epoch_ms": 1793077126049,
         "git_branch": "docs/gb-95-sync-contracts",
-        "base_commit_sha": "79f542e2ca6548fa13f2b229085c5183f86188a2"
-      }
+        "lease_expires_at_epoch_ms": 1793077126049
+      },
+      "event": "task_claimed",
+      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d"
     },
     {
       "event": "status_changed",
-      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
       "from": "ready",
-      "to": "in_progress",
       "reason": "Claimed by agent-antigravity",
-      "timestamp_ms": 1793073526049
+      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
+      "timestamp_ms": 1793073526049,
+      "to": "in_progress"
     },
     {
       "event": "task_verified",
-      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
       "receipt": {
-        "verifier": "agent-antigravity",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Synchronized InferenceRequest, InferenceResponse, and ReasoningEffort in CONTRACTS.md Section 5",
-        "verified_at_epoch_ms": 1793073558436,
-        "git_branch": "main",
         "base_commit_sha": "79f542e2ca6548fa13f2b229085c5183f86188a2",
-        "head_commit_sha": "c6c59ad187fd459caf3e999cae1875f171c3fecf",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "c6c59ad187fd459caf3e999cae1875f171c3fecf"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "c6c59ad187fd459caf3e999cae1875f171c3fecf",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "Synchronized InferenceRequest, InferenceResponse, and ReasoningEffort in CONTRACTS.md Section 5",
+        "verified_at_epoch_ms": 1793073558436,
+        "verifier": "agent-antigravity"
+      },
+      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d"
     },
     {
       "event": "task_archived",
-      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
       "status": "verified",
+      "task_id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
       "timestamp_ms": 1794037974889
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794037974889,
+    "created_at_epoch_ms": 1793073497205,
+    "decisions": [],
+    "description": "Update Section 5 in CONTRACTS.md to include pub reasoning_effort: Option<ReasoningEffort> and ReasoningEffort enum.",
+    "edges": [],
+    "id": "15d80cbc-f32f-4e18-a553-150f676fa14d",
+    "kind": "feature",
+    "latest_handoff": null,
+    "plan": {
+      "design_markdown": "# GB-95: Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md\n\n## Context & Root Cause\nIn `sawhorse-core` (SH-5), `ReasoningEffort` enum and `reasoning_effort: Option<ReasoningEffort>` were added to `InferenceRequest`, but Section 5 in `CONTRACTS.md` was not updated to reflect this change.\n\n## Implementation Steps\n1. Update `CONTRACTS.md` Section 5:\n   - Add `ReasoningEffort` enum (`None`, `Low`, `Medium`, `High`).\n   - Add `pub reasoning_effort: Option<crate::ReasoningEffort>` to `InferenceRequest`.\n2. Commit atomically: `docs(contracts): synchronize InferenceRequest and ReasoningEffort in CONTRACTS.md`.\n",
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-95.md",
+      "steps": [],
+      "summary": "Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md",
+      "updated_at_epoch_ms": 1793073521946
+    },
+    "priority": 1,
+    "scope": {
+      "crate_name": "contracts",
+      "labels": [],
+      "module_path": null,
+      "repo": "workspace",
+      "target_files": [],
+      "target_symbols": []
+    },
+    "slug": "synchronize-inferencerequest-contract-and-reasoningeffort-enum-in-contracts-md-15d80c",
+    "status": "verified",
+    "ticket_key": "GB-95",
+    "title": "Synchronize InferenceRequest contract and ReasoningEffort enum in CONTRACTS.md",
+    "updated_at_epoch_ms": 1794037974889,
+    "verification_receipt": {
+      "base_commit_sha": "79f542e2ca6548fa13f2b229085c5183f86188a2",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "c6c59ad187fd459caf3e999cae1875f171c3fecf"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "c6c59ad187fd459caf3e999cae1875f171c3fecf",
+      "repo": null,
+      "summary": "Synchronized InferenceRequest, InferenceResponse, and ReasoningEffort in CONTRACTS.md Section 5",
+      "verified_at_epoch_ms": 1793073558436,
+      "verifier": "agent-antigravity"
+    }
+  }
 }

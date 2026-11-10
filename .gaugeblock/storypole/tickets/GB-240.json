@@ -1,133 +1,77 @@
 {
-  "ticket": {
-    "id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
-    "ticket_key": "GB-240",
-    "slug": "benchwork-dag-view-renders-stale-statuses-it-reads-the-workspace-store-exclusively-and-never-falls-back-to-the-single-store-37bc57",
-    "title": "benchwork DAG view renders stale statuses: it reads the workspace store exclusively and never falls back to the single store",
-    "description": "RESOLVED 2026-10-31 and CONFIRMED IN THE RUNNING UI by the owner: after reinstalling the daemon, GB-57 and GB-53 no longer render as ready. So the read path was the cause; the workspace-store-exclusivity in get_dag_view was the actual defect, and the daemon-cached-store hypothesis is refuted by that observation.\n\nFix (a33cb3c): get_dag_view and get_task_briefing load through one helper where the single store is authoritative and the workspace store only contributes tasks the single store lacks.\n\nOriginal measurement: GB-57 and GB-53 were VERIFIED in the ledger, each with a task_verified event and receipt (GB-57 antigravity, GB-53 `outfeed apply`), keyed by task UUID - which is why the first key-based search saw only task_created and nearly produced a corruption diagnosis.",
-    "kind": "bug",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "benchwork_core::dag_service::query::get_dag_view"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "OPEN: a fixture that verifies a task and asserts the view reports it verified - point it at load_tasks",
-      " and it needs a workspace store with a deliberately stale member index or it cannot catch the regression",
-      "OPEN: confirm in the running daemon that GB-57 and GB-53 render as verified after a reinstall and restart; if not",
-      " investigate daemon-side caching of the store"
-    ],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Manual verification confirmed",
-      "verified_at_epoch_ms": 1793469180483,
-      "git_branch": "main",
-      "base_commit_sha": "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440",
-      "head_commit_sha": "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440",
-      "commit_shas": [
-        "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793467349839,
-    "updated_at_epoch_ms": 1794038024009,
-    "archived_at_epoch_ms": 1794038024009
-  },
   "events": [
     {
       "event": "handoff_recorded",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
       "handoff": {
-        "recorded_by_agent": "cline",
-        "timestamp_ms": 1793467920668,
         "completed_items": [
           "a33cb3c: get_dag_view now loads through one helper where the single store is authoritative and the workspace store only contributes tasks the single store lacks; get_task_briefing had the same inversion and is fixed the same way. clippy clean, 24 benchwork-core tests green."
         ],
-        "remaining_items": [
-          "One criterion: a fixture that verifies a task and asserts the DAG view reports it verified. load_tasks is the single place to point it at. Also worth a visual check in the UI once the daemon is reinstalled - GB-57 and GB-53 should move from Ready to Verified."
-        ],
-        "last_error_or_blocker": "None. Separately, GB-128 was closed as part of this: its children (GB-129/130/131/189) are all verified, so it was one of the phantom Ready cards.",
+        "dirty_files": [],
         "git_ref": "a33cb3c",
-        "dirty_files": []
+        "last_error_or_blocker": "None. Separately, GB-128 was closed as part of this: its children (GB-129/130/131/189) are all verified, so it was one of the phantom Ready cards.",
+        "recorded_by_agent": "cline",
+        "remaining_items": [
+          "One criterion: a fixture that verifies a task and asserts the DAG view reports it verified. load_tasks is the single place to point it at. Also worth a visual check in the UI once the daemon is reinstalled - SP-6 and MTR-5 should move from Ready to Verified."
+        ],
+        "timestamp_ms": 1793467920668
       },
-      "new_status": "ready"
+      "new_status": "ready",
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f"
     },
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
-        "ticket_key": "GB-240",
-        "slug": "benchwork-dag-view-renders-stale-statuses-it-reads-the-workspace-store-exclusively-and-never-falls-back-to-the-single-store-37bc57",
-        "title": "benchwork DAG view renders stale statuses: it reads the workspace store exclusively and never falls back to the single store",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793467349839,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
         "kind": "bug",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "benchwork_core::dag_service::query::get_dag_view"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793467349839,
-        "updated_at_epoch_ms": 1793467349839
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
-    },
-    {
-      "event": "task_claimed",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
-      "claim": {
-        "agent_id": "cline",
-        "claimed_at_epoch_ms": 1793467360435,
-        "lease_expires_at_epoch_ms": 1793470960435,
-        "git_branch": null,
-        "base_commit_sha": null
+        "slug": "benchwork-dag-view-renders-stale-statuses-it-reads-the-workspace-store-exclusively-and-never-falls-back-to-the-single-store-37bc57",
+        "status": "triage",
+        "ticket_key": "GB-240",
+        "title": "benchwork DAG view renders stale statuses: it reads the workspace store exclusively and never falls back to the single store",
+        "updated_at_epoch_ms": 1793467349839,
+        "verification_receipt": null
       }
     },
     {
-      "event": "status_changed",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
-      "from": "triage",
-      "to": "in_progress",
-      "reason": "Claimed by cline",
-      "timestamp_ms": 1793467360435
+      "claim": {
+        "agent_id": "cline",
+        "base_commit_sha": null,
+        "claimed_at_epoch_ms": 1793467360435,
+        "git_branch": null,
+        "lease_expires_at_epoch_ms": 1793470960435
+      },
+      "event": "task_claimed",
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f"
     },
     {
-      "event": "task_updated",
+      "event": "status_changed",
+      "from": "triage",
+      "reason": "Claimed by cline",
       "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
-      "title": null,
-      "description": "Symptom reported from the UI: benchwork shows tasks in Ready that are complete - GB-57 and GB-53 among them.\n\nMeasured: those two are VERIFIED in the ledger. Each has a task_verified event with a receipt (GB-57 verifier antigravity, GB-53 verifier outfeed, command `outfeed apply`), keyed by task UUID. `storypole show` agrees, so the data is right and only the view is wrong.\n\nCause is in the read path, not the data. `get_dag_view` opens a StorypoleWorkspaceStore first and, if that succeeds, reads `get_all_tasks(ws.conn())` and RETURNS - the single store is never consulted. So the DAG board renders whatever the workspace index holds, and a workspace index that has not been re-synced since those tasks were verified still says ready. `query.rs` has the same shape again around lines 128 and 143.\n\nThis overlaps GB-79 (WorkspaceStore sync_all_members replay ordering and distributed event sync), which is where the staleness itself belongs; this ticket is the read-path half - prefer or merge the single store rather than treating a successful workspace open as authoritative.\n\nA note for whoever measures next: the first pass on this looked like ledger corruption because a search for the ticket key found only task_created. Verification events key on the task UUID, not the ticket key, so a key-based search cannot see them. Check that a search can observe the thing before concluding it is absent.",
-      "priority": null,
-      "scope": null,
+      "timestamp_ms": 1793467360435,
+      "to": "in_progress"
+    },
+    {
       "acceptance_criteria": [
         "A task verified in the ledger never renders as ready",
         " whichever store the view opened",
@@ -135,106 +79,197 @@
         " or workspace authoritative with a documented resync",
         "A fixture that verifies a task and then asserts the DAG view reports it verified"
       ],
-      "timestamp_ms": 1793467360526
+      "description": "Symptom reported from the UI: benchwork shows tasks in Ready that are complete - SP-6 and MTR-5 among them.\n\nMeasured: those two are VERIFIED in the ledger. Each has a task_verified event with a receipt (SP-6 verifier antigravity, MTR-5 verifier outfeed, command `outfeed apply`), keyed by task UUID. `storypole show` agrees, so the data is right and only the view is wrong.\n\nCause is in the read path, not the data. `get_dag_view` opens a StorypoleWorkspaceStore first and, if that succeeds, reads `get_all_tasks(ws.conn())` and RETURNS - the single store is never consulted. So the DAG board renders whatever the workspace index holds, and a workspace index that has not been re-synced since those tasks were verified still says ready. `query.rs` has the same shape again around lines 128 and 143.\n\nThis overlaps GB-79 (WorkspaceStore sync_all_members replay ordering and distributed event sync), which is where the staleness itself belongs; this ticket is the read-path half - prefer or merge the single store rather than treating a successful workspace open as authoritative.\n\nA note for whoever measures next: the first pass on this looked like ledger corruption because a search for the ticket key found only task_created. Verification events key on the task UUID, not the ticket key, so a key-based search cannot see them. Check that a search can observe the thing before concluding it is absent.",
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+      "timestamp_ms": 1793467360526,
+      "title": null
     },
     {
-      "event": "task_claimed",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793468950604,
-        "lease_expires_at_epoch_ms": 1793472550604,
         "git_branch": null,
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793472550604
+      },
+      "event": "task_claimed",
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f"
     },
     {
       "event": "status_changed",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
       "from": "ready",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793468950604
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+      "timestamp_ms": 1793468950604,
+      "to": "in_progress"
     },
     {
-      "event": "task_updated",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
-      "title": null,
-      "description": null,
-      "priority": null,
-      "scope": null,
       "acceptance_criteria": [
         "OPEN: a fixture that verifies a task and asserts the view reports it verified - point it at load_tasks",
         " and it needs a workspace store with a deliberately stale member index or it cannot catch the regression",
-        "OPEN: confirm in the running daemon that GB-57 and GB-53 render as verified after a reinstall and restart; if not",
+        "OPEN: confirm in the running daemon that SP-6 and MTR-5 render as verified after a reinstall and restart; if not",
         " investigate daemon-side caching of the store"
       ],
-      "timestamp_ms": 1793468951085
-    },
-    {
+      "description": null,
       "event": "task_updated",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
-      "title": null,
-      "description": "HONESTY NOTE on the mechanism (2026-10-31), because an earlier description overstated it: \"the workspace index had not re-synced\" is a hypothesis consistent with the code shape, not an established fact.\n\n`StorypoleWorkspaceStore::open` builds its aggregate from `StorypoleStore::open_exact` on the root and on each member that has a dot dir, and it is opened per call in this path. So a per-call staleness story needs either the member indexes to lag, or the daemon to cache the store in its state. Which is true has NOT been measured.\n\nThe observable check is cheap: reinstall the daemon, restart it, and see whether GB-57 and GB-53 move to Verified. If they do not, the workspace path was not the cause and the next suspect is the daemon holding its own store in ctx.state. The fix still stands on its own terms - a cache should not outvote its source - but it is not yet proven to be the whole cause.",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": null,
-      "timestamp_ms": 1793468964264
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+      "timestamp_ms": 1793468951085,
+      "title": null
     },
     {
-      "event": "task_claimed",
+      "acceptance_criteria": null,
+      "description": "HONESTY NOTE on the mechanism (2026-10-31), because an earlier description overstated it: \"the workspace index had not re-synced\" is a hypothesis consistent with the code shape, not an established fact.\n\n`StorypoleWorkspaceStore::open` builds its aggregate from `StorypoleStore::open_exact` on the root and on each member that has a dot dir, and it is opened per call in this path. So a per-call staleness story needs either the member indexes to lag, or the daemon to cache the store in its state. Which is true has NOT been measured.\n\nThe observable check is cheap: reinstall the daemon, restart it, and see whether SP-6 and MTR-5 move to Verified. If they do not, the workspace path was not the cause and the next suspect is the daemon holding its own store in ctx.state. The fix still stands on its own terms - a cache should not outvote its source - but it is not yet proven to be the whole cause.",
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
       "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+      "timestamp_ms": 1793468964264,
+      "title": null
+    },
+    {
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793469171418,
-        "lease_expires_at_epoch_ms": 1793472771418,
         "git_branch": null,
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793472771418
+      },
+      "event": "task_claimed",
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f"
     },
     {
+      "acceptance_criteria": null,
+      "description": "RESOLVED 2026-10-31 and CONFIRMED IN THE RUNNING UI by the owner: after reinstalling the daemon, SP-6 and MTR-5 no longer render as ready. So the read path was the cause; the workspace-store-exclusivity in get_dag_view was the actual defect, and the daemon-cached-store hypothesis is refuted by that observation.\n\nFix (a33cb3c): get_dag_view and get_task_briefing load through one helper where the single store is authoritative and the workspace store only contributes tasks the single store lacks.\n\nOriginal measurement: SP-6 and MTR-5 were VERIFIED in the ledger, each with a task_verified event and receipt (SP-6 antigravity, MTR-5 `outfeed apply`), keyed by task UUID - which is why the first key-based search saw only task_created and nearly produced a corruption diagnosis.",
       "event": "task_updated",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
-      "title": null,
-      "description": "RESOLVED 2026-10-31 and CONFIRMED IN THE RUNNING UI by the owner: after reinstalling the daemon, GB-57 and GB-53 no longer render as ready. So the read path was the cause; the workspace-store-exclusivity in get_dag_view was the actual defect, and the daemon-cached-store hypothesis is refuted by that observation.\n\nFix (a33cb3c): get_dag_view and get_task_briefing load through one helper where the single store is authoritative and the workspace store only contributes tasks the single store lacks.\n\nOriginal measurement: GB-57 and GB-53 were VERIFIED in the ledger, each with a task_verified event and receipt (GB-57 antigravity, GB-53 `outfeed apply`), keyed by task UUID - which is why the first key-based search saw only task_created and nearly produced a corruption diagnosis.",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": null,
-      "timestamp_ms": 1793469171467
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+      "timestamp_ms": 1793469171467,
+      "title": null
     },
     {
       "event": "task_verified",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Manual verification confirmed",
-        "verified_at_epoch_ms": 1793469180483,
-        "git_branch": "main",
         "base_commit_sha": "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440",
-        "head_commit_sha": "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793469180483,
+        "verifier": "manual"
+      },
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f"
     },
     {
       "event": "status_changed",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
       "from": "verified",
-      "to": "archived",
       "reason": "Archived out of active backlog",
-      "timestamp_ms": 1793953185828
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+      "timestamp_ms": 1793953185828,
+      "to": "archived"
     },
     {
       "event": "task_archived",
-      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
       "status": "verified",
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
       "timestamp_ms": 1794038024009
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "a57eaf8a-7577-48e0-af3a-e3aa203b7523",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-5"
+      },
+      "event": "edge_added",
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+      "timestamp_ms": 1794336146494
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "b6b7843a-6554-4d9d-9721-483930b18148",
+        "target_repo": "storypole",
+        "target_ticket_key": "SP-6"
+      },
+      "event": "edge_added",
+      "task_id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+      "timestamp_ms": 1794336146494
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "OPEN: a fixture that verifies a task and asserts the view reports it verified - point it at load_tasks",
+      " and it needs a workspace store with a deliberately stale member index or it cannot catch the regression",
+      "OPEN: confirm in the running daemon that SP-6 and MTR-5 render as verified after a reinstall and restart; if not",
+      " investigate daemon-side caching of the store"
+    ],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038024009,
+    "created_at_epoch_ms": 1793467349839,
+    "decisions": [],
+    "description": "RESOLVED 2026-10-31 and CONFIRMED IN THE RUNNING UI by the owner: after reinstalling the daemon, SP-6 and MTR-5 no longer render as ready. So the read path was the cause; the workspace-store-exclusivity in get_dag_view was the actual defect, and the daemon-cached-store hypothesis is refuted by that observation.\n\nFix (a33cb3c): get_dag_view and get_task_briefing load through one helper where the single store is authoritative and the workspace store only contributes tasks the single store lacks.\n\nOriginal measurement: SP-6 and MTR-5 were VERIFIED in the ledger, each with a task_verified event and receipt (SP-6 antigravity, MTR-5 `outfeed apply`), keyed by task UUID - which is why the first key-based search saw only task_created and nearly produced a corruption diagnosis.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "a57eaf8a-7577-48e0-af3a-e3aa203b7523",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-5"
+      },
+      {
+        "kind": "related_to",
+        "target_id": "b6b7843a-6554-4d9d-9721-483930b18148",
+        "target_repo": "storypole",
+        "target_ticket_key": "SP-6"
+      }
+    ],
+    "id": "37bc5742-189c-49d8-bd1f-18effb35c17f",
+    "kind": "bug",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_core::dag_service::query::get_dag_view"
+      ]
+    },
+    "slug": "benchwork-dag-view-renders-stale-statuses-it-reads-the-workspace-store-exclusively-and-never-falls-back-to-the-single-store-37bc57",
+    "status": "verified",
+    "ticket_key": "GB-240",
+    "title": "benchwork DAG view renders stale statuses: it reads the workspace store exclusively and never falls back to the single store",
+    "updated_at_epoch_ms": 1794038024009,
+    "verification_receipt": {
+      "base_commit_sha": "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "80a8198410a5e9fa1ad4f2f95734a96d3bf7c440",
+      "repo": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1793469180483,
+      "verifier": "manual"
+    }
+  }
 }

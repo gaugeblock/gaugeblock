@@ -1,77 +1,146 @@
 {
-  "ticket": {
-    "id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
-    "ticket_key": "GB-341",
-    "slug": "a-verified-task-cannot-be-reopened-1497f1",
-    "title": "A Verified task cannot be reopened",
-    "description": "storypole update has no status flag and no verb moves a task out of Verified: claim only works on claimable states, unarchive only restores archived, defer only defers. GB-57 is the case in hand, Verified with 0 of 6 plan steps and a manual unscoped receipt, and the only way to correct the record was to file a superseding epic (GB-328). Reopening should be explicit, should record who reopened the task and why, and should keep the old receipt rather than delete it, because a false receipt is itself evidence.",
-    "kind": "bug",
-    "status": "triage",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "storypole_cli::handlers::lifecycle_cmds"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794167037094,
-    "updated_at_epoch_ms": 1794167037094
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794167037094,
+        "decisions": [],
+        "description": "storypole update has no status flag and no verb moves a task out of Verified: claim only works on claimable states, unarchive only restores archived, defer only defers. SP-6 is the case in hand, Verified with 0 of 6 plan steps and a manual unscoped receipt, and the only way to correct the record was to file a superseding epic (SP-34). Reopening should be explicit, should record who reopened the task and why, and should keep the old receipt rather than delete it, because a false receipt is itself evidence.",
+        "edges": [],
         "id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
-        "ticket_key": "GB-341",
-        "slug": "a-verified-task-cannot-be-reopened-1497f1",
-        "title": "A Verified task cannot be reopened",
-        "description": "storypole update has no status flag and no verb moves a task out of Verified: claim only works on claimable states, unarchive only restores archived, defer only defers. GB-57 is the case in hand, Verified with 0 of 6 plan steps and a manual unscoped receipt, and the only way to correct the record was to file a superseding epic (GB-328). Reopening should be explicit, should record who reopened the task and why, and should keep the old receipt rather than delete it, because a false receipt is itself evidence.",
         "kind": "bug",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "storypole_cli::handlers::lifecycle_cmds"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794167037094,
-        "updated_at_epoch_ms": 1794167037094
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+        "slug": "a-verified-task-cannot-be-reopened-1497f1",
+        "status": "triage",
+        "ticket_key": "GB-341",
+        "title": "A Verified task cannot be reopened",
+        "updated_at_epoch_ms": 1794167037094,
+        "verification_receipt": null
+      }
     },
     {
+      "acceptance_criteria": null,
+      "description": "storypole update has no status flag and no verb moves a task out of Verified: claim only works on claimable states, unarchive only restores archived, defer only defers. SP-6 is the case in hand, Verified with 0 of 6 plan steps and a manual unscoped receipt, and the only way to correct the record was to file a superseding epic (SP-34). Reopening should be explicit, should record who reopened the task and why, and should keep the old receipt rather than delete it, because a false receipt is itself evidence.\n\nSCOPED 2026-11-08, not started. The ticket is right that this is missing: `storypole update` has no status flag and no\nverb moves a task out of Verified. Scoped against the closest existing verbs so the next session starts with the shape\nrather than a search.\n\nSITES VERIFIED:\n  * crates/storypole-cli/src/args.rs - the `Command` enum; `Defer(DeferArgs)` at line 71 is the model for a verb with a\n    small argument set.\n  * crates/storypole-cli/src/task_args.rs - `DeferArgs` at line 28 shows the house style: positional key/title plus\n    `--flag` fields with `default_value` and `value_parser`, and a `captured_by` string that defaults to \"user\".\n  * crates/storypole-core/src/ops/workflow.rs - `claim_task` at line 119 is the only existing transition that records\n    an actor, so it is the model for recording WHO reopened and WHY.\n\nBEHAVIOUR THE TICKET ASKS FOR, restated as acceptance:\n  1. `storypole reopen <KEY> --reason <text> [--by <agent>]`.\n  2. Reason is required. A reopen without a reason is a status edit, and the whole point is that the record says why a\n     certification was withdrawn.\n  3. The old receipt is KEPT, not deleted. A false receipt is evidence; overwriting it destroys the thing that shows how\n     the task came to be wrongly certified (SP-6 in the ticket description is the case that motivated this).\n  4. Destination state is Ready rather than Triage when the task still carries its scope and criteria, and Triage when it\n     does not - a reopened task that is not actionable is a reopened task nobody can pick up.\n  5. Refuse to reopen anything that is not Verified, and say which state it is in. Reopening a Ready task is meaningless\n     and silently succeeding at it would make the verb look broader than it is.\n\nWHY THIS IS A DESIGN TICKET AND NOT A ONE-LINER: point 3 interacts with the receipt invariant that a task's\nverification evidence cannot exceed what ran (ADR 0003). Keeping a superseded receipt means the task carries two, and\nanything reading \"the receipt\" has to say which one it means - the current one, or the one that was withdrawn. That is\nthe same question CO-1 and CO-3 were about, one layer up, and it deserves the answer being chosen rather than assumed.",
       "event": "task_updated",
-      "task_id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
-      "title": null,
-      "description": "storypole update has no status flag and no verb moves a task out of Verified: claim only works on claimable states, unarchive only restores archived, defer only defers. GB-57 is the case in hand, Verified with 0 of 6 plan steps and a manual unscoped receipt, and the only way to correct the record was to file a superseding epic (GB-328). Reopening should be explicit, should record who reopened the task and why, and should keep the old receipt rather than delete it, because a false receipt is itself evidence.\n\nSCOPED 2026-11-08, not started. The ticket is right that this is missing: `storypole update` has no status flag and no\nverb moves a task out of Verified. Scoped against the closest existing verbs so the next session starts with the shape\nrather than a search.\n\nSITES VERIFIED:\n  * crates/storypole-cli/src/args.rs - the `Command` enum; `Defer(DeferArgs)` at line 71 is the model for a verb with a\n    small argument set.\n  * crates/storypole-cli/src/task_args.rs - `DeferArgs` at line 28 shows the house style: positional key/title plus\n    `--flag` fields with `default_value` and `value_parser`, and a `captured_by` string that defaults to \"user\".\n  * crates/storypole-core/src/ops/workflow.rs - `claim_task` at line 119 is the only existing transition that records\n    an actor, so it is the model for recording WHO reopened and WHY.\n\nBEHAVIOUR THE TICKET ASKS FOR, restated as acceptance:\n  1. `storypole reopen <KEY> --reason <text> [--by <agent>]`.\n  2. Reason is required. A reopen without a reason is a status edit, and the whole point is that the record says why a\n     certification was withdrawn.\n  3. The old receipt is KEPT, not deleted. A false receipt is evidence; overwriting it destroys the thing that shows how\n     the task came to be wrongly certified (GB-57 in the ticket description is the case that motivated this).\n  4. Destination state is Ready rather than Triage when the task still carries its scope and criteria, and Triage when it\n     does not - a reopened task that is not actionable is a reopened task nobody can pick up.\n  5. Refuse to reopen anything that is not Verified, and say which state it is in. Reopening a Ready task is meaningless\n     and silently succeeding at it would make the verb look broader than it is.\n\nWHY THIS IS A DESIGN TICKET AND NOT A ONE-LINER: point 3 interacts with the receipt invariant that a task's\nverification evidence cannot exceed what ran (ADR 0003). Keeping a superseded receipt means the task carries two, and\nanything reading \"the receipt\" has to say which one it means - the current one, or the one that was withdrawn. That is\nthe same question SP-1 and SP-3 were about, one layer up, and it deserves the answer being chosen rather than assumed.",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": null,
-      "timestamp_ms": 1794278425735
+      "task_id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
+      "timestamp_ms": 1794278425735,
+      "title": null
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "32422c86-ccda-4983-afc1-07a2f7200806",
+        "target_repo": "storypole",
+        "target_ticket_key": "SP-34"
+      },
+      "event": "edge_added",
+      "task_id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
+      "timestamp_ms": 1794336146498
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "b6b7843a-6554-4d9d-9721-483930b18148",
+        "target_repo": "storypole",
+        "target_ticket_key": "SP-6"
+      },
+      "event": "edge_added",
+      "task_id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
+      "timestamp_ms": 1794336146504
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "3ae64ad7-bd48-4c7b-8552-95bdb3a77921",
+        "target_repo": "common",
+        "target_ticket_key": "CO-1"
+      },
+      "event": "edge_added",
+      "task_id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
+      "timestamp_ms": 1794336146507
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "141965f2-3ccb-425c-833b-5df37022d846",
+        "target_repo": "common",
+        "target_ticket_key": "CO-3"
+      },
+      "event": "edge_added",
+      "task_id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
+      "timestamp_ms": 1794336146508
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794167037094,
+    "decisions": [],
+    "description": "storypole update has no status flag and no verb moves a task out of Verified: claim only works on claimable states, unarchive only restores archived, defer only defers. SP-6 is the case in hand, Verified with 0 of 6 plan steps and a manual unscoped receipt, and the only way to correct the record was to file a superseding epic (SP-34). Reopening should be explicit, should record who reopened the task and why, and should keep the old receipt rather than delete it, because a false receipt is itself evidence.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "32422c86-ccda-4983-afc1-07a2f7200806",
+        "target_repo": "storypole",
+        "target_ticket_key": "SP-34"
+      },
+      {
+        "kind": "related_to",
+        "target_id": "b6b7843a-6554-4d9d-9721-483930b18148",
+        "target_repo": "storypole",
+        "target_ticket_key": "SP-6"
+      },
+      {
+        "kind": "related_to",
+        "target_id": "3ae64ad7-bd48-4c7b-8552-95bdb3a77921",
+        "target_repo": "common",
+        "target_ticket_key": "CO-1"
+      },
+      {
+        "kind": "related_to",
+        "target_id": "141965f2-3ccb-425c-833b-5df37022d846",
+        "target_repo": "common",
+        "target_ticket_key": "CO-3"
+      }
+    ],
+    "id": "1497f144-3f45-47bc-b9ef-c8cd307fa8ad",
+    "kind": "bug",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::handlers::lifecycle_cmds"
+      ]
+    },
+    "slug": "a-verified-task-cannot-be-reopened-1497f1",
+    "status": "triage",
+    "ticket_key": "GB-341",
+    "title": "A Verified task cannot be reopened",
+    "updated_at_epoch_ms": 1794167037094,
+    "verification_receipt": null
+  }
 }

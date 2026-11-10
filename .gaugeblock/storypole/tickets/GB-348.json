@@ -1,67 +1,85 @@
 {
-  "ticket": {
-    "id": "0d2dd0d4-9b05-472c-8514-1b5c16ee9fc3",
-    "ticket_key": "GB-348",
-    "slug": "storypole-list-hides-archived-tickets-without-saying-so-so-an-all-archived-store-reads-as-empty-0d2dd0",
-    "title": "storypole list hides archived tickets without saying so, so an all-archived store reads as empty",
-    "description": "storypole list hides archived tickets and says nothing about it. A store whose tickets are all archived prints \"No tasks found matching filter criteria\" - identical to a store with no tickets, an unreadable store, or one whose index failed to build. Measured 2026-11-10 during GB-347: dado holds 3 tickets, all archived, and lists as empty; --include-archived shows all 3; batten behaves the same way with its 1 ticket; rabbet lists because it has unarchived rows. The filter is documented in --help but the output gives the operator no way to tell \"hidden by filter\" from \"store is empty\", which is why it was read as a store-health defect during the remint and written into GB-347 as one. Fix is small: print the hidden count when rows were filtered out. Filed at the harness because SP-1 is still owned by common until the GB-347 remint lands; this is storypole-CLI work and should be reminted into storypole with the rest.",
-    "kind": "tech_debt",
-    "status": "triage",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "storypole_cli::handlers::core_cmds::handle_list"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794333563631,
-    "updated_at_epoch_ms": 1794333563631
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794333563631,
+        "decisions": [],
+        "description": "storypole list hides archived tickets and says nothing about it. A store whose tickets are all archived prints \"No tasks found matching filter criteria\" - identical to a store with no tickets, an unreadable store, or one whose index failed to build. Measured 2026-11-10 during GB-347: dado holds 3 tickets, all archived, and lists as empty; --include-archived shows all 3; batten behaves the same way with its 1 ticket; rabbet lists because it has unarchived rows. The filter is documented in --help but the output gives the operator no way to tell \"hidden by filter\" from \"store is empty\", which is why it was read as a store-health defect during the remint and written into GB-347 as one. Fix is small: print the hidden count when rows were filtered out. Filed at the harness because CO-1 is still owned by common until the GB-347 remint lands; this is storypole-CLI work and should be reminted into storypole with the rest.",
+        "edges": [],
         "id": "0d2dd0d4-9b05-472c-8514-1b5c16ee9fc3",
-        "ticket_key": "GB-348",
-        "slug": "storypole-list-hides-archived-tickets-without-saying-so-so-an-all-archived-store-reads-as-empty-0d2dd0",
-        "title": "storypole list hides archived tickets without saying so, so an all-archived store reads as empty",
-        "description": "storypole list hides archived tickets and says nothing about it. A store whose tickets are all archived prints \"No tasks found matching filter criteria\" - identical to a store with no tickets, an unreadable store, or one whose index failed to build. Measured 2026-11-10 during GB-347: dado holds 3 tickets, all archived, and lists as empty; --include-archived shows all 3; batten behaves the same way with its 1 ticket; rabbet lists because it has unarchived rows. The filter is documented in --help but the output gives the operator no way to tell \"hidden by filter\" from \"store is empty\", which is why it was read as a store-health defect during the remint and written into GB-347 as one. Fix is small: print the hidden count when rows were filtered out. Filed at the harness because SP-1 is still owned by common until the GB-347 remint lands; this is storypole-CLI work and should be reminted into storypole with the rest.",
         "kind": "tech_debt",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "storypole_cli::handlers::core_cmds::handle_list"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794333563631,
-        "updated_at_epoch_ms": 1794333563631
+        "slug": "storypole-list-hides-archived-tickets-without-saying-so-so-an-all-archived-store-reads-as-empty-0d2dd0",
+        "status": "triage",
+        "ticket_key": "GB-348",
+        "title": "storypole list hides archived tickets without saying so, so an all-archived store reads as empty",
+        "updated_at_epoch_ms": 1794333563631,
+        "verification_receipt": null
+      }
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "3ae64ad7-bd48-4c7b-8552-95bdb3a77921",
+        "target_repo": "common",
+        "target_ticket_key": "CO-1"
       },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+      "event": "edge_added",
+      "task_id": "0d2dd0d4-9b05-472c-8514-1b5c16ee9fc3",
+      "timestamp_ms": 1794336146724
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794333563631,
+    "decisions": [],
+    "description": "storypole list hides archived tickets and says nothing about it. A store whose tickets are all archived prints \"No tasks found matching filter criteria\" - identical to a store with no tickets, an unreadable store, or one whose index failed to build. Measured 2026-11-10 during GB-347: dado holds 3 tickets, all archived, and lists as empty; --include-archived shows all 3; batten behaves the same way with its 1 ticket; rabbet lists because it has unarchived rows. The filter is documented in --help but the output gives the operator no way to tell \"hidden by filter\" from \"store is empty\", which is why it was read as a store-health defect during the remint and written into GB-347 as one. Fix is small: print the hidden count when rows were filtered out. Filed at the harness because CO-1 is still owned by common until the GB-347 remint lands; this is storypole-CLI work and should be reminted into storypole with the rest.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "3ae64ad7-bd48-4c7b-8552-95bdb3a77921",
+        "target_repo": "common",
+        "target_ticket_key": "CO-1"
+      }
+    ],
+    "id": "0d2dd0d4-9b05-472c-8514-1b5c16ee9fc3",
+    "kind": "tech_debt",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::handlers::core_cmds::handle_list"
+      ]
+    },
+    "slug": "storypole-list-hides-archived-tickets-without-saying-so-so-an-all-archived-store-reads-as-empty-0d2dd0",
+    "status": "triage",
+    "ticket_key": "GB-348",
+    "title": "storypole list hides archived tickets without saying so, so an all-archived store reads as empty",
+    "updated_at_epoch_ms": 1794333563631,
+    "verification_receipt": null
+  }
 }

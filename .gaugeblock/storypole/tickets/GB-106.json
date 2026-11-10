@@ -1,184 +1,184 @@
 {
-  "ticket": {
-    "id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
-    "ticket_key": "GB-106",
-    "slug": "meta-harness-core-foundation-documentation-overhaul-root-miter-storypole-d74681",
-    "title": "Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)",
-    "description": "Elevate meta-harness root documentation, miter documentation (across ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match its README excellence), and storypole documentation across all 9 canonical documents",
-    "kind": "epic",
-    "status": "verified",
-    "priority": 1,
-    "scope": {
-      "repo": "workspace",
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": {
-      "summary": "GB-106: Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)",
-      "design_markdown": "# GB-106: Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)\n\n## Architectural Directives & Mandatory Exemplar\n1. **Mandatory Exemplar Requirement:** The implementing agent MUST read and align with `miter/README.md` and `miter/AGENTS.md` as the gold standard. Every repository document set must deliver matching depth:\n   - `README.md`: Woodworking metaphor, badges, \"Why X?\" without/with tables, real console walkthroughs, complete CLI/MCP references.\n   - `PRODUCT.md`: Distinct user personas, acute friction points, JTBD, telemetry metrics.\n   - `ARCHITECTURE.md`: High-density Mermaid diagrams, crate boundaries, storage/runtime pipelines, cross-tool contracts.\n   - `SPEC.md`: Formal behavioral invariants, state machines, algebraic wire types, CLI grammar/exit codes.\n   - `DESIGN.md`: Minimum 3 concrete ADRs with Context, Decision, Consequences, and Rejected Alternatives.\n   - `AGENTS.md`: Full non-negotiable engineering laws (hard 250 LOC, zero inline scope creep with `storypole defer`, Tiered Verification Gates, conventional commits, branch isolation) plus domain-specific invariant rules.\n   - `CONTRIBUTING.md`: Precise Rust 2024 toolchain, inner loop commands, clippy/fmt rules.\n   - `ROADMAP.md`: Active beta lifecycle status, completed milestones, future horizons mapped to Storypole.\n   - `CHANGELOG.md`: Strict Keep a Changelog with active `[Unreleased]`.\n\n## Phased Execution Steps\n1. `gb-107-root-docs` | Elevate meta-harness root SPEC, ARCHITECTURE (Mermaid multi-repo dataflow), DESIGN (multi-repo ADRs), and PRODUCT | `chalkline docs check`\n2. `gb-108-miter-docs` | Elevate miter ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match its exemplary README/AGENTS | `chalkline docs check -d miter`\n3. `gb-109-storypole-docs` | Elevate storypole across all 9 canonical docs (Git-native ledger, DAG resolver, claim leases, MCP server) | `chalkline docs check -d storypole`\n",
-      "steps": [
-        {
-          "step_id": "gb-107",
-          "title": "Elevate meta-harness root SPEC, ARCHITECTURE, DESIGN, and PRODUCT",
-          "target_files": [],
-          "verification_gate": "chalkline docs check",
-          "completed": false
-        },
-        {
-          "step_id": "gb-108",
-          "title": "Elevate miter ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match README",
-          "target_files": [],
-          "verification_gate": "chalkline docs check -d miter",
-          "completed": false
-        },
-        {
-          "step_id": "gb-109",
-          "title": "Elevate storypole across all 9 canonical docs",
-          "target_files": [],
-          "verification_gate": "chalkline docs check -d storypole",
-          "completed": false
-        }
-      ],
-      "plan_file_path": ".gaugeblock/storypole/plans/GB-106.md",
-      "updated_at_epoch_ms": 1793150418562
-    },
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Completed Phase 2: Meta-Harness & Core Foundation Documentation Overhaul (Root meta-harness GB-107, miter GB-108, and storypole GB-109 all 9-doc compliant and elevated to gold standard)",
-      "verified_at_epoch_ms": 1793155127944,
-      "git_branch": "feat/phase-2-foundation-docs",
-      "base_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7",
-      "head_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7",
-      "commit_shas": [
-        "eb41759d878265449e8539a61b95ecee1a62fcd7"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793149817143,
-    "updated_at_epoch_ms": 1794037976548,
-    "archived_at_epoch_ms": 1794037976548
-  },
   "events": [
     {
       "event": "task_created",
       "task": {
-        "id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
-        "ticket_key": "GB-106",
-        "slug": "meta-harness-core-foundation-documentation-overhaul-root-miter-storypole-d74681",
-        "title": "Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793149817143,
+        "decisions": [],
         "description": "Elevate meta-harness root documentation, miter documentation (across ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match its README excellence), and storypole documentation across all 9 canonical documents",
+        "edges": [],
+        "id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
         "kind": "epic",
-        "status": "ready",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 1,
         "scope": {
-          "repo": "workspace",
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": "workspace",
           "target_files": [],
-          "target_symbols": [],
-          "labels": []
+          "target_symbols": []
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793149817143,
-        "updated_at_epoch_ms": 1793149817143
+        "slug": "meta-harness-core-foundation-documentation-overhaul-root-miter-storypole-d74681",
+        "status": "ready",
+        "ticket_key": "GB-106",
+        "title": "Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)",
+        "updated_at_epoch_ms": 1793149817143,
+        "verification_receipt": null
       }
     },
     {
       "event": "plan_updated",
-      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
       "plan": {
-        "summary": "GB-106: Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)",
         "design_markdown": "# GB-106: Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)\n\n## Architectural Directives & Mandatory Exemplar\n1. **Mandatory Exemplar Requirement:** The implementing agent MUST read and align with `miter/README.md` and `miter/AGENTS.md` as the gold standard. Every repository document set must deliver matching depth:\n   - `README.md`: Woodworking metaphor, badges, \"Why X?\" without/with tables, real console walkthroughs, complete CLI/MCP references.\n   - `PRODUCT.md`: Distinct user personas, acute friction points, JTBD, telemetry metrics.\n   - `ARCHITECTURE.md`: High-density Mermaid diagrams, crate boundaries, storage/runtime pipelines, cross-tool contracts.\n   - `SPEC.md`: Formal behavioral invariants, state machines, algebraic wire types, CLI grammar/exit codes.\n   - `DESIGN.md`: Minimum 3 concrete ADRs with Context, Decision, Consequences, and Rejected Alternatives.\n   - `AGENTS.md`: Full non-negotiable engineering laws (hard 250 LOC, zero inline scope creep with `storypole defer`, Tiered Verification Gates, conventional commits, branch isolation) plus domain-specific invariant rules.\n   - `CONTRIBUTING.md`: Precise Rust 2024 toolchain, inner loop commands, clippy/fmt rules.\n   - `ROADMAP.md`: Active beta lifecycle status, completed milestones, future horizons mapped to Storypole.\n   - `CHANGELOG.md`: Strict Keep a Changelog with active `[Unreleased]`.\n\n## Phased Execution Steps\n1. `gb-107-root-docs` | Elevate meta-harness root SPEC, ARCHITECTURE (Mermaid multi-repo dataflow), DESIGN (multi-repo ADRs), and PRODUCT | `chalkline docs check`\n2. `gb-108-miter-docs` | Elevate miter ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match its exemplary README/AGENTS | `chalkline docs check -d miter`\n3. `gb-109-storypole-docs` | Elevate storypole across all 9 canonical docs (Git-native ledger, DAG resolver, claim leases, MCP server) | `chalkline docs check -d storypole`\n",
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-106.md",
         "steps": [
           {
+            "completed": false,
             "step_id": "gb-107",
+            "target_files": [],
             "title": "Elevate meta-harness root SPEC, ARCHITECTURE, DESIGN, and PRODUCT",
-            "target_files": [],
-            "verification_gate": "chalkline docs check",
-            "completed": false
+            "verification_gate": "chalkline docs check"
           },
           {
+            "completed": false,
             "step_id": "gb-108",
-            "title": "Elevate miter ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match README",
             "target_files": [],
-            "verification_gate": "chalkline docs check -d miter",
-            "completed": false
+            "title": "Elevate miter ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match README",
+            "verification_gate": "chalkline docs check -d miter"
           },
           {
+            "completed": false,
             "step_id": "gb-109",
-            "title": "Elevate storypole across all 9 canonical docs",
             "target_files": [],
-            "verification_gate": "chalkline docs check -d storypole",
-            "completed": false
+            "title": "Elevate storypole across all 9 canonical docs",
+            "verification_gate": "chalkline docs check -d storypole"
           }
         ],
-        "plan_file_path": ".gaugeblock/storypole/plans/GB-106.md",
+        "summary": "GB-106: Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)",
         "updated_at_epoch_ms": 1793150418562
       },
+      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
       "timestamp_ms": 1793150418562
     },
     {
-      "event": "task_claimed",
-      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
       "claim": {
         "agent_id": "agent-antigravity",
+        "base_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7",
         "claimed_at_epoch_ms": 1793155127712,
-        "lease_expires_at_epoch_ms": 1793158727712,
         "git_branch": "feat/phase-2-foundation-docs",
-        "base_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7"
-      }
+        "lease_expires_at_epoch_ms": 1793158727712
+      },
+      "event": "task_claimed",
+      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b"
     },
     {
       "event": "status_changed",
-      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
       "from": "ready",
-      "to": "in_progress",
       "reason": "Claimed by agent-antigravity",
-      "timestamp_ms": 1793155127712
+      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
+      "timestamp_ms": 1793155127712,
+      "to": "in_progress"
     },
     {
       "event": "task_verified",
-      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Completed Phase 2: Meta-Harness & Core Foundation Documentation Overhaul (Root meta-harness GB-107, miter GB-108, and storypole GB-109 all 9-doc compliant and elevated to gold standard)",
-        "verified_at_epoch_ms": 1793155127944,
-        "git_branch": "feat/phase-2-foundation-docs",
         "base_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7",
-        "head_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "eb41759d878265449e8539a61b95ecee1a62fcd7"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "feat/phase-2-foundation-docs",
+        "head_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "Completed Phase 2: Meta-Harness & Core Foundation Documentation Overhaul (Root meta-harness GB-107, miter MTR-7, and storypole SP-7 all 9-doc compliant and elevated to gold standard)",
+        "verified_at_epoch_ms": 1793155127944,
+        "verifier": "manual"
+      },
+      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b"
     },
     {
       "event": "task_archived",
-      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
       "status": "verified",
+      "task_id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
       "timestamp_ms": 1794037976548
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794037976548,
+    "created_at_epoch_ms": 1793149817143,
+    "decisions": [],
+    "description": "Elevate meta-harness root documentation, miter documentation (across ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match its README excellence), and storypole documentation across all 9 canonical documents",
+    "edges": [],
+    "id": "d7468114-0e27-49e0-81d7-06545afdbd7b",
+    "kind": "epic",
+    "latest_handoff": null,
+    "plan": {
+      "design_markdown": "# GB-106: Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)\n\n## Architectural Directives & Mandatory Exemplar\n1. **Mandatory Exemplar Requirement:** The implementing agent MUST read and align with `miter/README.md` and `miter/AGENTS.md` as the gold standard. Every repository document set must deliver matching depth:\n   - `README.md`: Woodworking metaphor, badges, \"Why X?\" without/with tables, real console walkthroughs, complete CLI/MCP references.\n   - `PRODUCT.md`: Distinct user personas, acute friction points, JTBD, telemetry metrics.\n   - `ARCHITECTURE.md`: High-density Mermaid diagrams, crate boundaries, storage/runtime pipelines, cross-tool contracts.\n   - `SPEC.md`: Formal behavioral invariants, state machines, algebraic wire types, CLI grammar/exit codes.\n   - `DESIGN.md`: Minimum 3 concrete ADRs with Context, Decision, Consequences, and Rejected Alternatives.\n   - `AGENTS.md`: Full non-negotiable engineering laws (hard 250 LOC, zero inline scope creep with `storypole defer`, Tiered Verification Gates, conventional commits, branch isolation) plus domain-specific invariant rules.\n   - `CONTRIBUTING.md`: Precise Rust 2024 toolchain, inner loop commands, clippy/fmt rules.\n   - `ROADMAP.md`: Active beta lifecycle status, completed milestones, future horizons mapped to Storypole.\n   - `CHANGELOG.md`: Strict Keep a Changelog with active `[Unreleased]`.\n\n## Phased Execution Steps\n1. `gb-107-root-docs` | Elevate meta-harness root SPEC, ARCHITECTURE (Mermaid multi-repo dataflow), DESIGN (multi-repo ADRs), and PRODUCT | `chalkline docs check`\n2. `gb-108-miter-docs` | Elevate miter ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match its exemplary README/AGENTS | `chalkline docs check -d miter`\n3. `gb-109-storypole-docs` | Elevate storypole across all 9 canonical docs (Git-native ledger, DAG resolver, claim leases, MCP server) | `chalkline docs check -d storypole`\n",
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-106.md",
+      "steps": [
+        {
+          "completed": false,
+          "step_id": "gb-107",
+          "target_files": [],
+          "title": "Elevate meta-harness root SPEC, ARCHITECTURE, DESIGN, and PRODUCT",
+          "verification_gate": "chalkline docs check"
+        },
+        {
+          "completed": false,
+          "step_id": "gb-108",
+          "target_files": [],
+          "title": "Elevate miter ARCHITECTURE, SPEC, DESIGN, PRODUCT, CONTRIBUTING, ROADMAP to match README",
+          "verification_gate": "chalkline docs check -d miter"
+        },
+        {
+          "completed": false,
+          "step_id": "gb-109",
+          "target_files": [],
+          "title": "Elevate storypole across all 9 canonical docs",
+          "verification_gate": "chalkline docs check -d storypole"
+        }
+      ],
+      "summary": "GB-106: Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)",
+      "updated_at_epoch_ms": 1793150418562
+    },
+    "priority": 1,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": "workspace",
+      "target_files": [],
+      "target_symbols": []
+    },
+    "slug": "meta-harness-core-foundation-documentation-overhaul-root-miter-storypole-d74681",
+    "status": "verified",
+    "ticket_key": "GB-106",
+    "title": "Meta-Harness & Core Foundation Documentation Overhaul (Root, Miter, Storypole)",
+    "updated_at_epoch_ms": 1794037976548,
+    "verification_receipt": {
+      "base_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "eb41759d878265449e8539a61b95ecee1a62fcd7"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "feat/phase-2-foundation-docs",
+      "head_commit_sha": "eb41759d878265449e8539a61b95ecee1a62fcd7",
+      "repo": null,
+      "summary": "Completed Phase 2: Meta-Harness & Core Foundation Documentation Overhaul (Root meta-harness GB-107, miter MTR-7, and storypole SP-7 all 9-doc compliant and elevated to gold standard)",
+      "verified_at_epoch_ms": 1793155127944,
+      "verifier": "manual"
+    }
+  }
 }

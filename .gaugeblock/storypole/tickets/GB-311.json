@@ -1,81 +1,81 @@
 {
-  "ticket": {
-    "id": "1523b02f-20fd-4894-afaa-950b60eff12c",
-    "ticket_key": "GB-311",
-    "slug": "writes-bypass-storypolestore-open-so-the-repository-boundary-guard-does-not-cover-add-update-claim-1523b0",
-    "title": "Writes bypass StorypoleStore::open, so the repository-boundary guard does not cover add/update/claim",
-    "description": "",
-    "kind": "bug",
-    "status": "triage",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "storypole_core::ops::mutations"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "ANSWERED BY EXPERIMENT 2026-11-07: worktrees resolve reads canonically but WRITE to their own copy, so two agents in two worktrees diverge. Not ready for multi-agent work, and the reason is specific.\n\nREPRO, in a throwaway repository with a `.gaugeblock` committed the way every suite repository has it:\n  storypole init; storypole add 'Task alpha'          -> SP-1 in the main checkout\n  git worktree add ../wt2 -b agent-b                   -> wt2/ contains its own .gaugeblock/storypole (because it is tracked)\n  cd ../wt2; storypole list                            -> SP-1 visible, resolution reaches the main ledger\n  cd ../wt2; storypole add 'Task beta from worktree'   -> SP-2\n  grep SP-2 main/.gaugeblock/storypole/ledger.jsonl    -> 0\n  grep SP-2 wt2/.gaugeblock/storypole/ledger.jsonl     -> 1\nSo the write landed in the worktree's copy of the ledger. Reads and writes disagree, and nothing reports it.\n\nWHY IT HAPPENS, in two layers:\n  1. `.gaugeblock/storypole/ledger.jsonl` is tracked in git, by design - the ledger is a versioned asset (law 11). A checkout of a worktree therefore contains a physical copy of it, and any tool that resolves by walking upwards finds that copy first.\n  2. The repository-boundary guard added in 588829d compares the directory the walk found against the repository git reports. From wt2 both answers are 'wt2' for the walk and 'main' for git - so the guard should have refused. It did not, which means the write path does not go through StorypoleStore::open at all. That is its own defect and it is the more serious of the two: the guard protects reads and the writes bypass it.\n\nWHAT A WORKING SETUP NEEDS, in order:\n  a. Every write path resolves through GaugeblockPaths::discover - the git common dir - instead of walking upwards. Then a worktree writes to the main checkout's ledger because that is the only ledger, and the copy in the worktree is inert.\n  b. Decide what the tracked copy is FOR. Either the ledger stops being tracked (gitignored like the index and the spool, with the events replayed from somewhere durable), or the worktree copy is explicitly ignored by tooling and a test asserts it. Leaving it tracked and ignored-by-convention is how the two-ledgers bug returns.\n  c. Concurrency, which is a separate question and unanswered: two processes appending to one JSONL and rebuilding one sqlite index. Claim leases prevent two agents taking the same task, but nothing yet prevents interleaved appends or a torn read during a rebuild. That needs its own measurement before anybody promises parallel agents.\n\nWHAT WORKS TODAY, worth stating so the answer is not all negative: task reads from a worktree DO resolve to the main checkout (verified), file edits are isolated by git, and the claim lease prevents two agents claiming one task. The gap is ledger writes and, unmeasured, concurrent appends.\n\nGB-169 as written (claim --worktree) is the right shape for fixing this: the flag exists precisely so the tool creates and resolves the worktree, which is where the canonicalisation belongs."
-    ],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794105614147,
-    "updated_at_epoch_ms": 1794105619798
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "1523b02f-20fd-4894-afaa-950b60eff12c",
-        "ticket_key": "GB-311",
-        "slug": "writes-bypass-storypolestore-open-so-the-repository-boundary-guard-does-not-cover-add-update-claim-1523b0",
-        "title": "Writes bypass StorypoleStore::open, so the repository-boundary guard does not cover add/update/claim",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794105614147,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "1523b02f-20fd-4894-afaa-950b60eff12c",
         "kind": "bug",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "storypole_core::ops::mutations"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794105614147,
-        "updated_at_epoch_ms": 1794105614147
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+        "slug": "writes-bypass-storypolestore-open-so-the-repository-boundary-guard-does-not-cover-add-update-claim-1523b0",
+        "status": "triage",
+        "ticket_key": "GB-311",
+        "title": "Writes bypass StorypoleStore::open, so the repository-boundary guard does not cover add/update/claim",
+        "updated_at_epoch_ms": 1794105614147,
+        "verification_receipt": null
+      }
     },
     {
-      "event": "task_updated",
-      "task_id": "1523b02f-20fd-4894-afaa-950b60eff12c",
-      "title": null,
+      "acceptance_criteria": [
+        "ANSWERED BY EXPERIMENT 2026-11-07: worktrees resolve reads canonically but WRITE to their own copy, so two agents in two worktrees diverge. Not ready for multi-agent work, and the reason is specific.\n\nREPRO, in a throwaway repository with a `.gaugeblock` committed the way every suite repository has it:\n  storypole init; storypole add 'Task alpha'          -> CO-1 in the main checkout\n  git worktree add ../wt2 -b agent-b                   -> wt2/ contains its own .gaugeblock/storypole (because it is tracked)\n  cd ../wt2; storypole list                            -> CO-1 visible, resolution reaches the main ledger\n  cd ../wt2; storypole add 'Task beta from worktree'   -> CO-2\n  grep CO-2 main/.gaugeblock/storypole/ledger.jsonl    -> 0\n  grep CO-2 wt2/.gaugeblock/storypole/ledger.jsonl     -> 1\nSo the write landed in the worktree's copy of the ledger. Reads and writes disagree, and nothing reports it.\n\nWHY IT HAPPENS, in two layers:\n  1. `.gaugeblock/storypole/ledger.jsonl` is tracked in git, by design - the ledger is a versioned asset (law 11). A checkout of a worktree therefore contains a physical copy of it, and any tool that resolves by walking upwards finds that copy first.\n  2. The repository-boundary guard added in 588829d compares the directory the walk found against the repository git reports. From wt2 both answers are 'wt2' for the walk and 'main' for git - so the guard should have refused. It did not, which means the write path does not go through StorypoleStore::open at all. That is its own defect and it is the more serious of the two: the guard protects reads and the writes bypass it.\n\nWHAT A WORKING SETUP NEEDS, in order:\n  a. Every write path resolves through GaugeblockPaths::discover - the git common dir - instead of walking upwards. Then a worktree writes to the main checkout's ledger because that is the only ledger, and the copy in the worktree is inert.\n  b. Decide what the tracked copy is FOR. Either the ledger stops being tracked (gitignored like the index and the spool, with the events replayed from somewhere durable), or the worktree copy is explicitly ignored by tooling and a test asserts it. Leaving it tracked and ignored-by-convention is how the two-ledgers bug returns.\n  c. Concurrency, which is a separate question and unanswered: two processes appending to one JSONL and rebuilding one sqlite index. Claim leases prevent two agents taking the same task, but nothing yet prevents interleaved appends or a torn read during a rebuild. That needs its own measurement before anybody promises parallel agents.\n\nWHAT WORKS TODAY, worth stating so the answer is not all negative: task reads from a worktree DO resolve to the main checkout (verified), file edits are isolated by git, and the claim lease prevents two agents claiming one task. The gap is ledger writes and, unmeasured, concurrent appends.\n\nSP-14 as written (claim --worktree) is the right shape for fixing this: the flag exists precisely so the tool creates and resolves the worktree, which is where the canonicalisation belongs."
+      ],
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": [
-        "ANSWERED BY EXPERIMENT 2026-11-07: worktrees resolve reads canonically but WRITE to their own copy, so two agents in two worktrees diverge. Not ready for multi-agent work, and the reason is specific.\n\nREPRO, in a throwaway repository with a `.gaugeblock` committed the way every suite repository has it:\n  storypole init; storypole add 'Task alpha'          -> SP-1 in the main checkout\n  git worktree add ../wt2 -b agent-b                   -> wt2/ contains its own .gaugeblock/storypole (because it is tracked)\n  cd ../wt2; storypole list                            -> SP-1 visible, resolution reaches the main ledger\n  cd ../wt2; storypole add 'Task beta from worktree'   -> SP-2\n  grep SP-2 main/.gaugeblock/storypole/ledger.jsonl    -> 0\n  grep SP-2 wt2/.gaugeblock/storypole/ledger.jsonl     -> 1\nSo the write landed in the worktree's copy of the ledger. Reads and writes disagree, and nothing reports it.\n\nWHY IT HAPPENS, in two layers:\n  1. `.gaugeblock/storypole/ledger.jsonl` is tracked in git, by design - the ledger is a versioned asset (law 11). A checkout of a worktree therefore contains a physical copy of it, and any tool that resolves by walking upwards finds that copy first.\n  2. The repository-boundary guard added in 588829d compares the directory the walk found against the repository git reports. From wt2 both answers are 'wt2' for the walk and 'main' for git - so the guard should have refused. It did not, which means the write path does not go through StorypoleStore::open at all. That is its own defect and it is the more serious of the two: the guard protects reads and the writes bypass it.\n\nWHAT A WORKING SETUP NEEDS, in order:\n  a. Every write path resolves through GaugeblockPaths::discover - the git common dir - instead of walking upwards. Then a worktree writes to the main checkout's ledger because that is the only ledger, and the copy in the worktree is inert.\n  b. Decide what the tracked copy is FOR. Either the ledger stops being tracked (gitignored like the index and the spool, with the events replayed from somewhere durable), or the worktree copy is explicitly ignored by tooling and a test asserts it. Leaving it tracked and ignored-by-convention is how the two-ledgers bug returns.\n  c. Concurrency, which is a separate question and unanswered: two processes appending to one JSONL and rebuilding one sqlite index. Claim leases prevent two agents taking the same task, but nothing yet prevents interleaved appends or a torn read during a rebuild. That needs its own measurement before anybody promises parallel agents.\n\nWHAT WORKS TODAY, worth stating so the answer is not all negative: task reads from a worktree DO resolve to the main checkout (verified), file edits are isolated by git, and the claim lease prevents two agents claiming one task. The gap is ledger writes and, unmeasured, concurrent appends.\n\nGB-169 as written (claim --worktree) is the right shape for fixing this: the flag exists precisely so the tool creates and resolves the worktree, which is where the canonicalisation belongs."
-      ],
-      "timestamp_ms": 1794105619798
+      "task_id": "1523b02f-20fd-4894-afaa-950b60eff12c",
+      "timestamp_ms": 1794105619798,
+      "title": null
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "ANSWERED BY EXPERIMENT 2026-11-07: worktrees resolve reads canonically but WRITE to their own copy, so two agents in two worktrees diverge. Not ready for multi-agent work, and the reason is specific.\n\nREPRO, in a throwaway repository with a `.gaugeblock` committed the way every suite repository has it:\n  storypole init; storypole add 'Task alpha'          -> CO-1 in the main checkout\n  git worktree add ../wt2 -b agent-b                   -> wt2/ contains its own .gaugeblock/storypole (because it is tracked)\n  cd ../wt2; storypole list                            -> CO-1 visible, resolution reaches the main ledger\n  cd ../wt2; storypole add 'Task beta from worktree'   -> CO-2\n  grep CO-2 main/.gaugeblock/storypole/ledger.jsonl    -> 0\n  grep CO-2 wt2/.gaugeblock/storypole/ledger.jsonl     -> 1\nSo the write landed in the worktree's copy of the ledger. Reads and writes disagree, and nothing reports it.\n\nWHY IT HAPPENS, in two layers:\n  1. `.gaugeblock/storypole/ledger.jsonl` is tracked in git, by design - the ledger is a versioned asset (law 11). A checkout of a worktree therefore contains a physical copy of it, and any tool that resolves by walking upwards finds that copy first.\n  2. The repository-boundary guard added in 588829d compares the directory the walk found against the repository git reports. From wt2 both answers are 'wt2' for the walk and 'main' for git - so the guard should have refused. It did not, which means the write path does not go through StorypoleStore::open at all. That is its own defect and it is the more serious of the two: the guard protects reads and the writes bypass it.\n\nWHAT A WORKING SETUP NEEDS, in order:\n  a. Every write path resolves through GaugeblockPaths::discover - the git common dir - instead of walking upwards. Then a worktree writes to the main checkout's ledger because that is the only ledger, and the copy in the worktree is inert.\n  b. Decide what the tracked copy is FOR. Either the ledger stops being tracked (gitignored like the index and the spool, with the events replayed from somewhere durable), or the worktree copy is explicitly ignored by tooling and a test asserts it. Leaving it tracked and ignored-by-convention is how the two-ledgers bug returns.\n  c. Concurrency, which is a separate question and unanswered: two processes appending to one JSONL and rebuilding one sqlite index. Claim leases prevent two agents taking the same task, but nothing yet prevents interleaved appends or a torn read during a rebuild. That needs its own measurement before anybody promises parallel agents.\n\nWHAT WORKS TODAY, worth stating so the answer is not all negative: task reads from a worktree DO resolve to the main checkout (verified), file edits are isolated by git, and the claim lease prevents two agents claiming one task. The gap is ledger writes and, unmeasured, concurrent appends.\n\nSP-14 as written (claim --worktree) is the right shape for fixing this: the flag exists precisely so the tool creates and resolves the worktree, which is where the canonicalisation belongs."
+    ],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794105614147,
+    "decisions": [],
+    "description": "",
+    "edges": [],
+    "id": "1523b02f-20fd-4894-afaa-950b60eff12c",
+    "kind": "bug",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::ops::mutations"
+      ]
+    },
+    "slug": "writes-bypass-storypolestore-open-so-the-repository-boundary-guard-does-not-cover-add-update-claim-1523b0",
+    "status": "triage",
+    "ticket_key": "GB-311",
+    "title": "Writes bypass StorypoleStore::open, so the repository-boundary guard does not cover add/update/claim",
+    "updated_at_epoch_ms": 1794105619798,
+    "verification_receipt": null
+  }
 }

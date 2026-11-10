@@ -1,81 +1,81 @@
 {
-  "ticket": {
-    "id": "54eaf930-8904-41aa-8bae-1542255b80cc",
-    "ticket_key": "GB-310",
-    "slug": "benchwork-four-live-telemetry-surfaces-status-pill-dag-pulse-waterfall-panel-4-54eaf9",
-    "title": "benchwork: four live telemetry surfaces (status pill, DAG pulse, waterfall, Panel 4)",
-    "description": "",
-    "kind": "feature",
-    "status": "deferred",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "benchwork_web"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "SCOPE 2026-11-07, from plans/GB-243.md section 12.4. The four benchwork surfaces, all driven by GET /api/v1/telemetry/stream (SSE).\n\nA. GLOBAL STATUS PILL. Currently a static `LIVE AGGREGATOR` badge. It must pulse with a live breadcrumb while an external span is active or completed within the last 3 seconds - for example `LIVE: cline - GB-161 - outfeed gate (3/6: nextest - 3.8s)` or `LIVE: miter-mcp - deps --why (82ms)` - and clicking it jumps to the waterfall. The 3-second window is a display decision, not a data decision: it should live in one named constant, because \"the pill flickers\" and \"the pill never turns off\" are both one edit away from each other.\n\nB. BACKLOG AND DAG BOARD. The TaskNode receiving spans gets an active execution ring plus a badge of the last command; a task detected as thrashing (GB-308) turns amber with a count. This is the surface that makes the pill and the waterfall worth having: it answers \"which task is this activity for\" at a glance.\n\nC. PANEL 3 WATERFALL SUB-VIEW. A toggle inside Panel 3 between the static AST X-ray and a live DevTools-style timeline grouped by trace_id and parent_span_id. Gate spans expand into their six step bars; `joiner fill` expands into its sawhorse inference calls with model and token counts; standalone MCP calls appear in order tagged by session_id and task_key. Clicking a row opens an inspector with input_summary, exit_code, duration_ms, token_usage and - for a failed gate step - the first diagnostic and the captured diff preview.\n\nThe diff preview is the one item here with a security dimension: a diff can contain anything that was in the tree, including secrets, and the panel is a browser UI. It must render as inert text, never as HTML, and the server must not ship a diff it has not read from the snapshot path it controls.\n\nD. PANEL 4. The Law 12 matrix (P50, P90, latest per command and gate step, flagging regressions per GB-306), token and latency accounting by model role and task, and a unified spool table showing each SpoolEntry with its provenance (storypole verify / joiner fill / rabbet distill-telemetry) plus a `[ Run Distill Telemetry ]` action that invokes GB-244 and refreshes counts in place.\n\nPROVENANCE IN PANEL 4 IS THE POINT, not decoration: the spool now has three producers and a reader must be able to tell a Silver deterministic extraction from a Gold distilled repair without opening the file. This is the UI for the two-stream boundary in plans/GB-243.md section 12.1.\n\nDEPENDENCIES: the pill and waterfall need spans from more than sawhorse (GB-297, GB-298); the thrash badge needs GB-308; the distill button needs GB-244; the Law 12 matrix needs the same baseline as GB-306. This ticket can start on the waterfall rendering with synthetic spans rather than waiting for the whole chain.\n\nDone when: each surface reacts to a span within a second of it being appended, all four degrade to a quiet empty state when telemetry is absent (no spinner that never ends), the diff preview renders as text, and the spool table names the producer for every record."
-    ],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794091040752,
-    "updated_at_epoch_ms": 1794091079270
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "54eaf930-8904-41aa-8bae-1542255b80cc",
-        "ticket_key": "GB-310",
-        "slug": "benchwork-four-live-telemetry-surfaces-status-pill-dag-pulse-waterfall-panel-4-54eaf9",
-        "title": "benchwork: four live telemetry surfaces (status pill, DAG pulse, waterfall, Panel 4)",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794091040752,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "54eaf930-8904-41aa-8bae-1542255b80cc",
         "kind": "feature",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "benchwork_web"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794091040752,
-        "updated_at_epoch_ms": 1794091040752
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+        "slug": "benchwork-four-live-telemetry-surfaces-status-pill-dag-pulse-waterfall-panel-4-54eaf9",
+        "status": "deferred",
+        "ticket_key": "GB-310",
+        "title": "benchwork: four live telemetry surfaces (status pill, DAG pulse, waterfall, Panel 4)",
+        "updated_at_epoch_ms": 1794091040752,
+        "verification_receipt": null
+      }
     },
     {
-      "event": "task_updated",
-      "task_id": "54eaf930-8904-41aa-8bae-1542255b80cc",
-      "title": null,
+      "acceptance_criteria": [
+        "SCOPE 2026-11-07, from plans/GB-243.md section 12.4. The four benchwork surfaces, all driven by GET /api/v1/telemetry/stream (SSE).\n\nA. GLOBAL STATUS PILL. Currently a static `LIVE AGGREGATOR` badge. It must pulse with a live breadcrumb while an external span is active or completed within the last 3 seconds - for example `LIVE: cline - MTR-12 - outfeed gate (3/6: nextest - 3.8s)` or `LIVE: miter-mcp - deps --why (82ms)` - and clicking it jumps to the waterfall. The 3-second window is a display decision, not a data decision: it should live in one named constant, because \"the pill flickers\" and \"the pill never turns off\" are both one edit away from each other.\n\nB. BACKLOG AND DAG BOARD. The TaskNode receiving spans gets an active execution ring plus a badge of the last command; a task detected as thrashing (GB-308) turns amber with a count. This is the surface that makes the pill and the waterfall worth having: it answers \"which task is this activity for\" at a glance.\n\nC. PANEL 3 WATERFALL SUB-VIEW. A toggle inside Panel 3 between the static AST X-ray and a live DevTools-style timeline grouped by trace_id and parent_span_id. Gate spans expand into their six step bars; `joiner fill` expands into its sawhorse inference calls with model and token counts; standalone MCP calls appear in order tagged by session_id and task_key. Clicking a row opens an inspector with input_summary, exit_code, duration_ms, token_usage and - for a failed gate step - the first diagnostic and the captured diff preview.\n\nThe diff preview is the one item here with a security dimension: a diff can contain anything that was in the tree, including secrets, and the panel is a browser UI. It must render as inert text, never as HTML, and the server must not ship a diff it has not read from the snapshot path it controls.\n\nD. PANEL 4. The Law 12 matrix (P50, P90, latest per command and gate step, flagging regressions per GB-306), token and latency accounting by model role and task, and a unified spool table showing each SpoolEntry with its provenance (storypole verify / joiner fill / rabbet distill-telemetry) plus a `[ Run Distill Telemetry ]` action that invokes RB-4 and refreshes counts in place.\n\nPROVENANCE IN PANEL 4 IS THE POINT, not decoration: the spool now has three producers and a reader must be able to tell a Silver deterministic extraction from a Gold distilled repair without opening the file. This is the UI for the two-stream boundary in plans/GB-243.md section 12.1.\n\nDEPENDENCIES: the pill and waterfall need spans from more than sawhorse (GB-297, GB-298); the thrash badge needs GB-308; the distill button needs RB-4; the Law 12 matrix needs the same baseline as GB-306. This ticket can start on the waterfall rendering with synthetic spans rather than waiting for the whole chain.\n\nDone when: each surface reacts to a span within a second of it being appended, all four degrade to a quiet empty state when telemetry is absent (no spinner that never ends), the diff preview renders as text, and the spool table names the producer for every record."
+      ],
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": [
-        "SCOPE 2026-11-07, from plans/GB-243.md section 12.4. The four benchwork surfaces, all driven by GET /api/v1/telemetry/stream (SSE).\n\nA. GLOBAL STATUS PILL. Currently a static `LIVE AGGREGATOR` badge. It must pulse with a live breadcrumb while an external span is active or completed within the last 3 seconds - for example `LIVE: cline - GB-161 - outfeed gate (3/6: nextest - 3.8s)` or `LIVE: miter-mcp - deps --why (82ms)` - and clicking it jumps to the waterfall. The 3-second window is a display decision, not a data decision: it should live in one named constant, because \"the pill flickers\" and \"the pill never turns off\" are both one edit away from each other.\n\nB. BACKLOG AND DAG BOARD. The TaskNode receiving spans gets an active execution ring plus a badge of the last command; a task detected as thrashing (GB-308) turns amber with a count. This is the surface that makes the pill and the waterfall worth having: it answers \"which task is this activity for\" at a glance.\n\nC. PANEL 3 WATERFALL SUB-VIEW. A toggle inside Panel 3 between the static AST X-ray and a live DevTools-style timeline grouped by trace_id and parent_span_id. Gate spans expand into their six step bars; `joiner fill` expands into its sawhorse inference calls with model and token counts; standalone MCP calls appear in order tagged by session_id and task_key. Clicking a row opens an inspector with input_summary, exit_code, duration_ms, token_usage and - for a failed gate step - the first diagnostic and the captured diff preview.\n\nThe diff preview is the one item here with a security dimension: a diff can contain anything that was in the tree, including secrets, and the panel is a browser UI. It must render as inert text, never as HTML, and the server must not ship a diff it has not read from the snapshot path it controls.\n\nD. PANEL 4. The Law 12 matrix (P50, P90, latest per command and gate step, flagging regressions per GB-306), token and latency accounting by model role and task, and a unified spool table showing each SpoolEntry with its provenance (storypole verify / joiner fill / rabbet distill-telemetry) plus a `[ Run Distill Telemetry ]` action that invokes GB-244 and refreshes counts in place.\n\nPROVENANCE IN PANEL 4 IS THE POINT, not decoration: the spool now has three producers and a reader must be able to tell a Silver deterministic extraction from a Gold distilled repair without opening the file. This is the UI for the two-stream boundary in plans/GB-243.md section 12.1.\n\nDEPENDENCIES: the pill and waterfall need spans from more than sawhorse (GB-297, GB-298); the thrash badge needs GB-308; the distill button needs GB-244; the Law 12 matrix needs the same baseline as GB-306. This ticket can start on the waterfall rendering with synthetic spans rather than waiting for the whole chain.\n\nDone when: each surface reacts to a span within a second of it being appended, all four degrade to a quiet empty state when telemetry is absent (no spinner that never ends), the diff preview renders as text, and the spool table names the producer for every record."
-      ],
-      "timestamp_ms": 1794091079270
+      "task_id": "54eaf930-8904-41aa-8bae-1542255b80cc",
+      "timestamp_ms": 1794091079270,
+      "title": null
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "SCOPE 2026-11-07, from plans/GB-243.md section 12.4. The four benchwork surfaces, all driven by GET /api/v1/telemetry/stream (SSE).\n\nA. GLOBAL STATUS PILL. Currently a static `LIVE AGGREGATOR` badge. It must pulse with a live breadcrumb while an external span is active or completed within the last 3 seconds - for example `LIVE: cline - MTR-12 - outfeed gate (3/6: nextest - 3.8s)` or `LIVE: miter-mcp - deps --why (82ms)` - and clicking it jumps to the waterfall. The 3-second window is a display decision, not a data decision: it should live in one named constant, because \"the pill flickers\" and \"the pill never turns off\" are both one edit away from each other.\n\nB. BACKLOG AND DAG BOARD. The TaskNode receiving spans gets an active execution ring plus a badge of the last command; a task detected as thrashing (GB-308) turns amber with a count. This is the surface that makes the pill and the waterfall worth having: it answers \"which task is this activity for\" at a glance.\n\nC. PANEL 3 WATERFALL SUB-VIEW. A toggle inside Panel 3 between the static AST X-ray and a live DevTools-style timeline grouped by trace_id and parent_span_id. Gate spans expand into their six step bars; `joiner fill` expands into its sawhorse inference calls with model and token counts; standalone MCP calls appear in order tagged by session_id and task_key. Clicking a row opens an inspector with input_summary, exit_code, duration_ms, token_usage and - for a failed gate step - the first diagnostic and the captured diff preview.\n\nThe diff preview is the one item here with a security dimension: a diff can contain anything that was in the tree, including secrets, and the panel is a browser UI. It must render as inert text, never as HTML, and the server must not ship a diff it has not read from the snapshot path it controls.\n\nD. PANEL 4. The Law 12 matrix (P50, P90, latest per command and gate step, flagging regressions per GB-306), token and latency accounting by model role and task, and a unified spool table showing each SpoolEntry with its provenance (storypole verify / joiner fill / rabbet distill-telemetry) plus a `[ Run Distill Telemetry ]` action that invokes RB-4 and refreshes counts in place.\n\nPROVENANCE IN PANEL 4 IS THE POINT, not decoration: the spool now has three producers and a reader must be able to tell a Silver deterministic extraction from a Gold distilled repair without opening the file. This is the UI for the two-stream boundary in plans/GB-243.md section 12.1.\n\nDEPENDENCIES: the pill and waterfall need spans from more than sawhorse (GB-297, GB-298); the thrash badge needs GB-308; the distill button needs RB-4; the Law 12 matrix needs the same baseline as GB-306. This ticket can start on the waterfall rendering with synthetic spans rather than waiting for the whole chain.\n\nDone when: each surface reacts to a span within a second of it being appended, all four degrade to a quiet empty state when telemetry is absent (no spinner that never ends), the diff preview renders as text, and the spool table names the producer for every record."
+    ],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794091040752,
+    "decisions": [],
+    "description": "",
+    "edges": [],
+    "id": "54eaf930-8904-41aa-8bae-1542255b80cc",
+    "kind": "feature",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_web"
+      ]
+    },
+    "slug": "benchwork-four-live-telemetry-surfaces-status-pill-dag-pulse-waterfall-panel-4-54eaf9",
+    "status": "deferred",
+    "ticket_key": "GB-310",
+    "title": "benchwork: four live telemetry surfaces (status pill, DAG pulse, waterfall, Panel 4)",
+    "updated_at_epoch_ms": 1794091079270,
+    "verification_receipt": null
+  }
 }

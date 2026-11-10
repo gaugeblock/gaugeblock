@@ -1,283 +1,164 @@
 {
-  "ticket": {
-    "id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
-    "ticket_key": "GB-131",
-    "slug": "extract-gaugeblock-git-porcelain-and-standardize-codegen-units-for-release-compilation-6c1acc",
-    "title": "Extract gaugeblock-git: repository, worktree and ref-range process boundary",
-    "description": "STEPS 1-6 OF 7 DONE. The crate exists (common/crates/gaugeblock-git, 7 modules, 30 fixture tests on real repositories and bare remotes) and the migration is complete in substance: git call sites in library sources went 68 -> 7, of which 1 is the crate itself, 4 are test fixtures that build scenario repositories, and 2 are documented exceptions (git add -A in outfeed restaging, whose semantics are a GB-150 decision; and outfeed git log --format carrying the commit body, which the crate Commit does not model yet).\n\nAPI: repo identity (discover, common_dir, is_worktree, head_sha, current_branch incl. unborn HEAD, is_dirty, status_porcelain), worktrees (list/add/add-detached/remove/prune), history (commits_between, merge_base, is_ancestor, describe_tags, ahead_behind), index (stage_paths refusing an empty scope, commit returning CommitSummary, has_staged_changes, checkout, checkout_new_branch, pull_ff_only, restore_path, is_tracked), remote (tag_annotated, push_branch, push_branch_and_tag atomic, fetch_tag, remotes) and Repository::clone.\n\nMIGRATED, one commit per repository: outfeed-core (git/mod + git/history + push + sync + sync_model + clone + manifest + lockfiles), storypole-core (git.rs), miter-engine (analysis/dirty, inventory/git_extractor) and miter-harness (sandbox create/mod/files, whose generic git() escape hatch is gone).\n\nBEHAVIOUR CHANGES ON PURPOSE: outfeed push is now one atomic branch+tag push instead of two, so a rejected tag cannot leave a branch published and a release half-made; a detached HEAD is an InvalidBranch rather than the literal string; unborn HEAD reports its branch (a fix the migration itself surfaced).\n\nREMAINING: step 7, the Tier 3 gate (miter contracts + chalkline docs check), and the two documented exceptions above if they are to be closed.",
-    "kind": "refactor",
-    "status": "verified",
-    "priority": 2,
-    "scope": {
-      "repo": "workspace",
-      "crate_name": "gaugeblock-git",
-      "module_path": null,
-      "target_files": [
-        "common/crates/gaugeblock-git/Cargo.toml",
-        "common/crates/gaugeblock-git/src/lib.rs",
-        "common/crates/gaugeblock-git/src/repo.rs",
-        "common/crates/gaugeblock-git/src/worktree.rs",
-        "common/crates/gaugeblock-git/src/history.rs",
-        "common/crates/gaugeblock-git/src/index.rs",
-        "common/crates/gaugeblock-git/src/remote.rs"
-      ],
-      "target_symbols": [],
-      "labels": [
-        "git,profile,llvm,gaugeblock-common"
-      ]
-    },
-    "edges": [
-      {
-        "kind": "parent_epic",
-        "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
-        "target_ticket_key": "GB-128",
-        "target_repo": "workspace"
-      },
-      {
-        "kind": "blocked_by",
-        "target_id": "24a4f11a-1dfa-4c4f-8d17-bfc426be7b7a",
-        "target_ticket_key": "GB-126",
-        "target_repo": "outfeed"
-      }
-    ],
-    "decisions": [],
-    "acceptance_criteria": [
-      "Library sources contain no git spawn except the crate, test fixtures, and two documented exceptions",
-      "Every repository migrated with its own gate green",
-      "Worktree, history, index and remote verbs covered by fixture tests on real repositories"
-    ],
-    "plan": {
-      "summary": "gaugeblock-git owns every git and worktree operation: repo detection, worktrees, ref ranges, scoped staging/commit, push",
-      "design_markdown": "# Task Plan: GB-131 — `gaugeblock-git`\n\n> **Scope:** `common/crates/gaugeblock-git` **Parent epic:** `GB-128` **Status:** Planned\n\n## 1. Why this crate exists\n\nSix places currently spawn `git` with `format!`-built command lines and parse stdout by hand:\n\n| Owner | Duplicated calls |\n|:--|:--|\n| `storypole-core::git` | current branch, head sha, merge base, `rev-list` between shas |\n| `outfeed-core::git` | dirty tree, commit + annotated tag, push, tag verify |\n| `benchwork-core` | dirty tree, head sha, scoped commit for Panel 1 |\n| `miter` (`deps --since`) | commit ranges |\n| `rabbet` (backfill) | commit ranges, head sha |\n| `scripts/*.sh` | branch, tags |\n\n`GB-126` already collapsed the worst copy inside `outfeed`. This ticket generalizes the winner and\nrelocates it, it does not write a seventh wrapper.\n\n## 2. Boundary (frozen — see `common/ARCHITECTURE.md` §4)\n\n**Owns:** repository detection (`common_dir`, worktree vs main checkout), `worktree add/remove/prune/list`,\n`rev-list`/`merge_base`/tag ranges, scoped `status`/`add`/`commit`/annotated `tag`, `push`.\n\n**Does not own:** which repository to act on, `.gaugeblock/` resolution, workspace config, and any suite\ntype (`TaskNode`, `ReleasePlan`). A caller hands it a `Path` and typed arguments; it returns values or a\n`thiserror` error carrying stderr. It never depends on `gaugeblock-workspace` — the edge is one-way\n(`GB-189` -> `GB-131`).\n\n## 3. Steps\n\n| # | Step | Gate |\n|:--|:--|:--|\n| 1 | `repo` module: `common_dir`, `is_worktree`, `head_sha`, `current_branch`, `is_dirty` | `cargo nextest -p gaugeblock-git` with a temp repo + linked worktree fixture |\n| 2 | `worktree` module: `add`, `remove`, `prune`, `list` returning typed `WorktreeInfo` | fixture asserts two worktrees share one `common_dir` |\n| 3 | `history` module: `commits_between`, `merge_base`, `describe_range` (replaces `rev-list` string parsing) | fixture with a 3-commit range |\n| 4 | `index` module: scoped `stage_paths` + `commit` returning a typed `CommitSummary` | fixture asserts only the named paths are staged (`GB-150` staging rule) |\n| 5 | `remote` module: annotated `tag` + single-round-trip `push_branch_and_tag` | dry-run against a local bare remote |\n| 6 | Delete `storypole-core::git`, `outfeed-core::git` and the benchwork copy; re-point callers | `cargo nextest --workspace` in each affected repo |\n| 7 | `miter contracts` + `chalkline docs check` green | Tier 3 |\n\n## 4. Consumers this unblocks\n\n* `GB-169` — canonical `.gaugeblock` across worktrees needs step 2 and step 1 in that order.\n* `GB-170` — benchwork agent pool needs `worktree add/remove/prune/list`.\n* `GB-180` — Panel 1 atomic doc commits need step 4 (scoped staging, no `git add .`).\n* `outfeed release` — needs step 5 for the single push.\n\n## 5. Explicitly out of scope\n\n* `codegen-units` tuning — moved to `GB-190` because it is a profile decision, not a crate boundary.\n* Path/topology/config policy — `GB-189`.\n",
-      "steps": [
-        {
-          "step_id": "1",
-          "title": "repo module: common_dir, is_worktree, head_sha, current_branch, is_dirty",
-          "target_files": [],
-          "verification_gate": "nextest -p gaugeblock-git with worktree fixture",
-          "completed": false
-        },
-        {
-          "step_id": "2",
-          "title": "worktree module: add, remove, prune, list",
-          "target_files": [],
-          "verification_gate": "two worktrees share one common_dir",
-          "completed": false
-        },
-        {
-          "step_id": "3",
-          "title": "history module: commits_between, merge_base, describe_range",
-          "target_files": [],
-          "verification_gate": "3-commit range fixture",
-          "completed": false
-        },
-        {
-          "step_id": "4",
-          "title": "index module: scoped stage_paths + commit",
-          "target_files": [],
-          "verification_gate": "only named paths staged",
-          "completed": false
-        },
-        {
-          "step_id": "5",
-          "title": "remote module: annotated tag + single push",
-          "target_files": [],
-          "verification_gate": "local bare remote",
-          "completed": false
-        },
-        {
-          "step_id": "6",
-          "title": "delete storypole-core::git, outfeed-core::git, benchwork copy",
-          "target_files": [],
-          "verification_gate": "nextest --workspace per repo",
-          "completed": false
-        },
-        {
-          "step_id": "7",
-          "title": "miter contracts + chalkline docs check",
-          "target_files": [],
-          "verification_gate": "Tier 3",
-          "completed": false
-        }
-      ],
-      "plan_file_path": ".gaugeblock/storypole/plans/GB-131.md",
-      "updated_at_epoch_ms": 1793306986502
-    },
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "All seven steps done. The crate exists in common/crates/gaugeblock-git (repo identity incl. unborn HEAD, worktree lifecycle incl. detached add, history with ranges/merge-base/ancestry/describe/ahead-behind, index with scoped staging that refuses an empty scope, remote with atomic branch+tag push, and clone) covered by 30 fixture tests against real repositories and bare remotes. Migration complete in substance: git spawns in library sources went 68 -> 7, of which 1 is the crate itself, 4 are test fixtures that build scenario repositories, and 2 are documented exceptions (outfeed staging with -A, a GB-150 semantics decision; and outfeed log --format carrying the commit body, which Commit does not model). Migrated one repository per commit: outfeed-core (20 -> 2), storypole-core (7 -> 0), miter-engine and miter-harness (8 -> 0). Behaviour improved on purpose: atomic release push, detached HEAD as InvalidBranch, unborn HEAD reporting its branch. Tier 3 gate: contracts exit 0, docs check 9 present/0 missing/0 drifted in all 11 repositories (two drifts found and fixed: GitError had no spec, and the GB-202 layer types had none), all lockfiles fresh, layer gate clean, audit passed.",
-      "verified_at_epoch_ms": 1793417829307,
-      "git_branch": "main",
-      "base_commit_sha": "f525157e9110b2c35692fbf7054a99f2e4367c8d",
-      "head_commit_sha": "f525157e9110b2c35692fbf7054a99f2e4367c8d",
-      "commit_shas": [
-        "f525157e9110b2c35692fbf7054a99f2e4367c8d"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793170415860,
-    "updated_at_epoch_ms": 1794037999962,
-    "archived_at_epoch_ms": 1794037999962
-  },
   "events": [
     {
       "event": "handoff_recorded",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "handoff": {
-        "recorded_by_agent": "cline",
-        "timestamp_ms": 1793368328115,
         "completed_items": [
           "Step 1 of the plan: gaugeblock-git crate created in common/crates/gaugeblock-git with the repo module (discover, common_dir, is_worktree, head_sha, current_branch as Option<String>, is_dirty) and run_git carrying stderr. 4 fixture tests on real repositories pass (nested discovery, sha length, untracked-is-dirty, detached HEAD, linked worktree sharing the common dir), clippy and fmt clean. Commit b2f961b, merged to common/main."
         ],
+        "dirty_files": [],
+        "git_ref": "b2f961b",
+        "last_error_or_blocker": "No blocker. Step 6 is the large half and wants its own session: 66 call sites across 24 files in 3 repositories, each needing the Tier 2 gate in its own repo.",
+        "recorded_by_agent": "cline",
         "remaining_items": [
           "Steps 2-7 of .gaugeblock/storypole/plans/GB-131.md: worktree add/remove/prune/list; history (commits_between, merge_base, describe_range); index (scoped stage_paths + commit returning CommitSummary); remote (annotated tag + single push_branch_and_tag); then delete storypole-core::git, outfeed-core::git, the benchwork copy and re-point 66 call sites across 24 files in 3 repos; finally Tier 3 (miter contracts + chalkline docs check)."
         ],
-        "last_error_or_blocker": "No blocker. Step 6 is the large half and wants its own session: 66 call sites across 24 files in 3 repositories, each needing the Tier 2 gate in its own repo.",
-        "git_ref": "b2f961b",
-        "dirty_files": []
+        "timestamp_ms": 1793368328115
       },
-      "new_status": "ready"
+      "new_status": "ready",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d"
     },
     {
       "event": "handoff_recorded",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "handoff": {
-        "recorded_by_agent": "cline",
-        "timestamp_ms": 1793412416702,
         "completed_items": [
           "Steps 1-3 of 7 done in common/crates/gaugeblock-git. b2f961b repo identity (discover, common_dir, is_worktree, head_sha, current_branch as Option, is_dirty); 10d420f worktree lifecycle (worktrees/add/remove/prune + WorktreeInfo parsed from --porcelain, dirty-removal refused without force); 52c8e93 history (merge_base, is_ancestor mapping exit 1 to false, commits_between with a unit-separated parse). 15 fixture tests on real repositories. MEASURED SCOPE for what remains: 68 git call sites in 26 files across 4 repos - outfeed 44 in 13 files, miter 12 in 8, storypole 10 in 3, plus the 2 in the new crate itself."
         ],
+        "dirty_files": [],
+        "git_ref": "52c8e93",
+        "last_error_or_blocker": "None for steps 4-5. Step 6 is sequencing, not risk: each repo needs its own gate, and outfeed is 44 of the 68 sites.",
+        "recorded_by_agent": "cline",
         "remaining_items": [
           "Steps 4-7: index (scoped stage_paths + commit returning CommitSummary), remote (annotated tag + single-round-trip push), then the migration - delete storypole-core::git, outfeed-core::git and the benchwork copy and re-point 68 call sites across 24 consumer files, one repository per commit. Step 6 is the large half and wants its own block: outfeed alone is 44 sites. Finally Tier 3 (miter contracts + chalkline docs check)."
         ],
-        "last_error_or_blocker": "None for steps 4-5. Step 6 is sequencing, not risk: each repo needs its own gate, and outfeed is 44 of the 68 sites.",
-        "git_ref": "52c8e93",
-        "dirty_files": []
+        "timestamp_ms": 1793412416702
       },
-      "new_status": "ready"
+      "new_status": "ready",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d"
     },
     {
       "event": "task_created",
       "task": {
-        "id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
-        "ticket_key": "GB-131",
-        "slug": "extract-gaugeblock-git-porcelain-and-standardize-codegen-units-for-release-compilation-6c1acc",
-        "title": "Extract gaugeblock-git porcelain and standardize codegen-units for release compilation",
-        "description": "Extract safe git porcelain into gaugeblock-git supporting single-round-trip push (branch + tag). Standardize Cargo release profile codegen-units to 16 for local builds to prevent single-core LLVM stalls.",
-        "kind": "refactor",
-        "status": "ready",
-        "priority": 2,
-        "scope": {
-          "repo": "workspace",
-          "crate_name": null,
-          "module_path": null,
-          "target_files": [],
-          "target_symbols": [],
-          "labels": [
-            "git,profile,llvm,gaugeblock-common"
-          ]
-        },
-        "edges": [],
-        "decisions": [],
         "acceptance_criteria": [
           "push_branch_and_tag executes in a single git push network round-trip,codegen-units set to 16 for local compilation accelerating release builds 3-5x"
         ],
-        "plan": null,
         "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
         "created_at_epoch_ms": 1793170415860,
-        "updated_at_epoch_ms": 1793170415860
+        "decisions": [],
+        "description": "Extract safe git porcelain into gaugeblock-git supporting single-round-trip push (branch + tag). Standardize Cargo release profile codegen-units to 16 for local builds to prevent single-core LLVM stalls.",
+        "edges": [],
+        "id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+        "kind": "refactor",
+        "latest_handoff": null,
+        "plan": null,
+        "priority": 2,
+        "scope": {
+          "crate_name": null,
+          "labels": [
+            "git,profile,llvm,gaugeblock-common"
+          ],
+          "module_path": null,
+          "repo": "workspace",
+          "target_files": [],
+          "target_symbols": []
+        },
+        "slug": "extract-gaugeblock-git-porcelain-and-standardize-codegen-units-for-release-compilation-6c1acc",
+        "status": "ready",
+        "ticket_key": "GB-131",
+        "title": "Extract gaugeblock-git porcelain and standardize codegen-units for release compilation",
+        "updated_at_epoch_ms": 1793170415860,
+        "verification_receipt": null
       }
     },
     {
-      "event": "edge_added",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "edge": {
         "kind": "parent_epic",
         "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
-        "target_ticket_key": "GB-128",
-        "target_repo": "workspace"
+        "target_repo": "workspace",
+        "target_ticket_key": "GB-128"
       },
+      "event": "edge_added",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "timestamp_ms": 1793170419790
     },
     {
       "event": "plan_updated",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "plan": {
-        "summary": "Extract gaugeblock-git porcelain and standardize codegen-units",
         "design_markdown": "# Task Plan: GB-131 — Extract gaugeblock-git Porcelain and Standardize codegen-units for Release Compilation\n\n> **Task Key:** `GB-131`  \n> **Parent Epic:** `GB-128`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Problem Statement\n`outfeed-core` has a 99.2% clone between single-repo and suite release tagging, and 4 tools duplicate git subprocess wrappers. Furthermore, all 10 repositories set `[profile.release] codegen-units = 1`, forcing LLVM to serialize to a single CPU core and slowing release compilations by 3x–5x.\n\n---\n\n## 2. Technical Blueprint\n1. In `gaugeblock/common/crates/gaugeblock-git`:\n   * Implement robust git porcelain helpers: `get_current_branch`, `is_working_tree_dirty`, `get_head_sha`, `create_commit_and_tag`.\n   * Implement single-round-trip pushing (`push_branch_and_tag` -> `git push <remote> <branch> <tag>`).\n2. In all 10 repository root `Cargo.toml` files:\n   * Remove `codegen-units = 1` from `[profile.release]` (allowing default 16), or define a dedicated `release-dist` profile for CI packaging while keeping local release compilation multi-threaded.\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Implement git porcelain helpers in `gaugeblock-git`.\n* **Step 2:** Standardize `[profile.release]` codegen-units across all 10 root Cargo.toml files.\n* **Step 3:** Tier 3 workspace verification (`cargo nextest run --workspace`).\n",
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-131.md",
         "steps": [
           {
+            "completed": false,
             "step_id": "1",
+            "target_files": [],
             "title": "Implement git porcelain helpers in gaugeblock-git",
-            "target_files": [],
-            "verification_gate": "cargo check -p gaugeblock-git",
-            "completed": false
+            "verification_gate": "cargo check -p gaugeblock-git"
           },
           {
+            "completed": false,
             "step_id": "2",
-            "title": "Standardize release profile codegen-units across root Cargo.toml files",
             "target_files": [],
-            "verification_gate": "cargo check --workspace",
-            "completed": false
+            "title": "Standardize release profile codegen-units across root Cargo.toml files",
+            "verification_gate": "cargo check --workspace"
           },
           {
+            "completed": false,
             "step_id": "3",
-            "title": "Tier 3 workspace verification",
             "target_files": [],
-            "verification_gate": "cargo nextest run --workspace",
-            "completed": false
+            "title": "Tier 3 workspace verification",
+            "verification_gate": "cargo nextest run --workspace"
           }
         ],
-        "plan_file_path": ".gaugeblock/storypole/plans/GB-131.md",
+        "summary": "Extract gaugeblock-git porcelain and standardize codegen-units",
         "updated_at_epoch_ms": 1793170564406
       },
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "timestamp_ms": 1793170564406
     },
     {
-      "event": "edge_added",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "edge": {
         "kind": "blocked_by",
         "target_id": "24a4f11a-1dfa-4c4f-8d17-bfc426be7b7a",
-        "target_ticket_key": "GB-126",
-        "target_repo": "outfeed"
+        "target_repo": "outfeed",
+        "target_ticket_key": "OF-28"
       },
+      "event": "edge_added",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "timestamp_ms": 1793172791049
     },
     {
       "event": "status_changed",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "from": "ready",
-      "to": "blocked",
-      "reason": "Blocked by unverified task GB-126",
-      "timestamp_ms": 1793172791049
+      "reason": "Blocked by unverified task OF-28",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+      "timestamp_ms": 1793172791049,
+      "to": "blocked"
     },
     {
       "event": "status_changed",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "from": "blocked",
-      "to": "ready",
-      "reason": "Dependency GB-126 verified",
-      "timestamp_ms": 1793176619348
+      "reason": "Dependency OF-28 verified",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+      "timestamp_ms": 1793176619348,
+      "to": "ready"
     },
     {
+      "acceptance_criteria": [
+        "gaugeblock-git owns common_dir/worktree detection, worktree add/remove/prune/list, rev-list and tag ranges, and scoped status/add/commit/tag/push",
+        "gaugeblock-git does not depend on gaugeblock-workspace and resolves no .gaugeblock path",
+        "storypole-core::git, outfeed-core::git and the other git subprocess wrappers are deleted in favour of it",
+        "miter contracts and chalkline docs check stay green after the move"
+      ],
+      "description": "One crate owns everything that spawns git or reasons about a repository, lifted out of the four to six places that currently copy it. Ownership: common_dir and worktree detection (.git file versus directory, git rev-parse --git-common-dir); worktree add/remove/prune/list, which is what SP-14 and BW-25 need; rev-list and tag/commit ranges for storypole verify receipts, miter deps --since and rabbet backfill; scoped status/add/commit and annotated tag with single-round-trip push for outfeed release tagging and benchwork Panel 1 atomic doc commits (GB-180). Non-goals: it resolves no .gaugeblock path, chooses no repository, reads no workspace config and knows no suite vocabulary - that is gaugeblock-workspace (CO-7). Commands take typed arguments and return typed values or thiserror errors carrying stderr; no format!-built command lines. The codegen-units half of the old scope moved to GB-190 so this ticket is one crate.",
       "event": "task_updated",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
-      "title": "Extract gaugeblock-git: repository, worktree and ref-range process boundary",
-      "description": "One crate owns everything that spawns git or reasons about a repository, lifted out of the four to six places that currently copy it. Ownership: common_dir and worktree detection (.git file versus directory, git rev-parse --git-common-dir); worktree add/remove/prune/list, which is what GB-169 and GB-170 need; rev-list and tag/commit ranges for storypole verify receipts, miter deps --since and rabbet backfill; scoped status/add/commit and annotated tag with single-round-trip push for outfeed release tagging and benchwork Panel 1 atomic doc commits (GB-180). Non-goals: it resolves no .gaugeblock path, chooses no repository, reads no workspace config and knows no suite vocabulary - that is gaugeblock-workspace (GB-189). Commands take typed arguments and return typed values or thiserror errors carrying stderr; no format!-built command lines. The codegen-units half of the old scope moved to GB-190 so this ticket is one crate.",
       "priority": null,
       "scope": {
-        "repo": "workspace",
         "crate_name": "gaugeblock-git",
+        "labels": [
+          "git,profile,llvm,gaugeblock-common"
+        ],
         "module_path": null,
+        "repo": "workspace",
         "target_files": [
           "common/crates/gaugeblock-git/Cargo.toml",
           "common/crates/gaugeblock-git/src/lib.rs",
@@ -287,180 +168,299 @@
           "common/crates/gaugeblock-git/src/index.rs",
           "common/crates/gaugeblock-git/src/remote.rs"
         ],
-        "target_symbols": [],
-        "labels": [
-          "git,profile,llvm,gaugeblock-common"
-        ]
+        "target_symbols": []
       },
-      "acceptance_criteria": [
-        "gaugeblock-git owns common_dir/worktree detection, worktree add/remove/prune/list, rev-list and tag ranges, and scoped status/add/commit/tag/push",
-        "gaugeblock-git does not depend on gaugeblock-workspace and resolves no .gaugeblock path",
-        "storypole-core::git, outfeed-core::git and the other git subprocess wrappers are deleted in favour of it",
-        "miter contracts and chalkline docs check stay green after the move"
-      ],
-      "timestamp_ms": 1793306955722
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+      "timestamp_ms": 1793306955722,
+      "title": "Extract gaugeblock-git: repository, worktree and ref-range process boundary"
     },
     {
       "event": "plan_updated",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "plan": {
-        "summary": "gaugeblock-git owns every git and worktree operation: repo detection, worktrees, ref ranges, scoped staging/commit, push",
-        "design_markdown": "# Task Plan: GB-131 — `gaugeblock-git`\n\n> **Scope:** `common/crates/gaugeblock-git` **Parent epic:** `GB-128` **Status:** Planned\n\n## 1. Why this crate exists\n\nSix places currently spawn `git` with `format!`-built command lines and parse stdout by hand:\n\n| Owner | Duplicated calls |\n|:--|:--|\n| `storypole-core::git` | current branch, head sha, merge base, `rev-list` between shas |\n| `outfeed-core::git` | dirty tree, commit + annotated tag, push, tag verify |\n| `benchwork-core` | dirty tree, head sha, scoped commit for Panel 1 |\n| `miter` (`deps --since`) | commit ranges |\n| `rabbet` (backfill) | commit ranges, head sha |\n| `scripts/*.sh` | branch, tags |\n\n`GB-126` already collapsed the worst copy inside `outfeed`. This ticket generalizes the winner and\nrelocates it, it does not write a seventh wrapper.\n\n## 2. Boundary (frozen — see `common/ARCHITECTURE.md` §4)\n\n**Owns:** repository detection (`common_dir`, worktree vs main checkout), `worktree add/remove/prune/list`,\n`rev-list`/`merge_base`/tag ranges, scoped `status`/`add`/`commit`/annotated `tag`, `push`.\n\n**Does not own:** which repository to act on, `.gaugeblock/` resolution, workspace config, and any suite\ntype (`TaskNode`, `ReleasePlan`). A caller hands it a `Path` and typed arguments; it returns values or a\n`thiserror` error carrying stderr. It never depends on `gaugeblock-workspace` — the edge is one-way\n(`GB-189` -> `GB-131`).\n\n## 3. Steps\n\n| # | Step | Gate |\n|:--|:--|:--|\n| 1 | `repo` module: `common_dir`, `is_worktree`, `head_sha`, `current_branch`, `is_dirty` | `cargo nextest -p gaugeblock-git` with a temp repo + linked worktree fixture |\n| 2 | `worktree` module: `add`, `remove`, `prune`, `list` returning typed `WorktreeInfo` | fixture asserts two worktrees share one `common_dir` |\n| 3 | `history` module: `commits_between`, `merge_base`, `describe_range` (replaces `rev-list` string parsing) | fixture with a 3-commit range |\n| 4 | `index` module: scoped `stage_paths` + `commit` returning a typed `CommitSummary` | fixture asserts only the named paths are staged (`GB-150` staging rule) |\n| 5 | `remote` module: annotated `tag` + single-round-trip `push_branch_and_tag` | dry-run against a local bare remote |\n| 6 | Delete `storypole-core::git`, `outfeed-core::git` and the benchwork copy; re-point callers | `cargo nextest --workspace` in each affected repo |\n| 7 | `miter contracts` + `chalkline docs check` green | Tier 3 |\n\n## 4. Consumers this unblocks\n\n* `GB-169` — canonical `.gaugeblock` across worktrees needs step 2 and step 1 in that order.\n* `GB-170` — benchwork agent pool needs `worktree add/remove/prune/list`.\n* `GB-180` — Panel 1 atomic doc commits need step 4 (scoped staging, no `git add .`).\n* `outfeed release` — needs step 5 for the single push.\n\n## 5. Explicitly out of scope\n\n* `codegen-units` tuning — moved to `GB-190` because it is a profile decision, not a crate boundary.\n* Path/topology/config policy — `GB-189`.\n",
+        "design_markdown": "# Task Plan: GB-131 — `gaugeblock-git`\n\n> **Scope:** `common/crates/gaugeblock-git` **Parent epic:** `GB-128` **Status:** Planned\n\n## 1. Why this crate exists\n\nSix places currently spawn `git` with `format!`-built command lines and parse stdout by hand:\n\n| Owner | Duplicated calls |\n|:--|:--|\n| `storypole-core::git` | current branch, head sha, merge base, `rev-list` between shas |\n| `outfeed-core::git` | dirty tree, commit + annotated tag, push, tag verify |\n| `benchwork-core` | dirty tree, head sha, scoped commit for Panel 1 |\n| `miter` (`deps --since`) | commit ranges |\n| `rabbet` (backfill) | commit ranges, head sha |\n| `scripts/*.sh` | branch, tags |\n\n`OF-28` already collapsed the worst copy inside `outfeed`. This ticket generalizes the winner and\nrelocates it, it does not write a seventh wrapper.\n\n## 2. Boundary (frozen — see `common/ARCHITECTURE.md` §4)\n\n**Owns:** repository detection (`common_dir`, worktree vs main checkout), `worktree add/remove/prune/list`,\n`rev-list`/`merge_base`/tag ranges, scoped `status`/`add`/`commit`/annotated `tag`, `push`.\n\n**Does not own:** which repository to act on, `.gaugeblock/` resolution, workspace config, and any suite\ntype (`TaskNode`, `ReleasePlan`). A caller hands it a `Path` and typed arguments; it returns values or a\n`thiserror` error carrying stderr. It never depends on `gaugeblock-workspace` — the edge is one-way\n(`CO-7` -> `GB-131`).\n\n## 3. Steps\n\n| # | Step | Gate |\n|:--|:--|:--|\n| 1 | `repo` module: `common_dir`, `is_worktree`, `head_sha`, `current_branch`, `is_dirty` | `cargo nextest -p gaugeblock-git` with a temp repo + linked worktree fixture |\n| 2 | `worktree` module: `add`, `remove`, `prune`, `list` returning typed `WorktreeInfo` | fixture asserts two worktrees share one `common_dir` |\n| 3 | `history` module: `commits_between`, `merge_base`, `describe_range` (replaces `rev-list` string parsing) | fixture with a 3-commit range |\n| 4 | `index` module: scoped `stage_paths` + `commit` returning a typed `CommitSummary` | fixture asserts only the named paths are staged (`GB-150` staging rule) |\n| 5 | `remote` module: annotated `tag` + single-round-trip `push_branch_and_tag` | dry-run against a local bare remote |\n| 6 | Delete `storypole-core::git`, `outfeed-core::git` and the benchwork copy; re-point callers | `cargo nextest --workspace` in each affected repo |\n| 7 | `miter contracts` + `chalkline docs check` green | Tier 3 |\n\n## 4. Consumers this unblocks\n\n* `SP-14` — canonical `.gaugeblock` across worktrees needs step 2 and step 1 in that order.\n* `BW-25` — benchwork agent pool needs `worktree add/remove/prune/list`.\n* `GB-180` — Panel 1 atomic doc commits need step 4 (scoped staging, no `git add .`).\n* `outfeed release` — needs step 5 for the single push.\n\n## 5. Explicitly out of scope\n\n* `codegen-units` tuning — moved to `GB-190` because it is a profile decision, not a crate boundary.\n* Path/topology/config policy — `CO-7`.\n",
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-131.md",
         "steps": [
           {
+            "completed": false,
             "step_id": "1",
+            "target_files": [],
             "title": "repo module: common_dir, is_worktree, head_sha, current_branch, is_dirty",
-            "target_files": [],
-            "verification_gate": "nextest -p gaugeblock-git with worktree fixture",
-            "completed": false
+            "verification_gate": "nextest -p gaugeblock-git with worktree fixture"
           },
           {
+            "completed": false,
             "step_id": "2",
+            "target_files": [],
             "title": "worktree module: add, remove, prune, list",
-            "target_files": [],
-            "verification_gate": "two worktrees share one common_dir",
-            "completed": false
+            "verification_gate": "two worktrees share one common_dir"
           },
           {
+            "completed": false,
             "step_id": "3",
+            "target_files": [],
             "title": "history module: commits_between, merge_base, describe_range",
-            "target_files": [],
-            "verification_gate": "3-commit range fixture",
-            "completed": false
+            "verification_gate": "3-commit range fixture"
           },
           {
+            "completed": false,
             "step_id": "4",
+            "target_files": [],
             "title": "index module: scoped stage_paths + commit",
-            "target_files": [],
-            "verification_gate": "only named paths staged",
-            "completed": false
+            "verification_gate": "only named paths staged"
           },
           {
+            "completed": false,
             "step_id": "5",
+            "target_files": [],
             "title": "remote module: annotated tag + single push",
-            "target_files": [],
-            "verification_gate": "local bare remote",
-            "completed": false
+            "verification_gate": "local bare remote"
           },
           {
+            "completed": false,
             "step_id": "6",
-            "title": "delete storypole-core::git, outfeed-core::git, benchwork copy",
             "target_files": [],
-            "verification_gate": "nextest --workspace per repo",
-            "completed": false
+            "title": "delete storypole-core::git, outfeed-core::git, benchwork copy",
+            "verification_gate": "nextest --workspace per repo"
           },
           {
+            "completed": false,
             "step_id": "7",
-            "title": "miter contracts + chalkline docs check",
             "target_files": [],
-            "verification_gate": "Tier 3",
-            "completed": false
+            "title": "miter contracts + chalkline docs check",
+            "verification_gate": "Tier 3"
           }
         ],
-        "plan_file_path": ".gaugeblock/storypole/plans/GB-131.md",
+        "summary": "gaugeblock-git owns every git and worktree operation: repo detection, worktrees, ref ranges, scoped staging/commit, push",
         "updated_at_epoch_ms": 1793306986502
       },
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "timestamp_ms": 1793306986502
     },
     {
-      "event": "edge_added",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "edge": {
         "kind": "parent_epic",
         "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
-        "target_ticket_key": "GB-128",
-        "target_repo": "workspace"
+        "target_repo": "workspace",
+        "target_ticket_key": "GB-128"
       },
+      "event": "edge_added",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "timestamp_ms": 1793306995845
     },
     {
-      "event": "task_claimed",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793412416215,
-        "lease_expires_at_epoch_ms": 1793416016215,
         "git_branch": null,
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793416016215
+      },
+      "event": "task_claimed",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d"
     },
     {
       "event": "status_changed",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "from": "ready",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793412416215
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+      "timestamp_ms": 1793412416215,
+      "to": "in_progress"
     },
     {
-      "event": "task_claimed",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793414694798,
-        "lease_expires_at_epoch_ms": 1793418294798,
         "git_branch": null,
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793418294798
+      },
+      "event": "task_claimed",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d"
     },
     {
       "event": "status_changed",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "from": "ready",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793414694798
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+      "timestamp_ms": 1793414694798,
+      "to": "in_progress"
     },
     {
-      "event": "task_updated",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
-      "title": null,
-      "description": "STEPS 1-6 OF 7 DONE. The crate exists (common/crates/gaugeblock-git, 7 modules, 30 fixture tests on real repositories and bare remotes) and the migration is complete in substance: git call sites in library sources went 68 -> 7, of which 1 is the crate itself, 4 are test fixtures that build scenario repositories, and 2 are documented exceptions (git add -A in outfeed restaging, whose semantics are a GB-150 decision; and outfeed git log --format carrying the commit body, which the crate Commit does not model yet).\n\nAPI: repo identity (discover, common_dir, is_worktree, head_sha, current_branch incl. unborn HEAD, is_dirty, status_porcelain), worktrees (list/add/add-detached/remove/prune), history (commits_between, merge_base, is_ancestor, describe_tags, ahead_behind), index (stage_paths refusing an empty scope, commit returning CommitSummary, has_staged_changes, checkout, checkout_new_branch, pull_ff_only, restore_path, is_tracked), remote (tag_annotated, push_branch, push_branch_and_tag atomic, fetch_tag, remotes) and Repository::clone.\n\nMIGRATED, one commit per repository: outfeed-core (git/mod + git/history + push + sync + sync_model + clone + manifest + lockfiles), storypole-core (git.rs), miter-engine (analysis/dirty, inventory/git_extractor) and miter-harness (sandbox create/mod/files, whose generic git() escape hatch is gone).\n\nBEHAVIOUR CHANGES ON PURPOSE: outfeed push is now one atomic branch+tag push instead of two, so a rejected tag cannot leave a branch published and a release half-made; a detached HEAD is an InvalidBranch rather than the literal string; unborn HEAD reports its branch (a fix the migration itself surfaced).\n\nREMAINING: step 7, the Tier 3 gate (miter contracts + chalkline docs check), and the two documented exceptions above if they are to be closed.",
-      "priority": null,
-      "scope": null,
       "acceptance_criteria": [
         "Library sources contain no git spawn except the crate, test fixtures, and two documented exceptions",
         "Every repository migrated with its own gate green",
         "Worktree, history, index and remote verbs covered by fixture tests on real repositories"
       ],
-      "timestamp_ms": 1793414695247
+      "description": "STEPS 1-6 OF 7 DONE. The crate exists (common/crates/gaugeblock-git, 7 modules, 30 fixture tests on real repositories and bare remotes) and the migration is complete in substance: git call sites in library sources went 68 -> 7, of which 1 is the crate itself, 4 are test fixtures that build scenario repositories, and 2 are documented exceptions (git add -A in outfeed restaging, whose semantics are a GB-150 decision; and outfeed git log --format carrying the commit body, which the crate Commit does not model yet).\n\nAPI: repo identity (discover, common_dir, is_worktree, head_sha, current_branch incl. unborn HEAD, is_dirty, status_porcelain), worktrees (list/add/add-detached/remove/prune), history (commits_between, merge_base, is_ancestor, describe_tags, ahead_behind), index (stage_paths refusing an empty scope, commit returning CommitSummary, has_staged_changes, checkout, checkout_new_branch, pull_ff_only, restore_path, is_tracked), remote (tag_annotated, push_branch, push_branch_and_tag atomic, fetch_tag, remotes) and Repository::clone.\n\nMIGRATED, one commit per repository: outfeed-core (git/mod + git/history + push + sync + sync_model + clone + manifest + lockfiles), storypole-core (git.rs), miter-engine (analysis/dirty, inventory/git_extractor) and miter-harness (sandbox create/mod/files, whose generic git() escape hatch is gone).\n\nBEHAVIOUR CHANGES ON PURPOSE: outfeed push is now one atomic branch+tag push instead of two, so a rejected tag cannot leave a branch published and a release half-made; a detached HEAD is an InvalidBranch rather than the literal string; unborn HEAD reports its branch (a fix the migration itself surfaced).\n\nREMAINING: step 7, the Tier 3 gate (miter contracts + chalkline docs check), and the two documented exceptions above if they are to be closed.",
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+      "timestamp_ms": 1793414695247,
+      "title": null
     },
     {
-      "event": "task_claimed",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793417829184,
-        "lease_expires_at_epoch_ms": 1793421429184,
         "git_branch": null,
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793421429184
+      },
+      "event": "task_claimed",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d"
     },
     {
       "event": "task_verified",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "All seven steps done. The crate exists in common/crates/gaugeblock-git (repo identity incl. unborn HEAD, worktree lifecycle incl. detached add, history with ranges/merge-base/ancestry/describe/ahead-behind, index with scoped staging that refuses an empty scope, remote with atomic branch+tag push, and clone) covered by 30 fixture tests against real repositories and bare remotes. Migration complete in substance: git spawns in library sources went 68 -> 7, of which 1 is the crate itself, 4 are test fixtures that build scenario repositories, and 2 are documented exceptions (outfeed staging with -A, a GB-150 semantics decision; and outfeed log --format carrying the commit body, which Commit does not model). Migrated one repository per commit: outfeed-core (20 -> 2), storypole-core (7 -> 0), miter-engine and miter-harness (8 -> 0). Behaviour improved on purpose: atomic release push, detached HEAD as InvalidBranch, unborn HEAD reporting its branch. Tier 3 gate: contracts exit 0, docs check 9 present/0 missing/0 drifted in all 11 repositories (two drifts found and fixed: GitError had no spec, and the GB-202 layer types had none), all lockfiles fresh, layer gate clean, audit passed.",
-        "verified_at_epoch_ms": 1793417829307,
-        "git_branch": "main",
         "base_commit_sha": "f525157e9110b2c35692fbf7054a99f2e4367c8d",
-        "head_commit_sha": "f525157e9110b2c35692fbf7054a99f2e4367c8d",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "f525157e9110b2c35692fbf7054a99f2e4367c8d"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "f525157e9110b2c35692fbf7054a99f2e4367c8d",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "All seven steps done. The crate exists in common/crates/gaugeblock-git (repo identity incl. unborn HEAD, worktree lifecycle incl. detached add, history with ranges/merge-base/ancestry/describe/ahead-behind, index with scoped staging that refuses an empty scope, remote with atomic branch+tag push, and clone) covered by 30 fixture tests against real repositories and bare remotes. Migration complete in substance: git spawns in library sources went 68 -> 7, of which 1 is the crate itself, 4 are test fixtures that build scenario repositories, and 2 are documented exceptions (outfeed staging with -A, a GB-150 semantics decision; and outfeed log --format carrying the commit body, which Commit does not model). Migrated one repository per commit: outfeed-core (20 -> 2), storypole-core (7 -> 0), miter-engine and miter-harness (8 -> 0). Behaviour improved on purpose: atomic release push, detached HEAD as InvalidBranch, unborn HEAD reporting its branch. Tier 3 gate: contracts exit 0, docs check 9 present/0 missing/0 drifted in all 11 repositories (two drifts found and fixed: GitError had no spec, and the MTR-19 layer types had none), all lockfiles fresh, layer gate clean, audit passed.",
+        "verified_at_epoch_ms": 1793417829307,
+        "verifier": "manual"
+      },
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d"
     },
     {
       "event": "task_archived",
-      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "status": "verified",
+      "task_id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
       "timestamp_ms": 1794037999962
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "Library sources contain no git spawn except the crate, test fixtures, and two documented exceptions",
+      "Every repository migrated with its own gate green",
+      "Worktree, history, index and remote verbs covered by fixture tests on real repositories"
+    ],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794037999962,
+    "created_at_epoch_ms": 1793170415860,
+    "decisions": [],
+    "description": "STEPS 1-6 OF 7 DONE. The crate exists (common/crates/gaugeblock-git, 7 modules, 30 fixture tests on real repositories and bare remotes) and the migration is complete in substance: git call sites in library sources went 68 -> 7, of which 1 is the crate itself, 4 are test fixtures that build scenario repositories, and 2 are documented exceptions (git add -A in outfeed restaging, whose semantics are a GB-150 decision; and outfeed git log --format carrying the commit body, which the crate Commit does not model yet).\n\nAPI: repo identity (discover, common_dir, is_worktree, head_sha, current_branch incl. unborn HEAD, is_dirty, status_porcelain), worktrees (list/add/add-detached/remove/prune), history (commits_between, merge_base, is_ancestor, describe_tags, ahead_behind), index (stage_paths refusing an empty scope, commit returning CommitSummary, has_staged_changes, checkout, checkout_new_branch, pull_ff_only, restore_path, is_tracked), remote (tag_annotated, push_branch, push_branch_and_tag atomic, fetch_tag, remotes) and Repository::clone.\n\nMIGRATED, one commit per repository: outfeed-core (git/mod + git/history + push + sync + sync_model + clone + manifest + lockfiles), storypole-core (git.rs), miter-engine (analysis/dirty, inventory/git_extractor) and miter-harness (sandbox create/mod/files, whose generic git() escape hatch is gone).\n\nBEHAVIOUR CHANGES ON PURPOSE: outfeed push is now one atomic branch+tag push instead of two, so a rejected tag cannot leave a branch published and a release half-made; a detached HEAD is an InvalidBranch rather than the literal string; unborn HEAD reports its branch (a fix the migration itself surfaced).\n\nREMAINING: step 7, the Tier 3 gate (miter contracts + chalkline docs check), and the two documented exceptions above if they are to be closed.",
+    "edges": [
+      {
+        "kind": "parent_epic",
+        "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+        "target_repo": "workspace",
+        "target_ticket_key": "GB-128"
+      },
+      {
+        "kind": "blocked_by",
+        "target_id": "24a4f11a-1dfa-4c4f-8d17-bfc426be7b7a",
+        "target_repo": "outfeed",
+        "target_ticket_key": "OF-28"
+      }
+    ],
+    "id": "6c1accad-8fc7-4281-91de-5e417dc9ad7d",
+    "kind": "refactor",
+    "latest_handoff": null,
+    "plan": {
+      "design_markdown": "# Task Plan: GB-131 — `gaugeblock-git`\n\n> **Scope:** `common/crates/gaugeblock-git` **Parent epic:** `GB-128` **Status:** Planned\n\n## 1. Why this crate exists\n\nSix places currently spawn `git` with `format!`-built command lines and parse stdout by hand:\n\n| Owner | Duplicated calls |\n|:--|:--|\n| `storypole-core::git` | current branch, head sha, merge base, `rev-list` between shas |\n| `outfeed-core::git` | dirty tree, commit + annotated tag, push, tag verify |\n| `benchwork-core` | dirty tree, head sha, scoped commit for Panel 1 |\n| `miter` (`deps --since`) | commit ranges |\n| `rabbet` (backfill) | commit ranges, head sha |\n| `scripts/*.sh` | branch, tags |\n\n`OF-28` already collapsed the worst copy inside `outfeed`. This ticket generalizes the winner and\nrelocates it, it does not write a seventh wrapper.\n\n## 2. Boundary (frozen — see `common/ARCHITECTURE.md` §4)\n\n**Owns:** repository detection (`common_dir`, worktree vs main checkout), `worktree add/remove/prune/list`,\n`rev-list`/`merge_base`/tag ranges, scoped `status`/`add`/`commit`/annotated `tag`, `push`.\n\n**Does not own:** which repository to act on, `.gaugeblock/` resolution, workspace config, and any suite\ntype (`TaskNode`, `ReleasePlan`). A caller hands it a `Path` and typed arguments; it returns values or a\n`thiserror` error carrying stderr. It never depends on `gaugeblock-workspace` — the edge is one-way\n(`CO-7` -> `GB-131`).\n\n## 3. Steps\n\n| # | Step | Gate |\n|:--|:--|:--|\n| 1 | `repo` module: `common_dir`, `is_worktree`, `head_sha`, `current_branch`, `is_dirty` | `cargo nextest -p gaugeblock-git` with a temp repo + linked worktree fixture |\n| 2 | `worktree` module: `add`, `remove`, `prune`, `list` returning typed `WorktreeInfo` | fixture asserts two worktrees share one `common_dir` |\n| 3 | `history` module: `commits_between`, `merge_base`, `describe_range` (replaces `rev-list` string parsing) | fixture with a 3-commit range |\n| 4 | `index` module: scoped `stage_paths` + `commit` returning a typed `CommitSummary` | fixture asserts only the named paths are staged (`GB-150` staging rule) |\n| 5 | `remote` module: annotated `tag` + single-round-trip `push_branch_and_tag` | dry-run against a local bare remote |\n| 6 | Delete `storypole-core::git`, `outfeed-core::git` and the benchwork copy; re-point callers | `cargo nextest --workspace` in each affected repo |\n| 7 | `miter contracts` + `chalkline docs check` green | Tier 3 |\n\n## 4. Consumers this unblocks\n\n* `SP-14` — canonical `.gaugeblock` across worktrees needs step 2 and step 1 in that order.\n* `BW-25` — benchwork agent pool needs `worktree add/remove/prune/list`.\n* `GB-180` — Panel 1 atomic doc commits need step 4 (scoped staging, no `git add .`).\n* `outfeed release` — needs step 5 for the single push.\n\n## 5. Explicitly out of scope\n\n* `codegen-units` tuning — moved to `GB-190` because it is a profile decision, not a crate boundary.\n* Path/topology/config policy — `CO-7`.\n",
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-131.md",
+      "steps": [
+        {
+          "completed": false,
+          "step_id": "1",
+          "target_files": [],
+          "title": "repo module: common_dir, is_worktree, head_sha, current_branch, is_dirty",
+          "verification_gate": "nextest -p gaugeblock-git with worktree fixture"
+        },
+        {
+          "completed": false,
+          "step_id": "2",
+          "target_files": [],
+          "title": "worktree module: add, remove, prune, list",
+          "verification_gate": "two worktrees share one common_dir"
+        },
+        {
+          "completed": false,
+          "step_id": "3",
+          "target_files": [],
+          "title": "history module: commits_between, merge_base, describe_range",
+          "verification_gate": "3-commit range fixture"
+        },
+        {
+          "completed": false,
+          "step_id": "4",
+          "target_files": [],
+          "title": "index module: scoped stage_paths + commit",
+          "verification_gate": "only named paths staged"
+        },
+        {
+          "completed": false,
+          "step_id": "5",
+          "target_files": [],
+          "title": "remote module: annotated tag + single push",
+          "verification_gate": "local bare remote"
+        },
+        {
+          "completed": false,
+          "step_id": "6",
+          "target_files": [],
+          "title": "delete storypole-core::git, outfeed-core::git, benchwork copy",
+          "verification_gate": "nextest --workspace per repo"
+        },
+        {
+          "completed": false,
+          "step_id": "7",
+          "target_files": [],
+          "title": "miter contracts + chalkline docs check",
+          "verification_gate": "Tier 3"
+        }
+      ],
+      "summary": "gaugeblock-git owns every git and worktree operation: repo detection, worktrees, ref ranges, scoped staging/commit, push",
+      "updated_at_epoch_ms": 1793306986502
+    },
+    "priority": 2,
+    "scope": {
+      "crate_name": "gaugeblock-git",
+      "labels": [
+        "git,profile,llvm,gaugeblock-common"
+      ],
+      "module_path": null,
+      "repo": "workspace",
+      "target_files": [
+        "common/crates/gaugeblock-git/Cargo.toml",
+        "common/crates/gaugeblock-git/src/lib.rs",
+        "common/crates/gaugeblock-git/src/repo.rs",
+        "common/crates/gaugeblock-git/src/worktree.rs",
+        "common/crates/gaugeblock-git/src/history.rs",
+        "common/crates/gaugeblock-git/src/index.rs",
+        "common/crates/gaugeblock-git/src/remote.rs"
+      ],
+      "target_symbols": []
+    },
+    "slug": "extract-gaugeblock-git-porcelain-and-standardize-codegen-units-for-release-compilation-6c1acc",
+    "status": "verified",
+    "ticket_key": "GB-131",
+    "title": "Extract gaugeblock-git: repository, worktree and ref-range process boundary",
+    "updated_at_epoch_ms": 1794037999962,
+    "verification_receipt": {
+      "base_commit_sha": "f525157e9110b2c35692fbf7054a99f2e4367c8d",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "f525157e9110b2c35692fbf7054a99f2e4367c8d"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "f525157e9110b2c35692fbf7054a99f2e4367c8d",
+      "repo": null,
+      "summary": "All seven steps done. The crate exists in common/crates/gaugeblock-git (repo identity incl. unborn HEAD, worktree lifecycle incl. detached add, history with ranges/merge-base/ancestry/describe/ahead-behind, index with scoped staging that refuses an empty scope, remote with atomic branch+tag push, and clone) covered by 30 fixture tests against real repositories and bare remotes. Migration complete in substance: git spawns in library sources went 68 -> 7, of which 1 is the crate itself, 4 are test fixtures that build scenario repositories, and 2 are documented exceptions (outfeed staging with -A, a GB-150 semantics decision; and outfeed log --format carrying the commit body, which Commit does not model). Migrated one repository per commit: outfeed-core (20 -> 2), storypole-core (7 -> 0), miter-engine and miter-harness (8 -> 0). Behaviour improved on purpose: atomic release push, detached HEAD as InvalidBranch, unborn HEAD reporting its branch. Tier 3 gate: contracts exit 0, docs check 9 present/0 missing/0 drifted in all 11 repositories (two drifts found and fixed: GitError had no spec, and the MTR-19 layer types had none), all lockfiles fresh, layer gate clean, audit passed.",
+      "verified_at_epoch_ms": 1793417829307,
+      "verifier": "manual"
+    }
+  }
 }

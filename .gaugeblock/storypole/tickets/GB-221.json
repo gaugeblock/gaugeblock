@@ -1,136 +1,154 @@
 {
-  "ticket": {
-    "id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
-    "ticket_key": "GB-221",
-    "slug": "add-xhigh-and-max-to-the-reasoningeffort-wire-contract-a80ee0",
-    "title": "Add XHigh and Max to the ReasoningEffort wire contract",
-    "description": "gaugeblock_contracts::ReasoningEffort has None/Low/Medium/High; models-catalog models advertise up to xhigh and max (measured on cline-pass models via the curated overlay). Until the contract grows, sawhorse cannot request those tiers even though the provider accepts them - the gateway clamps rather than rejects, verified across all six values when GB-214 was investigated. This is a wire-contract change: serde naming in common/crates/gaugeblock-contracts/src/sawhorse.rs, CONTRACTS.md, and the miter contracts gate. Filed separately from GB-217 so the adoption there is not blocked on a contract bump.",
-    "kind": "feature",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "gaugeblock_contracts::sawhorse::ReasoningEffort"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "ReasoningEffort now carries XHigh and Max, completing the closed six-tier set that models-catalog defines (None/Low/Medium/High/XHigh/Max, ranks 0-5). Confirmed from the crate source that the set is closed: upstream reasoning_options folds onto those ranks (minimal->Low, med->Medium, xhigh->XHigh, maximum->Max) and unknown tokens are dropped, so an open Other(String) variant would only move the mismatch. XHigh carries an explicit serde rename to the canonical wire string xhigh, with a test proving the snake_case spelling x_high does not silently parse; all six round-trip and unknown tokens are rejected. CONTRACTS.md mirrors the enum and sawhorse payload emits the two new tiers verbatim. Gates: gaugeblock-contracts 31 tests, sawhorse-core 21 tests, clippy and fmt green in both.",
-      "verified_at_epoch_ms": 1793376054013,
-      "git_branch": "main",
-      "base_commit_sha": "d9c431bb03820ba4b20418f4ae2c9741cb2512ce",
-      "head_commit_sha": "d9c431bb03820ba4b20418f4ae2c9741cb2512ce",
-      "commit_shas": [
-        "d9c431bb03820ba4b20418f4ae2c9741cb2512ce"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793375383877,
-    "updated_at_epoch_ms": 1794038020053,
-    "archived_at_epoch_ms": 1794038020053
-  },
   "events": [
     {
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793375383877,
+        "decisions": [],
+        "description": "gaugeblock_contracts::ReasoningEffort has None/Low/Medium/High; models-catalog models advertise up to xhigh and max (measured on cline-pass models via the curated overlay). Until the contract grows, sawhorse cannot request those tiers even though the provider accepts them - the gateway clamps rather than rejects, verified across all six values when SH-9 was investigated. This is a wire-contract change: serde naming in common/crates/gaugeblock-contracts/src/sawhorse.rs, CONTRACTS.md, and the miter contracts gate. Filed separately from GB-217 so the adoption there is not blocked on a contract bump.",
+        "edges": [],
         "id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
-        "ticket_key": "GB-221",
-        "slug": "add-xhigh-and-max-to-the-reasoningeffort-wire-contract-a80ee0",
-        "title": "Add XHigh and Max to the ReasoningEffort wire contract",
-        "description": "gaugeblock_contracts::ReasoningEffort has None/Low/Medium/High; models-catalog models advertise up to xhigh and max (measured on cline-pass models via the curated overlay). Until the contract grows, sawhorse cannot request those tiers even though the provider accepts them - the gateway clamps rather than rejects, verified across all six values when GB-214 was investigated. This is a wire-contract change: serde naming in common/crates/gaugeblock-contracts/src/sawhorse.rs, CONTRACTS.md, and the miter contracts gate. Filed separately from GB-217 so the adoption there is not blocked on a contract bump.",
         "kind": "feature",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "gaugeblock_contracts::sawhorse::ReasoningEffort"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793375383877,
-        "updated_at_epoch_ms": 1793375383877
-      },
-      "captured_by_agent": "agent",
-      "discovered_from_task_id": null
-    },
-    {
-      "event": "task_claimed",
-      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
-      "claim": {
-        "agent_id": "cline",
-        "claimed_at_epoch_ms": 1793376053842,
-        "lease_expires_at_epoch_ms": 1793379653842,
-        "git_branch": "feat/gb-221-effort-tiers",
-        "base_commit_sha": null
+        "slug": "add-xhigh-and-max-to-the-reasoningeffort-wire-contract-a80ee0",
+        "status": "deferred",
+        "ticket_key": "GB-221",
+        "title": "Add XHigh and Max to the ReasoningEffort wire contract",
+        "updated_at_epoch_ms": 1793375383877,
+        "verification_receipt": null
       }
     },
     {
+      "claim": {
+        "agent_id": "cline",
+        "base_commit_sha": null,
+        "claimed_at_epoch_ms": 1793376053842,
+        "git_branch": "feat/gb-221-effort-tiers",
+        "lease_expires_at_epoch_ms": 1793379653842
+      },
+      "event": "task_claimed",
+      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0"
+    },
+    {
       "event": "status_changed",
-      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
       "from": "deferred",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793376053842
+      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
+      "timestamp_ms": 1793376053842,
+      "to": "in_progress"
     },
     {
       "event": "task_verified",
-      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "ReasoningEffort now carries XHigh and Max, completing the closed six-tier set that models-catalog defines (None/Low/Medium/High/XHigh/Max, ranks 0-5). Confirmed from the crate source that the set is closed: upstream reasoning_options folds onto those ranks (minimal->Low, med->Medium, xhigh->XHigh, maximum->Max) and unknown tokens are dropped, so an open Other(String) variant would only move the mismatch. XHigh carries an explicit serde rename to the canonical wire string xhigh, with a test proving the snake_case spelling x_high does not silently parse; all six round-trip and unknown tokens are rejected. CONTRACTS.md mirrors the enum and sawhorse payload emits the two new tiers verbatim. Gates: gaugeblock-contracts 31 tests, sawhorse-core 21 tests, clippy and fmt green in both.",
-        "verified_at_epoch_ms": 1793376054013,
-        "git_branch": "main",
         "base_commit_sha": "d9c431bb03820ba4b20418f4ae2c9741cb2512ce",
-        "head_commit_sha": "d9c431bb03820ba4b20418f4ae2c9741cb2512ce",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "d9c431bb03820ba4b20418f4ae2c9741cb2512ce"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "d9c431bb03820ba4b20418f4ae2c9741cb2512ce",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "ReasoningEffort now carries XHigh and Max, completing the closed six-tier set that models-catalog defines (None/Low/Medium/High/XHigh/Max, ranks 0-5). Confirmed from the crate source that the set is closed: upstream reasoning_options folds onto those ranks (minimal->Low, med->Medium, xhigh->XHigh, maximum->Max) and unknown tokens are dropped, so an open Other(String) variant would only move the mismatch. XHigh carries an explicit serde rename to the canonical wire string xhigh, with a test proving the snake_case spelling x_high does not silently parse; all six round-trip and unknown tokens are rejected. CONTRACTS.md mirrors the enum and sawhorse payload emits the two new tiers verbatim. Gates: gaugeblock-contracts 31 tests, sawhorse-core 21 tests, clippy and fmt green in both.",
+        "verified_at_epoch_ms": 1793376054013,
+        "verifier": "manual"
+      },
+      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0"
     },
     {
       "event": "status_changed",
-      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
       "from": "verified",
-      "to": "archived",
       "reason": "Archived out of active backlog",
-      "timestamp_ms": 1793953218067
+      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
+      "timestamp_ms": 1793953218067,
+      "to": "archived"
     },
     {
       "event": "task_archived",
-      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
       "status": "verified",
+      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
       "timestamp_ms": 1794038020053
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "9a301cae-b72e-4ea9-83cb-c1437e07dced",
+        "target_repo": "sawhorse",
+        "target_ticket_key": "SH-9"
+      },
+      "event": "edge_added",
+      "task_id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
+      "timestamp_ms": 1794336146490
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038020053,
+    "created_at_epoch_ms": 1793375383877,
+    "decisions": [],
+    "description": "gaugeblock_contracts::ReasoningEffort has None/Low/Medium/High; models-catalog models advertise up to xhigh and max (measured on cline-pass models via the curated overlay). Until the contract grows, sawhorse cannot request those tiers even though the provider accepts them - the gateway clamps rather than rejects, verified across all six values when SH-9 was investigated. This is a wire-contract change: serde naming in common/crates/gaugeblock-contracts/src/sawhorse.rs, CONTRACTS.md, and the miter contracts gate. Filed separately from GB-217 so the adoption there is not blocked on a contract bump.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "9a301cae-b72e-4ea9-83cb-c1437e07dced",
+        "target_repo": "sawhorse",
+        "target_ticket_key": "SH-9"
+      }
+    ],
+    "id": "a80ee0f9-c6f1-41a4-8b2d-847a5a3eeff0",
+    "kind": "feature",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "gaugeblock_contracts::sawhorse::ReasoningEffort"
+      ]
+    },
+    "slug": "add-xhigh-and-max-to-the-reasoningeffort-wire-contract-a80ee0",
+    "status": "verified",
+    "ticket_key": "GB-221",
+    "title": "Add XHigh and Max to the ReasoningEffort wire contract",
+    "updated_at_epoch_ms": 1794038020053,
+    "verification_receipt": {
+      "base_commit_sha": "d9c431bb03820ba4b20418f4ae2c9741cb2512ce",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "d9c431bb03820ba4b20418f4ae2c9741cb2512ce"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "d9c431bb03820ba4b20418f4ae2c9741cb2512ce",
+      "repo": null,
+      "summary": "ReasoningEffort now carries XHigh and Max, completing the closed six-tier set that models-catalog defines (None/Low/Medium/High/XHigh/Max, ranks 0-5). Confirmed from the crate source that the set is closed: upstream reasoning_options folds onto those ranks (minimal->Low, med->Medium, xhigh->XHigh, maximum->Max) and unknown tokens are dropped, so an open Other(String) variant would only move the mismatch. XHigh carries an explicit serde rename to the canonical wire string xhigh, with a test proving the snake_case spelling x_high does not silently parse; all six round-trip and unknown tokens are rejected. CONTRACTS.md mirrors the enum and sawhorse payload emits the two new tiers verbatim. Gates: gaugeblock-contracts 31 tests, sawhorse-core 21 tests, clippy and fmt green in both.",
+      "verified_at_epoch_ms": 1793376054013,
+      "verifier": "manual"
+    }
+  }
 }

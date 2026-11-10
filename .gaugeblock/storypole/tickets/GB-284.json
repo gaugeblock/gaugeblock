@@ -1,129 +1,129 @@
 {
-  "ticket": {
-    "id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
-    "ticket_key": "GB-284",
-    "slug": "chalkline-core-declare-a-task-writing-port-so-the-edge-to-storypole-core-burns-f18ad3",
-    "title": "chalkline-core: declare a task-writing port so the edge to storypole-core burns",
-    "description": "",
-    "kind": "refactor",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "chalkline_core::dag_compiler"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "DONE 2026-11-06, commit f32d87b (chalkline). First of the three behavioral GB-204 edges burned.\n\nchalkline-core no longer depends on storypole-core at all: the dependency is gone from its manifest, not merely unused. DagCompiler::compile now takes &mut impl TaskSink and emits CompiledTask values; the port has exactly two methods (create, link_blocked_by) because every method on it is one the sink author keeps working forever. StorypoleSink implements it in chalkline-mcp, which is an integrator and may hold the edge, and chalkline-cli reuses it because it already depends on chalkline-mcp - so there is no duplication and no integrator-to-integrator edge either.\n\nLayers: lateral allowlist 4 -> 3, downward 147 -> 148, verdict clean. The stale allowlist entry this left behind had to be deleted by hand, which is exactly the hole GB-248 describes (the gate does not fail on an entry matching no edge).\n\nBonus fix, same failure class as GB-282: chalkline's resolve_spec_file and grill handler probed SPEC.md at the repository root only, so after the docs move every specification read as missing with no error. Both probe docs/ then the root now.\n\nTest improvement worth noting: the old test needed a real storypole store to assert anything. The recording sink asserts the emitted tasks and the exact (child, blocker) pair, which is a strictly stronger claim and needs no engine.\n\nTier 2: fmt clean, clippy --all-targets -D warnings clean, 29 tests green, docs check 9 present 0 drifted.\n\nSeparate finding filed: cargo nextest run at the chalkline root discovers 0 tests and exits 4 - the workspace's test targets are only found when packages are named explicitly."
-    ],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "storypole-verify",
-      "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-      "verified_at_epoch_ms": 1794031774033,
-      "git_branch": "main",
-      "base_commit_sha": "8bbd887f00f6787aaeba4600003bd7828d5b701e",
-      "head_commit_sha": "8bbd887f00f6787aaeba4600003bd7828d5b701e",
-      "commit_shas": [
-        "8bbd887f00f6787aaeba4600003bd7828d5b701e"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1794031361103,
-    "updated_at_epoch_ms": 1794038026874,
-    "archived_at_epoch_ms": 1794038026874
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
-        "ticket_key": "GB-284",
-        "slug": "chalkline-core-declare-a-task-writing-port-so-the-edge-to-storypole-core-burns-f18ad3",
-        "title": "chalkline-core: declare a task-writing port so the edge to storypole-core burns",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794031361103,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
         "kind": "refactor",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "chalkline_core::dag_compiler"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794031361103,
-        "updated_at_epoch_ms": 1794031361103
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
-      "title": null,
-      "description": null,
-      "priority": null,
-      "scope": null,
-      "acceptance_criteria": [
-        "DONE 2026-11-06, commit f32d87b (chalkline). First of the three behavioral GB-204 edges burned.\n\nchalkline-core no longer depends on storypole-core at all: the dependency is gone from its manifest, not merely unused. DagCompiler::compile now takes &mut impl TaskSink and emits CompiledTask values; the port has exactly two methods (create, link_blocked_by) because every method on it is one the sink author keeps working forever. StorypoleSink implements it in chalkline-mcp, which is an integrator and may hold the edge, and chalkline-cli reuses it because it already depends on chalkline-mcp - so there is no duplication and no integrator-to-integrator edge either.\n\nLayers: lateral allowlist 4 -> 3, downward 147 -> 148, verdict clean. The stale allowlist entry this left behind had to be deleted by hand, which is exactly the hole GB-248 describes (the gate does not fail on an entry matching no edge).\n\nBonus fix, same failure class as GB-282: chalkline's resolve_spec_file and grill handler probed SPEC.md at the repository root only, so after the docs move every specification read as missing with no error. Both probe docs/ then the root now.\n\nTest improvement worth noting: the old test needed a real storypole store to assert anything. The recording sink asserts the emitted tasks and the exact (child, blocker) pair, which is a strictly stronger claim and needs no engine.\n\nTier 2: fmt clean, clippy --all-targets -D warnings clean, 29 tests green, docs check 9 present 0 drifted.\n\nSeparate finding filed: cargo nextest run at the chalkline root discovers 0 tests and exits 4 - the workspace's test targets are only found when packages are named explicitly."
-      ],
-      "timestamp_ms": 1794031731608
-    },
-    {
-      "event": "task_verified",
-      "task_id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
-      "receipt": {
-        "verifier": "storypole-verify",
-        "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-        "verified_at_epoch_ms": 1794031774033,
-        "git_branch": "main",
-        "base_commit_sha": "8bbd887f00f6787aaeba4600003bd7828d5b701e",
-        "head_commit_sha": "8bbd887f00f6787aaeba4600003bd7828d5b701e",
-        "commit_shas": [
-          "8bbd887f00f6787aaeba4600003bd7828d5b701e"
-        ],
-        "repo": null,
-        "chain_key": null
+        "slug": "chalkline-core-declare-a-task-writing-port-so-the-edge-to-storypole-core-burns-f18ad3",
+        "status": "deferred",
+        "ticket_key": "GB-284",
+        "title": "chalkline-core: declare a task-writing port so the edge to storypole-core burns",
+        "updated_at_epoch_ms": 1794031361103,
+        "verification_receipt": null
       }
     },
     {
-      "event": "task_archived",
+      "acceptance_criteria": [
+        "DONE 2026-11-06, commit f32d87b (chalkline). First of the three behavioral GB-204 edges burned.\n\nchalkline-core no longer depends on storypole-core at all: the dependency is gone from its manifest, not merely unused. DagCompiler::compile now takes &mut impl TaskSink and emits CompiledTask values; the port has exactly two methods (create, link_blocked_by) because every method on it is one the sink author keeps working forever. StorypoleSink implements it in chalkline-mcp, which is an integrator and may hold the edge, and chalkline-cli reuses it because it already depends on chalkline-mcp - so there is no duplication and no integrator-to-integrator edge either.\n\nLayers: lateral allowlist 4 -> 3, downward 147 -> 148, verdict clean. The stale allowlist entry this left behind had to be deleted by hand, which is exactly the hole MTR-23 describes (the gate does not fail on an entry matching no edge).\n\nBonus fix, same failure class as GB-282: chalkline's resolve_spec_file and grill handler probed SPEC.md at the repository root only, so after the docs move every specification read as missing with no error. Both probe docs/ then the root now.\n\nTest improvement worth noting: the old test needed a real storypole store to assert anything. The recording sink asserts the emitted tasks and the exact (child, blocker) pair, which is a strictly stronger claim and needs no engine.\n\nTier 2: fmt clean, clippy --all-targets -D warnings clean, 29 tests green, docs check 9 present 0 drifted.\n\nSeparate finding filed: cargo nextest run at the chalkline root discovers 0 tests and exits 4 - the workspace's test targets are only found when packages are named explicitly."
+      ],
+      "description": null,
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
       "task_id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
+      "timestamp_ms": 1794031731608,
+      "title": null
+    },
+    {
+      "event": "task_verified",
+      "receipt": {
+        "base_commit_sha": "8bbd887f00f6787aaeba4600003bd7828d5b701e",
+        "chain_key": null,
+        "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
+        "commit_shas": [
+          "8bbd887f00f6787aaeba4600003bd7828d5b701e"
+        ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "8bbd887f00f6787aaeba4600003bd7828d5b701e",
+        "repo": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794031774033,
+        "verifier": "storypole-verify"
+      },
+      "task_id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d"
+    },
+    {
+      "event": "task_archived",
       "status": "verified",
+      "task_id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
       "timestamp_ms": 1794037285823
     },
     {
       "event": "task_archived",
-      "task_id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
       "status": "verified",
+      "task_id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
       "timestamp_ms": 1794038026874
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "DONE 2026-11-06, commit f32d87b (chalkline). First of the three behavioral GB-204 edges burned.\n\nchalkline-core no longer depends on storypole-core at all: the dependency is gone from its manifest, not merely unused. DagCompiler::compile now takes &mut impl TaskSink and emits CompiledTask values; the port has exactly two methods (create, link_blocked_by) because every method on it is one the sink author keeps working forever. StorypoleSink implements it in chalkline-mcp, which is an integrator and may hold the edge, and chalkline-cli reuses it because it already depends on chalkline-mcp - so there is no duplication and no integrator-to-integrator edge either.\n\nLayers: lateral allowlist 4 -> 3, downward 147 -> 148, verdict clean. The stale allowlist entry this left behind had to be deleted by hand, which is exactly the hole MTR-23 describes (the gate does not fail on an entry matching no edge).\n\nBonus fix, same failure class as GB-282: chalkline's resolve_spec_file and grill handler probed SPEC.md at the repository root only, so after the docs move every specification read as missing with no error. Both probe docs/ then the root now.\n\nTest improvement worth noting: the old test needed a real storypole store to assert anything. The recording sink asserts the emitted tasks and the exact (child, blocker) pair, which is a strictly stronger claim and needs no engine.\n\nTier 2: fmt clean, clippy --all-targets -D warnings clean, 29 tests green, docs check 9 present 0 drifted.\n\nSeparate finding filed: cargo nextest run at the chalkline root discovers 0 tests and exits 4 - the workspace's test targets are only found when packages are named explicitly."
+    ],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038026874,
+    "created_at_epoch_ms": 1794031361103,
+    "decisions": [],
+    "description": "",
+    "edges": [],
+    "id": "f18ad3b5-d885-4d77-882b-bb8fdefadc1d",
+    "kind": "refactor",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "chalkline_core::dag_compiler"
+      ]
+    },
+    "slug": "chalkline-core-declare-a-task-writing-port-so-the-edge-to-storypole-core-burns-f18ad3",
+    "status": "verified",
+    "ticket_key": "GB-284",
+    "title": "chalkline-core: declare a task-writing port so the edge to storypole-core burns",
+    "updated_at_epoch_ms": 1794038026874,
+    "verification_receipt": {
+      "base_commit_sha": "8bbd887f00f6787aaeba4600003bd7828d5b701e",
+      "chain_key": null,
+      "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
+      "commit_shas": [
+        "8bbd887f00f6787aaeba4600003bd7828d5b701e"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "8bbd887f00f6787aaeba4600003bd7828d5b701e",
+      "repo": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794031774033,
+      "verifier": "storypole-verify"
+    }
+  }
 }

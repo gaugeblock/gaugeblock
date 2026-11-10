@@ -1,92 +1,55 @@
 {
-  "ticket": {
-    "id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
-    "ticket_key": "GB-274",
-    "slug": "storypole-show-json-nests-the-task-under-task-while-other-commands-do-not-which-breaks-naive-consumers-b3dc67",
-    "title": "One documented --json envelope for every storypole command, with schema_version",
-    "description": "",
-    "kind": "tech_debt",
-    "status": "triage",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "storypole_cli::format"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "ADOPTED 2026-11-06 (storypole commit). All 19 emit sites across 7 handler files route through json_out::print_json, which wraps gaugeblock_contracts::json::envelope. Verified end to end: list --json returns {command, count, schema_version, tasks} and show --json returns {briefing, command, schema_version}, both with schema_version 1. Tier 2: fmt clean, clippy -D warnings clean, 55/55.\\n\\nPayload naming chosen per command rather than a generic 'data': tasks carries a count beside it, briefing stays whole, plan and receipt keep their own names - naming is what makes the output extensible without the next break.\\n\\nTwo build fixes paid along the way, both dependency declarations the CLI was getting transitively: gaugeblock-contracts (the envelope itself) and serde (the Serialize bound). Worth noting because it is the same class as the earlier TRANSPORT of types through benchwork-core - explicit edges are cheaper than transitive luck."
-    ],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794002495652,
-    "updated_at_epoch_ms": 1794008674133
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
-        "ticket_key": "GB-274",
-        "slug": "storypole-show-json-nests-the-task-under-task-while-other-commands-do-not-which-breaks-naive-consumers-b3dc67",
-        "title": "storypole show --json nests the task under 'task' while other commands do not, which breaks naive consumers",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794002495652,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
         "kind": "tech_debt",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "storypole_cli::format"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794002495652,
-        "updated_at_epoch_ms": 1794002495652
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+        "slug": "storypole-show-json-nests-the-task-under-task-while-other-commands-do-not-which-breaks-naive-consumers-b3dc67",
+        "status": "triage",
+        "ticket_key": "GB-274",
+        "title": "storypole show --json nests the task under 'task' while other commands do not, which breaks naive consumers",
+        "updated_at_epoch_ms": 1794002495652,
+        "verification_receipt": null
+      }
     },
     {
-      "event": "task_updated",
-      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
-      "title": null,
-      "description": null,
-      "priority": null,
-      "scope": null,
       "acceptance_criteria": [
         "EVIDENCE 2026-11-06: 'storypole show GB-269 --json' has no top-level 'status' key because it nests the task under 'task'",
         " while 'storypole list --json' returns a bare array. A python one-liner written against list broke on show with KeyError: 'status'. Proposed: one documented envelope for every --json command (or none)",
         " stated in CONTRACTS.md so agent tooling can rely on it. Erring toward a stable envelope is worth more than a slightly shorter payload",
         " because the consumers are scripts that cannot see a shape change."
       ],
-      "timestamp_ms": 1794002501707
-    },
-    {
-      "event": "task_updated",
-      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
-      "title": "One documented --json envelope for every storypole command, with schema_version",
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
+      "timestamp_ms": 1794002501707,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "DECISION 2026-11-06: adopt a single envelope everywhere rather than reconciling two commands. Best practice for CLI JSON is that the output is a CONTRACT - consumers are scripts that cannot see a shape change - and that an object beats a bare array because an array has nowhere to put anything added later (count",
         " echoed filters",
@@ -102,7 +65,7 @@
         " 'decisions': [...] }\\nPayload key names the thing",
         " never 'data'. Do NOT add a second mode such as --json=payload: two modes recreate exactly the inconsistency being fixed.\\n\\nWHY NOW: the repository went public today with no external consumers",
         " so this is the cheapest moment in the project's life for a breaking change; my own script broke on show --json with KeyError: 'status' today",
-        " so the failure mode is observed rather than theoretical; both commands can be reconciled in one commit while there are only two; and GB-252/GB-273 will consume this output",
+        " so the failure mode is observed rather than theoretical; both commands can be reconciled in one commit while there are only two; and CH-10/GB-273 will consume this output",
         " so building them first means coding against an undefined contract twice.\\n\\nMIGRATION: emit the envelope unconditionally",
         " record it in CONTRACTS.md as the authoritative --json shape",
         " note BREAKING in the CHANGELOG",
@@ -110,15 +73,15 @@
         " the right answer is schema_version bumping",
         " not a flag."
       ],
-      "timestamp_ms": 1794007262161
-    },
-    {
-      "event": "task_updated",
-      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
+      "timestamp_ms": 1794007262161,
+      "title": "One documented --json envelope for every storypole command, with schema_version"
+    },
+    {
       "acceptance_criteria": [
         "STANDARD LANDED 2026-11-06 (common + CONTRACTS.md). The envelope is now defined once in gaugeblock_contracts::json - a wire contract belongs there for the same reason SpoolEntry does",
         " because every binary emits it and no tool should own the definition. envelope() merges an object payload beside schema_version and command",
@@ -130,31 +93,68 @@
         " then other binaries as they are touched. No in-repo consumer parses storypole --json (outfeed/storypole.rs has no JSON deserialisation)",
         " so the break is contained to our own scripts - including the one that failed today with KeyError: 'status'."
       ],
-      "timestamp_ms": 1794007605190
-    },
-    {
-      "event": "task_updated",
-      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
+      "timestamp_ms": 1794007605190,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "ADOPTION INVENTORY 2026-11-06, so the sweep starts from a list rather than a grep. 19 JSON emit sites across 7 handler files in storypole-cli:\n\n  core_cmds.rs        8\n  plan_cmds.rs        3\n  ledger_cmds.rs      2\n  lifecycle_cmds.rs   2\n  workspace_cmds.rs   2\n  spool_cmds.rs       1\n  update_cmd.rs       1\n\nOrder: list and show first (they are the documented examples and the ones my own scripts consume), then the mutating commands whose current output is a hand-written success object - those are also the ones that would benefit most from command and schema_version being present when reading a log back.\n\nDo it in ONE commit with the CHANGELOG entry. Half-adopting the envelope while CONTRACTS.md asserts the standard is worse than the state before the ticket, because the document would then be wrong rather than merely absent."
       ],
-      "timestamp_ms": 1794008446248
-    },
-    {
-      "event": "task_updated",
-      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
+      "timestamp_ms": 1794008446248,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "ADOPTED 2026-11-06 (storypole commit). All 19 emit sites across 7 handler files route through json_out::print_json, which wraps gaugeblock_contracts::json::envelope. Verified end to end: list --json returns {command, count, schema_version, tasks} and show --json returns {briefing, command, schema_version}, both with schema_version 1. Tier 2: fmt clean, clippy -D warnings clean, 55/55.\\n\\nPayload naming chosen per command rather than a generic 'data': tasks carries a count beside it, briefing stays whole, plan and receipt keep their own names - naming is what makes the output extensible without the next break.\\n\\nTwo build fixes paid along the way, both dependency declarations the CLI was getting transitively: gaugeblock-contracts (the envelope itself) and serde (the Serialize bound). Worth noting because it is the same class as the earlier TRANSPORT of types through benchwork-core - explicit edges are cheaper than transitive luck."
       ],
-      "timestamp_ms": 1794008674133
+      "description": null,
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
+      "task_id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
+      "timestamp_ms": 1794008674133,
+      "title": null
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "ADOPTED 2026-11-06 (storypole commit). All 19 emit sites across 7 handler files route through json_out::print_json, which wraps gaugeblock_contracts::json::envelope. Verified end to end: list --json returns {command, count, schema_version, tasks} and show --json returns {briefing, command, schema_version}, both with schema_version 1. Tier 2: fmt clean, clippy -D warnings clean, 55/55.\\n\\nPayload naming chosen per command rather than a generic 'data': tasks carries a count beside it, briefing stays whole, plan and receipt keep their own names - naming is what makes the output extensible without the next break.\\n\\nTwo build fixes paid along the way, both dependency declarations the CLI was getting transitively: gaugeblock-contracts (the envelope itself) and serde (the Serialize bound). Worth noting because it is the same class as the earlier TRANSPORT of types through benchwork-core - explicit edges are cheaper than transitive luck."
+    ],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794002495652,
+    "decisions": [],
+    "description": "",
+    "edges": [],
+    "id": "b3dc67b5-da78-4c82-8c65-9fe67f426a3a",
+    "kind": "tech_debt",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::format"
+      ]
+    },
+    "slug": "storypole-show-json-nests-the-task-under-task-while-other-commands-do-not-which-breaks-naive-consumers-b3dc67",
+    "status": "triage",
+    "ticket_key": "GB-274",
+    "title": "One documented --json envelope for every storypole command, with schema_version",
+    "updated_at_epoch_ms": 1794008674133,
+    "verification_receipt": null
+  }
 }

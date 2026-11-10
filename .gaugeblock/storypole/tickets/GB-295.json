@@ -1,81 +1,81 @@
 {
-  "ticket": {
-    "id": "bccfec60-432e-45ca-990f-503dd340d9b6",
-    "ticket_key": "GB-295",
-    "slug": "storypole-list-status-x-ignores-the-archived-filter-so-an-archived-backlog-still-lists-as-verified-bccfec",
-    "title": "storypole list --status X ignores the archived filter, so an archived backlog still lists as verified",
-    "description": "",
-    "kind": "bug",
-    "status": "triage",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "storypole_cli::handlers::core_cmds::handle_list"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "REPRODUCED 2026-11-06.\n\n  storypole list                      -> 64 rows   (archived excluded)\n  storypole list --include-archived   -> 293 rows  (everything)\n  storypole list --status verified    -> 221 rows  (all of them archived)\n\nAll 221 verified tasks were archived in this session (227 tasks carry a task_archived event and none carry task_unarchived), yet --status verified still lists all 221. Supplying --status therefore drops the archived filter that the unfiltered view applies, so the two views disagree about what 'verified' contains.\n\nHow it surfaced: I ran the archive sweep and the verified count did not move, so I concluded the sweep had failed and started checking the ledger by hand. It had worked. A filter that silently widens its own scope when you add a narrow term is worse than a filter that errors, because it produces confident wrong answers about the state of the backlog - and this session has spent a lot of effort on exactly that failure mode.\n\nExpected: status and archive are orthogonal (GB-258), so --status verified should compose with the default archived-excluded view and report 0. --include-archived should be the only way to widen it."
-    ],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794038093573,
-    "updated_at_epoch_ms": 1794038105841
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "bccfec60-432e-45ca-990f-503dd340d9b6",
-        "ticket_key": "GB-295",
-        "slug": "storypole-list-status-x-ignores-the-archived-filter-so-an-archived-backlog-still-lists-as-verified-bccfec",
-        "title": "storypole list --status X ignores the archived filter, so an archived backlog still lists as verified",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794038093573,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "bccfec60-432e-45ca-990f-503dd340d9b6",
         "kind": "bug",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "storypole_cli::handlers::core_cmds::handle_list"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794038093573,
-        "updated_at_epoch_ms": 1794038093573
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+        "slug": "storypole-list-status-x-ignores-the-archived-filter-so-an-archived-backlog-still-lists-as-verified-bccfec",
+        "status": "triage",
+        "ticket_key": "GB-295",
+        "title": "storypole list --status X ignores the archived filter, so an archived backlog still lists as verified",
+        "updated_at_epoch_ms": 1794038093573,
+        "verification_receipt": null
+      }
     },
     {
-      "event": "task_updated",
-      "task_id": "bccfec60-432e-45ca-990f-503dd340d9b6",
-      "title": null,
+      "acceptance_criteria": [
+        "REPRODUCED 2026-11-06.\n\n  storypole list                      -> 64 rows   (archived excluded)\n  storypole list --include-archived   -> 293 rows  (everything)\n  storypole list --status verified    -> 221 rows  (all of them archived)\n\nAll 221 verified tasks were archived in this session (227 tasks carry a task_archived event and none carry task_unarchived), yet --status verified still lists all 221. Supplying --status therefore drops the archived filter that the unfiltered view applies, so the two views disagree about what 'verified' contains.\n\nHow it surfaced: I ran the archive sweep and the verified count did not move, so I concluded the sweep had failed and started checking the ledger by hand. It had worked. A filter that silently widens its own scope when you add a narrow term is worse than a filter that errors, because it produces confident wrong answers about the state of the backlog - and this session has spent a lot of effort on exactly that failure mode.\n\nExpected: status and archive are orthogonal (SP-27), so --status verified should compose with the default archived-excluded view and report 0. --include-archived should be the only way to widen it."
+      ],
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": [
-        "REPRODUCED 2026-11-06.\n\n  storypole list                      -> 64 rows   (archived excluded)\n  storypole list --include-archived   -> 293 rows  (everything)\n  storypole list --status verified    -> 221 rows  (all of them archived)\n\nAll 221 verified tasks were archived in this session (227 tasks carry a task_archived event and none carry task_unarchived), yet --status verified still lists all 221. Supplying --status therefore drops the archived filter that the unfiltered view applies, so the two views disagree about what 'verified' contains.\n\nHow it surfaced: I ran the archive sweep and the verified count did not move, so I concluded the sweep had failed and started checking the ledger by hand. It had worked. A filter that silently widens its own scope when you add a narrow term is worse than a filter that errors, because it produces confident wrong answers about the state of the backlog - and this session has spent a lot of effort on exactly that failure mode.\n\nExpected: status and archive are orthogonal (GB-258), so --status verified should compose with the default archived-excluded view and report 0. --include-archived should be the only way to widen it."
-      ],
-      "timestamp_ms": 1794038105841
+      "task_id": "bccfec60-432e-45ca-990f-503dd340d9b6",
+      "timestamp_ms": 1794038105841,
+      "title": null
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "REPRODUCED 2026-11-06.\n\n  storypole list                      -> 64 rows   (archived excluded)\n  storypole list --include-archived   -> 293 rows  (everything)\n  storypole list --status verified    -> 221 rows  (all of them archived)\n\nAll 221 verified tasks were archived in this session (227 tasks carry a task_archived event and none carry task_unarchived), yet --status verified still lists all 221. Supplying --status therefore drops the archived filter that the unfiltered view applies, so the two views disagree about what 'verified' contains.\n\nHow it surfaced: I ran the archive sweep and the verified count did not move, so I concluded the sweep had failed and started checking the ledger by hand. It had worked. A filter that silently widens its own scope when you add a narrow term is worse than a filter that errors, because it produces confident wrong answers about the state of the backlog - and this session has spent a lot of effort on exactly that failure mode.\n\nExpected: status and archive are orthogonal (SP-27), so --status verified should compose with the default archived-excluded view and report 0. --include-archived should be the only way to widen it."
+    ],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794038093573,
+    "decisions": [],
+    "description": "",
+    "edges": [],
+    "id": "bccfec60-432e-45ca-990f-503dd340d9b6",
+    "kind": "bug",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::handlers::core_cmds::handle_list"
+      ]
+    },
+    "slug": "storypole-list-status-x-ignores-the-archived-filter-so-an-archived-backlog-still-lists-as-verified-bccfec",
+    "status": "triage",
+    "ticket_key": "GB-295",
+    "title": "storypole list --status X ignores the archived filter, so an archived backlog still lists as verified",
+    "updated_at_epoch_ms": 1794038105841,
+    "verification_receipt": null
+  }
 }

@@ -1,153 +1,153 @@
 {
-  "ticket": {
-    "id": "e26dc832-356b-469e-919b-daea2a85db57",
-    "ticket_key": "GB-286",
-    "slug": "outfeed-core-declare-a-task-verification-port-so-the-edge-to-storypole-core-burns-e26dc8",
-    "title": "outfeed-core: declare a task/verification port so the edge to storypole-core burns",
-    "description": "",
-    "kind": "refactor",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "outfeed_core::storypole"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "PLACEMENT CORRECTED 2026-11-06, commit 4a95355 (outfeed) + a6f156c (miter).\n\nThe work in 146fff9 was right; where it landed was wrong. Release orchestration was moved into outfeed-mcp because outfeed-cli already depended on it - a reason of convenience. -mcp is the MCP protocol surface, and hosting a release orchestrator there put real logic in the wrong layer.\n\nRelease orchestration now lives in its own package, crates/outfeed-orchestrator, following miter's shape of focused subcrates. outfeed-core plans and applies one repository; outfeed-orchestrator composes the suite; outfeed-cli and outfeed-mcp consume it and hold none of it. outfeed-mcp is a thin MCP adapter again.\n\nThe module named storypole became backlog: outfeed should not own a module named after another product, and the name also produced a phantom edge (outfeed_orchestrator::storypole read as a dependency on the storypole facade) that survived a re-index.\n\nClassification went to ORCHESTRATORS in miter with the reasoning recorded: cutting a suite release is composing, and the crate exists as its own package precisely so the core need not name any of that. Its edges to storypole-core and sawhorse-core are the composition, so they are Downward, not Lateral. Layers still show 1 lateral edge - dado-core -> miter-polyglot, blocked on GB-246 - with downward rising 150 -> 154.\n\nGates: fmt clean, clippy --workspace --all-targets -D warnings clean, 91 tests green, docs 9 present 0 drifted, 11/11 lockfiles fresh."
-    ],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "storypole-verify",
-      "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 0\nEntities with Contract Drift:     0\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-      "verified_at_epoch_ms": 1794034036122,
-      "git_branch": "main",
-      "base_commit_sha": "625f9ba60211ca22c2cd7245840773baad8040a4",
-      "head_commit_sha": "625f9ba60211ca22c2cd7245840773baad8040a4",
-      "commit_shas": [
-        "625f9ba60211ca22c2cd7245840773baad8040a4"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1794031361576,
-    "updated_at_epoch_ms": 1794038027616,
-    "archived_at_epoch_ms": 1794038027616
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "e26dc832-356b-469e-919b-daea2a85db57",
-        "ticket_key": "GB-286",
-        "slug": "outfeed-core-declare-a-task-verification-port-so-the-edge-to-storypole-core-burns-e26dc8",
-        "title": "outfeed-core: declare a task/verification port so the edge to storypole-core burns",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794031361576,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "e26dc832-356b-469e-919b-daea2a85db57",
         "kind": "refactor",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "outfeed_core::storypole"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794031361576,
-        "updated_at_epoch_ms": 1794031361576
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
-    },
-    {
-      "event": "task_updated",
-      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
-      "title": null,
-      "description": null,
-      "priority": null,
-      "scope": null,
-      "acceptance_criteria": [
-        "DESIGN DECISION NEEDED 2026-11-06, before any code. I started this and stopped: the seam is not a leaf module like GB-284's was, and the two options below differ architecturally rather than cosmetically.\n\nTHE FACTS. plan_release, apply_release, release_repo, release_repo_with_plan, plan_suite_releases, execute_suite_plan and the suite-wave entry all live INSIDE outfeed-core, and the per-repo loops live there too (suite_waves/entry.rs calls release_repo per repo). So enrichment cannot be a parameter passed by the CLI: the CLI does not own the loop that needs it. ReleaseOpts is #[derive(Debug, Clone)] and constructed field-by-field at every call site, so an injected port also breaks every constructor unless added with ..Default::default().\n\nWhat is already clean and worth keeping: find_storypole_root is a bare directory walk that touches no storypole type and belongs in core wherever else moves; and task_summaries is already &[(String, String, String)], so no storypole type crosses the seam today. Only the fetching and synthesizing calls carry the dependency.\n\nOPTION A - port on ReleaseOpts. Add Arc<dyn ReleaseEnrichment> with an async notes method returning a boxed future (dyn-safe without a new dependency), summaries and record_release as sync methods, and a Default no-op impl so library callers are unaffected. Touches ~5 signatures, 3 impls, 2 adapter modules in outfeed-cli and outfeed-mcp. Mechanical, no behavior change, but it is a trait object that exists only to avoid moving code.\n\nOPTION B - move the orchestrator out of core. release/, suite_plan/ and suite_waves/ move to an integrator-level crate that may legitimately depend on storypole and sawhorse; outfeed-core keeps planning, applying, semver and deterministic changelog formatting. The edges become structurally impossible rather than injected, and core loses two dependencies permanently.\n\nRECOMMENDATION: B, and not only for purity. Under A, outfeed-core still names the other products' capabilities, so the allowlist entry would keep existing in a different costume - the gate would pass while the coupling survives, which is the failure mode this whole burn-down exists to kill. B is the multi-hour job: it moves release_all, suite waves, the CLI and the MCP dispatch, and it needs the ReleaseOpts split.\n\nNot started deliberately. A half-moved orchestrator leaves outfeed unbuildable, and I would rather hand over a decision than a broken crate."
-      ],
-      "timestamp_ms": 1794032977420
-    },
-    {
-      "event": "task_updated",
-      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
-      "title": null,
-      "description": null,
-      "priority": null,
-      "scope": null,
-      "acceptance_criteria": [
-        "DONE 2026-11-06, commit 146fff9 (outfeed). Release orchestration moved above the core; both edges burned by relocation rather than injection.\n\noutfeed-core no longer depends on storypole-core or sawhorse-core - both lines are gone from its manifest - and neither name appears anywhere in its source. The orchestrator (release/, suite_plan/, suite_waves/, suite_exec.rs, storypole.rs, synthesis.rs, plus their tests) lives in outfeed-mcp, which outfeed-cli already depends on, so one copy serves the binary and the MCP surface and no integrator-to-integrator edge was created.\n\nThe seam needed a real change, not just a file move: synthesize_release_notes needs the target version, which only the planner computes, so plan_release split into plan_basis (pure: commits, referenced tickets, bump classification, target version) and finish_plan (manifest and changelog diffs). The integrator gathers notes between the two. plan_release survives as the one-call form for callers passing no notes.\n\nOne behavior improved rather than merely preserved: the release ticket used to be created fire-and-forget inside apply_release, from the core, with errors swallowed by `if let Ok`. The orchestrator now records it after a successful apply and reports either the ticket key or that no backlog was found. A silent failure became a reported one.\n\nLayers: lateral allowlist 3 -> 1, and the survivor is dado-core -> miter-polyglot, which is GB-246's edge. Downward 150, verdict clean.\n\nTier 2: fmt clean, clippy --workspace --all-targets -D warnings clean, 91 tests green, docs 9 present 0 drifted, 11/11 lockfiles fresh."
-      ],
-      "timestamp_ms": 1794034023078
-    },
-    {
-      "event": "task_verified",
-      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
-      "receipt": {
-        "verifier": "storypole-verify",
-        "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 0\nEntities with Contract Drift:     0\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-        "verified_at_epoch_ms": 1794034036122,
-        "git_branch": "main",
-        "base_commit_sha": "625f9ba60211ca22c2cd7245840773baad8040a4",
-        "head_commit_sha": "625f9ba60211ca22c2cd7245840773baad8040a4",
-        "commit_shas": [
-          "625f9ba60211ca22c2cd7245840773baad8040a4"
-        ],
-        "repo": null,
-        "chain_key": null
+        "slug": "outfeed-core-declare-a-task-verification-port-so-the-edge-to-storypole-core-burns-e26dc8",
+        "status": "deferred",
+        "ticket_key": "GB-286",
+        "title": "outfeed-core: declare a task/verification port so the edge to storypole-core burns",
+        "updated_at_epoch_ms": 1794031361576,
+        "verification_receipt": null
       }
     },
     {
-      "event": "task_updated",
-      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
-      "title": null,
+      "acceptance_criteria": [
+        "DESIGN DECISION NEEDED 2026-11-06, before any code. I started this and stopped: the seam is not a leaf module like GB-284's was, and the two options below differ architecturally rather than cosmetically.\n\nTHE FACTS. plan_release, apply_release, release_repo, release_repo_with_plan, plan_suite_releases, execute_suite_plan and the suite-wave entry all live INSIDE outfeed-core, and the per-repo loops live there too (suite_waves/entry.rs calls release_repo per repo). So enrichment cannot be a parameter passed by the CLI: the CLI does not own the loop that needs it. ReleaseOpts is #[derive(Debug, Clone)] and constructed field-by-field at every call site, so an injected port also breaks every constructor unless added with ..Default::default().\n\nWhat is already clean and worth keeping: find_storypole_root is a bare directory walk that touches no storypole type and belongs in core wherever else moves; and task_summaries is already &[(String, String, String)], so no storypole type crosses the seam today. Only the fetching and synthesizing calls carry the dependency.\n\nOPTION A - port on ReleaseOpts. Add Arc<dyn ReleaseEnrichment> with an async notes method returning a boxed future (dyn-safe without a new dependency), summaries and record_release as sync methods, and a Default no-op impl so library callers are unaffected. Touches ~5 signatures, 3 impls, 2 adapter modules in outfeed-cli and outfeed-mcp. Mechanical, no behavior change, but it is a trait object that exists only to avoid moving code.\n\nOPTION B - move the orchestrator out of core. release/, suite_plan/ and suite_waves/ move to an integrator-level crate that may legitimately depend on storypole and sawhorse; outfeed-core keeps planning, applying, semver and deterministic changelog formatting. The edges become structurally impossible rather than injected, and core loses two dependencies permanently.\n\nRECOMMENDATION: B, and not only for purity. Under A, outfeed-core still names the other products' capabilities, so the allowlist entry would keep existing in a different costume - the gate would pass while the coupling survives, which is the failure mode this whole burn-down exists to kill. B is the multi-hour job: it moves release_all, suite waves, the CLI and the MCP dispatch, and it needs the ReleaseOpts split.\n\nNot started deliberately. A half-moved orchestrator leaves outfeed unbuildable, and I would rather hand over a decision than a broken crate."
+      ],
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
+      "timestamp_ms": 1794032977420,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
-        "PLACEMENT CORRECTED 2026-11-06, commit 4a95355 (outfeed) + a6f156c (miter).\n\nThe work in 146fff9 was right; where it landed was wrong. Release orchestration was moved into outfeed-mcp because outfeed-cli already depended on it - a reason of convenience. -mcp is the MCP protocol surface, and hosting a release orchestrator there put real logic in the wrong layer.\n\nRelease orchestration now lives in its own package, crates/outfeed-orchestrator, following miter's shape of focused subcrates. outfeed-core plans and applies one repository; outfeed-orchestrator composes the suite; outfeed-cli and outfeed-mcp consume it and hold none of it. outfeed-mcp is a thin MCP adapter again.\n\nThe module named storypole became backlog: outfeed should not own a module named after another product, and the name also produced a phantom edge (outfeed_orchestrator::storypole read as a dependency on the storypole facade) that survived a re-index.\n\nClassification went to ORCHESTRATORS in miter with the reasoning recorded: cutting a suite release is composing, and the crate exists as its own package precisely so the core need not name any of that. Its edges to storypole-core and sawhorse-core are the composition, so they are Downward, not Lateral. Layers still show 1 lateral edge - dado-core -> miter-polyglot, blocked on GB-246 - with downward rising 150 -> 154.\n\nGates: fmt clean, clippy --workspace --all-targets -D warnings clean, 91 tests green, docs 9 present 0 drifted, 11/11 lockfiles fresh."
+        "DONE 2026-11-06, commit 146fff9 (outfeed). Release orchestration moved above the core; both edges burned by relocation rather than injection.\n\noutfeed-core no longer depends on storypole-core or sawhorse-core - both lines are gone from its manifest - and neither name appears anywhere in its source. The orchestrator (release/, suite_plan/, suite_waves/, suite_exec.rs, storypole.rs, synthesis.rs, plus their tests) lives in outfeed-mcp, which outfeed-cli already depends on, so one copy serves the binary and the MCP surface and no integrator-to-integrator edge was created.\n\nThe seam needed a real change, not just a file move: synthesize_release_notes needs the target version, which only the planner computes, so plan_release split into plan_basis (pure: commits, referenced tickets, bump classification, target version) and finish_plan (manifest and changelog diffs). The integrator gathers notes between the two. plan_release survives as the one-call form for callers passing no notes.\n\nOne behavior improved rather than merely preserved: the release ticket used to be created fire-and-forget inside apply_release, from the core, with errors swallowed by `if let Ok`. The orchestrator now records it after a successful apply and reports either the ticket key or that no backlog was found. A silent failure became a reported one.\n\nLayers: lateral allowlist 3 -> 1, and the survivor is dado-core -> miter-polyglot, which is MTR-22's edge. Downward 150, verdict clean.\n\nTier 2: fmt clean, clippy --workspace --all-targets -D warnings clean, 91 tests green, docs 9 present 0 drifted, 11/11 lockfiles fresh."
       ],
-      "timestamp_ms": 1794034577057
+      "description": null,
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
+      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
+      "timestamp_ms": 1794034023078,
+      "title": null
+    },
+    {
+      "event": "task_verified",
+      "receipt": {
+        "base_commit_sha": "625f9ba60211ca22c2cd7245840773baad8040a4",
+        "chain_key": null,
+        "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
+        "commit_shas": [
+          "625f9ba60211ca22c2cd7245840773baad8040a4"
+        ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "625f9ba60211ca22c2cd7245840773baad8040a4",
+        "repo": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 0\nEntities with Contract Drift:     0\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794034036122,
+        "verifier": "storypole-verify"
+      },
+      "task_id": "e26dc832-356b-469e-919b-daea2a85db57"
+    },
+    {
+      "acceptance_criteria": [
+        "PLACEMENT CORRECTED 2026-11-06, commit 4a95355 (outfeed) + a6f156c (miter).\n\nThe work in 146fff9 was right; where it landed was wrong. Release orchestration was moved into outfeed-mcp because outfeed-cli already depended on it - a reason of convenience. -mcp is the MCP protocol surface, and hosting a release orchestrator there put real logic in the wrong layer.\n\nRelease orchestration now lives in its own package, crates/outfeed-orchestrator, following miter's shape of focused subcrates. outfeed-core plans and applies one repository; outfeed-orchestrator composes the suite; outfeed-cli and outfeed-mcp consume it and hold none of it. outfeed-mcp is a thin MCP adapter again.\n\nThe module named storypole became backlog: outfeed should not own a module named after another product, and the name also produced a phantom edge (outfeed_orchestrator::storypole read as a dependency on the storypole facade) that survived a re-index.\n\nClassification went to ORCHESTRATORS in miter with the reasoning recorded: cutting a suite release is composing, and the crate exists as its own package precisely so the core need not name any of that. Its edges to storypole-core and sawhorse-core are the composition, so they are Downward, not Lateral. Layers still show 1 lateral edge - dado-core -> miter-polyglot, blocked on MTR-22 - with downward rising 150 -> 154.\n\nGates: fmt clean, clippy --workspace --all-targets -D warnings clean, 91 tests green, docs 9 present 0 drifted, 11/11 lockfiles fresh."
+      ],
+      "description": null,
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
+      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
+      "timestamp_ms": 1794034577057,
+      "title": null
     },
     {
       "event": "task_archived",
-      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
       "status": "verified",
+      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
       "timestamp_ms": 1794037279181
     },
     {
       "event": "task_archived",
-      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
       "status": "verified",
+      "task_id": "e26dc832-356b-469e-919b-daea2a85db57",
       "timestamp_ms": 1794038027616
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "PLACEMENT CORRECTED 2026-11-06, commit 4a95355 (outfeed) + a6f156c (miter).\n\nThe work in 146fff9 was right; where it landed was wrong. Release orchestration was moved into outfeed-mcp because outfeed-cli already depended on it - a reason of convenience. -mcp is the MCP protocol surface, and hosting a release orchestrator there put real logic in the wrong layer.\n\nRelease orchestration now lives in its own package, crates/outfeed-orchestrator, following miter's shape of focused subcrates. outfeed-core plans and applies one repository; outfeed-orchestrator composes the suite; outfeed-cli and outfeed-mcp consume it and hold none of it. outfeed-mcp is a thin MCP adapter again.\n\nThe module named storypole became backlog: outfeed should not own a module named after another product, and the name also produced a phantom edge (outfeed_orchestrator::storypole read as a dependency on the storypole facade) that survived a re-index.\n\nClassification went to ORCHESTRATORS in miter with the reasoning recorded: cutting a suite release is composing, and the crate exists as its own package precisely so the core need not name any of that. Its edges to storypole-core and sawhorse-core are the composition, so they are Downward, not Lateral. Layers still show 1 lateral edge - dado-core -> miter-polyglot, blocked on MTR-22 - with downward rising 150 -> 154.\n\nGates: fmt clean, clippy --workspace --all-targets -D warnings clean, 91 tests green, docs 9 present 0 drifted, 11/11 lockfiles fresh."
+    ],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038027616,
+    "created_at_epoch_ms": 1794031361576,
+    "decisions": [],
+    "description": "",
+    "edges": [],
+    "id": "e26dc832-356b-469e-919b-daea2a85db57",
+    "kind": "refactor",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "outfeed_core::storypole"
+      ]
+    },
+    "slug": "outfeed-core-declare-a-task-verification-port-so-the-edge-to-storypole-core-burns-e26dc8",
+    "status": "verified",
+    "ticket_key": "GB-286",
+    "title": "outfeed-core: declare a task/verification port so the edge to storypole-core burns",
+    "updated_at_epoch_ms": 1794038027616,
+    "verification_receipt": {
+      "base_commit_sha": "625f9ba60211ca22c2cd7245840773baad8040a4",
+      "chain_key": null,
+      "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
+      "commit_shas": [
+        "625f9ba60211ca22c2cd7245840773baad8040a4"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "625f9ba60211ca22c2cd7245840773baad8040a4",
+      "repo": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 0\nEntities with Contract Drift:     0\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794034036122,
+      "verifier": "storypole-verify"
+    }
+  }
 }

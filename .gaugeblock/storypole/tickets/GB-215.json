@@ -1,140 +1,140 @@
 {
-  "ticket": {
-    "id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
-    "ticket_key": "GB-215",
-    "slug": "declare-model-limits-so-requests-are-sized-from-a-known-window-c2700f",
-    "title": "Declare model limits so requests are sized from a known window",
-    "description": "ProviderConfig gains context_window, max_output_tokens and reasoning_effort; ModelLimits::output_budget slides the output budget down as the prompt grows; joiner sizes each fill from them and honours the configured effort. The provider API exposes no limits to discover: /models returns ids only, /models/{id} is 404, and usage reports cost rather than ceiling. Inference timeout raised 60s -> 300s because a medium-effort call with a 32K budget timed out at exactly 60s and reported it as transport failure.",
-    "kind": "feature",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [
-        "sawhorse/crates/sawhorse-core/src/config/schema.rs,sawhorse/crates/sawhorse-core/src/providers/openai_compat/payload.rs,joiner/crates/joiner-cli/src/handlers.rs,.gaugeblock/config.toml"
-      ],
-      "target_symbols": [
-        "sawhorse_core::config::schema::ProviderConfig,sawhorse_core::config::schema::ModelLimits,joiner_cli::handlers"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Declared model limits in ProviderConfig (context_window, max_output_tokens, reasoning_effort) with ModelLimits::output_budget sliding the request budget; joiner sizes each fill from them. API confirmed to expose no limits: /models has no metadata, /models/{id} is 404, usage has no ceiling. Timeout 60s -> 300s because medium-effort calls timed out at exactly 60s and reported transport failure. Live Gold fill still 500s with the budget ruled out (4096 and 32768 fail alike) and structured output ruled out (json_object/json_schema 200), so the trigger is the filler payload, handed to GB-214.",
-      "verified_at_epoch_ms": 1793362773631,
-      "git_branch": "feat/gb-215-declared-model-limits",
-      "base_commit_sha": "dc1f102f184d085bed9029d3d8f87fb2c60bcfed",
-      "head_commit_sha": "3405e991a548328ec802f9cba85e032b0688dc5d",
-      "commit_shas": [
-        "3405e991a548328ec802f9cba85e032b0688dc5d"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793362768494,
-    "updated_at_epoch_ms": 1794038018583,
-    "archived_at_epoch_ms": 1794038018583
-  },
   "events": [
     {
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
-        "ticket_key": "GB-215",
-        "slug": "declare-model-limits-so-requests-are-sized-from-a-known-window-c2700f",
-        "title": "Declare model limits so requests are sized from a known window",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793362768494,
+        "decisions": [],
         "description": "ProviderConfig gains context_window, max_output_tokens and reasoning_effort; ModelLimits::output_budget slides the output budget down as the prompt grows; joiner sizes each fill from them and honours the configured effort. The provider API exposes no limits to discover: /models returns ids only, /models/{id} is 404, and usage reports cost rather than ceiling. Inference timeout raised 60s -> 300s because a medium-effort call with a 32K budget timed out at exactly 60s and reported it as transport failure.",
+        "edges": [],
+        "id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
         "kind": "feature",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [
             "sawhorse/crates/sawhorse-core/src/config/schema.rs,sawhorse/crates/sawhorse-core/src/providers/openai_compat/payload.rs,joiner/crates/joiner-cli/src/handlers.rs,.gaugeblock/config.toml"
           ],
           "target_symbols": [
             "sawhorse_core::config::schema::ProviderConfig,sawhorse_core::config::schema::ModelLimits,joiner_cli::handlers"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793362768494,
-        "updated_at_epoch_ms": 1793362768494
-      },
-      "captured_by_agent": "agent",
-      "discovered_from_task_id": null
-    },
-    {
-      "event": "task_claimed",
-      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
-      "claim": {
-        "agent_id": "cline",
-        "claimed_at_epoch_ms": 1793362773435,
-        "lease_expires_at_epoch_ms": 1793366373435,
-        "git_branch": "feat/gb-215-declared-model-limits",
-        "base_commit_sha": null
+        "slug": "declare-model-limits-so-requests-are-sized-from-a-known-window-c2700f",
+        "status": "deferred",
+        "ticket_key": "GB-215",
+        "title": "Declare model limits so requests are sized from a known window",
+        "updated_at_epoch_ms": 1793362768494,
+        "verification_receipt": null
       }
     },
     {
+      "claim": {
+        "agent_id": "cline",
+        "base_commit_sha": null,
+        "claimed_at_epoch_ms": 1793362773435,
+        "git_branch": "feat/gb-215-declared-model-limits",
+        "lease_expires_at_epoch_ms": 1793366373435
+      },
+      "event": "task_claimed",
+      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333"
+    },
+    {
       "event": "status_changed",
-      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
       "from": "deferred",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793362773435
+      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
+      "timestamp_ms": 1793362773435,
+      "to": "in_progress"
     },
     {
       "event": "task_verified",
-      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Declared model limits in ProviderConfig (context_window, max_output_tokens, reasoning_effort) with ModelLimits::output_budget sliding the request budget; joiner sizes each fill from them. API confirmed to expose no limits: /models has no metadata, /models/{id} is 404, usage has no ceiling. Timeout 60s -> 300s because medium-effort calls timed out at exactly 60s and reported transport failure. Live Gold fill still 500s with the budget ruled out (4096 and 32768 fail alike) and structured output ruled out (json_object/json_schema 200), so the trigger is the filler payload, handed to GB-214.",
-        "verified_at_epoch_ms": 1793362773631,
-        "git_branch": "feat/gb-215-declared-model-limits",
         "base_commit_sha": "dc1f102f184d085bed9029d3d8f87fb2c60bcfed",
-        "head_commit_sha": "3405e991a548328ec802f9cba85e032b0688dc5d",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "3405e991a548328ec802f9cba85e032b0688dc5d"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "feat/gb-215-declared-model-limits",
+        "head_commit_sha": "3405e991a548328ec802f9cba85e032b0688dc5d",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "Declared model limits in ProviderConfig (context_window, max_output_tokens, reasoning_effort) with ModelLimits::output_budget sliding the request budget; joiner sizes each fill from them. API confirmed to expose no limits: /models has no metadata, /models/{id} is 404, usage has no ceiling. Timeout 60s -> 300s because medium-effort calls timed out at exactly 60s and reported transport failure. Live Gold fill still 500s with the budget ruled out (4096 and 32768 fail alike) and structured output ruled out (json_object/json_schema 200), so the trigger is the filler payload, handed to SH-9.",
+        "verified_at_epoch_ms": 1793362773631,
+        "verifier": "manual"
+      },
+      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333"
     },
     {
       "event": "status_changed",
-      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
       "from": "verified",
-      "to": "archived",
       "reason": "Archived out of active backlog",
-      "timestamp_ms": 1793953233610
+      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
+      "timestamp_ms": 1793953233610,
+      "to": "archived"
     },
     {
       "event": "task_archived",
-      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
       "status": "verified",
+      "task_id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
       "timestamp_ms": 1794038018583
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038018583,
+    "created_at_epoch_ms": 1793362768494,
+    "decisions": [],
+    "description": "ProviderConfig gains context_window, max_output_tokens and reasoning_effort; ModelLimits::output_budget slides the output budget down as the prompt grows; joiner sizes each fill from them and honours the configured effort. The provider API exposes no limits to discover: /models returns ids only, /models/{id} is 404, and usage reports cost rather than ceiling. Inference timeout raised 60s -> 300s because a medium-effort call with a 32K budget timed out at exactly 60s and reported it as transport failure.",
+    "edges": [],
+    "id": "c2700fff-a3d1-4c15-a75e-68588b2f5333",
+    "kind": "feature",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [
+        "sawhorse/crates/sawhorse-core/src/config/schema.rs,sawhorse/crates/sawhorse-core/src/providers/openai_compat/payload.rs,joiner/crates/joiner-cli/src/handlers.rs,.gaugeblock/config.toml"
+      ],
+      "target_symbols": [
+        "sawhorse_core::config::schema::ProviderConfig,sawhorse_core::config::schema::ModelLimits,joiner_cli::handlers"
+      ]
+    },
+    "slug": "declare-model-limits-so-requests-are-sized-from-a-known-window-c2700f",
+    "status": "verified",
+    "ticket_key": "GB-215",
+    "title": "Declare model limits so requests are sized from a known window",
+    "updated_at_epoch_ms": 1794038018583,
+    "verification_receipt": {
+      "base_commit_sha": "dc1f102f184d085bed9029d3d8f87fb2c60bcfed",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "3405e991a548328ec802f9cba85e032b0688dc5d"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "feat/gb-215-declared-model-limits",
+      "head_commit_sha": "3405e991a548328ec802f9cba85e032b0688dc5d",
+      "repo": null,
+      "summary": "Declared model limits in ProviderConfig (context_window, max_output_tokens, reasoning_effort) with ModelLimits::output_budget sliding the request budget; joiner sizes each fill from them. API confirmed to expose no limits: /models has no metadata, /models/{id} is 404, usage has no ceiling. Timeout 60s -> 300s because medium-effort calls timed out at exactly 60s and reported transport failure. Live Gold fill still 500s with the budget ruled out (4096 and 32768 fail alike) and structured output ruled out (json_object/json_schema 200), so the trigger is the filler payload, handed to SH-9.",
+      "verified_at_epoch_ms": 1793362773631,
+      "verifier": "manual"
+    }
+  }
 }

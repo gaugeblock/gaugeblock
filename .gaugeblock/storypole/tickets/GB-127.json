@@ -1,226 +1,226 @@
 {
-  "ticket": {
-    "id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
-    "ticket_key": "GB-127",
-    "slug": "phase-2-reserve-gaugeblock-and-sub-crate-namespaces-on-crates-io-49d5b6",
-    "title": "Phase 2: Reserve gaugeblock and sub-crate namespaces on Crates.io",
-    "description": "Publish initial placeholder versions (0.1.0-beta.1) for all unclaimed gaugeblock namespaces on Crates.io to secure the brand ahead of public release: gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git, gaugeblock-core.",
-    "kind": "epic",
-    "status": "verified",
-    "priority": 1,
-    "scope": {
-      "repo": "workspace",
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [],
-      "labels": [
-        "crates-io,brand,reservation,gaugeblock"
-      ]
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [
-      "All 6 gaugeblock namespaces are published and owned on Crates.io,Automatic 429 countdown wait prevents rate-limit aborts"
-    ],
-    "plan": {
-      "summary": "Reserve gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git and gaugeblock-core on crates.io at 0.1.0-alpha.1",
-      "design_markdown": "# Task Plan: GB-127 — Phase 2: Reserve gaugeblock and Sub-Crate Namespaces on Crates.io\n\n> **Task Key:** `GB-127`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Objective\nSecure all unclaimed root and sub-crate namespaces for `gaugeblock` on Crates.io by publishing initial placeholder versions (`0.1.0-beta.1`) using the automated 429 countdown cooldown harness.\n\n---\n\n## 2. Target Namespaces\n* `gaugeblock` (Root facade / meta-harness CLI)\n* `gaugeblock-common` (Foundation library)\n* `gaugeblock-contracts` (Direct code implementation of CONTRACTS.md)\n* `gaugeblock-mcp` (Generic Model Context Protocol stdio engine)\n* `gaugeblock-git` (Safe git porcelain and single-round-trip push)\n* `gaugeblock-core` (Meta-harness orchestration engine)\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Prepare placeholder Cargo manifests and minimal documentation conforming to Crates.io publishing rules.\n* **Step 2:** Execute namespace reservation script with automated 429 cooldown tracking.\n* **Step 3:** Verify ownership and package existence on `https://crates.io/api/v1/crates/{name}`.\n\n---\n\n## 4. Execution Record — 2026-10-28\n\n**Reservation version: `0.1.0-alpha.1`.** Namespace reservations ship at `alpha.1`; the suite only\nmoves to `0.1.0-beta.1` once a crate is actually built and ready for dogfooding.\n\nAll six namespaces are claimed and publicly resolvable:\n\n| Crate | Version | crates.io |\n|:---|:---|:---|\n| `gaugeblock` | `0.1.0-alpha.1` | published |\n| `gaugeblock-common` | `0.1.0-alpha.1` | published |\n| `gaugeblock-contracts` | `0.1.0-alpha.1` | published |\n| `gaugeblock-mcp` | `0.1.0-alpha.1` | published |\n| `gaugeblock-git` | `0.1.0-alpha.1` | published |\n| `gaugeblock-core` | `0.1.0-alpha.1` | published |\n\n* Each placeholder is a dependency-free library with `description`, `license`, `repository`\n  (`https://github.com/gaugeblock/common` for the sub-crates), `homepage`, `documentation`,\n  `readme`, keywords and categories, plus a `pub const PACKAGE` naming the reserved package.\n* Published with the freshly built `outfeed publish` (dogfooding `GB-125`): dry-run gate per crate,\n  then sequential publication.\n* **Live rate-limit exercise:** the sixth crate (`gaugeblock-mcp`) hit crates.io's new-crate limit and\n  the new `rate_limit` retry path engaged (`crates.io rate limit: retrying in 30s`). The cooldown in\n  crates.io's body form (`try again after <RFC2822 date>`) is not parsed yet, so the three-attempt\n  budget expired before the real deadline and the crate was published after the cooldown. The parser\n  gap is tracked as `GB-140`.\n\n**Next version:** the first real implementation of any of these crates bumps it to\n`0.1.0-beta.1` (dogfood-ready), never re-using `alpha.1`.\n\n",
-      "steps": [
-        {
-          "step_id": "1",
-          "title": "Prepare placeholder manifests and READMEs",
-          "target_files": [],
-          "verification_gate": "published 0.1.0-alpha.1",
-          "completed": false
-        },
-        {
-          "step_id": "2",
-          "title": "Publish with 429 cooldown tracking",
-          "target_files": [],
-          "verification_gate": "outfeed publish",
-          "completed": false
-        },
-        {
-          "step_id": "3",
-          "title": "Verify existence via crates.io API",
-          "target_files": [],
-          "verification_gate": "curl api/v1/crates/{name}",
-          "completed": false
-        }
-      ],
-      "plan_file_path": ".gaugeblock/storypole/plans/GB-127.md",
-      "updated_at_epoch_ms": 1793201559532
-    },
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "cline",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "All six namespaces reserved at 0.1.0-alpha.1 and confirmed via the crates.io API: gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git, gaugeblock-core. Published with the freshly built outfeed publish (dry-run gate per crate, sequential upload). The new rate-limit path engaged on the sixth crate; its cooldown came from crates.io's body text which the parser does not yet read (GB-140). Policy recorded in AGENTS.md and the plan: alpha.1 for reservations, beta.1 only for a dogfood-ready build.",
-      "verified_at_epoch_ms": 1793201569590,
-      "git_branch": "main",
-      "base_commit_sha": "ad390465fa480f21f8fc47ed937aafdd4c467ff3",
-      "head_commit_sha": "ad390465fa480f21f8fc47ed937aafdd4c467ff3",
-      "commit_shas": [
-        "ad390465fa480f21f8fc47ed937aafdd4c467ff3"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793170355425,
-    "updated_at_epoch_ms": 1794037983727,
-    "archived_at_epoch_ms": 1794037983727
-  },
   "events": [
     {
       "event": "task_created",
       "task": {
-        "id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
-        "ticket_key": "GB-127",
-        "slug": "phase-2-reserve-gaugeblock-and-sub-crate-namespaces-on-crates-io-49d5b6",
-        "title": "Phase 2: Reserve gaugeblock and sub-crate namespaces on Crates.io",
-        "description": "Publish initial placeholder versions (0.1.0-beta.1) for all unclaimed gaugeblock namespaces on Crates.io to secure the brand ahead of public release: gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git, gaugeblock-core.",
-        "kind": "epic",
-        "status": "ready",
-        "priority": 1,
-        "scope": {
-          "repo": "workspace",
-          "crate_name": null,
-          "module_path": null,
-          "target_files": [],
-          "target_symbols": [],
-          "labels": [
-            "crates-io,brand,reservation,gaugeblock"
-          ]
-        },
-        "edges": [],
-        "decisions": [],
         "acceptance_criteria": [
           "All 6 gaugeblock namespaces are published and owned on Crates.io,Automatic 429 countdown wait prevents rate-limit aborts"
         ],
-        "plan": null,
         "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
         "created_at_epoch_ms": 1793170355425,
-        "updated_at_epoch_ms": 1793170355425
+        "decisions": [],
+        "description": "Publish initial placeholder versions (0.1.0-beta.1) for all unclaimed gaugeblock namespaces on Crates.io to secure the brand ahead of public release: gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git, gaugeblock-core.",
+        "edges": [],
+        "id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
+        "kind": "epic",
+        "latest_handoff": null,
+        "plan": null,
+        "priority": 1,
+        "scope": {
+          "crate_name": null,
+          "labels": [
+            "crates-io,brand,reservation,gaugeblock"
+          ],
+          "module_path": null,
+          "repo": "workspace",
+          "target_files": [],
+          "target_symbols": []
+        },
+        "slug": "phase-2-reserve-gaugeblock-and-sub-crate-namespaces-on-crates-io-49d5b6",
+        "status": "ready",
+        "ticket_key": "GB-127",
+        "title": "Phase 2: Reserve gaugeblock and sub-crate namespaces on Crates.io",
+        "updated_at_epoch_ms": 1793170355425,
+        "verification_receipt": null
       }
     },
     {
       "event": "plan_updated",
-      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "plan": {
-        "summary": "Reserve gaugeblock and sub-crate namespaces on Crates.io",
         "design_markdown": "# Task Plan: GB-127 — Phase 2: Reserve gaugeblock and Sub-Crate Namespaces on Crates.io\n\n> **Task Key:** `GB-127`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Objective\nSecure all unclaimed root and sub-crate namespaces for `gaugeblock` on Crates.io by publishing initial placeholder versions (`0.1.0-beta.1`) using the automated 429 countdown cooldown harness.\n\n---\n\n## 2. Target Namespaces\n* `gaugeblock` (Root facade / meta-harness CLI)\n* `gaugeblock-common` (Foundation library)\n* `gaugeblock-contracts` (Direct code implementation of CONTRACTS.md)\n* `gaugeblock-mcp` (Generic Model Context Protocol stdio engine)\n* `gaugeblock-git` (Safe git porcelain and single-round-trip push)\n* `gaugeblock-core` (Meta-harness orchestration engine)\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Prepare placeholder Cargo manifests and minimal documentation conforming to Crates.io publishing rules.\n* **Step 2:** Execute namespace reservation script with automated 429 cooldown tracking.\n* **Step 3:** Verify ownership and package existence on `https://crates.io/api/v1/crates/{name}`.\n",
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-127.md",
         "steps": [
           {
+            "completed": false,
             "step_id": "1",
+            "target_files": [],
             "title": "Prepare placeholder manifests and documentation",
-            "target_files": [],
-            "verification_gate": "miter audit",
-            "completed": false
+            "verification_gate": "miter audit"
           },
           {
+            "completed": false,
             "step_id": "2",
-            "title": "Execute reservation with automated 429 cooldown tracking",
             "target_files": [],
-            "verification_gate": "scripts/publish-crates.sh",
-            "completed": false
+            "title": "Execute reservation with automated 429 cooldown tracking",
+            "verification_gate": "scripts/publish-crates.sh"
           },
           {
+            "completed": false,
             "step_id": "3",
-            "title": "Verify package ownership on Crates.io API",
             "target_files": [],
-            "verification_gate": "miter contracts",
-            "completed": false
+            "title": "Verify package ownership on Crates.io API",
+            "verification_gate": "miter contracts"
           }
         ],
-        "plan_file_path": ".gaugeblock/storypole/plans/GB-127.md",
+        "summary": "Reserve gaugeblock and sub-crate namespaces on Crates.io",
         "updated_at_epoch_ms": 1793170523040
       },
+      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "timestamp_ms": 1793170523040
     },
     {
-      "event": "task_claimed",
-      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793200929315,
-        "lease_expires_at_epoch_ms": 1793204529315,
         "git_branch": "chore/reserve-namespaces",
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793204529315
+      },
+      "event": "task_claimed",
+      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081"
     },
     {
       "event": "status_changed",
-      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "from": "ready",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793200929315
+      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
+      "timestamp_ms": 1793200929315,
+      "to": "in_progress"
     },
     {
       "event": "plan_updated",
-      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "plan": {
-        "summary": "Reserve gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git and gaugeblock-core on crates.io at 0.1.0-alpha.1",
-        "design_markdown": "# Task Plan: GB-127 — Phase 2: Reserve gaugeblock and Sub-Crate Namespaces on Crates.io\n\n> **Task Key:** `GB-127`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Objective\nSecure all unclaimed root and sub-crate namespaces for `gaugeblock` on Crates.io by publishing initial placeholder versions (`0.1.0-beta.1`) using the automated 429 countdown cooldown harness.\n\n---\n\n## 2. Target Namespaces\n* `gaugeblock` (Root facade / meta-harness CLI)\n* `gaugeblock-common` (Foundation library)\n* `gaugeblock-contracts` (Direct code implementation of CONTRACTS.md)\n* `gaugeblock-mcp` (Generic Model Context Protocol stdio engine)\n* `gaugeblock-git` (Safe git porcelain and single-round-trip push)\n* `gaugeblock-core` (Meta-harness orchestration engine)\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Prepare placeholder Cargo manifests and minimal documentation conforming to Crates.io publishing rules.\n* **Step 2:** Execute namespace reservation script with automated 429 cooldown tracking.\n* **Step 3:** Verify ownership and package existence on `https://crates.io/api/v1/crates/{name}`.\n\n---\n\n## 4. Execution Record — 2026-10-28\n\n**Reservation version: `0.1.0-alpha.1`.** Namespace reservations ship at `alpha.1`; the suite only\nmoves to `0.1.0-beta.1` once a crate is actually built and ready for dogfooding.\n\nAll six namespaces are claimed and publicly resolvable:\n\n| Crate | Version | crates.io |\n|:---|:---|:---|\n| `gaugeblock` | `0.1.0-alpha.1` | published |\n| `gaugeblock-common` | `0.1.0-alpha.1` | published |\n| `gaugeblock-contracts` | `0.1.0-alpha.1` | published |\n| `gaugeblock-mcp` | `0.1.0-alpha.1` | published |\n| `gaugeblock-git` | `0.1.0-alpha.1` | published |\n| `gaugeblock-core` | `0.1.0-alpha.1` | published |\n\n* Each placeholder is a dependency-free library with `description`, `license`, `repository`\n  (`https://github.com/gaugeblock/common` for the sub-crates), `homepage`, `documentation`,\n  `readme`, keywords and categories, plus a `pub const PACKAGE` naming the reserved package.\n* Published with the freshly built `outfeed publish` (dogfooding `GB-125`): dry-run gate per crate,\n  then sequential publication.\n* **Live rate-limit exercise:** the sixth crate (`gaugeblock-mcp`) hit crates.io's new-crate limit and\n  the new `rate_limit` retry path engaged (`crates.io rate limit: retrying in 30s`). The cooldown in\n  crates.io's body form (`try again after <RFC2822 date>`) is not parsed yet, so the three-attempt\n  budget expired before the real deadline and the crate was published after the cooldown. The parser\n  gap is tracked as `GB-140`.\n\n**Next version:** the first real implementation of any of these crates bumps it to\n`0.1.0-beta.1` (dogfood-ready), never re-using `alpha.1`.\n\n",
+        "design_markdown": "# Task Plan: GB-127 — Phase 2: Reserve gaugeblock and Sub-Crate Namespaces on Crates.io\n\n> **Task Key:** `GB-127`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Objective\nSecure all unclaimed root and sub-crate namespaces for `gaugeblock` on Crates.io by publishing initial placeholder versions (`0.1.0-beta.1`) using the automated 429 countdown cooldown harness.\n\n---\n\n## 2. Target Namespaces\n* `gaugeblock` (Root facade / meta-harness CLI)\n* `gaugeblock-common` (Foundation library)\n* `gaugeblock-contracts` (Direct code implementation of CONTRACTS.md)\n* `gaugeblock-mcp` (Generic Model Context Protocol stdio engine)\n* `gaugeblock-git` (Safe git porcelain and single-round-trip push)\n* `gaugeblock-core` (Meta-harness orchestration engine)\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Prepare placeholder Cargo manifests and minimal documentation conforming to Crates.io publishing rules.\n* **Step 2:** Execute namespace reservation script with automated 429 cooldown tracking.\n* **Step 3:** Verify ownership and package existence on `https://crates.io/api/v1/crates/{name}`.\n\n---\n\n## 4. Execution Record — 2026-10-28\n\n**Reservation version: `0.1.0-alpha.1`.** Namespace reservations ship at `alpha.1`; the suite only\nmoves to `0.1.0-beta.1` once a crate is actually built and ready for dogfooding.\n\nAll six namespaces are claimed and publicly resolvable:\n\n| Crate | Version | crates.io |\n|:---|:---|:---|\n| `gaugeblock` | `0.1.0-alpha.1` | published |\n| `gaugeblock-common` | `0.1.0-alpha.1` | published |\n| `gaugeblock-contracts` | `0.1.0-alpha.1` | published |\n| `gaugeblock-mcp` | `0.1.0-alpha.1` | published |\n| `gaugeblock-git` | `0.1.0-alpha.1` | published |\n| `gaugeblock-core` | `0.1.0-alpha.1` | published |\n\n* Each placeholder is a dependency-free library with `description`, `license`, `repository`\n  (`https://github.com/gaugeblock/common` for the sub-crates), `homepage`, `documentation`,\n  `readme`, keywords and categories, plus a `pub const PACKAGE` naming the reserved package.\n* Published with the freshly built `outfeed publish` (dogfooding `OF-27`): dry-run gate per crate,\n  then sequential publication.\n* **Live rate-limit exercise:** the sixth crate (`gaugeblock-mcp`) hit crates.io's new-crate limit and\n  the new `rate_limit` retry path engaged (`crates.io rate limit: retrying in 30s`). The cooldown in\n  crates.io's body form (`try again after <RFC2822 date>`) is not parsed yet, so the three-attempt\n  budget expired before the real deadline and the crate was published after the cooldown. The parser\n  gap is tracked as `OF-33`.\n\n**Next version:** the first real implementation of any of these crates bumps it to\n`0.1.0-beta.1` (dogfood-ready), never re-using `alpha.1`.\n\n",
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-127.md",
         "steps": [
           {
+            "completed": false,
             "step_id": "1",
+            "target_files": [],
             "title": "Prepare placeholder manifests and READMEs",
-            "target_files": [],
-            "verification_gate": "published 0.1.0-alpha.1",
-            "completed": false
+            "verification_gate": "published 0.1.0-alpha.1"
           },
           {
+            "completed": false,
             "step_id": "2",
-            "title": "Publish with 429 cooldown tracking",
             "target_files": [],
-            "verification_gate": "outfeed publish",
-            "completed": false
+            "title": "Publish with 429 cooldown tracking",
+            "verification_gate": "outfeed publish"
           },
           {
+            "completed": false,
             "step_id": "3",
-            "title": "Verify existence via crates.io API",
             "target_files": [],
-            "verification_gate": "curl api/v1/crates/{name}",
-            "completed": false
+            "title": "Verify existence via crates.io API",
+            "verification_gate": "curl api/v1/crates/{name}"
           }
         ],
-        "plan_file_path": ".gaugeblock/storypole/plans/GB-127.md",
+        "summary": "Reserve gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git and gaugeblock-core on crates.io at 0.1.0-alpha.1",
         "updated_at_epoch_ms": 1793201559532
       },
+      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "timestamp_ms": 1793201559532
     },
     {
       "event": "task_verified",
-      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "receipt": {
-        "verifier": "cline",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "All six namespaces reserved at 0.1.0-alpha.1 and confirmed via the crates.io API: gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git, gaugeblock-core. Published with the freshly built outfeed publish (dry-run gate per crate, sequential upload). The new rate-limit path engaged on the sixth crate; its cooldown came from crates.io's body text which the parser does not yet read (GB-140). Policy recorded in AGENTS.md and the plan: alpha.1 for reservations, beta.1 only for a dogfood-ready build.",
-        "verified_at_epoch_ms": 1793201569590,
-        "git_branch": "main",
         "base_commit_sha": "ad390465fa480f21f8fc47ed937aafdd4c467ff3",
-        "head_commit_sha": "ad390465fa480f21f8fc47ed937aafdd4c467ff3",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "ad390465fa480f21f8fc47ed937aafdd4c467ff3"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "ad390465fa480f21f8fc47ed937aafdd4c467ff3",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "All six namespaces reserved at 0.1.0-alpha.1 and confirmed via the crates.io API: gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git, gaugeblock-core. Published with the freshly built outfeed publish (dry-run gate per crate, sequential upload). The new rate-limit path engaged on the sixth crate; its cooldown came from crates.io's body text which the parser does not yet read (OF-33). Policy recorded in AGENTS.md and the plan: alpha.1 for reservations, beta.1 only for a dogfood-ready build.",
+        "verified_at_epoch_ms": 1793201569590,
+        "verifier": "cline"
+      },
+      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081"
     },
     {
       "event": "task_archived",
-      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "status": "verified",
+      "task_id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
       "timestamp_ms": 1794037983727
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "All 6 gaugeblock namespaces are published and owned on Crates.io,Automatic 429 countdown wait prevents rate-limit aborts"
+    ],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794037983727,
+    "created_at_epoch_ms": 1793170355425,
+    "decisions": [],
+    "description": "Publish initial placeholder versions (0.1.0-beta.1) for all unclaimed gaugeblock namespaces on Crates.io to secure the brand ahead of public release: gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git, gaugeblock-core.",
+    "edges": [],
+    "id": "49d5b66f-a8ef-45a4-9620-a091fcfe7081",
+    "kind": "epic",
+    "latest_handoff": null,
+    "plan": {
+      "design_markdown": "# Task Plan: GB-127 — Phase 2: Reserve gaugeblock and Sub-Crate Namespaces on Crates.io\n\n> **Task Key:** `GB-127`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Objective\nSecure all unclaimed root and sub-crate namespaces for `gaugeblock` on Crates.io by publishing initial placeholder versions (`0.1.0-beta.1`) using the automated 429 countdown cooldown harness.\n\n---\n\n## 2. Target Namespaces\n* `gaugeblock` (Root facade / meta-harness CLI)\n* `gaugeblock-common` (Foundation library)\n* `gaugeblock-contracts` (Direct code implementation of CONTRACTS.md)\n* `gaugeblock-mcp` (Generic Model Context Protocol stdio engine)\n* `gaugeblock-git` (Safe git porcelain and single-round-trip push)\n* `gaugeblock-core` (Meta-harness orchestration engine)\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Prepare placeholder Cargo manifests and minimal documentation conforming to Crates.io publishing rules.\n* **Step 2:** Execute namespace reservation script with automated 429 cooldown tracking.\n* **Step 3:** Verify ownership and package existence on `https://crates.io/api/v1/crates/{name}`.\n\n---\n\n## 4. Execution Record — 2026-10-28\n\n**Reservation version: `0.1.0-alpha.1`.** Namespace reservations ship at `alpha.1`; the suite only\nmoves to `0.1.0-beta.1` once a crate is actually built and ready for dogfooding.\n\nAll six namespaces are claimed and publicly resolvable:\n\n| Crate | Version | crates.io |\n|:---|:---|:---|\n| `gaugeblock` | `0.1.0-alpha.1` | published |\n| `gaugeblock-common` | `0.1.0-alpha.1` | published |\n| `gaugeblock-contracts` | `0.1.0-alpha.1` | published |\n| `gaugeblock-mcp` | `0.1.0-alpha.1` | published |\n| `gaugeblock-git` | `0.1.0-alpha.1` | published |\n| `gaugeblock-core` | `0.1.0-alpha.1` | published |\n\n* Each placeholder is a dependency-free library with `description`, `license`, `repository`\n  (`https://github.com/gaugeblock/common` for the sub-crates), `homepage`, `documentation`,\n  `readme`, keywords and categories, plus a `pub const PACKAGE` naming the reserved package.\n* Published with the freshly built `outfeed publish` (dogfooding `OF-27`): dry-run gate per crate,\n  then sequential publication.\n* **Live rate-limit exercise:** the sixth crate (`gaugeblock-mcp`) hit crates.io's new-crate limit and\n  the new `rate_limit` retry path engaged (`crates.io rate limit: retrying in 30s`). The cooldown in\n  crates.io's body form (`try again after <RFC2822 date>`) is not parsed yet, so the three-attempt\n  budget expired before the real deadline and the crate was published after the cooldown. The parser\n  gap is tracked as `OF-33`.\n\n**Next version:** the first real implementation of any of these crates bumps it to\n`0.1.0-beta.1` (dogfood-ready), never re-using `alpha.1`.\n\n",
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-127.md",
+      "steps": [
+        {
+          "completed": false,
+          "step_id": "1",
+          "target_files": [],
+          "title": "Prepare placeholder manifests and READMEs",
+          "verification_gate": "published 0.1.0-alpha.1"
+        },
+        {
+          "completed": false,
+          "step_id": "2",
+          "target_files": [],
+          "title": "Publish with 429 cooldown tracking",
+          "verification_gate": "outfeed publish"
+        },
+        {
+          "completed": false,
+          "step_id": "3",
+          "target_files": [],
+          "title": "Verify existence via crates.io API",
+          "verification_gate": "curl api/v1/crates/{name}"
+        }
+      ],
+      "summary": "Reserve gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git and gaugeblock-core on crates.io at 0.1.0-alpha.1",
+      "updated_at_epoch_ms": 1793201559532
+    },
+    "priority": 1,
+    "scope": {
+      "crate_name": null,
+      "labels": [
+        "crates-io,brand,reservation,gaugeblock"
+      ],
+      "module_path": null,
+      "repo": "workspace",
+      "target_files": [],
+      "target_symbols": []
+    },
+    "slug": "phase-2-reserve-gaugeblock-and-sub-crate-namespaces-on-crates-io-49d5b6",
+    "status": "verified",
+    "ticket_key": "GB-127",
+    "title": "Phase 2: Reserve gaugeblock and sub-crate namespaces on Crates.io",
+    "updated_at_epoch_ms": 1794037983727,
+    "verification_receipt": {
+      "base_commit_sha": "ad390465fa480f21f8fc47ed937aafdd4c467ff3",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "ad390465fa480f21f8fc47ed937aafdd4c467ff3"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "ad390465fa480f21f8fc47ed937aafdd4c467ff3",
+      "repo": null,
+      "summary": "All six namespaces reserved at 0.1.0-alpha.1 and confirmed via the crates.io API: gaugeblock, gaugeblock-common, gaugeblock-contracts, gaugeblock-mcp, gaugeblock-git, gaugeblock-core. Published with the freshly built outfeed publish (dry-run gate per crate, sequential upload). The new rate-limit path engaged on the sixth crate; its cooldown came from crates.io's body text which the parser does not yet read (OF-33). Policy recorded in AGENTS.md and the plan: alpha.1 for reservations, beta.1 only for a dogfood-ready build.",
+      "verified_at_epoch_ms": 1793201569590,
+      "verifier": "cline"
+    }
+  }
 }

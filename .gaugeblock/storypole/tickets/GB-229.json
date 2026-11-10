@@ -1,73 +1,73 @@
 {
-  "ticket": {
-    "id": "e37925f1-d1bf-4e02-a789-aa9bf497d518",
-    "ticket_key": "GB-229",
-    "slug": "a-trivial-hole-cannot-produce-a-gold-pair-so-the-corpus-cannot-grow-by-repetition-alone-e37925",
-    "title": "A trivial hole cannot produce a Gold pair, so the corpus cannot grow by repetition alone",
-    "description": "PARKED by owner decision 2026-10-30. Deliberately not pursued now: the pipeline defects that produced no Gold are all cleared (GB-224, GB-225, GB-227), and the owner is comfortable with Gold accruing organically rather than by manufacturing difficulty.\n\nOWNER THESIS, worth preserving because it changes the ticket premise: Gold is inherently rarer here because the oracle and the universal provider are the same model right now - the verifier cannot be harder than the generator. The intended sources of Gold are instead (a) backfill and OSS mining over real messy git history - commits named fix, fix again, another try carry a genuine failed state and a genuine repair, which is exactly a DPO pair, and (b) community contributions once the public rabbet datastore exists and developers report their own traces.\n\nSo the grading idea below is not rejected, only deprioritised. Re-open if the corpus needs to be grown faster than real history supplies.",
-    "kind": "feature",
-    "status": "deferred",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1793396913980,
-    "updated_at_epoch_ms": 1793398847060
-  },
   "events": [
     {
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793396913980,
+        "decisions": [],
+        "description": "Measured in the cross-fixture yield study (.gaugeblock/storypole/plans/JN-9.md): 9 fills across 3 fixtures gave 3 Gold and 6 Silver, and the split is per-hole rather than per-pipeline. sum_positive is a one-line delegation that compiles first try, so it produced 0/3 Gold; parse_port needs range and error handling the first attempt plausibly gets wrong, so it produced 2/3. grapheme_count sat at 1/3.\n\nCONSEQUENCE: running more fills over trivial holes yields more Silver and no DPO pairs. Growing the Gold corpus needs holes with genuine failure modes - wrong return types, error mapping, borrow lifetimes, trait bounds - not more fixtures of the same difficulty.\n\nNEXT: build a fixture set graded by difficulty (a trivial delegation, an error-mapping case, a lifetime/borrow case, a trait-bound case) and measure Gold rate per grade. That would turn the 33% headline into a per-difficulty curve, which is what would tell us whether the corpus can be grown on purpose or only harvested opportunistically. Related: JN-9 (compiler oracle), GB-225 (body carrying), GB-228 (spool quarantine).",
+        "edges": [],
         "id": "e37925f1-d1bf-4e02-a789-aa9bf497d518",
-        "ticket_key": "GB-229",
-        "slug": "a-trivial-hole-cannot-produce-a-gold-pair-so-the-corpus-cannot-grow-by-repetition-alone-e37925",
-        "title": "A trivial hole cannot produce a Gold pair, so the corpus cannot grow by repetition alone",
-        "description": "Measured in the cross-fixture yield study (.gaugeblock/storypole/plans/GB-213.md): 9 fills across 3 fixtures gave 3 Gold and 6 Silver, and the split is per-hole rather than per-pipeline. sum_positive is a one-line delegation that compiles first try, so it produced 0/3 Gold; parse_port needs range and error handling the first attempt plausibly gets wrong, so it produced 2/3. grapheme_count sat at 1/3.\n\nCONSEQUENCE: running more fills over trivial holes yields more Silver and no DPO pairs. Growing the Gold corpus needs holes with genuine failure modes - wrong return types, error mapping, borrow lifetimes, trait bounds - not more fixtures of the same difficulty.\n\nNEXT: build a fixture set graded by difficulty (a trivial delegation, an error-mapping case, a lifetime/borrow case, a trait-bound case) and measure Gold rate per grade. That would turn the 33% headline into a per-difficulty curve, which is what would tell us whether the corpus can be grown on purpose or only harvested opportunistically. Related: GB-213 (compiler oracle), GB-225 (body carrying), GB-228 (spool quarantine).",
         "kind": "feature",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
-          "target_symbols": [],
-          "labels": []
+          "target_symbols": []
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793396913980,
-        "updated_at_epoch_ms": 1793396913980
-      },
-      "captured_by_agent": "agent",
-      "discovered_from_task_id": null
+        "slug": "a-trivial-hole-cannot-produce-a-gold-pair-so-the-corpus-cannot-grow-by-repetition-alone-e37925",
+        "status": "deferred",
+        "ticket_key": "GB-229",
+        "title": "A trivial hole cannot produce a Gold pair, so the corpus cannot grow by repetition alone",
+        "updated_at_epoch_ms": 1793396913980,
+        "verification_receipt": null
+      }
     },
     {
-      "event": "task_updated",
-      "task_id": "e37925f1-d1bf-4e02-a789-aa9bf497d518",
-      "title": null,
+      "acceptance_criteria": null,
       "description": "PARKED by owner decision 2026-10-30. Deliberately not pursued now: the pipeline defects that produced no Gold are all cleared (GB-224, GB-225, GB-227), and the owner is comfortable with Gold accruing organically rather than by manufacturing difficulty.\n\nOWNER THESIS, worth preserving because it changes the ticket premise: Gold is inherently rarer here because the oracle and the universal provider are the same model right now - the verifier cannot be harder than the generator. The intended sources of Gold are instead (a) backfill and OSS mining over real messy git history - commits named fix, fix again, another try carry a genuine failed state and a genuine repair, which is exactly a DPO pair, and (b) community contributions once the public rabbet datastore exists and developers report their own traces.\n\nSo the grading idea below is not rejected, only deprioritised. Re-open if the corpus needs to be grown faster than real history supplies.",
+      "event": "task_updated",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": null,
-      "timestamp_ms": 1793398847060
+      "task_id": "e37925f1-d1bf-4e02-a789-aa9bf497d518",
+      "timestamp_ms": 1793398847060,
+      "title": null
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "created_at_epoch_ms": 1793396913980,
+    "decisions": [],
+    "description": "PARKED by owner decision 2026-10-30. Deliberately not pursued now: the pipeline defects that produced no Gold are all cleared (GB-224, GB-225, GB-227), and the owner is comfortable with Gold accruing organically rather than by manufacturing difficulty.\n\nOWNER THESIS, worth preserving because it changes the ticket premise: Gold is inherently rarer here because the oracle and the universal provider are the same model right now - the verifier cannot be harder than the generator. The intended sources of Gold are instead (a) backfill and OSS mining over real messy git history - commits named fix, fix again, another try carry a genuine failed state and a genuine repair, which is exactly a DPO pair, and (b) community contributions once the public rabbet datastore exists and developers report their own traces.\n\nSo the grading idea below is not rejected, only deprioritised. Re-open if the corpus needs to be grown faster than real history supplies.",
+    "edges": [],
+    "id": "e37925f1-d1bf-4e02-a789-aa9bf497d518",
+    "kind": "feature",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": []
+    },
+    "slug": "a-trivial-hole-cannot-produce-a-gold-pair-so-the-corpus-cannot-grow-by-repetition-alone-e37925",
+    "status": "deferred",
+    "ticket_key": "GB-229",
+    "title": "A trivial hole cannot produce a Gold pair, so the corpus cannot grow by repetition alone",
+    "updated_at_epoch_ms": 1793398847060,
+    "verification_receipt": null
+  }
 }

@@ -1,218 +1,236 @@
 {
-  "ticket": {
-    "id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
-    "ticket_key": "GB-160",
-    "slug": "suite-dependency-and-feature-strategy-audit-evidence-before-any-further-crate-extraction-1dff06",
-    "title": "Suite dependency and feature strategy audit: evidence before any further crate extraction",
-    "description": "Evidence gathered 2026-10-31 for GB-203, recorded in .gaugeblock/storypole/plans/GB-203.md rather than in this description because the plan is the durable artifact.\n\nMeasured: miter-engine is 126 files / ~9.3k lines across eight subsystems (polyglot 2488, analysis 2346, inventory 1046, hydrate 960, codec 742, security 599, store 406, ingest 317, root 376).\n\nDependency evidence, which is what this ticket asked for before any extraction: tree_sitter spans polyglot (6 files) and analysis (9), so analysis depends on polyglot - a downward edge, permitted, and it fixes the split order. The language parsers (hcl, serde_yaml, dockerfile-parser, sqlparser) are polyglot alone. redb appears in analysis in five files, but as store-coupled convenience wrappers beside pure cores, so the pure passes can move without dragging storage along.\n\nOne risk recorded rather than resolved: rayon appears only in store and ingest, never in analysis, which is where parallel analysis would be expected. Worth checking before the split puts the dependency on the wrong side.",
-    "kind": "feature",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": "workspace",
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": {
-      "summary": "Evidence-based verdict per repository on crate extraction vs Cargo features vs leaving it alone, with a hard three-part test and no code changes during measurement",
-      "design_markdown": "# Task Plan: GB-160 — Suite Dependency and Feature Strategy Audit\n\n> **Epic Key:** `GB-160` **Scope:** all eleven repositories + `miter` capability **Status:** Planned\n\n---\n\n## 1. Objective\n\nDecide, from evidence, where a shared crate or a Cargo feature is warranted across the suite — and\nwhere the honest answer is \"leave it alone\".\n\nThis exists because one extraction was right and three were guesses. `gaugeblock-contracts` was a\n*layering* problem: six members carried copies of the same 42 wire types, ~890 lines came out, and the\nrepointing was mechanical. `miter-syntax`, `miter-inventory` and `gaugeblock-security` were proposed on\ndirect-dependency counts; `cargo tree` then showed every consumer already reaches `miter-engine`\ntransitively through `chalkline-core`, so repointing would have removed **zero crates**. A hunch about\nweight is not a measurement.\n\n---\n\n## 2. The framing this audit applies\n\n| Mechanism | Right when | Tonight's example |\n|:--|:--|:--|\n| **Crate extraction** | the *direction* of a dependency must change | `contracts` must sit beneath every member |\n| **Cargo feature** | it is the same code in optional *weight* | `tokio` — you select the parts you need |\n| **Do nothing** | one consumer, or the heavy dependency is genuinely needed | `chalkline`/`benchwork` need the inventory |\n\nMost \"split this out\" instincts are the middle row wearing the top row's clothes.\n\n---\n\n## 3. Decision criteria (all three, or the answer is no)\n\n1. **At least two consumers** use it — proved by `miter references`, not by intent or by a symbol's name.\n2. **A measured reduction** in at least one consumer: fewer transitive crates *or* less clean build time.\n3. **No dependency cycle**, and no heavy dependency pushed *down* onto every consumer.\n\nCorollary: the audit is allowed to recommend deleting a crate, merging two, or adding nothing.\n\n---\n\n## 4. Evidence to collect\n\n* `cargo tree -p <crate> -e normal` per consumer — total transitive size, and `-i <dep>` for the path.\n* `cargo build -p <crate> --timings` on the heaviest consumers, before and after any change.\n* `miter references/impact` for each candidate module — is it shared, or parochial?\n* `miter clones` — duplication that would *justify* extraction.\n* `miter skeleton` — the real size of an extracted API surface.\n* `miter contracts` — schema drift after any move.\n\n---\n\n## 5. Phases\n\n**P0 — Capability.** `miter` cannot currently answer the central question. `references` and `impact`\nwork per symbol; nothing aggregates *crate-to-crate* edges with symbol counts, and nothing understands\n`#[cfg(feature = ...)]`. Add `miter deps`: per consumer crate, the provider crates it imports from and\nhow many distinct symbols, plus which items sit behind a feature gate. Without it this audit is\nanecdote.\n\n**P1 — Measure.** Run the evidence collection across all eleven repositories. No edits, no branches in\nother repos.\n\n**P2 — Report.** One section per repository: current dependency weight, candidates found, and a verdict\nof *extract* / *feature* / *leave*, each with the numbers behind it. Publish as\n`.gaugeblock/reports/dependency-strategy-audit.md` (or the repo's chosen doc path).\n\n**P3 — Batch.** Group the surviving recommendations into one implementation epic, ordered so that each\nstep is independently gateable and bisectable.\n\n---\n\n## 6. Exit criteria\n\n* Every repository has a written verdict, including the ones the audit clears.\n* Every *extract* verdict cites a consumer count and a measured delta.\n* `GB-157`, `GB-158`, `GB-159` are each explicitly closed, rescoped, or promoted with data.\n* No production code changed during P0-P2 beyond the new `miter deps` capability.\n\n---\n\n## 7. Known constraints\n\n* Local development resolves cross-repo crates through `.cargo/config.toml` `[patch.crates-io]`, so\n  `cargo tree` reflects the working copies — good for honesty, but it means tree sizes are\n  workspace-local and must be recorded as such.\n* `chalkline-core` is the pivot: its use of `inspect_workspace` is why six repositories carry\n  `miter-engine`'s 165-crate subtree. Any verdict that ignores that edge is wrong.\n* No pushes, releases, publishes or version bumps are part of this epic.\n",
-      "steps": [
-        {
-          "step_id": "1",
-          "title": "Add miter deps: per-crate import edges with symbol counts and feature-gated items",
-          "target_files": [],
-          "verification_gate": "miter deps --json reports edges for all eleven repos",
-          "completed": false
-        },
-        {
-          "step_id": "2",
-          "title": "Measure every repository with cargo tree, --timings, references, clones and skeleton (read-only)",
-          "target_files": [],
-          "verification_gate": "evidence table per repo recorded",
-          "completed": false
-        },
-        {
-          "step_id": "3",
-          "title": "Publish the audit report with an extract/feature/leave verdict per repo",
-          "target_files": [],
-          "verification_gate": "every verdict cites a consumer count and a measured delta",
-          "completed": false
-        },
-        {
-          "step_id": "4",
-          "title": "Batch surviving recommendations into one implementation epic",
-          "target_files": [],
-          "verification_gate": "GB-157/158/159 closed, rescoped or promoted",
-          "completed": false
-        }
-      ],
-      "plan_file_path": ".gaugeblock/storypole/plans/GB-160.md",
-      "updated_at_epoch_ms": 1793249174612
-    },
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Manual verification confirmed",
-      "verified_at_epoch_ms": 1793470762955,
-      "git_branch": "main",
-      "base_commit_sha": "33fd5a64752a403bbb269667c40099d084bcf436",
-      "head_commit_sha": "33fd5a64752a403bbb269667c40099d084bcf436",
-      "commit_shas": [
-        "33fd5a64752a403bbb269667c40099d084bcf436"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793248783712,
-    "updated_at_epoch_ms": 1794038012018,
-    "archived_at_epoch_ms": 1794038012018
-  },
   "events": [
     {
+      "captured_by_agent": "cline",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793248783712,
+        "decisions": [],
+        "description": "Suite-wide read-only audit of crate strategy and feature strategy, batched as an epic, before any further extraction (MTR-10/GB-158/MTR-11 stay parked until it reports). Evidence gathered so far: gaugeblock-contracts was warranted (6 members, 42 wire types, ~890 duplicated lines removed) while miter-syntax/miter-inventory/gaugeblock-security are unproven - cargo tree shows every consumer already reaches miter-engine through chalkline-core, so repointing removes zero crates. Proposed decision criteria for any new crate: at least two consumers, a measured reduction in at least one consumer's transitive tree or build time, and no dependency cycle or heavy dependency pushed down for everyone. Framing: features are the right tool when it is the same code in optional weight (tokio-style), crates are the right tool when the dependency direction itself must change (contracts as the bottom layer). Inputs: cargo tree per crate, cargo build --timings for the heaviest consumers, miter references/impact to prove a module is shared rather than parochial, miter clones to evidence duplication, miter skeleton for API surface. Gap noted: miter has no aggregated per-crate import-edge or feature-usage report, so the symbol-level half needs a small miter capability before the audit can be mechanical rather than manual.",
+        "edges": [],
         "id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
-        "ticket_key": "GB-160",
-        "slug": "suite-dependency-and-feature-strategy-audit-evidence-before-any-further-crate-extraction-1dff06",
-        "title": "Suite dependency and feature strategy audit: evidence before any further crate extraction",
-        "description": "Suite-wide read-only audit of crate strategy and feature strategy, batched as an epic, before any further extraction (GB-157/GB-158/GB-159 stay parked until it reports). Evidence gathered so far: gaugeblock-contracts was warranted (6 members, 42 wire types, ~890 duplicated lines removed) while miter-syntax/miter-inventory/gaugeblock-security are unproven - cargo tree shows every consumer already reaches miter-engine through chalkline-core, so repointing removes zero crates. Proposed decision criteria for any new crate: at least two consumers, a measured reduction in at least one consumer's transitive tree or build time, and no dependency cycle or heavy dependency pushed down for everyone. Framing: features are the right tool when it is the same code in optional weight (tokio-style), crates are the right tool when the dependency direction itself must change (contracts as the bottom layer). Inputs: cargo tree per crate, cargo build --timings for the heaviest consumers, miter references/impact to prove a module is shared rather than parochial, miter clones to evidence duplication, miter skeleton for API surface. Gap noted: miter has no aggregated per-crate import-edge or feature-usage report, so the symbol-level half needs a small miter capability before the audit can be mechanical rather than manual.",
         "kind": "feature",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": "workspace",
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
-          "target_symbols": [],
-          "labels": []
+          "target_symbols": []
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793248783712,
-        "updated_at_epoch_ms": 1793248783712
-      },
-      "captured_by_agent": "cline",
-      "discovered_from_task_id": null
+        "slug": "suite-dependency-and-feature-strategy-audit-evidence-before-any-further-crate-extraction-1dff06",
+        "status": "deferred",
+        "ticket_key": "GB-160",
+        "title": "Suite dependency and feature strategy audit: evidence before any further crate extraction",
+        "updated_at_epoch_ms": 1793248783712,
+        "verification_receipt": null
+      }
     },
     {
       "event": "plan_updated",
-      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
       "plan": {
-        "summary": "Evidence-based verdict per repository on crate extraction vs Cargo features vs leaving it alone, with a hard three-part test and no code changes during measurement",
-        "design_markdown": "# Task Plan: GB-160 — Suite Dependency and Feature Strategy Audit\n\n> **Epic Key:** `GB-160` **Scope:** all eleven repositories + `miter` capability **Status:** Planned\n\n---\n\n## 1. Objective\n\nDecide, from evidence, where a shared crate or a Cargo feature is warranted across the suite — and\nwhere the honest answer is \"leave it alone\".\n\nThis exists because one extraction was right and three were guesses. `gaugeblock-contracts` was a\n*layering* problem: six members carried copies of the same 42 wire types, ~890 lines came out, and the\nrepointing was mechanical. `miter-syntax`, `miter-inventory` and `gaugeblock-security` were proposed on\ndirect-dependency counts; `cargo tree` then showed every consumer already reaches `miter-engine`\ntransitively through `chalkline-core`, so repointing would have removed **zero crates**. A hunch about\nweight is not a measurement.\n\n---\n\n## 2. The framing this audit applies\n\n| Mechanism | Right when | Tonight's example |\n|:--|:--|:--|\n| **Crate extraction** | the *direction* of a dependency must change | `contracts` must sit beneath every member |\n| **Cargo feature** | it is the same code in optional *weight* | `tokio` — you select the parts you need |\n| **Do nothing** | one consumer, or the heavy dependency is genuinely needed | `chalkline`/`benchwork` need the inventory |\n\nMost \"split this out\" instincts are the middle row wearing the top row's clothes.\n\n---\n\n## 3. Decision criteria (all three, or the answer is no)\n\n1. **At least two consumers** use it — proved by `miter references`, not by intent or by a symbol's name.\n2. **A measured reduction** in at least one consumer: fewer transitive crates *or* less clean build time.\n3. **No dependency cycle**, and no heavy dependency pushed *down* onto every consumer.\n\nCorollary: the audit is allowed to recommend deleting a crate, merging two, or adding nothing.\n\n---\n\n## 4. Evidence to collect\n\n* `cargo tree -p <crate> -e normal` per consumer — total transitive size, and `-i <dep>` for the path.\n* `cargo build -p <crate> --timings` on the heaviest consumers, before and after any change.\n* `miter references/impact` for each candidate module — is it shared, or parochial?\n* `miter clones` — duplication that would *justify* extraction.\n* `miter skeleton` — the real size of an extracted API surface.\n* `miter contracts` — schema drift after any move.\n\n---\n\n## 5. Phases\n\n**P0 — Capability.** `miter` cannot currently answer the central question. `references` and `impact`\nwork per symbol; nothing aggregates *crate-to-crate* edges with symbol counts, and nothing understands\n`#[cfg(feature = ...)]`. Add `miter deps`: per consumer crate, the provider crates it imports from and\nhow many distinct symbols, plus which items sit behind a feature gate. Without it this audit is\nanecdote.\n\n**P1 — Measure.** Run the evidence collection across all eleven repositories. No edits, no branches in\nother repos.\n\n**P2 — Report.** One section per repository: current dependency weight, candidates found, and a verdict\nof *extract* / *feature* / *leave*, each with the numbers behind it. Publish as\n`.gaugeblock/reports/dependency-strategy-audit.md` (or the repo's chosen doc path).\n\n**P3 — Batch.** Group the surviving recommendations into one implementation epic, ordered so that each\nstep is independently gateable and bisectable.\n\n---\n\n## 6. Exit criteria\n\n* Every repository has a written verdict, including the ones the audit clears.\n* Every *extract* verdict cites a consumer count and a measured delta.\n* `GB-157`, `GB-158`, `GB-159` are each explicitly closed, rescoped, or promoted with data.\n* No production code changed during P0-P2 beyond the new `miter deps` capability.\n\n---\n\n## 7. Known constraints\n\n* Local development resolves cross-repo crates through `.cargo/config.toml` `[patch.crates-io]`, so\n  `cargo tree` reflects the working copies — good for honesty, but it means tree sizes are\n  workspace-local and must be recorded as such.\n* `chalkline-core` is the pivot: its use of `inspect_workspace` is why six repositories carry\n  `miter-engine`'s 165-crate subtree. Any verdict that ignores that edge is wrong.\n* No pushes, releases, publishes or version bumps are part of this epic.\n",
+        "design_markdown": "# Task Plan: GB-160 — Suite Dependency and Feature Strategy Audit\n\n> **Epic Key:** `GB-160` **Scope:** all eleven repositories + `miter` capability **Status:** Planned\n\n---\n\n## 1. Objective\n\nDecide, from evidence, where a shared crate or a Cargo feature is warranted across the suite — and\nwhere the honest answer is \"leave it alone\".\n\nThis exists because one extraction was right and three were guesses. `gaugeblock-contracts` was a\n*layering* problem: six members carried copies of the same 42 wire types, ~890 lines came out, and the\nrepointing was mechanical. `miter-syntax`, `miter-inventory` and `gaugeblock-security` were proposed on\ndirect-dependency counts; `cargo tree` then showed every consumer already reaches `miter-engine`\ntransitively through `chalkline-core`, so repointing would have removed **zero crates**. A hunch about\nweight is not a measurement.\n\n---\n\n## 2. The framing this audit applies\n\n| Mechanism | Right when | Tonight's example |\n|:--|:--|:--|\n| **Crate extraction** | the *direction* of a dependency must change | `contracts` must sit beneath every member |\n| **Cargo feature** | it is the same code in optional *weight* | `tokio` — you select the parts you need |\n| **Do nothing** | one consumer, or the heavy dependency is genuinely needed | `chalkline`/`benchwork` need the inventory |\n\nMost \"split this out\" instincts are the middle row wearing the top row's clothes.\n\n---\n\n## 3. Decision criteria (all three, or the answer is no)\n\n1. **At least two consumers** use it — proved by `miter references`, not by intent or by a symbol's name.\n2. **A measured reduction** in at least one consumer: fewer transitive crates *or* less clean build time.\n3. **No dependency cycle**, and no heavy dependency pushed *down* onto every consumer.\n\nCorollary: the audit is allowed to recommend deleting a crate, merging two, or adding nothing.\n\n---\n\n## 4. Evidence to collect\n\n* `cargo tree -p <crate> -e normal` per consumer — total transitive size, and `-i <dep>` for the path.\n* `cargo build -p <crate> --timings` on the heaviest consumers, before and after any change.\n* `miter references/impact` for each candidate module — is it shared, or parochial?\n* `miter clones` — duplication that would *justify* extraction.\n* `miter skeleton` — the real size of an extracted API surface.\n* `miter contracts` — schema drift after any move.\n\n---\n\n## 5. Phases\n\n**P0 — Capability.** `miter` cannot currently answer the central question. `references` and `impact`\nwork per symbol; nothing aggregates *crate-to-crate* edges with symbol counts, and nothing understands\n`#[cfg(feature = ...)]`. Add `miter deps`: per consumer crate, the provider crates it imports from and\nhow many distinct symbols, plus which items sit behind a feature gate. Without it this audit is\nanecdote.\n\n**P1 — Measure.** Run the evidence collection across all eleven repositories. No edits, no branches in\nother repos.\n\n**P2 — Report.** One section per repository: current dependency weight, candidates found, and a verdict\nof *extract* / *feature* / *leave*, each with the numbers behind it. Publish as\n`.gaugeblock/reports/dependency-strategy-audit.md` (or the repo's chosen doc path).\n\n**P3 — Batch.** Group the surviving recommendations into one implementation epic, ordered so that each\nstep is independently gateable and bisectable.\n\n---\n\n## 6. Exit criteria\n\n* Every repository has a written verdict, including the ones the audit clears.\n* Every *extract* verdict cites a consumer count and a measured delta.\n* `MTR-10`, `GB-158`, `MTR-11` are each explicitly closed, rescoped, or promoted with data.\n* No production code changed during P0-P2 beyond the new `miter deps` capability.\n\n---\n\n## 7. Known constraints\n\n* Local development resolves cross-repo crates through `.cargo/config.toml` `[patch.crates-io]`, so\n  `cargo tree` reflects the working copies — good for honesty, but it means tree sizes are\n  workspace-local and must be recorded as such.\n* `chalkline-core` is the pivot: its use of `inspect_workspace` is why six repositories carry\n  `miter-engine`'s 165-crate subtree. Any verdict that ignores that edge is wrong.\n* No pushes, releases, publishes or version bumps are part of this epic.\n",
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-160.md",
         "steps": [
           {
+            "completed": false,
             "step_id": "1",
+            "target_files": [],
             "title": "Add miter deps: per-crate import edges with symbol counts and feature-gated items",
-            "target_files": [],
-            "verification_gate": "miter deps --json reports edges for all eleven repos",
-            "completed": false
+            "verification_gate": "miter deps --json reports edges for all eleven repos"
           },
           {
+            "completed": false,
             "step_id": "2",
+            "target_files": [],
             "title": "Measure every repository with cargo tree, --timings, references, clones and skeleton (read-only)",
-            "target_files": [],
-            "verification_gate": "evidence table per repo recorded",
-            "completed": false
+            "verification_gate": "evidence table per repo recorded"
           },
           {
+            "completed": false,
             "step_id": "3",
-            "title": "Publish the audit report with an extract/feature/leave verdict per repo",
             "target_files": [],
-            "verification_gate": "every verdict cites a consumer count and a measured delta",
-            "completed": false
+            "title": "Publish the audit report with an extract/feature/leave verdict per repo",
+            "verification_gate": "every verdict cites a consumer count and a measured delta"
           },
           {
+            "completed": false,
             "step_id": "4",
-            "title": "Batch surviving recommendations into one implementation epic",
             "target_files": [],
-            "verification_gate": "GB-157/158/159 closed, rescoped or promoted",
-            "completed": false
+            "title": "Batch surviving recommendations into one implementation epic",
+            "verification_gate": "MTR-10/158/159 closed, rescoped or promoted"
           }
         ],
-        "plan_file_path": ".gaugeblock/storypole/plans/GB-160.md",
+        "summary": "Evidence-based verdict per repository on crate extraction vs Cargo features vs leaving it alone, with a hard three-part test and no code changes during measurement",
         "updated_at_epoch_ms": 1793249174612
       },
+      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
       "timestamp_ms": 1793249174612
     },
     {
-      "event": "task_claimed",
-      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
       "claim": {
         "agent_id": "cline",
+        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793470686490,
-        "lease_expires_at_epoch_ms": 1793474286490,
         "git_branch": null,
-        "base_commit_sha": null
-      }
+        "lease_expires_at_epoch_ms": 1793474286490
+      },
+      "event": "task_claimed",
+      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961"
     },
     {
       "event": "status_changed",
-      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
       "from": "deferred",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793470686490
+      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
+      "timestamp_ms": 1793470686490,
+      "to": "in_progress"
     },
     {
+      "acceptance_criteria": null,
+      "description": "Evidence gathered 2026-10-31 for MTR-20, recorded in .gaugeblock/storypole/plans/MTR-20.md rather than in this description because the plan is the durable artifact.\n\nMeasured: miter-engine is 126 files / ~9.3k lines across eight subsystems (polyglot 2488, analysis 2346, inventory 1046, hydrate 960, codec 742, security 599, store 406, ingest 317, root 376).\n\nDependency evidence, which is what this ticket asked for before any extraction: tree_sitter spans polyglot (6 files) and analysis (9), so analysis depends on polyglot - a downward edge, permitted, and it fixes the split order. The language parsers (hcl, serde_yaml, dockerfile-parser, sqlparser) are polyglot alone. redb appears in analysis in five files, but as store-coupled convenience wrappers beside pure cores, so the pure passes can move without dragging storage along.\n\nOne risk recorded rather than resolved: rayon appears only in store and ingest, never in analysis, which is where parallel analysis would be expected. Worth checking before the split puts the dependency on the wrong side.",
       "event": "task_updated",
-      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
-      "title": null,
-      "description": "Evidence gathered 2026-10-31 for GB-203, recorded in .gaugeblock/storypole/plans/GB-203.md rather than in this description because the plan is the durable artifact.\n\nMeasured: miter-engine is 126 files / ~9.3k lines across eight subsystems (polyglot 2488, analysis 2346, inventory 1046, hydrate 960, codec 742, security 599, store 406, ingest 317, root 376).\n\nDependency evidence, which is what this ticket asked for before any extraction: tree_sitter spans polyglot (6 files) and analysis (9), so analysis depends on polyglot - a downward edge, permitted, and it fixes the split order. The language parsers (hcl, serde_yaml, dockerfile-parser, sqlparser) are polyglot alone. redb appears in analysis in five files, but as store-coupled convenience wrappers beside pure cores, so the pure passes can move without dragging storage along.\n\nOne risk recorded rather than resolved: rayon appears only in store and ingest, never in analysis, which is where parallel analysis would be expected. Worth checking before the split puts the dependency on the wrong side.",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": null,
-      "timestamp_ms": 1793470762830
+      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
+      "timestamp_ms": 1793470762830,
+      "title": null
     },
     {
       "event": "task_verified",
-      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Manual verification confirmed",
-        "verified_at_epoch_ms": 1793470762955,
-        "git_branch": "main",
         "base_commit_sha": "33fd5a64752a403bbb269667c40099d084bcf436",
-        "head_commit_sha": "33fd5a64752a403bbb269667c40099d084bcf436",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "33fd5a64752a403bbb269667c40099d084bcf436"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "33fd5a64752a403bbb269667c40099d084bcf436",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793470762955,
+        "verifier": "manual"
+      },
+      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961"
     },
     {
       "event": "status_changed",
-      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
       "from": "verified",
-      "to": "archived",
       "reason": "Archived out of active backlog",
-      "timestamp_ms": 1793953175223
+      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
+      "timestamp_ms": 1793953175223,
+      "to": "archived"
     },
     {
       "event": "task_archived",
-      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
       "status": "verified",
+      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
       "timestamp_ms": 1794038012018
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "9296fdfe-1e9a-4190-a6a2-642e7fd212c6",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-20"
+      },
+      "event": "edge_added",
+      "task_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
+      "timestamp_ms": 1794336146474
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038012018,
+    "created_at_epoch_ms": 1793248783712,
+    "decisions": [],
+    "description": "Evidence gathered 2026-10-31 for MTR-20, recorded in .gaugeblock/storypole/plans/MTR-20.md rather than in this description because the plan is the durable artifact.\n\nMeasured: miter-engine is 126 files / ~9.3k lines across eight subsystems (polyglot 2488, analysis 2346, inventory 1046, hydrate 960, codec 742, security 599, store 406, ingest 317, root 376).\n\nDependency evidence, which is what this ticket asked for before any extraction: tree_sitter spans polyglot (6 files) and analysis (9), so analysis depends on polyglot - a downward edge, permitted, and it fixes the split order. The language parsers (hcl, serde_yaml, dockerfile-parser, sqlparser) are polyglot alone. redb appears in analysis in five files, but as store-coupled convenience wrappers beside pure cores, so the pure passes can move without dragging storage along.\n\nOne risk recorded rather than resolved: rayon appears only in store and ingest, never in analysis, which is where parallel analysis would be expected. Worth checking before the split puts the dependency on the wrong side.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "9296fdfe-1e9a-4190-a6a2-642e7fd212c6",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-20"
+      }
+    ],
+    "id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
+    "kind": "feature",
+    "latest_handoff": null,
+    "plan": {
+      "design_markdown": "# Task Plan: GB-160 — Suite Dependency and Feature Strategy Audit\n\n> **Epic Key:** `GB-160` **Scope:** all eleven repositories + `miter` capability **Status:** Planned\n\n---\n\n## 1. Objective\n\nDecide, from evidence, where a shared crate or a Cargo feature is warranted across the suite — and\nwhere the honest answer is \"leave it alone\".\n\nThis exists because one extraction was right and three were guesses. `gaugeblock-contracts` was a\n*layering* problem: six members carried copies of the same 42 wire types, ~890 lines came out, and the\nrepointing was mechanical. `miter-syntax`, `miter-inventory` and `gaugeblock-security` were proposed on\ndirect-dependency counts; `cargo tree` then showed every consumer already reaches `miter-engine`\ntransitively through `chalkline-core`, so repointing would have removed **zero crates**. A hunch about\nweight is not a measurement.\n\n---\n\n## 2. The framing this audit applies\n\n| Mechanism | Right when | Tonight's example |\n|:--|:--|:--|\n| **Crate extraction** | the *direction* of a dependency must change | `contracts` must sit beneath every member |\n| **Cargo feature** | it is the same code in optional *weight* | `tokio` — you select the parts you need |\n| **Do nothing** | one consumer, or the heavy dependency is genuinely needed | `chalkline`/`benchwork` need the inventory |\n\nMost \"split this out\" instincts are the middle row wearing the top row's clothes.\n\n---\n\n## 3. Decision criteria (all three, or the answer is no)\n\n1. **At least two consumers** use it — proved by `miter references`, not by intent or by a symbol's name.\n2. **A measured reduction** in at least one consumer: fewer transitive crates *or* less clean build time.\n3. **No dependency cycle**, and no heavy dependency pushed *down* onto every consumer.\n\nCorollary: the audit is allowed to recommend deleting a crate, merging two, or adding nothing.\n\n---\n\n## 4. Evidence to collect\n\n* `cargo tree -p <crate> -e normal` per consumer — total transitive size, and `-i <dep>` for the path.\n* `cargo build -p <crate> --timings` on the heaviest consumers, before and after any change.\n* `miter references/impact` for each candidate module — is it shared, or parochial?\n* `miter clones` — duplication that would *justify* extraction.\n* `miter skeleton` — the real size of an extracted API surface.\n* `miter contracts` — schema drift after any move.\n\n---\n\n## 5. Phases\n\n**P0 — Capability.** `miter` cannot currently answer the central question. `references` and `impact`\nwork per symbol; nothing aggregates *crate-to-crate* edges with symbol counts, and nothing understands\n`#[cfg(feature = ...)]`. Add `miter deps`: per consumer crate, the provider crates it imports from and\nhow many distinct symbols, plus which items sit behind a feature gate. Without it this audit is\nanecdote.\n\n**P1 — Measure.** Run the evidence collection across all eleven repositories. No edits, no branches in\nother repos.\n\n**P2 — Report.** One section per repository: current dependency weight, candidates found, and a verdict\nof *extract* / *feature* / *leave*, each with the numbers behind it. Publish as\n`.gaugeblock/reports/dependency-strategy-audit.md` (or the repo's chosen doc path).\n\n**P3 — Batch.** Group the surviving recommendations into one implementation epic, ordered so that each\nstep is independently gateable and bisectable.\n\n---\n\n## 6. Exit criteria\n\n* Every repository has a written verdict, including the ones the audit clears.\n* Every *extract* verdict cites a consumer count and a measured delta.\n* `MTR-10`, `GB-158`, `MTR-11` are each explicitly closed, rescoped, or promoted with data.\n* No production code changed during P0-P2 beyond the new `miter deps` capability.\n\n---\n\n## 7. Known constraints\n\n* Local development resolves cross-repo crates through `.cargo/config.toml` `[patch.crates-io]`, so\n  `cargo tree` reflects the working copies — good for honesty, but it means tree sizes are\n  workspace-local and must be recorded as such.\n* `chalkline-core` is the pivot: its use of `inspect_workspace` is why six repositories carry\n  `miter-engine`'s 165-crate subtree. Any verdict that ignores that edge is wrong.\n* No pushes, releases, publishes or version bumps are part of this epic.\n",
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-160.md",
+      "steps": [
+        {
+          "completed": false,
+          "step_id": "1",
+          "target_files": [],
+          "title": "Add miter deps: per-crate import edges with symbol counts and feature-gated items",
+          "verification_gate": "miter deps --json reports edges for all eleven repos"
+        },
+        {
+          "completed": false,
+          "step_id": "2",
+          "target_files": [],
+          "title": "Measure every repository with cargo tree, --timings, references, clones and skeleton (read-only)",
+          "verification_gate": "evidence table per repo recorded"
+        },
+        {
+          "completed": false,
+          "step_id": "3",
+          "target_files": [],
+          "title": "Publish the audit report with an extract/feature/leave verdict per repo",
+          "verification_gate": "every verdict cites a consumer count and a measured delta"
+        },
+        {
+          "completed": false,
+          "step_id": "4",
+          "target_files": [],
+          "title": "Batch surviving recommendations into one implementation epic",
+          "verification_gate": "MTR-10/158/159 closed, rescoped or promoted"
+        }
+      ],
+      "summary": "Evidence-based verdict per repository on crate extraction vs Cargo features vs leaving it alone, with a hard three-part test and no code changes during measurement",
+      "updated_at_epoch_ms": 1793249174612
+    },
+    "priority": 3,
+    "scope": {
+      "crate_name": "workspace",
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": []
+    },
+    "slug": "suite-dependency-and-feature-strategy-audit-evidence-before-any-further-crate-extraction-1dff06",
+    "status": "verified",
+    "ticket_key": "GB-160",
+    "title": "Suite dependency and feature strategy audit: evidence before any further crate extraction",
+    "updated_at_epoch_ms": 1794038012018,
+    "verification_receipt": {
+      "base_commit_sha": "33fd5a64752a403bbb269667c40099d084bcf436",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "33fd5a64752a403bbb269667c40099d084bcf436"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "33fd5a64752a403bbb269667c40099d084bcf436",
+      "repo": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1793470762955,
+      "verifier": "manual"
+    }
+  }
 }

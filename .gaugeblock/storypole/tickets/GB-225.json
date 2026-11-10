@@ -1,136 +1,136 @@
 {
-  "ticket": {
-    "id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
-    "ticket_key": "GB-225",
-    "slug": "the-gold-chosen-body-is-stored-as-the-placeholder-filled-instead-of-the-code-eac151",
-    "title": "The Gold chosen body is stored as the placeholder <filled> instead of the code",
-    "description": "Measured while proving the DPO shard end to end after GB-216. `hole_filler_dpo.parquet` now has 2 real rows with prompt/chosen/rejected columns, the scope signature (/tmp/gb-gold-crate/src/lib.rs::grapheme_count) and a genuinely rejected attempt containing `use unicode_segmentation::UnicodeSegmentation;`. The `chosen` column, though, reads `grapheme_count: <filled>` - the literal placeholder rather than the accepted code.\n\nSame shape shows up upstream: the spool record filled_holes map has keys `grapheme_count` and `<filled>`, so the filled body never got attached to the hole it fills. Regex `mine-patterns` is affected too: with 2 examples it proposes a template `<filled>` with an empty typed-hole list, which is a degenerate pattern rather than a discovered one.\n\nThis is the difference between a shard that exists and a shard that trains: a DPO pair whose chosen side is a placeholder is unusable. Fix belongs where the trace is assembled (joiner fill - the hole name and the body are both known there) and should assert that filled_holes contains at least one non-placeholder body before spooling.",
-    "kind": "bug",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "joiner_core::function_fill,gaugeblock_contracts::telemetry"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "The Gold/Silver trace now carries the accepted body instead of the literal <filled>: the CLI was building filled_holes as (symbol, \"<filled>\") while FillOutcome::code - the validated candidate - sat unused beside it. Verified live: the spool record for the newest fill holds the full function body including its doc comment and the crate::text::grapheme_count delegation, and the exported sft shard contains that text rather than a placeholder. record_trace now refuses to spool a hole whose body is empty or the placeholder, naming the hole, because a corpus that silently accepts untrainable pairs only fails when someone trains on it. Found while proving this: verification was writing the bare candidate as the whole file, erasing every mod declaration, so a correct candidate delegating to crate::text failed with \"cannot find text in the crate root\"; it now splices exactly as --apply does. Also found the GB-213 fixture itself was false - its doc comment promised a crate::text helper that did not exist, which is why every earlier attempt reached for unicode_segmentation. Gate: clippy -D warnings, 32 tests, fmt green across three commits.",
-      "verified_at_epoch_ms": 1793395084579,
-      "git_branch": "main",
-      "base_commit_sha": "3078dfc20c7888f79b4af4e7bc11b2dae64421f4",
-      "head_commit_sha": "3078dfc20c7888f79b4af4e7bc11b2dae64421f4",
-      "commit_shas": [
-        "3078dfc20c7888f79b4af4e7bc11b2dae64421f4"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793391351795,
-    "updated_at_epoch_ms": 1794038020493,
-    "archived_at_epoch_ms": 1794038020493
-  },
   "events": [
     {
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
-        "ticket_key": "GB-225",
-        "slug": "the-gold-chosen-body-is-stored-as-the-placeholder-filled-instead-of-the-code-eac151",
-        "title": "The Gold chosen body is stored as the placeholder <filled> instead of the code",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793391351795,
+        "decisions": [],
         "description": "Measured while proving the DPO shard end to end after GB-216. `hole_filler_dpo.parquet` now has 2 real rows with prompt/chosen/rejected columns, the scope signature (/tmp/gb-gold-crate/src/lib.rs::grapheme_count) and a genuinely rejected attempt containing `use unicode_segmentation::UnicodeSegmentation;`. The `chosen` column, though, reads `grapheme_count: <filled>` - the literal placeholder rather than the accepted code.\n\nSame shape shows up upstream: the spool record filled_holes map has keys `grapheme_count` and `<filled>`, so the filled body never got attached to the hole it fills. Regex `mine-patterns` is affected too: with 2 examples it proposes a template `<filled>` with an empty typed-hole list, which is a degenerate pattern rather than a discovered one.\n\nThis is the difference between a shard that exists and a shard that trains: a DPO pair whose chosen side is a placeholder is unusable. Fix belongs where the trace is assembled (joiner fill - the hole name and the body are both known there) and should assert that filled_holes contains at least one non-placeholder body before spooling.",
+        "edges": [],
+        "id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
         "kind": "bug",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "joiner_core::function_fill,gaugeblock_contracts::telemetry"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793391351795,
-        "updated_at_epoch_ms": 1793391351795
-      },
-      "captured_by_agent": "agent",
-      "discovered_from_task_id": null
-    },
-    {
-      "event": "task_claimed",
-      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
-      "claim": {
-        "agent_id": "cline",
-        "claimed_at_epoch_ms": 1793395084284,
-        "lease_expires_at_epoch_ms": 1793398684284,
-        "git_branch": "fix/gb-225-chosen-body",
-        "base_commit_sha": null
+        "slug": "the-gold-chosen-body-is-stored-as-the-placeholder-filled-instead-of-the-code-eac151",
+        "status": "triage",
+        "ticket_key": "GB-225",
+        "title": "The Gold chosen body is stored as the placeholder <filled> instead of the code",
+        "updated_at_epoch_ms": 1793391351795,
+        "verification_receipt": null
       }
     },
     {
+      "claim": {
+        "agent_id": "cline",
+        "base_commit_sha": null,
+        "claimed_at_epoch_ms": 1793395084284,
+        "git_branch": "fix/gb-225-chosen-body",
+        "lease_expires_at_epoch_ms": 1793398684284
+      },
+      "event": "task_claimed",
+      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444"
+    },
+    {
       "event": "status_changed",
-      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
       "from": "triage",
-      "to": "in_progress",
       "reason": "Claimed by cline",
-      "timestamp_ms": 1793395084284
+      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
+      "timestamp_ms": 1793395084284,
+      "to": "in_progress"
     },
     {
       "event": "task_verified",
-      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "The Gold/Silver trace now carries the accepted body instead of the literal <filled>: the CLI was building filled_holes as (symbol, \"<filled>\") while FillOutcome::code - the validated candidate - sat unused beside it. Verified live: the spool record for the newest fill holds the full function body including its doc comment and the crate::text::grapheme_count delegation, and the exported sft shard contains that text rather than a placeholder. record_trace now refuses to spool a hole whose body is empty or the placeholder, naming the hole, because a corpus that silently accepts untrainable pairs only fails when someone trains on it. Found while proving this: verification was writing the bare candidate as the whole file, erasing every mod declaration, so a correct candidate delegating to crate::text failed with \"cannot find text in the crate root\"; it now splices exactly as --apply does. Also found the GB-213 fixture itself was false - its doc comment promised a crate::text helper that did not exist, which is why every earlier attempt reached for unicode_segmentation. Gate: clippy -D warnings, 32 tests, fmt green across three commits.",
-        "verified_at_epoch_ms": 1793395084579,
-        "git_branch": "main",
         "base_commit_sha": "3078dfc20c7888f79b4af4e7bc11b2dae64421f4",
-        "head_commit_sha": "3078dfc20c7888f79b4af4e7bc11b2dae64421f4",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "3078dfc20c7888f79b4af4e7bc11b2dae64421f4"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "3078dfc20c7888f79b4af4e7bc11b2dae64421f4",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "The Gold/Silver trace now carries the accepted body instead of the literal <filled>: the CLI was building filled_holes as (symbol, \"<filled>\") while FillOutcome::code - the validated candidate - sat unused beside it. Verified live: the spool record for the newest fill holds the full function body including its doc comment and the crate::text::grapheme_count delegation, and the exported sft shard contains that text rather than a placeholder. record_trace now refuses to spool a hole whose body is empty or the placeholder, naming the hole, because a corpus that silently accepts untrainable pairs only fails when someone trains on it. Found while proving this: verification was writing the bare candidate as the whole file, erasing every mod declaration, so a correct candidate delegating to crate::text failed with \"cannot find text in the crate root\"; it now splices exactly as --apply does. Also found the JN-9 fixture itself was false - its doc comment promised a crate::text helper that did not exist, which is why every earlier attempt reached for unicode_segmentation. Gate: clippy -D warnings, 32 tests, fmt green across three commits.",
+        "verified_at_epoch_ms": 1793395084579,
+        "verifier": "manual"
+      },
+      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444"
     },
     {
       "event": "status_changed",
-      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
       "from": "verified",
-      "to": "archived",
       "reason": "Archived out of active backlog",
-      "timestamp_ms": 1793953246965
+      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
+      "timestamp_ms": 1793953246965,
+      "to": "archived"
     },
     {
       "event": "task_archived",
-      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
       "status": "verified",
+      "task_id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
       "timestamp_ms": 1794038020493
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038020493,
+    "created_at_epoch_ms": 1793391351795,
+    "decisions": [],
+    "description": "Measured while proving the DPO shard end to end after GB-216. `hole_filler_dpo.parquet` now has 2 real rows with prompt/chosen/rejected columns, the scope signature (/tmp/gb-gold-crate/src/lib.rs::grapheme_count) and a genuinely rejected attempt containing `use unicode_segmentation::UnicodeSegmentation;`. The `chosen` column, though, reads `grapheme_count: <filled>` - the literal placeholder rather than the accepted code.\n\nSame shape shows up upstream: the spool record filled_holes map has keys `grapheme_count` and `<filled>`, so the filled body never got attached to the hole it fills. Regex `mine-patterns` is affected too: with 2 examples it proposes a template `<filled>` with an empty typed-hole list, which is a degenerate pattern rather than a discovered one.\n\nThis is the difference between a shard that exists and a shard that trains: a DPO pair whose chosen side is a placeholder is unusable. Fix belongs where the trace is assembled (joiner fill - the hole name and the body are both known there) and should assert that filled_holes contains at least one non-placeholder body before spooling.",
+    "edges": [],
+    "id": "eac15176-c4bc-44d1-b0e7-36665f46c444",
+    "kind": "bug",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "joiner_core::function_fill,gaugeblock_contracts::telemetry"
+      ]
+    },
+    "slug": "the-gold-chosen-body-is-stored-as-the-placeholder-filled-instead-of-the-code-eac151",
+    "status": "verified",
+    "ticket_key": "GB-225",
+    "title": "The Gold chosen body is stored as the placeholder <filled> instead of the code",
+    "updated_at_epoch_ms": 1794038020493,
+    "verification_receipt": {
+      "base_commit_sha": "3078dfc20c7888f79b4af4e7bc11b2dae64421f4",
+      "chain_key": null,
+      "command": "n/a",
+      "commit_shas": [
+        "3078dfc20c7888f79b4af4e7bc11b2dae64421f4"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "3078dfc20c7888f79b4af4e7bc11b2dae64421f4",
+      "repo": null,
+      "summary": "The Gold/Silver trace now carries the accepted body instead of the literal <filled>: the CLI was building filled_holes as (symbol, \"<filled>\") while FillOutcome::code - the validated candidate - sat unused beside it. Verified live: the spool record for the newest fill holds the full function body including its doc comment and the crate::text::grapheme_count delegation, and the exported sft shard contains that text rather than a placeholder. record_trace now refuses to spool a hole whose body is empty or the placeholder, naming the hole, because a corpus that silently accepts untrainable pairs only fails when someone trains on it. Found while proving this: verification was writing the bare candidate as the whole file, erasing every mod declaration, so a correct candidate delegating to crate::text failed with \"cannot find text in the crate root\"; it now splices exactly as --apply does. Also found the JN-9 fixture itself was false - its doc comment promised a crate::text helper that did not exist, which is why every earlier attempt reached for unicode_segmentation. Gate: clippy -D warnings, 32 tests, fmt green across three commits.",
+      "verified_at_epoch_ms": 1793395084579,
+      "verifier": "manual"
+    }
+  }
 }

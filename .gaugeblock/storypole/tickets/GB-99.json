@@ -1,146 +1,146 @@
 {
-  "ticket": {
-    "id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
-    "ticket_key": "GB-99",
-    "slug": "codify-miter-contracts-and-chalkline-docs-check-in-tiered-verification-gates-6b2871",
-    "title": "Codify miter contracts and chalkline docs check in Tiered Verification Gates",
-    "description": "Codify miter contracts and chalkline docs check in the Tiered Verification Matrix (Tier 3 Task Completion Gate and Tier 4 Release Gate) to guarantee wire contract parity and 9-doc canonical architecture compliance before releases.",
-    "kind": "feature",
-    "status": "verified",
-    "priority": 3,
-    "scope": {
-      "repo": "workspace",
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [
-        "AGENTS.md,CONTRACTS.md"
-      ],
-      "target_symbols": [],
-      "labels": []
+  "events": [
+    {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
+      "event": "deferred_item_captured",
+      "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793126166631,
+        "decisions": [],
+        "description": "Codify miter contracts and chalkline docs check in the Tiered Verification Matrix (Tier 3 Task Completion Gate and Tier 4 Release Gate) to guarantee wire contract parity and 9-doc canonical architecture compliance before releases.",
+        "edges": [],
+        "id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
+        "kind": "feature",
+        "latest_handoff": null,
+        "plan": null,
+        "priority": 3,
+        "scope": {
+          "crate_name": null,
+          "labels": [],
+          "module_path": null,
+          "repo": "workspace",
+          "target_files": [
+            "AGENTS.md,CONTRACTS.md"
+          ],
+          "target_symbols": []
+        },
+        "slug": "codify-miter-contracts-and-chalkline-docs-check-in-tiered-verification-gates-6b2871",
+        "status": "deferred",
+        "ticket_key": "GB-99",
+        "title": "Codify miter contracts and chalkline docs check in Tiered Verification Gates",
+        "updated_at_epoch_ms": 1793126166631,
+        "verification_receipt": null
+      }
     },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "1d40d107-90c1-413d-b453-946e0a340932",
+        "target_repo": "chalkline",
+        "target_ticket_key": "CH-2"
+      },
+      "event": "edge_added",
+      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
+      "timestamp_ms": 1793149867418
+    },
+    {
+      "claim": {
+        "agent_id": "agent-antigravity",
+        "base_commit_sha": "5803f04420e22e16b2075202e4a44c2627b946b8",
+        "claimed_at_epoch_ms": 1793151907888,
+        "git_branch": "feat/chalkline-docs-evolution",
+        "lease_expires_at_epoch_ms": 1793155507888
+      },
+      "event": "task_claimed",
+      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499"
+    },
+    {
+      "event": "status_changed",
+      "from": "deferred",
+      "reason": "Claimed by agent-antigravity",
+      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
+      "timestamp_ms": 1793151907888,
+      "to": "in_progress"
+    },
+    {
+      "event": "task_verified",
+      "receipt": {
+        "base_commit_sha": "5803f04420e22e16b2075202e4a44c2627b946b8",
+        "chain_key": null,
+        "command": "n/a",
+        "commit_shas": [
+          "804b5b03dd4040b7c103cefdf67fbc1e716cf533"
+        ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "feat/chalkline-docs-evolution",
+        "head_commit_sha": "804b5b03dd4040b7c103cefdf67fbc1e716cf533",
+        "repo": null,
+        "summary": "Codified miter contracts and chalkline docs check in Tiered Verification Gates (Tier 2-4) and added 9-document wire schemas to CONTRACTS.md",
+        "verified_at_epoch_ms": 1793151946714,
+        "verifier": "manual"
+      },
+      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499"
+    },
+    {
+      "event": "task_archived",
+      "status": "verified",
+      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
+      "timestamp_ms": 1794038006980
+    }
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794038006980,
+    "created_at_epoch_ms": 1793126166631,
+    "decisions": [],
+    "description": "Codify miter contracts and chalkline docs check in the Tiered Verification Matrix (Tier 3 Task Completion Gate and Tier 4 Release Gate) to guarantee wire contract parity and 9-doc canonical architecture compliance before releases.",
     "edges": [
       {
         "kind": "related_to",
         "target_id": "1d40d107-90c1-413d-b453-946e0a340932",
-        "target_ticket_key": "GB-102",
-        "target_repo": "chalkline"
+        "target_repo": "chalkline",
+        "target_ticket_key": "CH-2"
       }
     ],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
+    "id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
+    "kind": "feature",
     "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": "workspace",
+      "target_files": [
+        "AGENTS.md,CONTRACTS.md"
+      ],
+      "target_symbols": []
+    },
+    "slug": "codify-miter-contracts-and-chalkline-docs-check-in-tiered-verification-gates-6b2871",
+    "status": "verified",
+    "ticket_key": "GB-99",
+    "title": "Codify miter contracts and chalkline docs check in Tiered Verification Gates",
+    "updated_at_epoch_ms": 1794038006980,
     "verification_receipt": {
-      "verifier": "manual",
-      "command": "n/a",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Codified miter contracts and chalkline docs check in Tiered Verification Gates (Tier 2-4) and added 9-document wire schemas to CONTRACTS.md",
-      "verified_at_epoch_ms": 1793151946714,
-      "git_branch": "feat/chalkline-docs-evolution",
       "base_commit_sha": "5803f04420e22e16b2075202e4a44c2627b946b8",
-      "head_commit_sha": "804b5b03dd4040b7c103cefdf67fbc1e716cf533",
+      "chain_key": null,
+      "command": "n/a",
       "commit_shas": [
         "804b5b03dd4040b7c103cefdf67fbc1e716cf533"
       ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "feat/chalkline-docs-evolution",
+      "head_commit_sha": "804b5b03dd4040b7c103cefdf67fbc1e716cf533",
       "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793126166631,
-    "updated_at_epoch_ms": 1794038006980,
-    "archived_at_epoch_ms": 1794038006980
-  },
-  "events": [
-    {
-      "event": "deferred_item_captured",
-      "task": {
-        "id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
-        "ticket_key": "GB-99",
-        "slug": "codify-miter-contracts-and-chalkline-docs-check-in-tiered-verification-gates-6b2871",
-        "title": "Codify miter contracts and chalkline docs check in Tiered Verification Gates",
-        "description": "Codify miter contracts and chalkline docs check in the Tiered Verification Matrix (Tier 3 Task Completion Gate and Tier 4 Release Gate) to guarantee wire contract parity and 9-doc canonical architecture compliance before releases.",
-        "kind": "feature",
-        "status": "deferred",
-        "priority": 3,
-        "scope": {
-          "repo": "workspace",
-          "crate_name": null,
-          "module_path": null,
-          "target_files": [
-            "AGENTS.md,CONTRACTS.md"
-          ],
-          "target_symbols": [],
-          "labels": []
-        },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793126166631,
-        "updated_at_epoch_ms": 1793126166631
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
-    },
-    {
-      "event": "edge_added",
-      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
-      "edge": {
-        "kind": "related_to",
-        "target_id": "1d40d107-90c1-413d-b453-946e0a340932",
-        "target_ticket_key": "GB-102",
-        "target_repo": "chalkline"
-      },
-      "timestamp_ms": 1793149867418
-    },
-    {
-      "event": "task_claimed",
-      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
-      "claim": {
-        "agent_id": "agent-antigravity",
-        "claimed_at_epoch_ms": 1793151907888,
-        "lease_expires_at_epoch_ms": 1793155507888,
-        "git_branch": "feat/chalkline-docs-evolution",
-        "base_commit_sha": "5803f04420e22e16b2075202e4a44c2627b946b8"
-      }
-    },
-    {
-      "event": "status_changed",
-      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
-      "from": "deferred",
-      "to": "in_progress",
-      "reason": "Claimed by agent-antigravity",
-      "timestamp_ms": 1793151907888
-    },
-    {
-      "event": "task_verified",
-      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
-      "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Codified miter contracts and chalkline docs check in Tiered Verification Gates (Tier 2-4) and added 9-document wire schemas to CONTRACTS.md",
-        "verified_at_epoch_ms": 1793151946714,
-        "git_branch": "feat/chalkline-docs-evolution",
-        "base_commit_sha": "5803f04420e22e16b2075202e4a44c2627b946b8",
-        "head_commit_sha": "804b5b03dd4040b7c103cefdf67fbc1e716cf533",
-        "commit_shas": [
-          "804b5b03dd4040b7c103cefdf67fbc1e716cf533"
-        ],
-        "repo": null,
-        "chain_key": null
-      }
-    },
-    {
-      "event": "task_archived",
-      "task_id": "6b2871f4-24d1-4ed0-a048-6bc864841499",
-      "status": "verified",
-      "timestamp_ms": 1794038006980
+      "summary": "Codified miter contracts and chalkline docs check in Tiered Verification Gates (Tier 2-4) and added 9-document wire schemas to CONTRACTS.md",
+      "verified_at_epoch_ms": 1793151946714,
+      "verifier": "manual"
     }
-  ]
+  }
 }

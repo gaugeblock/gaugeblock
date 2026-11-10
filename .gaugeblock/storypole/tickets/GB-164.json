@@ -1,93 +1,127 @@
 {
-  "ticket": {
-    "id": "8740f22e-4b18-4cfe-8206-730327771dfd",
-    "ticket_key": "GB-164",
-    "slug": "miter-clones-across-crates-plus-an-outfeed-gate-that-runs-the-tier-3-matrix-8740f2",
-    "title": "miter clones --across-crates: group duplication by crate pair",
-    "description": "Remaining half of GB-164 after outfeed gate moved to GB-168. miter clones currently groups by file; grouping by crate pair is the strongest evidence available for a shared crate - two crates sharing a few hundred lines is exactly what justifies an extraction, and it is the one input GB-160 currently has to infer. Add --across-crates to emit a matrix of crate pairs with shared-clone counts and the source spans involved, so GB-162 --what-if can cite duplication as evidence rather than assertion.",
-    "kind": "feature",
-    "status": "deferred",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": "workspace",
-      "module_path": null,
-      "target_files": [
-        "miter/src/cli/clones.rs,outfeed/src/cli"
-      ],
-      "target_symbols": [],
-      "labels": []
-    },
-    "edges": [
-      {
-        "kind": "related_to",
-        "target_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
-        "target_ticket_key": "GB-160"
-      }
-    ],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1793250786224,
-    "updated_at_epoch_ms": 1793252049246
-  },
   "events": [
     {
+      "captured_by_agent": "cline",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "8740f22e-4b18-4cfe-8206-730327771dfd",
-        "ticket_key": "GB-164",
-        "slug": "miter-clones-across-crates-plus-an-outfeed-gate-that-runs-the-tier-3-matrix-8740f2",
-        "title": "miter clones --across-crates plus an outfeed gate that runs the Tier 3 matrix",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1793250786224,
+        "decisions": [],
         "description": "Two dogfooding wins surfaced while auditing, batched because both are small and independent. (1) miter clones --across-crates: group duplication by crate pair instead of by file. Two crates sharing three hundred lines is the strongest evidence available for a shared crate, and it is the one input GB-160 currently has to guess at. (2) outfeed gate: one command running the Tier 3 matrix - cargo fmt --check, clippy --workspace --all-targets -D warnings, nextest --workspace, miter contracts, outfeed lockfiles, chalkline docs check --workspace - so the release gate stops being typed by hand. Motivation is first-hand: today produced a commit that left Cargo.lock unstaged and one that briefly broke a #[cfg(test)] pairing, both inside manually assembled gate commands.",
+        "edges": [],
+        "id": "8740f22e-4b18-4cfe-8206-730327771dfd",
         "kind": "feature",
-        "status": "deferred",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": "workspace",
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [
             "miter/src/cli/clones.rs,outfeed/src/cli"
           ],
-          "target_symbols": [],
-          "labels": []
+          "target_symbols": []
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1793250786224,
-        "updated_at_epoch_ms": 1793250786224
-      },
-      "captured_by_agent": "cline",
-      "discovered_from_task_id": null
+        "slug": "miter-clones-across-crates-plus-an-outfeed-gate-that-runs-the-tier-3-matrix-8740f2",
+        "status": "deferred",
+        "ticket_key": "GB-164",
+        "title": "miter clones --across-crates plus an outfeed gate that runs the Tier 3 matrix",
+        "updated_at_epoch_ms": 1793250786224,
+        "verification_receipt": null
+      }
     },
     {
+      "acceptance_criteria": null,
+      "description": "Remaining half of GB-164 after outfeed gate moved to OF-37. miter clones currently groups by file; grouping by crate pair is the strongest evidence available for a shared crate - two crates sharing a few hundred lines is exactly what justifies an extraction, and it is the one input GB-160 currently has to infer. Add --across-crates to emit a matrix of crate pairs with shared-clone counts and the source spans involved, so MTR-13 --what-if can cite duplication as evidence rather than assertion.",
       "event": "task_updated",
-      "task_id": "8740f22e-4b18-4cfe-8206-730327771dfd",
-      "title": "miter clones --across-crates: group duplication by crate pair",
-      "description": "Remaining half of GB-164 after outfeed gate moved to GB-168. miter clones currently groups by file; grouping by crate pair is the strongest evidence available for a shared crate - two crates sharing a few hundred lines is exactly what justifies an extraction, and it is the one input GB-160 currently has to infer. Add --across-crates to emit a matrix of crate pairs with shared-clone counts and the source spans involved, so GB-162 --what-if can cite duplication as evidence rather than assertion.",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": null,
-      "timestamp_ms": 1793252040071
+      "task_id": "8740f22e-4b18-4cfe-8206-730327771dfd",
+      "timestamp_ms": 1793252040071,
+      "title": "miter clones --across-crates: group duplication by crate pair"
     },
     {
-      "event": "edge_added",
-      "task_id": "8740f22e-4b18-4cfe-8206-730327771dfd",
       "edge": {
         "kind": "related_to",
         "target_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
         "target_ticket_key": "GB-160"
       },
+      "event": "edge_added",
+      "task_id": "8740f22e-4b18-4cfe-8206-730327771dfd",
       "timestamp_ms": 1793252049246
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "9bf01ba3-b9c7-4de2-88ac-c8177039f743",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-13"
+      },
+      "event": "edge_added",
+      "task_id": "8740f22e-4b18-4cfe-8206-730327771dfd",
+      "timestamp_ms": 1794336146474
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "79d32e88-4c03-492f-8c61-fb674105b150",
+        "target_repo": "outfeed",
+        "target_ticket_key": "OF-37"
+      },
+      "event": "edge_added",
+      "task_id": "8740f22e-4b18-4cfe-8206-730327771dfd",
+      "timestamp_ms": 1794336146475
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "created_at_epoch_ms": 1793250786224,
+    "decisions": [],
+    "description": "Remaining half of GB-164 after outfeed gate moved to OF-37. miter clones currently groups by file; grouping by crate pair is the strongest evidence available for a shared crate - two crates sharing a few hundred lines is exactly what justifies an extraction, and it is the one input GB-160 currently has to infer. Add --across-crates to emit a matrix of crate pairs with shared-clone counts and the source spans involved, so MTR-13 --what-if can cite duplication as evidence rather than assertion.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "1dff0681-9fe6-4002-81d2-82b1f6cd9961",
+        "target_ticket_key": "GB-160"
+      },
+      {
+        "kind": "related_to",
+        "target_id": "9bf01ba3-b9c7-4de2-88ac-c8177039f743",
+        "target_repo": "miter",
+        "target_ticket_key": "MTR-13"
+      },
+      {
+        "kind": "related_to",
+        "target_id": "79d32e88-4c03-492f-8c61-fb674105b150",
+        "target_repo": "outfeed",
+        "target_ticket_key": "OF-37"
+      }
+    ],
+    "id": "8740f22e-4b18-4cfe-8206-730327771dfd",
+    "kind": "feature",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": "workspace",
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [
+        "miter/src/cli/clones.rs,outfeed/src/cli"
+      ],
+      "target_symbols": []
+    },
+    "slug": "miter-clones-across-crates-plus-an-outfeed-gate-that-runs-the-tier-3-matrix-8740f2",
+    "status": "deferred",
+    "ticket_key": "GB-164",
+    "title": "miter clones --across-crates: group duplication by crate pair",
+    "updated_at_epoch_ms": 1793252049246,
+    "verification_receipt": null
+  }
 }

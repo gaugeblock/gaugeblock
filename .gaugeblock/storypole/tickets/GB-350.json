@@ -1,67 +1,102 @@
 {
-  "ticket": {
-    "id": "816578d1-bf7b-4dbe-b168-e079e5966699",
-    "ticket_key": "GB-350",
-    "slug": "plan-blueprints-can-be-orphaned-or-point-at-files-that-do-not-exist-and-no-command-notices-816578",
-    "title": "plan blueprints can be orphaned or point at files that do not exist, and no command notices",
-    "description": "Measured 2026-11-10 while reminting every member store (GB-347). Plan blueprints and the tickets that name them are not checked against each other, so a store can hold a plan nobody owns and a ticket can point at a file that does not exist - and no command says so.  chalkline: plans/GB-18.md has no owning ticket (no GB-18 in that store); CH-1 and CH-2 report plan_file_path .gaugeblock/storypole/plans/CH-1.md and CH-2.md, and neither file exists. The pointers were dangling before the remint as GB-91.md and GB-102.md and are still dangling after it.  benchwork: plans/GB-17.md and plans/GB-46.md have no owning ticket.  storypole: plans/GB-36.md has no owning ticket.  remint cannot fix this by design - it renames a blueprint when a ticket owns the key, and there is nothing to rename an orphan after - so the orphans survive a migration that is otherwise exhaustive. The check that would catch it is cheap: for every store, name each plan file with no owning ticket and each plan_file_path that resolves to nothing. `ledger-verify` is the natural home, alongside the structural ledger checks it already performs.",
-    "kind": "bug",
-    "status": "triage",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "storypole_core::tickets"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794335206549,
-    "updated_at_epoch_ms": 1794335206549
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794335206549,
+        "decisions": [],
+        "description": "Measured 2026-11-10 while reminting every member store (GB-347). Plan blueprints and the tickets that name them are not checked against each other, so a store can hold a plan nobody owns and a ticket can point at a file that does not exist - and no command says so.  chalkline: plans/GB-18.md has no owning ticket (no GB-18 in that store); CH-1 and CH-2 report plan_file_path .gaugeblock/storypole/plans/CH-1.md and CH-2.md, and neither file exists. The pointers were dangling before the remint as CH-1.md and CH-2.md and are still dangling after it.  benchwork: plans/GB-17.md and plans/GB-46.md have no owning ticket.  storypole: plans/GB-36.md has no owning ticket.  remint cannot fix this by design - it renames a blueprint when a ticket owns the key, and there is nothing to rename an orphan after - so the orphans survive a migration that is otherwise exhaustive. The check that would catch it is cheap: for every store, name each plan file with no owning ticket and each plan_file_path that resolves to nothing. `ledger-verify` is the natural home, alongside the structural ledger checks it already performs.",
+        "edges": [],
         "id": "816578d1-bf7b-4dbe-b168-e079e5966699",
-        "ticket_key": "GB-350",
-        "slug": "plan-blueprints-can-be-orphaned-or-point-at-files-that-do-not-exist-and-no-command-notices-816578",
-        "title": "plan blueprints can be orphaned or point at files that do not exist, and no command notices",
-        "description": "Measured 2026-11-10 while reminting every member store (GB-347). Plan blueprints and the tickets that name them are not checked against each other, so a store can hold a plan nobody owns and a ticket can point at a file that does not exist - and no command says so.  chalkline: plans/GB-18.md has no owning ticket (no GB-18 in that store); CH-1 and CH-2 report plan_file_path .gaugeblock/storypole/plans/CH-1.md and CH-2.md, and neither file exists. The pointers were dangling before the remint as GB-91.md and GB-102.md and are still dangling after it.  benchwork: plans/GB-17.md and plans/GB-46.md have no owning ticket.  storypole: plans/GB-36.md has no owning ticket.  remint cannot fix this by design - it renames a blueprint when a ticket owns the key, and there is nothing to rename an orphan after - so the orphans survive a migration that is otherwise exhaustive. The check that would catch it is cheap: for every store, name each plan file with no owning ticket and each plan_file_path that resolves to nothing. `ledger-verify` is the natural home, alongside the structural ledger checks it already performs.",
         "kind": "bug",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "storypole_core::tickets"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794335206549,
-        "updated_at_epoch_ms": 1794335206549
+        "slug": "plan-blueprints-can-be-orphaned-or-point-at-files-that-do-not-exist-and-no-command-notices-816578",
+        "status": "triage",
+        "ticket_key": "GB-350",
+        "title": "plan blueprints can be orphaned or point at files that do not exist, and no command notices",
+        "updated_at_epoch_ms": 1794335206549,
+        "verification_receipt": null
+      }
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "1d40d107-90c1-413d-b453-946e0a340932",
+        "target_repo": "chalkline",
+        "target_ticket_key": "CH-2"
       },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+      "event": "edge_added",
+      "task_id": "816578d1-bf7b-4dbe-b168-e079e5966699",
+      "timestamp_ms": 1794336146725
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "32e99bba-8335-4294-854a-4449a2602896",
+        "target_repo": "chalkline",
+        "target_ticket_key": "CH-1"
+      },
+      "event": "edge_added",
+      "task_id": "816578d1-bf7b-4dbe-b168-e079e5966699",
+      "timestamp_ms": 1794336146725
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794335206549,
+    "decisions": [],
+    "description": "Measured 2026-11-10 while reminting every member store (GB-347). Plan blueprints and the tickets that name them are not checked against each other, so a store can hold a plan nobody owns and a ticket can point at a file that does not exist - and no command says so.  chalkline: plans/GB-18.md has no owning ticket (no GB-18 in that store); CH-1 and CH-2 report plan_file_path .gaugeblock/storypole/plans/CH-1.md and CH-2.md, and neither file exists. The pointers were dangling before the remint as CH-1.md and CH-2.md and are still dangling after it.  benchwork: plans/GB-17.md and plans/GB-46.md have no owning ticket.  storypole: plans/GB-36.md has no owning ticket.  remint cannot fix this by design - it renames a blueprint when a ticket owns the key, and there is nothing to rename an orphan after - so the orphans survive a migration that is otherwise exhaustive. The check that would catch it is cheap: for every store, name each plan file with no owning ticket and each plan_file_path that resolves to nothing. `ledger-verify` is the natural home, alongside the structural ledger checks it already performs.",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "1d40d107-90c1-413d-b453-946e0a340932",
+        "target_repo": "chalkline",
+        "target_ticket_key": "CH-2"
+      },
+      {
+        "kind": "related_to",
+        "target_id": "32e99bba-8335-4294-854a-4449a2602896",
+        "target_repo": "chalkline",
+        "target_ticket_key": "CH-1"
+      }
+    ],
+    "id": "816578d1-bf7b-4dbe-b168-e079e5966699",
+    "kind": "bug",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::tickets"
+      ]
+    },
+    "slug": "plan-blueprints-can-be-orphaned-or-point-at-files-that-do-not-exist-and-no-command-notices-816578",
+    "status": "triage",
+    "ticket_key": "GB-350",
+    "title": "plan blueprints can be orphaned or point at files that do not exist, and no command notices",
+    "updated_at_epoch_ms": 1794335206549,
+    "verification_receipt": null
+  }
 }

@@ -1,77 +1,95 @@
 {
-  "ticket": {
-    "id": "4cd81e5c-54aa-4b56-91fd-c944dd791f6e",
-    "ticket_key": "GB-343",
-    "slug": "four-cli-crates-have-no-tests-where-their-invocation-spans-live-4cd81e",
-    "title": "Four CLI crates have no tests where their invocation spans live",
-    "description": "",
-    "kind": "tech_debt",
-    "status": "triage",
-    "priority": 3,
-    "scope": {
-      "repo": null,
-      "crate_name": null,
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [
-        "rabbet-cli,outfeed-cli,dado-cli,batten-cli"
-      ],
-      "labels": []
-    },
-    "edges": [],
-    "decisions": [],
-    "acceptance_criteria": [],
-    "plan": null,
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": null,
-    "created_at_epoch_ms": 1794270134875,
-    "updated_at_epoch_ms": 1794270134875
-  },
   "events": [
     {
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "id": "4cd81e5c-54aa-4b56-91fd-c944dd791f6e",
-        "ticket_key": "GB-343",
-        "slug": "four-cli-crates-have-no-tests-where-their-invocation-spans-live-4cd81e",
-        "title": "Four CLI crates have no tests where their invocation spans live",
+        "acceptance_criteria": [],
+        "active_claim": null,
+        "created_at_epoch_ms": 1794270134875,
+        "decisions": [],
         "description": "",
+        "edges": [],
+        "id": "4cd81e5c-54aa-4b56-91fd-c944dd791f6e",
         "kind": "tech_debt",
-        "status": "triage",
+        "latest_handoff": null,
+        "plan": null,
         "priority": 3,
         "scope": {
-          "repo": null,
           "crate_name": null,
+          "labels": [],
           "module_path": null,
+          "repo": null,
           "target_files": [],
           "target_symbols": [
             "rabbet-cli,outfeed-cli,dado-cli,batten-cli"
-          ],
-          "labels": []
+          ]
         },
-        "edges": [],
-        "decisions": [],
-        "acceptance_criteria": [],
-        "plan": null,
-        "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
-        "created_at_epoch_ms": 1794270134875,
-        "updated_at_epoch_ms": 1794270134875
-      },
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null
+        "slug": "four-cli-crates-have-no-tests-where-their-invocation-spans-live-4cd81e",
+        "status": "triage",
+        "ticket_key": "GB-343",
+        "title": "Four CLI crates have no tests where their invocation spans live",
+        "updated_at_epoch_ms": 1794270134875,
+        "verification_receipt": null
+      }
     },
     {
+      "acceptance_criteria": null,
+      "description": "CONSTRAINT FOUND BEFORE STARTING 2026-11-08, which changes what this ticket can ask for.\n\nThe obvious test - a unit test in each CLI crate asserting that `InvocationSpan::start` produces a span - cannot work as\nwritten. `emission_enabled()` returns false for any process running from `target/*/deps/<crate>-<hash>`, which is exactly\nwhat a cargo test binary is. That guard exists because a test run once wrote synthetic failures into the only log the\nsuite is observed through (BW-33), and it is correct. The consequence is that the span wiring in `main` is invisible to\nany test that runs inside the same process.\n\nSo this is not a ticket about writing four unit tests. It is a ticket about how to test out-of-process:\n\n  * run the installed binary with a scratch suite root and a temporary sink, then read the log; the harness owns the\n    environment, so the guard is not in the way;\n  * or expose a way for a test to state its intent explicitly - an `InvocationSpan::start_with(sink)` that bypasses the\n    policy, which already exists internally as `append_span_forced` for exactly this reason;\n  * or accept that the proof is the manual live run already recorded on GB-339 for all ten tools, and use these crates\n    only for the parts that are pure (subcommand derivation from argv, which is genuinely unit-testable).\n\nThe third option is honest and cheapest; the first is the one that would catch a regression, because it exercises the\nreal binary. Worth deciding deliberately rather than having the ticket quietly become \"add a test that asserts nothing\".",
       "event": "task_updated",
-      "task_id": "4cd81e5c-54aa-4b56-91fd-c944dd791f6e",
-      "title": null,
-      "description": "CONSTRAINT FOUND BEFORE STARTING 2026-11-08, which changes what this ticket can ask for.\n\nThe obvious test - a unit test in each CLI crate asserting that `InvocationSpan::start` produces a span - cannot work as\nwritten. `emission_enabled()` returns false for any process running from `target/*/deps/<crate>-<hash>`, which is exactly\nwhat a cargo test binary is. That guard exists because a test run once wrote synthetic failures into the only log the\nsuite is observed through (GB-340), and it is correct. The consequence is that the span wiring in `main` is invisible to\nany test that runs inside the same process.\n\nSo this is not a ticket about writing four unit tests. It is a ticket about how to test out-of-process:\n\n  * run the installed binary with a scratch suite root and a temporary sink, then read the log; the harness owns the\n    environment, so the guard is not in the way;\n  * or expose a way for a test to state its intent explicitly - an `InvocationSpan::start_with(sink)` that bypasses the\n    policy, which already exists internally as `append_span_forced` for exactly this reason;\n  * or accept that the proof is the manual live run already recorded on GB-339 for all ten tools, and use these crates\n    only for the parts that are pure (subcommand derivation from argv, which is genuinely unit-testable).\n\nThe third option is honest and cheapest; the first is the one that would catch a regression, because it exercises the\nreal binary. Worth deciding deliberately rather than having the ticket quietly become \"add a test that asserts nothing\".",
       "priority": null,
       "scope": null,
-      "acceptance_criteria": null,
-      "timestamp_ms": 1794275441539
+      "task_id": "4cd81e5c-54aa-4b56-91fd-c944dd791f6e",
+      "timestamp_ms": 1794275441539,
+      "title": null
+    },
+    {
+      "edge": {
+        "kind": "related_to",
+        "target_id": "4cc79e98-88f0-4a2b-9f14-baad4a5d9e29",
+        "target_repo": "benchwork",
+        "target_ticket_key": "BW-33"
+      },
+      "event": "edge_added",
+      "task_id": "4cd81e5c-54aa-4b56-91fd-c944dd791f6e",
+      "timestamp_ms": 1794336146509
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [],
+    "active_claim": null,
+    "created_at_epoch_ms": 1794270134875,
+    "decisions": [],
+    "description": "",
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "4cc79e98-88f0-4a2b-9f14-baad4a5d9e29",
+        "target_repo": "benchwork",
+        "target_ticket_key": "BW-33"
+      }
+    ],
+    "id": "4cd81e5c-54aa-4b56-91fd-c944dd791f6e",
+    "kind": "tech_debt",
+    "latest_handoff": null,
+    "plan": null,
+    "priority": 3,
+    "scope": {
+      "crate_name": null,
+      "labels": [],
+      "module_path": null,
+      "repo": null,
+      "target_files": [],
+      "target_symbols": [
+        "rabbet-cli,outfeed-cli,dado-cli,batten-cli"
+      ]
+    },
+    "slug": "four-cli-crates-have-no-tests-where-their-invocation-spans-live-4cd81e",
+    "status": "triage",
+    "ticket_key": "GB-343",
+    "title": "Four CLI crates have no tests where their invocation spans live",
+    "updated_at_epoch_ms": 1794270134875,
+    "verification_receipt": null
+  }
 }

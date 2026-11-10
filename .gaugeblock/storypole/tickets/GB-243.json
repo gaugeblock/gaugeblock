@@ -1,219 +1,8 @@
 {
-  "ticket": {
-    "id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-    "ticket_key": "GB-243",
-    "slug": "end-to-end-flight-recorder-telemetry-gaugeblock-telemetry-events-jsonl-and-live-sse-execution-waterfall-in-benchwork-f2452f",
-    "title": "End-to-end flight recorder telemetry (.gaugeblock/telemetry/events.jsonl) and live SSE execution waterfall in benchwork",
-    "description": "Enables zero-configuration, cross-process observability across VS Code MCP servers (`*-mcp`), standalone CLI invocations, `outfeed gate` sub-steps, and `sawhorse` LLM calls. All processes append `TelemetrySpan` records via atomic `O_APPEND` to the worktree-safe canonical `.gaugeblock/telemetry/events.jsonl` resolved by `gaugeblock-workspace`. `benchwork` tails the file via filesystem notifications (`notify`), indexes spans into `.gaugeblock/telemetry/index.sqlite`, and streams live execution activity to the global header pulse, Panel 3 (`AST & Synthesis X-Ray`) waterfall, and Panel 4 (`Model Router & Telemetry Spool`) Law 12 timing tables.",
-    "kind": "feature",
-    "status": "verified",
-    "priority": 1,
-    "scope": {
-      "repo": "gaugeblock",
-      "crate_name": "gaugeblock-contracts, gaugeblock-workspace, gaugeblock-mcp, sawhorse-core, outfeed-core, benchwork-core, benchwork-cli, web",
-      "module_path": null,
-      "target_files": [],
-      "target_symbols": [],
-      "labels": [
-        "telemetry",
-        "observability",
-        "flight-recorder",
-        "mcp",
-        "cli",
-        "benchwork",
-        "law-12",
-        "waterfall"
-      ]
-    },
-    "edges": [
-      {
-        "kind": "blocked_by",
-        "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
-        "target_ticket_key": "GB-189"
-      },
-      {
-        "kind": "blocked_by",
-        "target_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-        "target_ticket_key": "GB-130",
-        "target_repo": "workspace"
-      }
-    ],
-    "decisions": [
-      {
-        "decision_id": "796fde17-2171-4291-a1db-3fef5c4da9e7",
-        "parent_decision_id": null,
-        "status": "resolved",
-        "category": "transport",
-        "question": "D1 Transport: how must CLI binaries and *-mcp stdio servers emit telemetry spans?",
-        "proposed_options": [
-          "POSIX O_APPEND file-backed flight recorder at <canonical .gaugeblock>/telemetry/events.jsonl with zero network coupling",
-          "Blocking HTTP POST to the benchwork daemon on :4242",
-          "Unix domain socket owned by the benchwork daemon"
-        ],
-        "chosen_option": "POSIX O_APPEND file-backed flight recorder at <canonical .gaugeblock>/telemetry/events.jsonl with zero network coupling",
-        "rationale": "CLI binaries and *-mcp stdio servers MUST NOT make blocking HTTP/IPC calls to benchwork (:4242) to emit telemetry. Every process appends single-line TelemetrySpan JSON records directly to <canonical_gaugeblock>/telemetry/events.jsonl using OpenOptions::new().create(true).append(true) (< 100 us, fails silently if the disk is read-only). A blocking POST inside the MCP request path would add daemon latency to every tool call and turn a benchwork outage into an MCP outage for Cline and Antigravity; a detached thread to hide that latency adds teardown risk on SIGKILL. O_APPEND is atomic for a single line under POSIX, needs no daemon, no discovery and no port, and behaves identically for a CLI run nobody is watching. Add .gaugeblock/telemetry/ to root .gitignore alongside .gaugeblock/spool/.",
-        "resolved_by": "cline",
-        "updated_at_epoch_ms": 1793939896613
-      },
-      {
-        "decision_id": "d74b27b0-2cc6-495c-bb35-c5dad1ea9dd6",
-        "parent_decision_id": null,
-        "status": "resolved",
-        "category": "architecture",
-        "question": "D2 Instrumentation strategy: which call sites emit spans?",
-        "proposed_options": [
-          "Three shared choke points only: the gaugeblock-mcp JSON-RPC dispatcher, the gaugeblock-workspace SpanGuard used by CLI entry points (plus the outfeed gate step runner), and the sawhorse-core provider completion boundary",
-          "Instrument individual domain functions across all 10 repositories",
-          "Attach a tracing-subscriber layer to every binary"
-        ],
-        "chosen_option": "Three shared choke points only: the gaugeblock-mcp JSON-RPC dispatcher, the gaugeblock-workspace SpanGuard used by CLI entry points (plus the outfeed gate step runner), and the sawhorse-core provider completion boundary",
-        "rationale": "Rather than instrumenting individual domain functions across 10 repositories, instrument strictly at three shared choke points: (1) the gaugeblock-mcp JSON-RPC request dispatcher (SpanKind::McpTool) - measured: common/crates/gaugeblock-mcp/src/stdio.rs holds dispatch() and dispatch_async(), the single routing pair all seven MCP servers share, so one wrap covers every tool call; (2) a CLI top-level SpanGuard RAII drop helper in gaugeblock-workspace (SpanKind::CliCommand), plus SpanKind::GateStep inside outfeed gate where execute() already spawns each step; (3) the sawhorse-core provider completion boundary in RoleRouter::complete and complete_stream (SpanKind::LlmInference), where InferenceResponse already carries prompt_tokens, completion_tokens, latency_ms and model_used, so no provider plumbing changes. A tracing layer was rejected: it needs every one of the eleven binaries to adopt a subscriber and a shared registry, and it cannot express a completed span with a duration and an exit code as one appendable line.",
-        "resolved_by": "cline",
-        "updated_at_epoch_ms": 1793939896810
-      },
-      {
-        "decision_id": "14704c55-be22-4140-8a1c-353da717ccad",
-        "parent_decision_id": null,
-        "status": "resolved",
-        "category": "correlation",
-        "question": "D3 Correlation: how are parent-child span relationships propagated across process boundaries?",
-        "proposed_options": [
-          "GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY, the active git branch or the worktree path",
-          "W3C traceparent header injection only",
-          "No correlation: a flat, unordered span log"
-        ],
-        "chosen_option": "GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY, the active git branch or the worktree path",
-        "rationale": "Propagate parent-child causality across subprocess boundaries (outfeed gate spawning cargo clippy, miter and chalkline; joiner fill invoking sawhorse) via GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, inherited by every child because they are set on the Command. Environment is the only channel a stdio MCP server and a spawned cargo process both see; W3C traceparent needs an HTTP hop the gate does not have. Automatically enrich every span with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY or the active git branch / worktree path (feat/gb-...), so a span from a linked worktree attributes to the right task without the caller passing anything.",
-        "resolved_by": "cline",
-        "updated_at_epoch_ms": 1793939897080
-      },
-      {
-        "decision_id": "031b3ce4-ffdb-435c-aa96-ae2007bef688",
-        "parent_decision_id": null,
-        "status": "resolved",
-        "category": "ingestion",
-        "question": "D4 Benchwork ingestion: how does the daemon consume and serve the flight recorder?",
-        "proposed_options": [
-          "notify file watcher tracking the byte offset, SQLite index in WAL mode for history, and an immediate broadcast to SSE and REST",
-          "Poll events.jsonl on a 1 s tokio interval and re-read the whole file",
-          "Query the JSONL file directly on every HTTP request with no index"
-        ],
-        "chosen_option": "notify file watcher tracking the byte offset, SQLite index in WAL mode for history, and an immediate broadcast to SSE and REST",
-        "rationale": "benchwork-core watches .gaugeblock/telemetry/events.jsonl via the notify crate (tracking the byte offset so a restart resumes instead of replaying), indexes spans into .gaugeblock/telemetry/index.sqlite (WAL mode) for historical Law 12 P50/P95 duration and token queries, and broadcasts new spans immediately over GET /api/v1/telemetry/stream (SSE). Polling re-reads data that has not changed and still adds up to a second of latency to a pulse the header is meant to animate; reading JSONL per request makes P50/P95 a full scan of a file that grows for the life of the checkout. The index is derived state, so it is gitignored and can be deleted and rebuilt from the JSONL at any time (rusqlite 0.40 bundled already matches storypole-core and rabbet-core).",
-        "resolved_by": "cline",
-        "updated_at_epoch_ms": 1793939897318
-      }
-    ],
-    "acceptance_criteria": [
-      "TIER 3 STATUS: all cross-repo gates now pass. miter contracts 36 entities 0 drift; outfeed lockfiles all 11 fresh; chalkline docs check 9 present 0 missing 0 drifted on common",
-      " sawhorse",
-      " outfeed and benchwork (the two drifts are fixed - SpanStatus and TelemetrySpan added to the common boundary table",
-      " TelemetryIndexError specified in benchwork's with the reason it is module-local rather than a BenchworkError variant).\\n\\nNOT YET RUN",
-      " and the only reason this is not Verified: cargo fmt --all -- --check",
-      " cargo clippy --workspace --all-targets and cargo nextest run --workspace on those four repos. Per-crate Tier 2 is green across the board (gaugeblock-workspace 22/22",
-      " sawhorse-core 33/33",
-      " outfeed-core 90/90",
-      " benchwork-core 14/14+9/9+5/5) and the web build passed tsc -b and vite build",
-      " so these are expected to pass - but running them is the gate",
-      " and expecting is not verifying.\\n\\nLesson worth keeping: Tier 3 caught what Tier 2 structurally cannot - seven stale lockfiles in repositories I never edited",
-      " and two doc drifts from types I added. Neither would ever have appeared in the crate-level runs."
-    ],
-    "plan": {
-      "summary": "Flight recorder: one O_APPEND span log, three choke points, notify tailer + SQLite index, live SSE waterfall in Panel 3",
-      "design_markdown": "# Task Plan: GB-243 — End-to-end flight recorder telemetry and live SSE execution waterfall\n\n> **Key:** `GB-243` · **Kind:** Feature · **Priority:** P1 · **Repo:** `gaugeblock`\n> **Scope:** `gaugeblock-contracts`, `gaugeblock-workspace`, `gaugeblock-mcp`, `sawhorse-core`,\n> `outfeed-core`, `benchwork-core`, `benchwork-cli`, `web`\n> **Depends on:** `GB-189` (`gaugeblock-workspace`, Phase A foundation of `GB-200`) and `GB-130`\n> (`gaugeblock-mcp`, verified). The path resolver and the shared JSON-RPC dispatcher are the two\n> surfaces this ticket instruments, so it cannot start before both exist.\n> **Status:** Planned — blocked on `GB-189`.\n> **Companion:** `GB-244` (`rabbet distill-telemetry`) consumes the records produced here. This\n> ticket ships the schema and the transport; it does not mine them.\n\n---\n\n## 1. Why this exists — four blind spots, each visible in the tree today\n\n| Blind spot | What the tree shows |\n|:--|:--|\n| No cross-process record of anything | `outfeed gate` prints one line per step (`GateStepResult { name, passed, skipped, detail }`) and discards the duration it could have measured. A 40 s `clippy` and a 0.4 s `docs` look identical afterwards. |\n| `benchwork` sees only itself | `BenchworkState.event_tx: broadcast::Sender<LiveEvent>` carries six variants, all produced *inside the daemon*. An MCP tool call from Cline, or a `cargo clippy` spawned by the gate, is invisible. |\n| MCP tool usage is unmeasured | `common/crates/gaugeblock-mcp/src/stdio.rs` (139 LOC) routes every one of the seven servers through `dispatch`/`dispatch_async`. Nothing records which tool ran, for how long, or whether it errored. |\n| LLM cost is not attributable | `InferenceResponse` already carries `prompt_tokens`, `completion_tokens`, `latency_ms`, `model_used` and `reasoning_tokens` — and every consumer drops them at the return statement. |\n\nThe result is that law 12 (\"a figure that lives only in chat has not been recorded\") is currently\nunenforceable at the process level: there is nowhere to read a number from.\n\n## 2. Decisions (resolved on the ticket)\n\n| # | Decision | Chosen | Category |\n|:--|:--|:--|:--|\n| D1 | Transport for span emission | POSIX `O_APPEND` file-backed flight recorder, zero network coupling | `transport` |\n| D2 | Where instrumentation lives | Three shared choke points only | `architecture` |\n| D3 | Parent-child correlation across processes | `GAUGEBLOCK_TRACE_ID` / `GAUGEBLOCK_PARENT_SPAN_ID` env vars | `correlation` |\n| D4 | How `benchwork` ingests and serves | `notify` watcher + byte offset + SQLite (WAL) index + SSE/REST | `ingestion` |\n\n\n### D1 — POSIX `O_APPEND` file-backed flight recorder, zero network coupling\n\nCLI binaries and `*-mcp` stdio servers MUST NOT make blocking HTTP/IPC calls to `benchwork`\n(`:4242`) to emit telemetry. Every process appends single-line `TelemetrySpan` JSON records\ndirectly to `<canonical_gaugeblock>/telemetry/events.jsonl` using\n`OpenOptions::new().create(true).append(true)` (target `< 100 µs`, fails silently if the disk is\nread-only).\n\n*Why not HTTP:* a blocking POST inside the MCP request path adds daemon latency to every tool call\nand converts a `benchwork` outage into an MCP outage for Cline and Antigravity. Hiding that latency\non a detached thread adds teardown risk on `SIGKILL` — the process that loses the span is exactly\nthe one that died, which is the case the recorder exists for.\n\n*Why `O_APPEND` is sufficient:* a single `write` of a line at or below `PIPE_BUF` is atomic under\nPOSIX and lands at the end of the file without a lock, so N concurrent processes append without\ninterleaving. It needs no daemon, no discovery, no port, no authentication, and it behaves\nidentically for a CI run nobody is watching.\n\n`.gaugeblock/telemetry/` is added to the root `.gitignore` alongside `.gaugeblock/spool/` and\n`.gaugeblock/datasets/`. Note that the existing `.gaugeblock/**/*.sqlite` rule already covers\n`telemetry/index.sqlite`; `events.jsonl` and `snapshots/*.diff` are the two paths that need the new\ndirectory rule.\n\n### D2 — Three choke-point instrumentation strategy\n\nRather than instrumenting individual domain functions across ten repositories, instrument strictly\nat three shared choke points:\n\n1. **`gaugeblock-mcp` JSON-RPC request dispatcher** (`SpanKind::McpTool`). Measured: `stdio.rs`\n   holds `dispatch()` and `dispatch_async()`, the single routing pair all seven servers share, so\n   one wrap covers every VS Code tool call from Cline and Antigravity.\n2. **A CLI top-level `SpanGuard` RAII drop helper in `gaugeblock-workspace`**\n   (`SpanKind::CliCommand`), plus `SpanKind::GateStep` inside `outfeed gate`'s step runner, which\n   already owns the spawn.\n3. **`sawhorse-core` provider completion boundary** (`SpanKind::LlmInference`) —\n   `RoleRouter::complete` and `complete_stream`, where `InferenceResponse` is in hand.\n\nA `tracing-subscriber` layer was rejected: it would require all eleven binaries to adopt a\nsubscriber and a shared registry, and it cannot express \"one completed span with a duration and an\nexit code\" as a single appendable line.\n\n### D3 — 3-tier context and parent-child span correlation\n\nPropagate parent-child causality across subprocess boundaries (`outfeed gate` spawning\n`cargo clippy`, `miter` and `chalkline`; `joiner fill` invoking `sawhorse`) via\n`GAUGEBLOCK_TRACE_ID` and `GAUGEBLOCK_PARENT_SPAN_ID` environment variables, set on the `Command`\nand therefore inherited by every child. Environment is the only channel a stdio MCP server and a\nspawned `cargo` process both see; W3C `traceparent` needs an HTTP hop the gate does not have.\n\nAutomatically enrich every span with `task_key` and `worktree` inferred from `GAUGEBLOCK_TASK_KEY`\nor the active git branch / worktree path (`feat/gb-...`), so a span from a linked worktree\nattributes to the right task without the caller passing anything.\n\n### D4 — Live tailer and derived SQLite index in `benchwork`\n\n`benchwork-core` watches `.gaugeblock/telemetry/events.jsonl` via the `notify` crate (tracking the\nbyte offset so a restart resumes instead of replaying), indexes spans into\n`.gaugeblock/telemetry/index.sqlite` (WAL mode) for historical law 12 P50/P95 duration and token\nqueries, and broadcasts new spans immediately over `GET /api/v1/telemetry/stream` (SSE).\n\nPolling re-reads data that has not changed and still adds up to a second of latency to a pulse the\nheader is meant to animate. Reading the JSONL per request makes P50/P95 a full scan of a file that\ngrows for the life of the checkout. The index is derived state: gitignored, deletable, and\nrebuildable from the JSONL at any time (`rusqlite 0.40 bundled` already matches `storypole-core`\nand `rabbet-core`).\n\n---\n\n## 3. Wire contract — `common/crates/gaugeblock-contracts/src/telemetry/`\n\n> **Path correction (measured, not assumed).** The mission brief names\n> `gaugeblock-contracts/src/telemetry.rs` at ≤ 140 LOC. That file already exists at **146 LOC** and\n> already owns `TelemetryTier`, `AnonymizedSynthesisTrace`, `SyncStatus`, `SpoolEntry` and\n> `SpoolEntry::hash_trace` — the GB-182 spool envelope. Adding the span types inside it would put it\n> over 200 and one deserialisation test away from the hard 250 ceiling. **So the module becomes a\n> directory**, exactly as `storypole-core/src/telemetry/mod.rs` already does: `telemetry/mod.rs`\n> re-exports, `telemetry/spool.rs` carries today's 146 lines unchanged, `telemetry/spans.rs` holds\n> the new span wire contract. `pub use telemetry::*;` in `lib.rs` keeps every existing import path\n> working, so this is a move, not a breaking change.\n\n```rust\n// telemetry/spans.rs — new file, ≤ 140 LOC\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\npub enum SpanKind {\n    CliCommand,\n    McpTool,\n    GateStep,\n    LlmInference,\n    AstPass,\n}\n\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\npub enum SpanStatus {\n    Running,\n    Ok,\n    Error,\n    Skipped,\n}\n\n#[derive(Debug, Clone, Serialize, Deserialize)]\npub struct TokenUsageSummary {\n    pub model: String,\n    pub prompt_tokens: u32,\n    pub completion_tokens: u32,\n}\n\n#[derive(Debug, Clone, Serialize, Deserialize)]\npub struct TelemetrySpan {\n    pub trace_id: String,\n    pub span_id: String,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub parent_span_id: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub session_id: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub task_key: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub worktree: Option<String>,\n    pub binary: String,\n    pub kind: SpanKind,\n    pub name: String,\n    pub started_at_ms: u64,\n    pub duration_ms: u64,\n    pub status: SpanStatus,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub exit_code: Option<i32>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub token_usage: Option<TokenUsageSummary>,\n    /// Scrubbed, compact JSON summary of MCP tool arguments or CLI flags (≤ 512 bytes).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub input_summary: Option<String>,\n    /// Populated on `SpanKind::GateStep` when `status == Error`: first compiler/clippy/doc diagnostic.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub first_diagnostic: Option<String>,\n    /// Populated on `SpanKind::GateStep`: content-addressed hash of `git diff HEAD`\n    /// (or a spool snapshot key).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub worktree_diff_hash: Option<String>,\n    #[serde(default, skip_serializing_if = \"BTreeMap::is_empty\")]\n    pub attributes: BTreeMap<String, String>,\n}\n```\n\nContract invariants:\n\n1. `SpanKind` and `SpanStatus` are `Copy` and `snake_case` on the wire, so a TS discriminant in\n   `benchwork/web` is a literal union (`'cli_command' | 'mcp_tool' | ...`) and not a stringly check.\n2. Every optional field is `skip_serializing_if`, so a successful span writes ~14 fields. A\n   successful `cargo fmt` step must not carry a `first_diagnostic` key at all — `null` and \"absent\"\n   are different things to a dataset builder.\n3. **The envelope stays flat and appendable.** No nested span trees: tree shape is reconstructed by\n   `parent_span_id` at read time (D4's index, `GB-244`'s miner). A writer must never need to read\n   the file back.\n4. `started_at_ms` is epoch milliseconds and `duration_ms` is elapsed, not `ended_at`. A reader that\n   computes `started_at + duration` gets the end; a clock that jumps backwards cannot make an\n   interval negative.\n5. `TelemetrySpan` is *not* `PartialEq`: `attributes` ordering is `BTreeMap` so it could be, but\n   equality on a struct with a populated token block invites tests that assert on token counts the\n   provider never guaranteed. Tests assert field by field.\n\n\n---\n\n## 4. File layout and module budget (every file strictly ≤ 250 LOC)\n\n\"Today\" is `wc -l` on this checkout. Where a file is tight, the plan says what to extract instead of\npretending there is room.\n\n| # | File | Action | Budget | Today | Note |\n|:--|:--|:--|:--|:--|:--|\n| 1 | `common/crates/gaugeblock-contracts/src/telemetry/mod.rs` | new (split) | ≤ 60 | — | `pub mod spool; pub mod spans;` + re-exports + module doc |\n| 1b | `.../telemetry/spool.rs` | moved | ≤ 150 | 146 | today's content verbatim, path only |\n| 1c | `.../telemetry/spans.rs` | new | ≤ 140 | — | §3 wire contract + round-trip tests |\n| 2 | `common/crates/gaugeblock-workspace/src/paths.rs` | update | ≤ 150 | 125 | `telemetry_dir()`, `telemetry_events()`, `telemetry_index()`, `telemetry_snapshots()` — the same shape as the existing `spool_dir()`/`outbox()`/`index_db()` |\n| 3 | `common/crates/gaugeblock-workspace/src/telemetry.rs` | new | ≤ 190 | — | `emit_span`, `SpanGuard`, `SpanContext`, lazy trace-identity |\n\n\n| 4 | `common/crates/gaugeblock-mcp/src/telemetry_middleware.rs` | new | ≤ 130 | — | wraps `Route::CallTool`; `session_id` = MCP process PID + process start epoch; tool name, duration, error state, `input_summary` |\n| 4b | `common/crates/gaugeblock-mcp/src/stdio.rs` | update | ≤ 165 | 139 | two call sites (one per dispatcher) — the wrap must stay ~10 lines each or it does not belong here |\n| 5 | `sawhorse/crates/sawhorse-core/src/telemetry.rs` | new | ≤ 120 | — | `SpanKind::LlmInference` from `InferenceResponse`; `reasoning_tokens` goes to `attributes` |\n| 5b | `sawhorse/crates/sawhorse-core/src/router.rs` | update | ≤ 215 | 192 | one guard in `complete`, one in `complete_stream` (23 lines of headroom) |\n| 6 | `outfeed/crates/outfeed-core/src/gate/execute.rs` | update | ≤ 200 | 140 | step span start/finish + `GAUGEBLOCK_*` on the `Command` + `worktree_diff_hash` |\n| 6b | `outfeed/crates/outfeed-core/src/gate/mod.rs` | update | **≤ 250** | 224 | **only 26 lines of headroom.** If passing step context through `run_gate_steps` costs more than ~15, extract `gate/steps.rs` first and keep `mod.rs` as types + `gate_steps()` |\n| 7 | `benchwork/crates/benchwork-core/src/telemetry_tailer.rs` | new | ≤ 210 | — | `notify` watcher, byte-offset resume, `broadcast` publish |\n| 7b | `benchwork/crates/benchwork-core/src/telemetry_index.rs` | new (contingent) | ≤ 190 | — | split out of the tailer **if** the SQLite schema + queries do not fit; the 210 budget is realistic only for watch + read + publish |\n| 8 | `benchwork/crates/benchwork-cli/src/daemon/routes_telemetry.rs` | new | ≤ 170 | — | `stream` (SSE), `spans`, `law12-stats` |\n| 8b | `benchwork/crates/benchwork-cli/src/daemon/mod.rs` | update | ≤ 210 | 188 | three route registrations only |\n| 9 | `benchwork/web/src/panels/SynthesisXray/ExecutionWaterfallView.tsx` | new | ≤ 210 | — | hierarchical waterfall, interleaved MCP / CLI / LLM / gate-step rows |\n| 9b | `benchwork/web/src/panels/SynthesisXray/SynthesisXrayPanel.tsx` | update | ≤ 220 | 164 | mount the view |\n| 10 | `benchwork/web/src/components/LiveAggregatorPill.tsx` | new | ≤ 90 | — | the header pill. **`App.tsx` is 199 LOC — 51 lines of headroom — so nothing goes inline there; `App.tsx` swaps four lines for one component** |\n| 11 | `benchwork/web/src/api/useTelemetryStream.ts` | new | ≤ 120 | — | `EventSource` over `/api/v1/telemetry/stream`, modelled on the existing `useLiveStream.ts` (50 LOC) |\n\n> **Section B path correction.** Two paths in the brief do not exist and one is misnamed:\n> there is no `benchwork/web/src/panels/SynthesisXray/ExecutionWaterfallView.tsx` *parent* yet (the\n> panel is `SynthesisXrayPanel.tsx`, 164 LOC), `benchwork-core` has **no** `notify` and **no**\n> `rusqlite` dependency today (it must gain `notify` 8.x and `rusqlite 0.40, bundled` to match\n> `storypole-core`/`rabbet-core`), and the gate step named `nextest` in the brief is really `tests`\n> (`gate_steps()` emits `fmt`, `clippy`, `tests`, `contracts`, `layers`, `lockfiles`, `docs` — seven\n> steps, not six). A span whose `name` does not match `gate_steps()` cannot be joined to a\n> `GateStepResult` later, so the name is taken from `GateStep.name`, never a literal.\n\n\n---\n\n## 5. Choke points in detail\n\n### 5.1 `SpanGuard` — the only writer\n\n```rust\n// gaugeblock-workspace/src/telemetry.rs\npub struct SpanGuard { /* trace_id, span_id, kind, name, binary, started: Instant, ctx, status */ }\n\nimpl SpanGuard {\n    /// Opens a span. Never fails: an unusable telemetry path yields a guard that writes nothing.\n    pub fn start(kind: SpanKind, name: impl Into<String>) -> Self;\n    /// Emits children with this span as parent (used by the gate step runner).\n    pub fn child(&self, kind: SpanKind, name: impl Into<String>) -> Self;\n    /// Records the terminal status/code; `Drop` writes the line.\n    pub fn finish_with_status(self, status: SpanStatus, exit_code: Option<i32>) -> Self;\n    /// The environment a child process must inherit (D3).\n    pub fn export_env(&self) -> [(String, String); 2];\n}\n\nimpl Drop for SpanGuard { /* one append, fail-open, never panics */ }\n```\n\nRules the guard must hold, each a test:\n\n1. **Fail-open.** A read-only or missing directory produces a no-op guard. Telemetry must never\n   change an exit code — the first time a flight recorder breaks a gate is the last time it is\n   trusted.\n2. **No panic in `Drop`.** A panic during unwinding is an abort; every fallible step is `if let Ok`.\n3. **One line per span.** The buffer is built with `serde_json::to_vec` and written with a single\n   `write_all` of `json + b\"\\n\"` — never two writes, or two processes can interleave mid-line.\n4. **`finish_with_status` before `Drop` wins.** Explicit finish sets the status; `Drop` only writes\n   if it has not already, or a `?`-early-return path would write `Running` for a failed command.\n5. **Lazy identity.** `trace_id` is inherited from `GAUGEBLOCK_TRACE_ID` when present, otherwise\n   generated once per process — so two `miter` calls in one session share a trace but two CLI runs\n   do not.\n\n### 5.2 `gaugeblock-mcp` dispatcher (`SpanKind::McpTool`)\n\n`stdio.rs::dispatch` / `dispatch_async` are wrapped on the `Route::CallTool` arm only: `initialize`,\n`tools/list` and `ping` are protocol housekeeping, and recording them would triple the event volume\nfor zero information. Each call emits `binary` (the server's own name), `name` (the tool),\n`session_id` (`<binary>-<pid>-<process_start_ms>`), `status` from `ToolOutcome`, `input_summary`\n(scrubbed, ≤ 512 bytes) and, when the tool is `miter` or `storypole`, `attributes`\n`output_symbols_touched` / `files_referenced` taken from the response envelope it already builds.\n\n### 5.3 CLI entry points (`SpanKind::CliCommand`)\n\nOne guard per process, opened in the binary's `main` after argument parsing (so the span name is the\nsubcommand, e.g. `miter.lookup`, not `miter`) and finished at the top-level `anyhow::Result`\nboundary. Eight of eleven binaries already return a single `Result` from `main`, so this is one\nbinding and one `.finish_with_status(...)` per binary.\n\n### 5.4 `outfeed gate` (`SpanKind::GateStep`)\n\n`run_gate_steps` already loops over `Vec<GateStep>` and calls `execute(dir, &step.command)`. Each\niteration opens a child guard named `GateStep.name`, and `execute` sets on the spawned `Command`:\n\n```rust\ncmd.env(\"GAUGEBLOCK_TRACE_ID\", &guard.trace_id)\n   .env(\"GAUGEBLOCK_PARENT_SPAN_ID\", &guard.span_id)\n   .env(\"GAUGEBLOCK_TASK_KEY\", ...);   // when inferable\n```\n\nso `cargo clippy`'s own nested `miter`/`chalkline` spans, and any MCP call made while the gate runs,\nreparent onto the step. Skipped steps emit `SpanStatus::Skipped` with `duration_ms: 0` — a skip is\nnot a pass, which is the same distinction `GateStepResult::skipped` already makes.\n\n### 5.5 `sawhorse` inference (`SpanKind::LlmInference`)\n\n`RoleRouter::complete` and `complete_stream` emit one span per *attempt* (not per role), so a\nfallback chain shows the failed provider and the provider that answered as siblings. `token_usage`\nis copied from `InferenceResponse.token_usage` semantics already present\n(`prompt_tokens`, `completion_tokens`, `model: model_used`); `reasoning_tokens` and the role go to\n`attributes`. No provider implementation changes.\n\n\n---\n\n## 6. Training-capture enrichment (why three optional fields exist)\n\nThe observability dashboard needs thirteen fields. `rabbet`'s dataset builder needs three more, and\nthey are optional precisely so a successful span stays small:\n\n| Field | Populated by | Purpose |\n|:--|:--|:--|\n| `input_summary` | `gaugeblock-mcp` (`McpTool`), CLI guard | what was asked, so a trajectory can be replayed without the raw arguments |\n| `first_diagnostic` | `outfeed gate` (`GateStep`, `status == Error`) | the rejection reason that a repair must answer |\n| `worktree_diff_hash` | `outfeed gate` (`GateStep`) | content address of the diff the step judged |\n\nCapture rules:\n\n1. **`input_summary` is scrubbed and capped at 512 bytes.** Scrubbing reuses `miter`'s existing\n   literal redaction; the cap is applied to the *serialised compact* JSON, and truncation appends\n   `…` so a downstream parser can tell \"short\" from \"truncated\". Over-long input is dropped rather\n   than truncated mid-token, because half a JSON object trains nothing and confuses a reader.\n2. **`worktree_diff_hash` = `sha256` of `git diff HEAD`** in the gate's working directory, computed\n   once per gate run (not per step) and reused for every step span, so all failures in one run share\n   an address.\n3. **On failure**, the first actionable line of the step's own output (already reduced by\n   `first_meaningful_line`) becomes `first_diagnostic`, and the scrubbed unified diff is written to\n   `.gaugeblock/telemetry/snapshots/<worktree_diff_hash>.diff` — content-addressed, so re-running a\n   failing gate rewrites the same file rather than growing the directory.\n4. **On a later passing run of the same `(task_key, step_name)`**, the passing diff is snapshotted\n   too. `Error(A) → Ok(B)`, `A != B`, is the `(rejected_diff, first_diagnostic) → chosen_diff`\n   repair pair `GB-244` mines. **This ticket only guarantees the pair can be reconstructed**; it\n   never writes a `SpoolEntry`.\n5. A snapshot write is subject to the same fail-open rule as the span write. A missing snapshot\n   degrades `GB-244`'s yield; it must never fail a gate.\n\n\n---\n\n## 7. Ordered plan steps\n\n| # | Step | Files | Verification gate |\n|:--|:--|:--|:--|\n| **T1** | Land the wire contract and the writer. Split `telemetry.rs` into a directory, add `spans.rs`, add `GaugeblockPaths::telemetry_*`, implement `emit_span` + `SpanGuard`, and add `.gaugeblock/telemetry/` to the root `.gitignore`. | `contracts/telemetry/{mod,spool,spans}.rs`, `workspace/src/{paths,telemetry}.rs`, root `.gitignore` | `cargo nextest run -p gaugeblock-contracts -p gaugeblock-workspace` (round-trip, absent-field, fail-open, one-line, concurrent-append and unwinding tests) |\n| **T2** | Wire the choke points: the `gaugeblock-mcp` dispatcher wrap, `outfeed gate` step spans with `GAUGEBLOCK_PARENT_SPAN_ID` child propagation, `sawhorse-core` inference spans, and the top-level CLI guards. | `mcp/src/{telemetry_middleware,stdio}.rs`, `outfeed-core/src/gate/{execute,mod}.rs`, `sawhorse-core/src/{telemetry,router}.rs` | `cargo nextest run -p gaugeblock-mcp -p outfeed-core -p sawhorse-core`; a fixture repo whose `cargo` child inherits the two variables asserts the parent link |\n| **T3** | Implement `telemetry_tailer.rs`, the SQLite index (WAL, byte-offset table), and the SSE + REST endpoints in `benchwork`. | `benchwork-core/src/telemetry_tailer.rs` (+ `telemetry_index.rs` if split), `benchwork-cli/src/daemon/{routes_telemetry,mod}.rs`, `benchwork-core/Cargo.toml` (**add `notify`, `rusqlite`**) | `cargo nextest run -p benchwork-core -p benchwork-cli` — append-then-resume test asserts zero duplicates and zero drops across a restart |\n| **T4** | Build `ExecutionWaterfallView.tsx` in Panel 3, the `LiveAggregatorPill` in the header, the `useTelemetryStream` hook, and surface law 12 rollups in Panel 4 (`ModelTelemetryHub`). | `web/src/panels/SynthesisXray/{ExecutionWaterfallView.tsx,SynthesisXrayPanel.tsx}`, `web/src/components/LiveAggregatorPill.tsx`, `web/src/api/useTelemetryStream.ts`, `web/src/panels/ModelTelemetryHub/SpoolTraceTable.tsx` | `bun run build` (tsc) + a Playwright e2e that renders a seeded two-level tree |\n| **T5** | End-to-end verification under law 12: measure `SpanGuard` overhead, trigger an MCP tool call and an `outfeed gate` run from *outside* `benchwork`, and confirm the parent-child tree renders live over SSE. | — | `miter contracts`, `outfeed gate`, `chalkline docs check` + the recorded numbers in §8 |\n\nSequencing notes:\n\n* T1 and T2 are the only steps that touch shared crates, so they land before T3 — `benchwork` cannot\n  tail a file whose schema is still moving.\n* T3's dependency additions are the only manifest churn in the ticket, and they are additive.\n* T4 can be developed against a seeded fixture (`tests/fixtures/telemetry/events.jsonl`) without a\n  running gate, so the panel is not blocked on T5.\n* T5 is a *measurement* step, not a smoke test: it exists to produce the numbers in §8.\n\n\n---\n\n## 8. Measurements to record (law 12 — no claim without a number)\n\n| What | How | Where it is recorded |\n|:--|:--|:--|\n| `SpanGuard` overhead | 10 000 `start`+`drop` cycles with the telemetry path writable vs. pointed at a read-only directory, same machine, sequential | commit message that lands T1, plus `common/PERF.md` |\n| Emit latency, worst case | times the single `write_all` at the 99th percentile with 4 concurrent writers appending | same commit; target `< 100 µs` from D1 |\n| SSE end-to-end latency | append from a plain `miter` CLI run, measure until the `EventSource` callback fires; target `< 250 ms` (acceptance criterion) | T5, in `benchwork/README.md` perf note |\n| Gate instrumentation cost | `outfeed gate` wall time with telemetry on vs. off, warm cache, same tree | commit message that lands T2 |\n| Index size growth | `index.sqlite`, `events.jsonl` and snapshot bytes after one full Tier 3 gate run | T5 |\n\nIf a number comes back worse than the target, it is recorded as a regression, not omitted.\n\n## 9. Out of scope (deferred deliberately)\n\n* **Retention, rotation, compaction.** `events.jsonl` grows without bound in this ticket. Rotating it\n  is a separate decision (which spans survive?) and belongs in its own ticket, not smuggled into T3.\n* **Mining or dataset emission.** `GB-244` owns `distill-telemetry`; this ticket guarantees the\n  records and the snapshots exist, nothing more.\n* **Typed MCP protocol migration** (`GB-235`) — orthogonal refactor of the same dispatcher.\n* **Span-based alerting or budgets** in `benchwork` (e.g. \"clippy p95 regressed\"). Useful, needs the\n  history first.\n* **`AstPass` kind** is defined in the enum but emitted by nothing in this ticket; it exists so\n  `miter`/`dado`/`batten` passes can be added without a schema bump.\n* **A `benchwork-mcp` tool** exposing spans to an agent. Later.\n\n## 10. Risks and how the plan answers them\n\n| Risk | Answer |\n|:--|:--|\n| A telemetry bug breaks a gate | Fail-open is a test in T1, not a convention. The no-op guard returns the same value the caller had. |\n| Span volume floods the daemon | MCP housekeeping methods are excluded; the broadcast channel for spans is separate from the 256-slot `LiveEvent` channel so a burst cannot evict a task update. |\n| `gate/mod.rs` (224 LOC) crosses 250 | Extract `gate/steps.rs` before adding anything; the plan names the trigger explicitly. |\n| The diff snapshot captures a secret | The snapshot is scrubbed by the same path as `input_summary`, and lives under a gitignored directory with a content-addressed name. |\n| `benchwork-core` grows two dependencies for a feature it may not always ship | Both sit behind the same crate that already depends on eight suite crates; the tailer is one module and can be feature-gated if it ever needs to be. |\n| Two processes write the same `events.jsonl` concurrently | `O_APPEND` plus a single `write_all` per line; a concurrent-append test with 4 writers asserts no interleaved line. |\n\n",
-      "steps": [
-        {
-          "step_id": "T1",
-          "title": "Land the wire contract, SpanGuard writer and telemetry path helpers",
-          "target_files": [],
-          "verification_gate": "cargo nextest run -p gaugeblock-contracts -p gaugeblock-workspace",
-          "completed": false
-        },
-        {
-          "step_id": "T2",
-          "title": "Wire the three choke points: mcp dispatcher, gate steps with parent propagation, sawhorse inference, CLI guards",
-          "target_files": [],
-          "verification_gate": "cargo nextest run -p gaugeblock-mcp -p outfeed-core -p sawhorse-core",
-          "completed": false
-        },
-        {
-          "step_id": "T3",
-          "title": "Implement the notify tailer, SQLite index and SSE/REST endpoints in benchwork",
-          "target_files": [],
-          "verification_gate": "cargo nextest run -p benchwork-core -p benchwork-cli",
-          "completed": false
-        },
-        {
-          "step_id": "T4",
-          "title": "Build the Panel 3 execution waterfall, header live pulse and Panel 4 law 12 tables",
-          "target_files": [],
-          "verification_gate": "bun run build plus Playwright e2e",
-          "completed": false
-        },
-        {
-          "step_id": "T5",
-          "title": "End-to-end verification: measure overhead, trigger external MCP and gate spans, confirm live tree",
-          "target_files": [],
-          "verification_gate": "miter contracts plus outfeed gate plus chalkline docs check",
-          "completed": false
-        }
-      ],
-      "plan_file_path": ".gaugeblock/storypole/plans/GB-243.md",
-      "updated_at_epoch_ms": 1793940009724
-    },
-    "active_claim": null,
-    "latest_handoff": null,
-    "verification_receipt": {
-      "verifier": "storypole-verify",
-      "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
-      "exit_code": 0,
-      "diagnostic_count": null,
-      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 36\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-      "verified_at_epoch_ms": 1794001639380,
-      "git_branch": "main",
-      "base_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
-      "head_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
-      "commit_shas": [
-        "0b29da396a72080975591037539439b60bed6d9f"
-      ],
-      "repo": null,
-      "chain_key": null
-    },
-    "created_at_epoch_ms": 1793939851002,
-    "updated_at_epoch_ms": 1794037984741,
-    "archived_at_epoch_ms": 1794037984741
-  },
   "events": [
     {
       "event": "task_created",
       "task": {
-        "id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-        "ticket_key": "GB-243",
-        "slug": "end-to-end-flight-recorder-telemetry-gaugeblock-telemetry-events-jsonl-and-live-sse-execution-waterfall-in-benchwork-f2452f",
-        "title": "End-to-end flight recorder telemetry (.gaugeblock/telemetry/events.jsonl) and live SSE execution waterfall in benchwork",
-        "description": "Enables zero-configuration, cross-process observability across VS Code MCP servers (`*-mcp`), standalone CLI invocations, `outfeed gate` sub-steps, and `sawhorse` LLM calls. All processes append `TelemetrySpan` records via atomic `O_APPEND` to the worktree-safe canonical `.gaugeblock/telemetry/events.jsonl` resolved by `gaugeblock-workspace`. `benchwork` tails the file via filesystem notifications (`notify`), indexes spans into `.gaugeblock/telemetry/index.sqlite`, and streams live execution activity to the global header pulse, Panel 3 (`AST & Synthesis X-Ray`) waterfall, and Panel 4 (`Model Router & Telemetry Spool`) Law 12 timing tables.",
-        "kind": "feature",
-        "status": "ready",
-        "priority": 1,
-        "scope": {
-          "repo": "gaugeblock",
-          "crate_name": "gaugeblock-contracts, gaugeblock-workspace, gaugeblock-mcp, sawhorse-core, outfeed-core, benchwork-core, benchwork-cli, web",
-          "module_path": null,
-          "target_files": [],
-          "target_symbols": [],
-          "labels": [
-            "telemetry",
-            "observability",
-            "flight-recorder",
-            "mcp",
-            "cli",
-            "benchwork",
-            "law-12",
-            "waterfall"
-          ]
-        },
-        "edges": [],
-        "decisions": [],
         "acceptance_criteria": [
           "TelemetrySpan round-trips through serde with every optional field omitted when absent, and lives in gaugeblock-contracts",
           "SpanGuard::drop appends exactly one O_APPEND line per span, creates the file when missing, and never changes the caller exit code on a read-only disk (fail-open)",
@@ -223,290 +12,311 @@
           "ExecutionWaterfallView.tsx renders the parent-child tree in Panel 3 and the header LIVE AGGREGATOR pill pulses while an external span is open",
           "Every touched file is at or under 250 LOC and .gaugeblock/telemetry/ is gitignored"
         ],
-        "plan": null,
         "active_claim": null,
-        "latest_handoff": null,
-        "verification_receipt": null,
         "created_at_epoch_ms": 1793939851002,
-        "updated_at_epoch_ms": 1793939851002
+        "decisions": [],
+        "description": "Enables zero-configuration, cross-process observability across VS Code MCP servers (`*-mcp`), standalone CLI invocations, `outfeed gate` sub-steps, and `sawhorse` LLM calls. All processes append `TelemetrySpan` records via atomic `O_APPEND` to the worktree-safe canonical `.gaugeblock/telemetry/events.jsonl` resolved by `gaugeblock-workspace`. `benchwork` tails the file via filesystem notifications (`notify`), indexes spans into `.gaugeblock/telemetry/index.sqlite`, and streams live execution activity to the global header pulse, Panel 3 (`AST & Synthesis X-Ray`) waterfall, and Panel 4 (`Model Router & Telemetry Spool`) Law 12 timing tables.",
+        "edges": [],
+        "id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+        "kind": "feature",
+        "latest_handoff": null,
+        "plan": null,
+        "priority": 1,
+        "scope": {
+          "crate_name": "gaugeblock-contracts, gaugeblock-workspace, gaugeblock-mcp, sawhorse-core, outfeed-core, benchwork-core, benchwork-cli, web",
+          "labels": [
+            "telemetry",
+            "observability",
+            "flight-recorder",
+            "mcp",
+            "cli",
+            "benchwork",
+            "law-12",
+            "waterfall"
+          ],
+          "module_path": null,
+          "repo": "gaugeblock",
+          "target_files": [],
+          "target_symbols": []
+        },
+        "slug": "end-to-end-flight-recorder-telemetry-gaugeblock-telemetry-events-jsonl-and-live-sse-execution-waterfall-in-benchwork-f2452f",
+        "status": "ready",
+        "ticket_key": "GB-243",
+        "title": "End-to-end flight recorder telemetry (.gaugeblock/telemetry/events.jsonl) and live SSE execution waterfall in benchwork",
+        "updated_at_epoch_ms": 1793939851002,
+        "verification_receipt": null
       }
     },
     {
-      "event": "decision_raised",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "decision": {
+        "category": "transport",
+        "chosen_option": null,
         "decision_id": "796fde17-2171-4291-a1db-3fef5c4da9e7",
         "parent_decision_id": null,
-        "status": "pending",
-        "category": "transport",
-        "question": "D1 Transport: how must CLI binaries and *-mcp stdio servers emit telemetry spans?",
         "proposed_options": [
           "POSIX O_APPEND file-backed flight recorder at <canonical .gaugeblock>/telemetry/events.jsonl with zero network coupling",
           "Blocking HTTP POST to the benchwork daemon on :4242",
           "Unix domain socket owned by the benchwork daemon"
         ],
-        "chosen_option": null,
+        "question": "D1 Transport: how must CLI binaries and *-mcp stdio servers emit telemetry spans?",
         "rationale": null,
         "resolved_by": null,
+        "status": "pending",
         "updated_at_epoch_ms": 1793939877517
       },
+      "event": "decision_raised",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793939877517
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "ready",
-      "to": "blocked",
       "reason": "Pending architectural decision required",
-      "timestamp_ms": 1793939877517
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793939877517,
+      "to": "blocked"
     },
     {
-      "event": "decision_resolved",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "decision_id": "796fde17-2171-4291-a1db-3fef5c4da9e7",
+      "appended_criterion": "No CLI or *-mcp binary performs a network or IPC call to emit a span: the emit path is OpenOptions append only, asserted by test.",
       "chosen_option": "POSIX O_APPEND file-backed flight recorder at <canonical .gaugeblock>/telemetry/events.jsonl with zero network coupling",
+      "decision_id": "796fde17-2171-4291-a1db-3fef5c4da9e7",
+      "event": "decision_resolved",
       "rationale": "CLI binaries and *-mcp stdio servers MUST NOT make blocking HTTP/IPC calls to benchwork (:4242) to emit telemetry. Every process appends single-line TelemetrySpan JSON records directly to <canonical_gaugeblock>/telemetry/events.jsonl using OpenOptions::new().create(true).append(true) (< 100 us, fails silently if the disk is read-only). A blocking POST inside the MCP request path would add daemon latency to every tool call and turn a benchwork outage into an MCP outage for Cline and Antigravity; a detached thread to hide that latency adds teardown risk on SIGKILL. O_APPEND is atomic for a single line under POSIX, needs no daemon, no discovery and no port, and behaves identically for a CLI run nobody is watching. Add .gaugeblock/telemetry/ to root .gitignore alongside .gaugeblock/spool/.",
       "resolved_by": "cline",
       "spawned_followup": null,
-      "appended_criterion": "No CLI or *-mcp binary performs a network or IPC call to emit a span: the emit path is OpenOptions append only, asserted by test.",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793939896613
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "blocked",
-      "to": "ready",
       "reason": "All pending decisions and dependencies satisfied",
-      "timestamp_ms": 1793939896613
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793939896613,
+      "to": "ready"
     },
     {
-      "event": "decision_raised",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "decision": {
+        "category": "architecture",
+        "chosen_option": null,
         "decision_id": "d74b27b0-2cc6-495c-bb35-c5dad1ea9dd6",
         "parent_decision_id": null,
-        "status": "pending",
-        "category": "architecture",
-        "question": "D2 Instrumentation strategy: which call sites emit spans?",
         "proposed_options": [
           "Three shared choke points only: the gaugeblock-mcp JSON-RPC dispatcher, the gaugeblock-workspace SpanGuard used by CLI entry points (plus the outfeed gate step runner), and the sawhorse-core provider completion boundary",
           "Instrument individual domain functions across all 10 repositories",
           "Attach a tracing-subscriber layer to every binary"
         ],
-        "chosen_option": null,
+        "question": "D2 Instrumentation strategy: which call sites emit spans?",
         "rationale": null,
         "resolved_by": null,
+        "status": "pending",
         "updated_at_epoch_ms": 1793939896720
       },
+      "event": "decision_raised",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793939896720
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "ready",
-      "to": "blocked",
       "reason": "Pending architectural decision required",
-      "timestamp_ms": 1793939896720
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793939896720,
+      "to": "blocked"
     },
     {
-      "event": "decision_resolved",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "decision_id": "d74b27b0-2cc6-495c-bb35-c5dad1ea9dd6",
+      "appended_criterion": "Exactly three instrumentation modules exist (gaugeblock-mcp/src/telemetry_middleware.rs, gaugeblock-workspace/src/telemetry.rs, sawhorse-core/src/telemetry.rs) plus the gate step runner; no domain crate gains a telemetry dependency.",
       "chosen_option": "Three shared choke points only: the gaugeblock-mcp JSON-RPC dispatcher, the gaugeblock-workspace SpanGuard used by CLI entry points (plus the outfeed gate step runner), and the sawhorse-core provider completion boundary",
+      "decision_id": "d74b27b0-2cc6-495c-bb35-c5dad1ea9dd6",
+      "event": "decision_resolved",
       "rationale": "Rather than instrumenting individual domain functions across 10 repositories, instrument strictly at three shared choke points: (1) the gaugeblock-mcp JSON-RPC request dispatcher (SpanKind::McpTool) - measured: common/crates/gaugeblock-mcp/src/stdio.rs holds dispatch() and dispatch_async(), the single routing pair all seven MCP servers share, so one wrap covers every tool call; (2) a CLI top-level SpanGuard RAII drop helper in gaugeblock-workspace (SpanKind::CliCommand), plus SpanKind::GateStep inside outfeed gate where execute() already spawns each step; (3) the sawhorse-core provider completion boundary in RoleRouter::complete and complete_stream (SpanKind::LlmInference), where InferenceResponse already carries prompt_tokens, completion_tokens, latency_ms and model_used, so no provider plumbing changes. A tracing layer was rejected: it needs every one of the eleven binaries to adopt a subscriber and a shared registry, and it cannot express a completed span with a duration and an exit code as one appendable line.",
       "resolved_by": "cline",
       "spawned_followup": null,
-      "appended_criterion": "Exactly three instrumentation modules exist (gaugeblock-mcp/src/telemetry_middleware.rs, gaugeblock-workspace/src/telemetry.rs, sawhorse-core/src/telemetry.rs) plus the gate step runner; no domain crate gains a telemetry dependency.",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793939896810
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "blocked",
-      "to": "ready",
       "reason": "All pending decisions and dependencies satisfied",
-      "timestamp_ms": 1793939896810
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793939896810,
+      "to": "ready"
     },
     {
-      "event": "decision_raised",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "decision": {
+        "category": "correlation",
+        "chosen_option": null,
         "decision_id": "14704c55-be22-4140-8a1c-353da717ccad",
         "parent_decision_id": null,
-        "status": "pending",
-        "category": "correlation",
-        "question": "D3 Correlation: how are parent-child span relationships propagated across process boundaries?",
         "proposed_options": [
           "GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY, the active git branch or the worktree path",
           "W3C traceparent header injection only",
           "No correlation: a flat, unordered span log"
         ],
-        "chosen_option": null,
+        "question": "D3 Correlation: how are parent-child span relationships propagated across process boundaries?",
         "rationale": null,
         "resolved_by": null,
+        "status": "pending",
         "updated_at_epoch_ms": 1793939896956
       },
+      "event": "decision_raised",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793939896956
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "ready",
-      "to": "blocked",
       "reason": "Pending architectural decision required",
-      "timestamp_ms": 1793939896956
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793939896956,
+      "to": "blocked"
     },
     {
-      "event": "decision_resolved",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "decision_id": "14704c55-be22-4140-8a1c-353da717ccad",
+      "appended_criterion": "A span emitted by a process spawned from outfeed gate carries the gate step span_id as parent_span_id, and task_key equals the active GAUGEBLOCK_TASK_KEY or the branch-derived key.",
       "chosen_option": "GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY, the active git branch or the worktree path",
+      "decision_id": "14704c55-be22-4140-8a1c-353da717ccad",
+      "event": "decision_resolved",
       "rationale": "Propagate parent-child causality across subprocess boundaries (outfeed gate spawning cargo clippy, miter and chalkline; joiner fill invoking sawhorse) via GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, inherited by every child because they are set on the Command. Environment is the only channel a stdio MCP server and a spawned cargo process both see; W3C traceparent needs an HTTP hop the gate does not have. Automatically enrich every span with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY or the active git branch / worktree path (feat/gb-...), so a span from a linked worktree attributes to the right task without the caller passing anything.",
       "resolved_by": "cline",
       "spawned_followup": null,
-      "appended_criterion": "A span emitted by a process spawned from outfeed gate carries the gate step span_id as parent_span_id, and task_key equals the active GAUGEBLOCK_TASK_KEY or the branch-derived key.",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793939897080
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "blocked",
-      "to": "ready",
       "reason": "All pending decisions and dependencies satisfied",
-      "timestamp_ms": 1793939897080
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793939897080,
+      "to": "ready"
     },
     {
-      "event": "decision_raised",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "decision": {
+        "category": "ingestion",
+        "chosen_option": null,
         "decision_id": "031b3ce4-ffdb-435c-aa96-ae2007bef688",
         "parent_decision_id": null,
-        "status": "pending",
-        "category": "ingestion",
-        "question": "D4 Benchwork ingestion: how does the daemon consume and serve the flight recorder?",
         "proposed_options": [
           "notify file watcher tracking the byte offset, SQLite index in WAL mode for history, and an immediate broadcast to SSE and REST",
           "Poll events.jsonl on a 1 s tokio interval and re-read the whole file",
           "Query the JSONL file directly on every HTTP request with no index"
         ],
-        "chosen_option": null,
+        "question": "D4 Benchwork ingestion: how does the daemon consume and serve the flight recorder?",
         "rationale": null,
         "resolved_by": null,
+        "status": "pending",
         "updated_at_epoch_ms": 1793939897168
       },
+      "event": "decision_raised",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793939897168
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "ready",
-      "to": "blocked",
       "reason": "Pending architectural decision required",
-      "timestamp_ms": 1793939897168
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793939897168,
+      "to": "blocked"
     },
     {
-      "event": "decision_resolved",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "decision_id": "031b3ce4-ffdb-435c-aa96-ae2007bef688",
+      "appended_criterion": "Restarting benchwork resumes at the recorded byte offset with zero duplicated and zero dropped spans in index.sqlite.",
       "chosen_option": "notify file watcher tracking the byte offset, SQLite index in WAL mode for history, and an immediate broadcast to SSE and REST",
+      "decision_id": "031b3ce4-ffdb-435c-aa96-ae2007bef688",
+      "event": "decision_resolved",
       "rationale": "benchwork-core watches .gaugeblock/telemetry/events.jsonl via the notify crate (tracking the byte offset so a restart resumes instead of replaying), indexes spans into .gaugeblock/telemetry/index.sqlite (WAL mode) for historical Law 12 P50/P95 duration and token queries, and broadcasts new spans immediately over GET /api/v1/telemetry/stream (SSE). Polling re-reads data that has not changed and still adds up to a second of latency to a pulse the header is meant to animate; reading JSONL per request makes P50/P95 a full scan of a file that grows for the life of the checkout. The index is derived state, so it is gitignored and can be deleted and rebuilt from the JSONL at any time (rusqlite 0.40 bundled already matches storypole-core and rabbet-core).",
       "resolved_by": "cline",
       "spawned_followup": null,
-      "appended_criterion": "Restarting benchwork resumes at the recorded byte offset with zero duplicated and zero dropped spans in index.sqlite.",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793939897318
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "blocked",
-      "to": "ready",
       "reason": "All pending decisions and dependencies satisfied",
-      "timestamp_ms": 1793939897318
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793939897318,
+      "to": "ready"
     },
     {
       "event": "plan_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "plan": {
-        "summary": "Flight recorder: one O_APPEND span log, three choke points, notify tailer + SQLite index, live SSE waterfall in Panel 3",
-        "design_markdown": "# Task Plan: GB-243 — End-to-end flight recorder telemetry and live SSE execution waterfall\n\n> **Key:** `GB-243` · **Kind:** Feature · **Priority:** P1 · **Repo:** `gaugeblock`\n> **Scope:** `gaugeblock-contracts`, `gaugeblock-workspace`, `gaugeblock-mcp`, `sawhorse-core`,\n> `outfeed-core`, `benchwork-core`, `benchwork-cli`, `web`\n> **Depends on:** `GB-189` (`gaugeblock-workspace`, Phase A foundation of `GB-200`) and `GB-130`\n> (`gaugeblock-mcp`, verified). The path resolver and the shared JSON-RPC dispatcher are the two\n> surfaces this ticket instruments, so it cannot start before both exist.\n> **Status:** Planned — blocked on `GB-189`.\n> **Companion:** `GB-244` (`rabbet distill-telemetry`) consumes the records produced here. This\n> ticket ships the schema and the transport; it does not mine them.\n\n---\n\n## 1. Why this exists — four blind spots, each visible in the tree today\n\n| Blind spot | What the tree shows |\n|:--|:--|\n| No cross-process record of anything | `outfeed gate` prints one line per step (`GateStepResult { name, passed, skipped, detail }`) and discards the duration it could have measured. A 40 s `clippy` and a 0.4 s `docs` look identical afterwards. |\n| `benchwork` sees only itself | `BenchworkState.event_tx: broadcast::Sender<LiveEvent>` carries six variants, all produced *inside the daemon*. An MCP tool call from Cline, or a `cargo clippy` spawned by the gate, is invisible. |\n| MCP tool usage is unmeasured | `common/crates/gaugeblock-mcp/src/stdio.rs` (139 LOC) routes every one of the seven servers through `dispatch`/`dispatch_async`. Nothing records which tool ran, for how long, or whether it errored. |\n| LLM cost is not attributable | `InferenceResponse` already carries `prompt_tokens`, `completion_tokens`, `latency_ms`, `model_used` and `reasoning_tokens` — and every consumer drops them at the return statement. |\n\nThe result is that law 12 (\"a figure that lives only in chat has not been recorded\") is currently\nunenforceable at the process level: there is nowhere to read a number from.\n\n## 2. Decisions (resolved on the ticket)\n\n| # | Decision | Chosen | Category |\n|:--|:--|:--|:--|\n| D1 | Transport for span emission | POSIX `O_APPEND` file-backed flight recorder, zero network coupling | `transport` |\n| D2 | Where instrumentation lives | Three shared choke points only | `architecture` |\n| D3 | Parent-child correlation across processes | `GAUGEBLOCK_TRACE_ID` / `GAUGEBLOCK_PARENT_SPAN_ID` env vars | `correlation` |\n| D4 | How `benchwork` ingests and serves | `notify` watcher + byte offset + SQLite (WAL) index + SSE/REST | `ingestion` |\n\n\n### D1 — POSIX `O_APPEND` file-backed flight recorder, zero network coupling\n\nCLI binaries and `*-mcp` stdio servers MUST NOT make blocking HTTP/IPC calls to `benchwork`\n(`:4242`) to emit telemetry. Every process appends single-line `TelemetrySpan` JSON records\ndirectly to `<canonical_gaugeblock>/telemetry/events.jsonl` using\n`OpenOptions::new().create(true).append(true)` (target `< 100 µs`, fails silently if the disk is\nread-only).\n\n*Why not HTTP:* a blocking POST inside the MCP request path adds daemon latency to every tool call\nand converts a `benchwork` outage into an MCP outage for Cline and Antigravity. Hiding that latency\non a detached thread adds teardown risk on `SIGKILL` — the process that loses the span is exactly\nthe one that died, which is the case the recorder exists for.\n\n*Why `O_APPEND` is sufficient:* a single `write` of a line at or below `PIPE_BUF` is atomic under\nPOSIX and lands at the end of the file without a lock, so N concurrent processes append without\ninterleaving. It needs no daemon, no discovery, no port, no authentication, and it behaves\nidentically for a CI run nobody is watching.\n\n`.gaugeblock/telemetry/` is added to the root `.gitignore` alongside `.gaugeblock/spool/` and\n`.gaugeblock/datasets/`. Note that the existing `.gaugeblock/**/*.sqlite` rule already covers\n`telemetry/index.sqlite`; `events.jsonl` and `snapshots/*.diff` are the two paths that need the new\ndirectory rule.\n\n### D2 — Three choke-point instrumentation strategy\n\nRather than instrumenting individual domain functions across ten repositories, instrument strictly\nat three shared choke points:\n\n1. **`gaugeblock-mcp` JSON-RPC request dispatcher** (`SpanKind::McpTool`). Measured: `stdio.rs`\n   holds `dispatch()` and `dispatch_async()`, the single routing pair all seven servers share, so\n   one wrap covers every VS Code tool call from Cline and Antigravity.\n2. **A CLI top-level `SpanGuard` RAII drop helper in `gaugeblock-workspace`**\n   (`SpanKind::CliCommand`), plus `SpanKind::GateStep` inside `outfeed gate`'s step runner, which\n   already owns the spawn.\n3. **`sawhorse-core` provider completion boundary** (`SpanKind::LlmInference`) —\n   `RoleRouter::complete` and `complete_stream`, where `InferenceResponse` is in hand.\n\nA `tracing-subscriber` layer was rejected: it would require all eleven binaries to adopt a\nsubscriber and a shared registry, and it cannot express \"one completed span with a duration and an\nexit code\" as a single appendable line.\n\n### D3 — 3-tier context and parent-child span correlation\n\nPropagate parent-child causality across subprocess boundaries (`outfeed gate` spawning\n`cargo clippy`, `miter` and `chalkline`; `joiner fill` invoking `sawhorse`) via\n`GAUGEBLOCK_TRACE_ID` and `GAUGEBLOCK_PARENT_SPAN_ID` environment variables, set on the `Command`\nand therefore inherited by every child. Environment is the only channel a stdio MCP server and a\nspawned `cargo` process both see; W3C `traceparent` needs an HTTP hop the gate does not have.\n\nAutomatically enrich every span with `task_key` and `worktree` inferred from `GAUGEBLOCK_TASK_KEY`\nor the active git branch / worktree path (`feat/gb-...`), so a span from a linked worktree\nattributes to the right task without the caller passing anything.\n\n### D4 — Live tailer and derived SQLite index in `benchwork`\n\n`benchwork-core` watches `.gaugeblock/telemetry/events.jsonl` via the `notify` crate (tracking the\nbyte offset so a restart resumes instead of replaying), indexes spans into\n`.gaugeblock/telemetry/index.sqlite` (WAL mode) for historical law 12 P50/P95 duration and token\nqueries, and broadcasts new spans immediately over `GET /api/v1/telemetry/stream` (SSE).\n\nPolling re-reads data that has not changed and still adds up to a second of latency to a pulse the\nheader is meant to animate. Reading the JSONL per request makes P50/P95 a full scan of a file that\ngrows for the life of the checkout. The index is derived state: gitignored, deletable, and\nrebuildable from the JSONL at any time (`rusqlite 0.40 bundled` already matches `storypole-core`\nand `rabbet-core`).\n\n---\n\n## 3. Wire contract — `common/crates/gaugeblock-contracts/src/telemetry/`\n\n> **Path correction (measured, not assumed).** The mission brief names\n> `gaugeblock-contracts/src/telemetry.rs` at ≤ 140 LOC. That file already exists at **146 LOC** and\n> already owns `TelemetryTier`, `AnonymizedSynthesisTrace`, `SyncStatus`, `SpoolEntry` and\n> `SpoolEntry::hash_trace` — the GB-182 spool envelope. Adding the span types inside it would put it\n> over 200 and one deserialisation test away from the hard 250 ceiling. **So the module becomes a\n> directory**, exactly as `storypole-core/src/telemetry/mod.rs` already does: `telemetry/mod.rs`\n> re-exports, `telemetry/spool.rs` carries today's 146 lines unchanged, `telemetry/spans.rs` holds\n> the new span wire contract. `pub use telemetry::*;` in `lib.rs` keeps every existing import path\n> working, so this is a move, not a breaking change.\n\n```rust\n// telemetry/spans.rs — new file, ≤ 140 LOC\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\npub enum SpanKind {\n    CliCommand,\n    McpTool,\n    GateStep,\n    LlmInference,\n    AstPass,\n}\n\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\npub enum SpanStatus {\n    Running,\n    Ok,\n    Error,\n    Skipped,\n}\n\n#[derive(Debug, Clone, Serialize, Deserialize)]\npub struct TokenUsageSummary {\n    pub model: String,\n    pub prompt_tokens: u32,\n    pub completion_tokens: u32,\n}\n\n#[derive(Debug, Clone, Serialize, Deserialize)]\npub struct TelemetrySpan {\n    pub trace_id: String,\n    pub span_id: String,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub parent_span_id: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub session_id: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub task_key: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub worktree: Option<String>,\n    pub binary: String,\n    pub kind: SpanKind,\n    pub name: String,\n    pub started_at_ms: u64,\n    pub duration_ms: u64,\n    pub status: SpanStatus,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub exit_code: Option<i32>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub token_usage: Option<TokenUsageSummary>,\n    /// Scrubbed, compact JSON summary of MCP tool arguments or CLI flags (≤ 512 bytes).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub input_summary: Option<String>,\n    /// Populated on `SpanKind::GateStep` when `status == Error`: first compiler/clippy/doc diagnostic.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub first_diagnostic: Option<String>,\n    /// Populated on `SpanKind::GateStep`: content-addressed hash of `git diff HEAD`\n    /// (or a spool snapshot key).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub worktree_diff_hash: Option<String>,\n    #[serde(default, skip_serializing_if = \"BTreeMap::is_empty\")]\n    pub attributes: BTreeMap<String, String>,\n}\n```\n\nContract invariants:\n\n1. `SpanKind` and `SpanStatus` are `Copy` and `snake_case` on the wire, so a TS discriminant in\n   `benchwork/web` is a literal union (`'cli_command' | 'mcp_tool' | ...`) and not a stringly check.\n2. Every optional field is `skip_serializing_if`, so a successful span writes ~14 fields. A\n   successful `cargo fmt` step must not carry a `first_diagnostic` key at all — `null` and \"absent\"\n   are different things to a dataset builder.\n3. **The envelope stays flat and appendable.** No nested span trees: tree shape is reconstructed by\n   `parent_span_id` at read time (D4's index, `GB-244`'s miner). A writer must never need to read\n   the file back.\n4. `started_at_ms` is epoch milliseconds and `duration_ms` is elapsed, not `ended_at`. A reader that\n   computes `started_at + duration` gets the end; a clock that jumps backwards cannot make an\n   interval negative.\n5. `TelemetrySpan` is *not* `PartialEq`: `attributes` ordering is `BTreeMap` so it could be, but\n   equality on a struct with a populated token block invites tests that assert on token counts the\n   provider never guaranteed. Tests assert field by field.\n\n\n---\n\n## 4. File layout and module budget (every file strictly ≤ 250 LOC)\n\n\"Today\" is `wc -l` on this checkout. Where a file is tight, the plan says what to extract instead of\npretending there is room.\n\n| # | File | Action | Budget | Today | Note |\n|:--|:--|:--|:--|:--|:--|\n| 1 | `common/crates/gaugeblock-contracts/src/telemetry/mod.rs` | new (split) | ≤ 60 | — | `pub mod spool; pub mod spans;` + re-exports + module doc |\n| 1b | `.../telemetry/spool.rs` | moved | ≤ 150 | 146 | today's content verbatim, path only |\n| 1c | `.../telemetry/spans.rs` | new | ≤ 140 | — | §3 wire contract + round-trip tests |\n| 2 | `common/crates/gaugeblock-workspace/src/paths.rs` | update | ≤ 150 | 125 | `telemetry_dir()`, `telemetry_events()`, `telemetry_index()`, `telemetry_snapshots()` — the same shape as the existing `spool_dir()`/`outbox()`/`index_db()` |\n| 3 | `common/crates/gaugeblock-workspace/src/telemetry.rs` | new | ≤ 190 | — | `emit_span`, `SpanGuard`, `SpanContext`, lazy trace-identity |\n\n\n| 4 | `common/crates/gaugeblock-mcp/src/telemetry_middleware.rs` | new | ≤ 130 | — | wraps `Route::CallTool`; `session_id` = MCP process PID + process start epoch; tool name, duration, error state, `input_summary` |\n| 4b | `common/crates/gaugeblock-mcp/src/stdio.rs` | update | ≤ 165 | 139 | two call sites (one per dispatcher) — the wrap must stay ~10 lines each or it does not belong here |\n| 5 | `sawhorse/crates/sawhorse-core/src/telemetry.rs` | new | ≤ 120 | — | `SpanKind::LlmInference` from `InferenceResponse`; `reasoning_tokens` goes to `attributes` |\n| 5b | `sawhorse/crates/sawhorse-core/src/router.rs` | update | ≤ 215 | 192 | one guard in `complete`, one in `complete_stream` (23 lines of headroom) |\n| 6 | `outfeed/crates/outfeed-core/src/gate/execute.rs` | update | ≤ 200 | 140 | step span start/finish + `GAUGEBLOCK_*` on the `Command` + `worktree_diff_hash` |\n| 6b | `outfeed/crates/outfeed-core/src/gate/mod.rs` | update | **≤ 250** | 224 | **only 26 lines of headroom.** If passing step context through `run_gate_steps` costs more than ~15, extract `gate/steps.rs` first and keep `mod.rs` as types + `gate_steps()` |\n| 7 | `benchwork/crates/benchwork-core/src/telemetry_tailer.rs` | new | ≤ 210 | — | `notify` watcher, byte-offset resume, `broadcast` publish |\n| 7b | `benchwork/crates/benchwork-core/src/telemetry_index.rs` | new (contingent) | ≤ 190 | — | split out of the tailer **if** the SQLite schema + queries do not fit; the 210 budget is realistic only for watch + read + publish |\n| 8 | `benchwork/crates/benchwork-cli/src/daemon/routes_telemetry.rs` | new | ≤ 170 | — | `stream` (SSE), `spans`, `law12-stats` |\n| 8b | `benchwork/crates/benchwork-cli/src/daemon/mod.rs` | update | ≤ 210 | 188 | three route registrations only |\n| 9 | `benchwork/web/src/panels/SynthesisXray/ExecutionWaterfallView.tsx` | new | ≤ 210 | — | hierarchical waterfall, interleaved MCP / CLI / LLM / gate-step rows |\n| 9b | `benchwork/web/src/panels/SynthesisXray/SynthesisXrayPanel.tsx` | update | ≤ 220 | 164 | mount the view |\n| 10 | `benchwork/web/src/components/LiveAggregatorPill.tsx` | new | ≤ 90 | — | the header pill. **`App.tsx` is 199 LOC — 51 lines of headroom — so nothing goes inline there; `App.tsx` swaps four lines for one component** |\n| 11 | `benchwork/web/src/api/useTelemetryStream.ts` | new | ≤ 120 | — | `EventSource` over `/api/v1/telemetry/stream`, modelled on the existing `useLiveStream.ts` (50 LOC) |\n\n> **Section B path correction.** Two paths in the brief do not exist and one is misnamed:\n> there is no `benchwork/web/src/panels/SynthesisXray/ExecutionWaterfallView.tsx` *parent* yet (the\n> panel is `SynthesisXrayPanel.tsx`, 164 LOC), `benchwork-core` has **no** `notify` and **no**\n> `rusqlite` dependency today (it must gain `notify` 8.x and `rusqlite 0.40, bundled` to match\n> `storypole-core`/`rabbet-core`), and the gate step named `nextest` in the brief is really `tests`\n> (`gate_steps()` emits `fmt`, `clippy`, `tests`, `contracts`, `layers`, `lockfiles`, `docs` — seven\n> steps, not six). A span whose `name` does not match `gate_steps()` cannot be joined to a\n> `GateStepResult` later, so the name is taken from `GateStep.name`, never a literal.\n\n\n---\n\n## 5. Choke points in detail\n\n### 5.1 `SpanGuard` — the only writer\n\n```rust\n// gaugeblock-workspace/src/telemetry.rs\npub struct SpanGuard { /* trace_id, span_id, kind, name, binary, started: Instant, ctx, status */ }\n\nimpl SpanGuard {\n    /// Opens a span. Never fails: an unusable telemetry path yields a guard that writes nothing.\n    pub fn start(kind: SpanKind, name: impl Into<String>) -> Self;\n    /// Emits children with this span as parent (used by the gate step runner).\n    pub fn child(&self, kind: SpanKind, name: impl Into<String>) -> Self;\n    /// Records the terminal status/code; `Drop` writes the line.\n    pub fn finish_with_status(self, status: SpanStatus, exit_code: Option<i32>) -> Self;\n    /// The environment a child process must inherit (D3).\n    pub fn export_env(&self) -> [(String, String); 2];\n}\n\nimpl Drop for SpanGuard { /* one append, fail-open, never panics */ }\n```\n\nRules the guard must hold, each a test:\n\n1. **Fail-open.** A read-only or missing directory produces a no-op guard. Telemetry must never\n   change an exit code — the first time a flight recorder breaks a gate is the last time it is\n   trusted.\n2. **No panic in `Drop`.** A panic during unwinding is an abort; every fallible step is `if let Ok`.\n3. **One line per span.** The buffer is built with `serde_json::to_vec` and written with a single\n   `write_all` of `json + b\"\\n\"` — never two writes, or two processes can interleave mid-line.\n4. **`finish_with_status` before `Drop` wins.** Explicit finish sets the status; `Drop` only writes\n   if it has not already, or a `?`-early-return path would write `Running` for a failed command.\n5. **Lazy identity.** `trace_id` is inherited from `GAUGEBLOCK_TRACE_ID` when present, otherwise\n   generated once per process — so two `miter` calls in one session share a trace but two CLI runs\n   do not.\n\n### 5.2 `gaugeblock-mcp` dispatcher (`SpanKind::McpTool`)\n\n`stdio.rs::dispatch` / `dispatch_async` are wrapped on the `Route::CallTool` arm only: `initialize`,\n`tools/list` and `ping` are protocol housekeeping, and recording them would triple the event volume\nfor zero information. Each call emits `binary` (the server's own name), `name` (the tool),\n`session_id` (`<binary>-<pid>-<process_start_ms>`), `status` from `ToolOutcome`, `input_summary`\n(scrubbed, ≤ 512 bytes) and, when the tool is `miter` or `storypole`, `attributes`\n`output_symbols_touched` / `files_referenced` taken from the response envelope it already builds.\n\n### 5.3 CLI entry points (`SpanKind::CliCommand`)\n\nOne guard per process, opened in the binary's `main` after argument parsing (so the span name is the\nsubcommand, e.g. `miter.lookup`, not `miter`) and finished at the top-level `anyhow::Result`\nboundary. Eight of eleven binaries already return a single `Result` from `main`, so this is one\nbinding and one `.finish_with_status(...)` per binary.\n\n### 5.4 `outfeed gate` (`SpanKind::GateStep`)\n\n`run_gate_steps` already loops over `Vec<GateStep>` and calls `execute(dir, &step.command)`. Each\niteration opens a child guard named `GateStep.name`, and `execute` sets on the spawned `Command`:\n\n```rust\ncmd.env(\"GAUGEBLOCK_TRACE_ID\", &guard.trace_id)\n   .env(\"GAUGEBLOCK_PARENT_SPAN_ID\", &guard.span_id)\n   .env(\"GAUGEBLOCK_TASK_KEY\", ...);   // when inferable\n```\n\nso `cargo clippy`'s own nested `miter`/`chalkline` spans, and any MCP call made while the gate runs,\nreparent onto the step. Skipped steps emit `SpanStatus::Skipped` with `duration_ms: 0` — a skip is\nnot a pass, which is the same distinction `GateStepResult::skipped` already makes.\n\n### 5.5 `sawhorse` inference (`SpanKind::LlmInference`)\n\n`RoleRouter::complete` and `complete_stream` emit one span per *attempt* (not per role), so a\nfallback chain shows the failed provider and the provider that answered as siblings. `token_usage`\nis copied from `InferenceResponse.token_usage` semantics already present\n(`prompt_tokens`, `completion_tokens`, `model: model_used`); `reasoning_tokens` and the role go to\n`attributes`. No provider implementation changes.\n\n\n---\n\n## 6. Training-capture enrichment (why three optional fields exist)\n\nThe observability dashboard needs thirteen fields. `rabbet`'s dataset builder needs three more, and\nthey are optional precisely so a successful span stays small:\n\n| Field | Populated by | Purpose |\n|:--|:--|:--|\n| `input_summary` | `gaugeblock-mcp` (`McpTool`), CLI guard | what was asked, so a trajectory can be replayed without the raw arguments |\n| `first_diagnostic` | `outfeed gate` (`GateStep`, `status == Error`) | the rejection reason that a repair must answer |\n| `worktree_diff_hash` | `outfeed gate` (`GateStep`) | content address of the diff the step judged |\n\nCapture rules:\n\n1. **`input_summary` is scrubbed and capped at 512 bytes.** Scrubbing reuses `miter`'s existing\n   literal redaction; the cap is applied to the *serialised compact* JSON, and truncation appends\n   `…` so a downstream parser can tell \"short\" from \"truncated\". Over-long input is dropped rather\n   than truncated mid-token, because half a JSON object trains nothing and confuses a reader.\n2. **`worktree_diff_hash` = `sha256` of `git diff HEAD`** in the gate's working directory, computed\n   once per gate run (not per step) and reused for every step span, so all failures in one run share\n   an address.\n3. **On failure**, the first actionable line of the step's own output (already reduced by\n   `first_meaningful_line`) becomes `first_diagnostic`, and the scrubbed unified diff is written to\n   `.gaugeblock/telemetry/snapshots/<worktree_diff_hash>.diff` — content-addressed, so re-running a\n   failing gate rewrites the same file rather than growing the directory.\n4. **On a later passing run of the same `(task_key, step_name)`**, the passing diff is snapshotted\n   too. `Error(A) → Ok(B)`, `A != B`, is the `(rejected_diff, first_diagnostic) → chosen_diff`\n   repair pair `GB-244` mines. **This ticket only guarantees the pair can be reconstructed**; it\n   never writes a `SpoolEntry`.\n5. A snapshot write is subject to the same fail-open rule as the span write. A missing snapshot\n   degrades `GB-244`'s yield; it must never fail a gate.\n\n\n---\n\n## 7. Ordered plan steps\n\n| # | Step | Files | Verification gate |\n|:--|:--|:--|:--|\n| **T1** | Land the wire contract and the writer. Split `telemetry.rs` into a directory, add `spans.rs`, add `GaugeblockPaths::telemetry_*`, implement `emit_span` + `SpanGuard`, and add `.gaugeblock/telemetry/` to the root `.gitignore`. | `contracts/telemetry/{mod,spool,spans}.rs`, `workspace/src/{paths,telemetry}.rs`, root `.gitignore` | `cargo nextest run -p gaugeblock-contracts -p gaugeblock-workspace` (round-trip, absent-field, fail-open, one-line, concurrent-append and unwinding tests) |\n| **T2** | Wire the choke points: the `gaugeblock-mcp` dispatcher wrap, `outfeed gate` step spans with `GAUGEBLOCK_PARENT_SPAN_ID` child propagation, `sawhorse-core` inference spans, and the top-level CLI guards. | `mcp/src/{telemetry_middleware,stdio}.rs`, `outfeed-core/src/gate/{execute,mod}.rs`, `sawhorse-core/src/{telemetry,router}.rs` | `cargo nextest run -p gaugeblock-mcp -p outfeed-core -p sawhorse-core`; a fixture repo whose `cargo` child inherits the two variables asserts the parent link |\n| **T3** | Implement `telemetry_tailer.rs`, the SQLite index (WAL, byte-offset table), and the SSE + REST endpoints in `benchwork`. | `benchwork-core/src/telemetry_tailer.rs` (+ `telemetry_index.rs` if split), `benchwork-cli/src/daemon/{routes_telemetry,mod}.rs`, `benchwork-core/Cargo.toml` (**add `notify`, `rusqlite`**) | `cargo nextest run -p benchwork-core -p benchwork-cli` — append-then-resume test asserts zero duplicates and zero drops across a restart |\n| **T4** | Build `ExecutionWaterfallView.tsx` in Panel 3, the `LiveAggregatorPill` in the header, the `useTelemetryStream` hook, and surface law 12 rollups in Panel 4 (`ModelTelemetryHub`). | `web/src/panels/SynthesisXray/{ExecutionWaterfallView.tsx,SynthesisXrayPanel.tsx}`, `web/src/components/LiveAggregatorPill.tsx`, `web/src/api/useTelemetryStream.ts`, `web/src/panels/ModelTelemetryHub/SpoolTraceTable.tsx` | `bun run build` (tsc) + a Playwright e2e that renders a seeded two-level tree |\n| **T5** | End-to-end verification under law 12: measure `SpanGuard` overhead, trigger an MCP tool call and an `outfeed gate` run from *outside* `benchwork`, and confirm the parent-child tree renders live over SSE. | — | `miter contracts`, `outfeed gate`, `chalkline docs check` + the recorded numbers in §8 |\n\nSequencing notes:\n\n* T1 and T2 are the only steps that touch shared crates, so they land before T3 — `benchwork` cannot\n  tail a file whose schema is still moving.\n* T3's dependency additions are the only manifest churn in the ticket, and they are additive.\n* T4 can be developed against a seeded fixture (`tests/fixtures/telemetry/events.jsonl`) without a\n  running gate, so the panel is not blocked on T5.\n* T5 is a *measurement* step, not a smoke test: it exists to produce the numbers in §8.\n\n\n---\n\n## 8. Measurements to record (law 12 — no claim without a number)\n\n| What | How | Where it is recorded |\n|:--|:--|:--|\n| `SpanGuard` overhead | 10 000 `start`+`drop` cycles with the telemetry path writable vs. pointed at a read-only directory, same machine, sequential | commit message that lands T1, plus `common/PERF.md` |\n| Emit latency, worst case | times the single `write_all` at the 99th percentile with 4 concurrent writers appending | same commit; target `< 100 µs` from D1 |\n| SSE end-to-end latency | append from a plain `miter` CLI run, measure until the `EventSource` callback fires; target `< 250 ms` (acceptance criterion) | T5, in `benchwork/README.md` perf note |\n| Gate instrumentation cost | `outfeed gate` wall time with telemetry on vs. off, warm cache, same tree | commit message that lands T2 |\n| Index size growth | `index.sqlite`, `events.jsonl` and snapshot bytes after one full Tier 3 gate run | T5 |\n\nIf a number comes back worse than the target, it is recorded as a regression, not omitted.\n\n## 9. Out of scope (deferred deliberately)\n\n* **Retention, rotation, compaction.** `events.jsonl` grows without bound in this ticket. Rotating it\n  is a separate decision (which spans survive?) and belongs in its own ticket, not smuggled into T3.\n* **Mining or dataset emission.** `GB-244` owns `distill-telemetry`; this ticket guarantees the\n  records and the snapshots exist, nothing more.\n* **Typed MCP protocol migration** (`GB-235`) — orthogonal refactor of the same dispatcher.\n* **Span-based alerting or budgets** in `benchwork` (e.g. \"clippy p95 regressed\"). Useful, needs the\n  history first.\n* **`AstPass` kind** is defined in the enum but emitted by nothing in this ticket; it exists so\n  `miter`/`dado`/`batten` passes can be added without a schema bump.\n* **A `benchwork-mcp` tool** exposing spans to an agent. Later.\n\n## 10. Risks and how the plan answers them\n\n| Risk | Answer |\n|:--|:--|\n| A telemetry bug breaks a gate | Fail-open is a test in T1, not a convention. The no-op guard returns the same value the caller had. |\n| Span volume floods the daemon | MCP housekeeping methods are excluded; the broadcast channel for spans is separate from the 256-slot `LiveEvent` channel so a burst cannot evict a task update. |\n| `gate/mod.rs` (224 LOC) crosses 250 | Extract `gate/steps.rs` before adding anything; the plan names the trigger explicitly. |\n| The diff snapshot captures a secret | The snapshot is scrubbed by the same path as `input_summary`, and lives under a gitignored directory with a content-addressed name. |\n| `benchwork-core` grows two dependencies for a feature it may not always ship | Both sit behind the same crate that already depends on eight suite crates; the tailer is one module and can be feature-gated if it ever needs to be. |\n| Two processes write the same `events.jsonl` concurrently | `O_APPEND` plus a single `write_all` per line; a concurrent-append test with 4 writers asserts no interleaved line. |\n\n",
+        "design_markdown": "# Task Plan: GB-243 — End-to-end flight recorder telemetry and live SSE execution waterfall\n\n> **Key:** `GB-243` · **Kind:** Feature · **Priority:** P1 · **Repo:** `gaugeblock`\n> **Scope:** `gaugeblock-contracts`, `gaugeblock-workspace`, `gaugeblock-mcp`, `sawhorse-core`,\n> `outfeed-core`, `benchwork-core`, `benchwork-cli`, `web`\n> **Depends on:** `CO-7` (`gaugeblock-workspace`, Phase A foundation of `GB-200`) and `GB-130`\n> (`gaugeblock-mcp`, verified). The path resolver and the shared JSON-RPC dispatcher are the two\n> surfaces this ticket instruments, so it cannot start before both exist.\n> **Status:** Planned — blocked on `CO-7`.\n> **Companion:** `RB-4` (`rabbet distill-telemetry`) consumes the records produced here. This\n> ticket ships the schema and the transport; it does not mine them.\n\n---\n\n## 1. Why this exists — four blind spots, each visible in the tree today\n\n| Blind spot | What the tree shows |\n|:--|:--|\n| No cross-process record of anything | `outfeed gate` prints one line per step (`GateStepResult { name, passed, skipped, detail }`) and discards the duration it could have measured. A 40 s `clippy` and a 0.4 s `docs` look identical afterwards. |\n| `benchwork` sees only itself | `BenchworkState.event_tx: broadcast::Sender<LiveEvent>` carries six variants, all produced *inside the daemon*. An MCP tool call from Cline, or a `cargo clippy` spawned by the gate, is invisible. |\n| MCP tool usage is unmeasured | `common/crates/gaugeblock-mcp/src/stdio.rs` (139 LOC) routes every one of the seven servers through `dispatch`/`dispatch_async`. Nothing records which tool ran, for how long, or whether it errored. |\n| LLM cost is not attributable | `InferenceResponse` already carries `prompt_tokens`, `completion_tokens`, `latency_ms`, `model_used` and `reasoning_tokens` — and every consumer drops them at the return statement. |\n\nThe result is that law 12 (\"a figure that lives only in chat has not been recorded\") is currently\nunenforceable at the process level: there is nowhere to read a number from.\n\n## 2. Decisions (resolved on the ticket)\n\n| # | Decision | Chosen | Category |\n|:--|:--|:--|:--|\n| D1 | Transport for span emission | POSIX `O_APPEND` file-backed flight recorder, zero network coupling | `transport` |\n| D2 | Where instrumentation lives | Three shared choke points only | `architecture` |\n| D3 | Parent-child correlation across processes | `GAUGEBLOCK_TRACE_ID` / `GAUGEBLOCK_PARENT_SPAN_ID` env vars | `correlation` |\n| D4 | How `benchwork` ingests and serves | `notify` watcher + byte offset + SQLite (WAL) index + SSE/REST | `ingestion` |\n\n\n### D1 — POSIX `O_APPEND` file-backed flight recorder, zero network coupling\n\nCLI binaries and `*-mcp` stdio servers MUST NOT make blocking HTTP/IPC calls to `benchwork`\n(`:4242`) to emit telemetry. Every process appends single-line `TelemetrySpan` JSON records\ndirectly to `<canonical_gaugeblock>/telemetry/events.jsonl` using\n`OpenOptions::new().create(true).append(true)` (target `< 100 µs`, fails silently if the disk is\nread-only).\n\n*Why not HTTP:* a blocking POST inside the MCP request path adds daemon latency to every tool call\nand converts a `benchwork` outage into an MCP outage for Cline and Antigravity. Hiding that latency\non a detached thread adds teardown risk on `SIGKILL` — the process that loses the span is exactly\nthe one that died, which is the case the recorder exists for.\n\n*Why `O_APPEND` is sufficient:* a single `write` of a line at or below `PIPE_BUF` is atomic under\nPOSIX and lands at the end of the file without a lock, so N concurrent processes append without\ninterleaving. It needs no daemon, no discovery, no port, no authentication, and it behaves\nidentically for a CI run nobody is watching.\n\n`.gaugeblock/telemetry/` is added to the root `.gitignore` alongside `.gaugeblock/spool/` and\n`.gaugeblock/datasets/`. Note that the existing `.gaugeblock/**/*.sqlite` rule already covers\n`telemetry/index.sqlite`; `events.jsonl` and `snapshots/*.diff` are the two paths that need the new\ndirectory rule.\n\n### D2 — Three choke-point instrumentation strategy\n\nRather than instrumenting individual domain functions across ten repositories, instrument strictly\nat three shared choke points:\n\n1. **`gaugeblock-mcp` JSON-RPC request dispatcher** (`SpanKind::McpTool`). Measured: `stdio.rs`\n   holds `dispatch()` and `dispatch_async()`, the single routing pair all seven servers share, so\n   one wrap covers every VS Code tool call from Cline and Antigravity.\n2. **A CLI top-level `SpanGuard` RAII drop helper in `gaugeblock-workspace`**\n   (`SpanKind::CliCommand`), plus `SpanKind::GateStep` inside `outfeed gate`'s step runner, which\n   already owns the spawn.\n3. **`sawhorse-core` provider completion boundary** (`SpanKind::LlmInference`) —\n   `RoleRouter::complete` and `complete_stream`, where `InferenceResponse` is in hand.\n\nA `tracing-subscriber` layer was rejected: it would require all eleven binaries to adopt a\nsubscriber and a shared registry, and it cannot express \"one completed span with a duration and an\nexit code\" as a single appendable line.\n\n### D3 — 3-tier context and parent-child span correlation\n\nPropagate parent-child causality across subprocess boundaries (`outfeed gate` spawning\n`cargo clippy`, `miter` and `chalkline`; `joiner fill` invoking `sawhorse`) via\n`GAUGEBLOCK_TRACE_ID` and `GAUGEBLOCK_PARENT_SPAN_ID` environment variables, set on the `Command`\nand therefore inherited by every child. Environment is the only channel a stdio MCP server and a\nspawned `cargo` process both see; W3C `traceparent` needs an HTTP hop the gate does not have.\n\nAutomatically enrich every span with `task_key` and `worktree` inferred from `GAUGEBLOCK_TASK_KEY`\nor the active git branch / worktree path (`feat/gb-...`), so a span from a linked worktree\nattributes to the right task without the caller passing anything.\n\n### D4 — Live tailer and derived SQLite index in `benchwork`\n\n`benchwork-core` watches `.gaugeblock/telemetry/events.jsonl` via the `notify` crate (tracking the\nbyte offset so a restart resumes instead of replaying), indexes spans into\n`.gaugeblock/telemetry/index.sqlite` (WAL mode) for historical law 12 P50/P95 duration and token\nqueries, and broadcasts new spans immediately over `GET /api/v1/telemetry/stream` (SSE).\n\nPolling re-reads data that has not changed and still adds up to a second of latency to a pulse the\nheader is meant to animate. Reading the JSONL per request makes P50/P95 a full scan of a file that\ngrows for the life of the checkout. The index is derived state: gitignored, deletable, and\nrebuildable from the JSONL at any time (`rusqlite 0.40 bundled` already matches `storypole-core`\nand `rabbet-core`).\n\n---\n\n## 3. Wire contract — `common/crates/gaugeblock-contracts/src/telemetry/`\n\n> **Path correction (measured, not assumed).** The mission brief names\n> `gaugeblock-contracts/src/telemetry.rs` at ≤ 140 LOC. That file already exists at **146 LOC** and\n> already owns `TelemetryTier`, `AnonymizedSynthesisTrace`, `SyncStatus`, `SpoolEntry` and\n> `SpoolEntry::hash_trace` — the CO-6 spool envelope. Adding the span types inside it would put it\n> over 200 and one deserialisation test away from the hard 250 ceiling. **So the module becomes a\n> directory**, exactly as `storypole-core/src/telemetry/mod.rs` already does: `telemetry/mod.rs`\n> re-exports, `telemetry/spool.rs` carries today's 146 lines unchanged, `telemetry/spans.rs` holds\n> the new span wire contract. `pub use telemetry::*;` in `lib.rs` keeps every existing import path\n> working, so this is a move, not a breaking change.\n\n```rust\n// telemetry/spans.rs — new file, ≤ 140 LOC\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\npub enum SpanKind {\n    CliCommand,\n    McpTool,\n    GateStep,\n    LlmInference,\n    AstPass,\n}\n\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\npub enum SpanStatus {\n    Running,\n    Ok,\n    Error,\n    Skipped,\n}\n\n#[derive(Debug, Clone, Serialize, Deserialize)]\npub struct TokenUsageSummary {\n    pub model: String,\n    pub prompt_tokens: u32,\n    pub completion_tokens: u32,\n}\n\n#[derive(Debug, Clone, Serialize, Deserialize)]\npub struct TelemetrySpan {\n    pub trace_id: String,\n    pub span_id: String,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub parent_span_id: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub session_id: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub task_key: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub worktree: Option<String>,\n    pub binary: String,\n    pub kind: SpanKind,\n    pub name: String,\n    pub started_at_ms: u64,\n    pub duration_ms: u64,\n    pub status: SpanStatus,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub exit_code: Option<i32>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub token_usage: Option<TokenUsageSummary>,\n    /// Scrubbed, compact JSON summary of MCP tool arguments or CLI flags (≤ 512 bytes).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub input_summary: Option<String>,\n    /// Populated on `SpanKind::GateStep` when `status == Error`: first compiler/clippy/doc diagnostic.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub first_diagnostic: Option<String>,\n    /// Populated on `SpanKind::GateStep`: content-addressed hash of `git diff HEAD`\n    /// (or a spool snapshot key).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub worktree_diff_hash: Option<String>,\n    #[serde(default, skip_serializing_if = \"BTreeMap::is_empty\")]\n    pub attributes: BTreeMap<String, String>,\n}\n```\n\nContract invariants:\n\n1. `SpanKind` and `SpanStatus` are `Copy` and `snake_case` on the wire, so a TS discriminant in\n   `benchwork/web` is a literal union (`'cli_command' | 'mcp_tool' | ...`) and not a stringly check.\n2. Every optional field is `skip_serializing_if`, so a successful span writes ~14 fields. A\n   successful `cargo fmt` step must not carry a `first_diagnostic` key at all — `null` and \"absent\"\n   are different things to a dataset builder.\n3. **The envelope stays flat and appendable.** No nested span trees: tree shape is reconstructed by\n   `parent_span_id` at read time (D4's index, `RB-4`'s miner). A writer must never need to read\n   the file back.\n4. `started_at_ms` is epoch milliseconds and `duration_ms` is elapsed, not `ended_at`. A reader that\n   computes `started_at + duration` gets the end; a clock that jumps backwards cannot make an\n   interval negative.\n5. `TelemetrySpan` is *not* `PartialEq`: `attributes` ordering is `BTreeMap` so it could be, but\n   equality on a struct with a populated token block invites tests that assert on token counts the\n   provider never guaranteed. Tests assert field by field.\n\n\n---\n\n## 4. File layout and module budget (every file strictly ≤ 250 LOC)\n\n\"Today\" is `wc -l` on this checkout. Where a file is tight, the plan says what to extract instead of\npretending there is room.\n\n| # | File | Action | Budget | Today | Note |\n|:--|:--|:--|:--|:--|:--|\n| 1 | `common/crates/gaugeblock-contracts/src/telemetry/mod.rs` | new (split) | ≤ 60 | — | `pub mod spool; pub mod spans;` + re-exports + module doc |\n| 1b | `.../telemetry/spool.rs` | moved | ≤ 150 | 146 | today's content verbatim, path only |\n| 1c | `.../telemetry/spans.rs` | new | ≤ 140 | — | §3 wire contract + round-trip tests |\n| 2 | `common/crates/gaugeblock-workspace/src/paths.rs` | update | ≤ 150 | 125 | `telemetry_dir()`, `telemetry_events()`, `telemetry_index()`, `telemetry_snapshots()` — the same shape as the existing `spool_dir()`/`outbox()`/`index_db()` |\n| 3 | `common/crates/gaugeblock-workspace/src/telemetry.rs` | new | ≤ 190 | — | `emit_span`, `SpanGuard`, `SpanContext`, lazy trace-identity |\n\n\n| 4 | `common/crates/gaugeblock-mcp/src/telemetry_middleware.rs` | new | ≤ 130 | — | wraps `Route::CallTool`; `session_id` = MCP process PID + process start epoch; tool name, duration, error state, `input_summary` |\n| 4b | `common/crates/gaugeblock-mcp/src/stdio.rs` | update | ≤ 165 | 139 | two call sites (one per dispatcher) — the wrap must stay ~10 lines each or it does not belong here |\n| 5 | `sawhorse/crates/sawhorse-core/src/telemetry.rs` | new | ≤ 120 | — | `SpanKind::LlmInference` from `InferenceResponse`; `reasoning_tokens` goes to `attributes` |\n| 5b | `sawhorse/crates/sawhorse-core/src/router.rs` | update | ≤ 215 | 192 | one guard in `complete`, one in `complete_stream` (23 lines of headroom) |\n| 6 | `outfeed/crates/outfeed-core/src/gate/execute.rs` | update | ≤ 200 | 140 | step span start/finish + `GAUGEBLOCK_*` on the `Command` + `worktree_diff_hash` |\n| 6b | `outfeed/crates/outfeed-core/src/gate/mod.rs` | update | **≤ 250** | 224 | **only 26 lines of headroom.** If passing step context through `run_gate_steps` costs more than ~15, extract `gate/steps.rs` first and keep `mod.rs` as types + `gate_steps()` |\n| 7 | `benchwork/crates/benchwork-core/src/telemetry_tailer.rs` | new | ≤ 210 | — | `notify` watcher, byte-offset resume, `broadcast` publish |\n| 7b | `benchwork/crates/benchwork-core/src/telemetry_index.rs` | new (contingent) | ≤ 190 | — | split out of the tailer **if** the SQLite schema + queries do not fit; the 210 budget is realistic only for watch + read + publish |\n| 8 | `benchwork/crates/benchwork-cli/src/daemon/routes_telemetry.rs` | new | ≤ 170 | — | `stream` (SSE), `spans`, `law12-stats` |\n| 8b | `benchwork/crates/benchwork-cli/src/daemon/mod.rs` | update | ≤ 210 | 188 | three route registrations only |\n| 9 | `benchwork/web/src/panels/SynthesisXray/ExecutionWaterfallView.tsx` | new | ≤ 210 | — | hierarchical waterfall, interleaved MCP / CLI / LLM / gate-step rows |\n| 9b | `benchwork/web/src/panels/SynthesisXray/SynthesisXrayPanel.tsx` | update | ≤ 220 | 164 | mount the view |\n| 10 | `benchwork/web/src/components/LiveAggregatorPill.tsx` | new | ≤ 90 | — | the header pill. **`App.tsx` is 199 LOC — 51 lines of headroom — so nothing goes inline there; `App.tsx` swaps four lines for one component** |\n| 11 | `benchwork/web/src/api/useTelemetryStream.ts` | new | ≤ 120 | — | `EventSource` over `/api/v1/telemetry/stream`, modelled on the existing `useLiveStream.ts` (50 LOC) |\n\n> **Section B path correction.** Two paths in the brief do not exist and one is misnamed:\n> there is no `benchwork/web/src/panels/SynthesisXray/ExecutionWaterfallView.tsx` *parent* yet (the\n> panel is `SynthesisXrayPanel.tsx`, 164 LOC), `benchwork-core` has **no** `notify` and **no**\n> `rusqlite` dependency today (it must gain `notify` 8.x and `rusqlite 0.40, bundled` to match\n> `storypole-core`/`rabbet-core`), and the gate step named `nextest` in the brief is really `tests`\n> (`gate_steps()` emits `fmt`, `clippy`, `tests`, `contracts`, `layers`, `lockfiles`, `docs` — seven\n> steps, not six). A span whose `name` does not match `gate_steps()` cannot be joined to a\n> `GateStepResult` later, so the name is taken from `GateStep.name`, never a literal.\n\n\n---\n\n## 5. Choke points in detail\n\n### 5.1 `SpanGuard` — the only writer\n\n```rust\n// gaugeblock-workspace/src/telemetry.rs\npub struct SpanGuard { /* trace_id, span_id, kind, name, binary, started: Instant, ctx, status */ }\n\nimpl SpanGuard {\n    /// Opens a span. Never fails: an unusable telemetry path yields a guard that writes nothing.\n    pub fn start(kind: SpanKind, name: impl Into<String>) -> Self;\n    /// Emits children with this span as parent (used by the gate step runner).\n    pub fn child(&self, kind: SpanKind, name: impl Into<String>) -> Self;\n    /// Records the terminal status/code; `Drop` writes the line.\n    pub fn finish_with_status(self, status: SpanStatus, exit_code: Option<i32>) -> Self;\n    /// The environment a child process must inherit (D3).\n    pub fn export_env(&self) -> [(String, String); 2];\n}\n\nimpl Drop for SpanGuard { /* one append, fail-open, never panics */ }\n```\n\nRules the guard must hold, each a test:\n\n1. **Fail-open.** A read-only or missing directory produces a no-op guard. Telemetry must never\n   change an exit code — the first time a flight recorder breaks a gate is the last time it is\n   trusted.\n2. **No panic in `Drop`.** A panic during unwinding is an abort; every fallible step is `if let Ok`.\n3. **One line per span.** The buffer is built with `serde_json::to_vec` and written with a single\n   `write_all` of `json + b\"\\n\"` — never two writes, or two processes can interleave mid-line.\n4. **`finish_with_status` before `Drop` wins.** Explicit finish sets the status; `Drop` only writes\n   if it has not already, or a `?`-early-return path would write `Running` for a failed command.\n5. **Lazy identity.** `trace_id` is inherited from `GAUGEBLOCK_TRACE_ID` when present, otherwise\n   generated once per process — so two `miter` calls in one session share a trace but two CLI runs\n   do not.\n\n### 5.2 `gaugeblock-mcp` dispatcher (`SpanKind::McpTool`)\n\n`stdio.rs::dispatch` / `dispatch_async` are wrapped on the `Route::CallTool` arm only: `initialize`,\n`tools/list` and `ping` are protocol housekeeping, and recording them would triple the event volume\nfor zero information. Each call emits `binary` (the server's own name), `name` (the tool),\n`session_id` (`<binary>-<pid>-<process_start_ms>`), `status` from `ToolOutcome`, `input_summary`\n(scrubbed, ≤ 512 bytes) and, when the tool is `miter` or `storypole`, `attributes`\n`output_symbols_touched` / `files_referenced` taken from the response envelope it already builds.\n\n### 5.3 CLI entry points (`SpanKind::CliCommand`)\n\nOne guard per process, opened in the binary's `main` after argument parsing (so the span name is the\nsubcommand, e.g. `miter.lookup`, not `miter`) and finished at the top-level `anyhow::Result`\nboundary. Eight of eleven binaries already return a single `Result` from `main`, so this is one\nbinding and one `.finish_with_status(...)` per binary.\n\n### 5.4 `outfeed gate` (`SpanKind::GateStep`)\n\n`run_gate_steps` already loops over `Vec<GateStep>` and calls `execute(dir, &step.command)`. Each\niteration opens a child guard named `GateStep.name`, and `execute` sets on the spawned `Command`:\n\n```rust\ncmd.env(\"GAUGEBLOCK_TRACE_ID\", &guard.trace_id)\n   .env(\"GAUGEBLOCK_PARENT_SPAN_ID\", &guard.span_id)\n   .env(\"GAUGEBLOCK_TASK_KEY\", ...);   // when inferable\n```\n\nso `cargo clippy`'s own nested `miter`/`chalkline` spans, and any MCP call made while the gate runs,\nreparent onto the step. Skipped steps emit `SpanStatus::Skipped` with `duration_ms: 0` — a skip is\nnot a pass, which is the same distinction `GateStepResult::skipped` already makes.\n\n### 5.5 `sawhorse` inference (`SpanKind::LlmInference`)\n\n`RoleRouter::complete` and `complete_stream` emit one span per *attempt* (not per role), so a\nfallback chain shows the failed provider and the provider that answered as siblings. `token_usage`\nis copied from `InferenceResponse.token_usage` semantics already present\n(`prompt_tokens`, `completion_tokens`, `model: model_used`); `reasoning_tokens` and the role go to\n`attributes`. No provider implementation changes.\n\n\n---\n\n## 6. Training-capture enrichment (why three optional fields exist)\n\nThe observability dashboard needs thirteen fields. `rabbet`'s dataset builder needs three more, and\nthey are optional precisely so a successful span stays small:\n\n| Field | Populated by | Purpose |\n|:--|:--|:--|\n| `input_summary` | `gaugeblock-mcp` (`McpTool`), CLI guard | what was asked, so a trajectory can be replayed without the raw arguments |\n| `first_diagnostic` | `outfeed gate` (`GateStep`, `status == Error`) | the rejection reason that a repair must answer |\n| `worktree_diff_hash` | `outfeed gate` (`GateStep`) | content address of the diff the step judged |\n\nCapture rules:\n\n1. **`input_summary` is scrubbed and capped at 512 bytes.** Scrubbing reuses `miter`'s existing\n   literal redaction; the cap is applied to the *serialised compact* JSON, and truncation appends\n   `…` so a downstream parser can tell \"short\" from \"truncated\". Over-long input is dropped rather\n   than truncated mid-token, because half a JSON object trains nothing and confuses a reader.\n2. **`worktree_diff_hash` = `sha256` of `git diff HEAD`** in the gate's working directory, computed\n   once per gate run (not per step) and reused for every step span, so all failures in one run share\n   an address.\n3. **On failure**, the first actionable line of the step's own output (already reduced by\n   `first_meaningful_line`) becomes `first_diagnostic`, and the scrubbed unified diff is written to\n   `.gaugeblock/telemetry/snapshots/<worktree_diff_hash>.diff` — content-addressed, so re-running a\n   failing gate rewrites the same file rather than growing the directory.\n4. **On a later passing run of the same `(task_key, step_name)`**, the passing diff is snapshotted\n   too. `Error(A) → Ok(B)`, `A != B`, is the `(rejected_diff, first_diagnostic) → chosen_diff`\n   repair pair `RB-4` mines. **This ticket only guarantees the pair can be reconstructed**; it\n   never writes a `SpoolEntry`.\n5. A snapshot write is subject to the same fail-open rule as the span write. A missing snapshot\n   degrades `RB-4`'s yield; it must never fail a gate.\n\n\n---\n\n## 7. Ordered plan steps\n\n| # | Step | Files | Verification gate |\n|:--|:--|:--|:--|\n| **T1** | Land the wire contract and the writer. Split `telemetry.rs` into a directory, add `spans.rs`, add `GaugeblockPaths::telemetry_*`, implement `emit_span` + `SpanGuard`, and add `.gaugeblock/telemetry/` to the root `.gitignore`. | `contracts/telemetry/{mod,spool,spans}.rs`, `workspace/src/{paths,telemetry}.rs`, root `.gitignore` | `cargo nextest run -p gaugeblock-contracts -p gaugeblock-workspace` (round-trip, absent-field, fail-open, one-line, concurrent-append and unwinding tests) |\n| **T2** | Wire the choke points: the `gaugeblock-mcp` dispatcher wrap, `outfeed gate` step spans with `GAUGEBLOCK_PARENT_SPAN_ID` child propagation, `sawhorse-core` inference spans, and the top-level CLI guards. | `mcp/src/{telemetry_middleware,stdio}.rs`, `outfeed-core/src/gate/{execute,mod}.rs`, `sawhorse-core/src/{telemetry,router}.rs` | `cargo nextest run -p gaugeblock-mcp -p outfeed-core -p sawhorse-core`; a fixture repo whose `cargo` child inherits the two variables asserts the parent link |\n| **T3** | Implement `telemetry_tailer.rs`, the SQLite index (WAL, byte-offset table), and the SSE + REST endpoints in `benchwork`. | `benchwork-core/src/telemetry_tailer.rs` (+ `telemetry_index.rs` if split), `benchwork-cli/src/daemon/{routes_telemetry,mod}.rs`, `benchwork-core/Cargo.toml` (**add `notify`, `rusqlite`**) | `cargo nextest run -p benchwork-core -p benchwork-cli` — append-then-resume test asserts zero duplicates and zero drops across a restart |\n| **T4** | Build `ExecutionWaterfallView.tsx` in Panel 3, the `LiveAggregatorPill` in the header, the `useTelemetryStream` hook, and surface law 12 rollups in Panel 4 (`ModelTelemetryHub`). | `web/src/panels/SynthesisXray/{ExecutionWaterfallView.tsx,SynthesisXrayPanel.tsx}`, `web/src/components/LiveAggregatorPill.tsx`, `web/src/api/useTelemetryStream.ts`, `web/src/panels/ModelTelemetryHub/SpoolTraceTable.tsx` | `bun run build` (tsc) + a Playwright e2e that renders a seeded two-level tree |\n| **T5** | End-to-end verification under law 12: measure `SpanGuard` overhead, trigger an MCP tool call and an `outfeed gate` run from *outside* `benchwork`, and confirm the parent-child tree renders live over SSE. | — | `miter contracts`, `outfeed gate`, `chalkline docs check` + the recorded numbers in §8 |\n\nSequencing notes:\n\n* T1 and T2 are the only steps that touch shared crates, so they land before T3 — `benchwork` cannot\n  tail a file whose schema is still moving.\n* T3's dependency additions are the only manifest churn in the ticket, and they are additive.\n* T4 can be developed against a seeded fixture (`tests/fixtures/telemetry/events.jsonl`) without a\n  running gate, so the panel is not blocked on T5.\n* T5 is a *measurement* step, not a smoke test: it exists to produce the numbers in §8.\n\n\n---\n\n## 8. Measurements to record (law 12 — no claim without a number)\n\n| What | How | Where it is recorded |\n|:--|:--|:--|\n| `SpanGuard` overhead | 10 000 `start`+`drop` cycles with the telemetry path writable vs. pointed at a read-only directory, same machine, sequential | commit message that lands T1, plus `common/PERF.md` |\n| Emit latency, worst case | times the single `write_all` at the 99th percentile with 4 concurrent writers appending | same commit; target `< 100 µs` from D1 |\n| SSE end-to-end latency | append from a plain `miter` CLI run, measure until the `EventSource` callback fires; target `< 250 ms` (acceptance criterion) | T5, in `benchwork/README.md` perf note |\n| Gate instrumentation cost | `outfeed gate` wall time with telemetry on vs. off, warm cache, same tree | commit message that lands T2 |\n| Index size growth | `index.sqlite`, `events.jsonl` and snapshot bytes after one full Tier 3 gate run | T5 |\n\nIf a number comes back worse than the target, it is recorded as a regression, not omitted.\n\n## 9. Out of scope (deferred deliberately)\n\n* **Retention, rotation, compaction.** `events.jsonl` grows without bound in this ticket. Rotating it\n  is a separate decision (which spans survive?) and belongs in its own ticket, not smuggled into T3.\n* **Mining or dataset emission.** `RB-4` owns `distill-telemetry`; this ticket guarantees the\n  records and the snapshots exist, nothing more.\n* **Typed MCP protocol migration** (`GB-235`) — orthogonal refactor of the same dispatcher.\n* **Span-based alerting or budgets** in `benchwork` (e.g. \"clippy p95 regressed\"). Useful, needs the\n  history first.\n* **`AstPass` kind** is defined in the enum but emitted by nothing in this ticket; it exists so\n  `miter`/`dado`/`batten` passes can be added without a schema bump.\n* **A `benchwork-mcp` tool** exposing spans to an agent. Later.\n\n## 10. Risks and how the plan answers them\n\n| Risk | Answer |\n|:--|:--|\n| A telemetry bug breaks a gate | Fail-open is a test in T1, not a convention. The no-op guard returns the same value the caller had. |\n| Span volume floods the daemon | MCP housekeeping methods are excluded; the broadcast channel for spans is separate from the 256-slot `LiveEvent` channel so a burst cannot evict a task update. |\n| `gate/mod.rs` (224 LOC) crosses 250 | Extract `gate/steps.rs` before adding anything; the plan names the trigger explicitly. |\n| The diff snapshot captures a secret | The snapshot is scrubbed by the same path as `input_summary`, and lives under a gitignored directory with a content-addressed name. |\n| `benchwork-core` grows two dependencies for a feature it may not always ship | Both sit behind the same crate that already depends on eight suite crates; the tailer is one module and can be feature-gated if it ever needs to be. |\n| Two processes write the same `events.jsonl` concurrently | `O_APPEND` plus a single `write_all` per line; a concurrent-append test with 4 writers asserts no interleaved line. |\n\n",
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-243.md",
         "steps": [
           {
+            "completed": false,
             "step_id": "T1",
+            "target_files": [],
             "title": "Land the wire contract, SpanGuard writer and telemetry path helpers",
-            "target_files": [],
-            "verification_gate": "cargo nextest run -p gaugeblock-contracts -p gaugeblock-workspace",
-            "completed": false
+            "verification_gate": "cargo nextest run -p gaugeblock-contracts -p gaugeblock-workspace"
           },
           {
+            "completed": false,
             "step_id": "T2",
+            "target_files": [],
             "title": "Wire the three choke points: mcp dispatcher, gate steps with parent propagation, sawhorse inference, CLI guards",
-            "target_files": [],
-            "verification_gate": "cargo nextest run -p gaugeblock-mcp -p outfeed-core -p sawhorse-core",
-            "completed": false
+            "verification_gate": "cargo nextest run -p gaugeblock-mcp -p outfeed-core -p sawhorse-core"
           },
           {
+            "completed": false,
             "step_id": "T3",
+            "target_files": [],
             "title": "Implement the notify tailer, SQLite index and SSE/REST endpoints in benchwork",
-            "target_files": [],
-            "verification_gate": "cargo nextest run -p benchwork-core -p benchwork-cli",
-            "completed": false
+            "verification_gate": "cargo nextest run -p benchwork-core -p benchwork-cli"
           },
           {
+            "completed": false,
             "step_id": "T4",
-            "title": "Build the Panel 3 execution waterfall, header live pulse and Panel 4 law 12 tables",
             "target_files": [],
-            "verification_gate": "bun run build plus Playwright e2e",
-            "completed": false
+            "title": "Build the Panel 3 execution waterfall, header live pulse and Panel 4 law 12 tables",
+            "verification_gate": "bun run build plus Playwright e2e"
           },
           {
+            "completed": false,
             "step_id": "T5",
-            "title": "End-to-end verification: measure overhead, trigger external MCP and gate spans, confirm live tree",
             "target_files": [],
-            "verification_gate": "miter contracts plus outfeed gate plus chalkline docs check",
-            "completed": false
+            "title": "End-to-end verification: measure overhead, trigger external MCP and gate spans, confirm live tree",
+            "verification_gate": "miter contracts plus outfeed gate plus chalkline docs check"
           }
         ],
-        "plan_file_path": ".gaugeblock/storypole/plans/GB-243.md",
+        "summary": "Flight recorder: one O_APPEND span log, three choke points, notify tailer + SQLite index, live SSE waterfall in Panel 3",
         "updated_at_epoch_ms": 1793940009724
       },
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793940009724
     },
     {
-      "event": "edge_added",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "edge": {
         "kind": "blocked_by",
         "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
-        "target_ticket_key": "GB-189"
+        "target_ticket_key": "CO-7"
       },
+      "event": "edge_added",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793940014139
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "ready",
-      "to": "blocked",
-      "reason": "Blocked by unverified task GB-189",
-      "timestamp_ms": 1793940014139
+      "reason": "Blocked by unverified task CO-7",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793940014139,
+      "to": "blocked"
     },
     {
-      "event": "edge_added",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "edge": {
         "kind": "blocked_by",
         "target_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-        "target_ticket_key": "GB-130",
-        "target_repo": "workspace"
+        "target_repo": "workspace",
+        "target_ticket_key": "GB-130"
       },
+      "event": "edge_added",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1793940014294
     },
     {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
-      "description": null,
-      "priority": null,
-      "scope": null,
       "acceptance_criteria": [
         "AC1 DONE 2026-11-05 (common 11502c0): TelemetrySpan + SpanStatus live in gaugeblock-contracts::telemetry with four tests pinning the serde contract (absent optionals omitted",
         " round trip",
@@ -517,23 +327,23 @@
         " waterfall UI",
         " law12 stats."
       ],
-      "timestamp_ms": 1793955666464
+      "description": null,
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793955666464,
+      "title": null
     },
     {
       "event": "status_changed",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "from": "blocked",
-      "to": "ready",
-      "reason": "Dependency GB-189 verified",
-      "timestamp_ms": 1793956069078
+      "reason": "Dependency CO-7 verified",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793956069078,
+      "to": "ready"
     },
     {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
-      "description": null,
-      "priority": null,
-      "scope": null,
       "acceptance_criteria": [
         "AC2 DONE 2026-11-06 (common 816b263): SpanGuard + append_span in gaugeblock-workspace::telemetry. OpenOptions::append with create",
         " parent directories created",
@@ -546,15 +356,15 @@
         " fail-open on an unwritable path",
         " and accumulation. Test-only uuid dev-dependency added; no new runtime dependency beyond contracts + serde_json."
       ],
-      "timestamp_ms": 1793985045982
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793985045982,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "DESIGN NOTE for the sawhorse choke point (2026-11-06",
         " before implementation). The completion boundary is per-provider async fn complete(&self",
@@ -569,15 +379,15 @@
         " which is where it is already used.\\n\\nAlso worth deciding deliberately: whether the span records model and role but never prompt or completion text",
         " since the log is plaintext on disk. The existing redaction rule lives in gaugeblock-security and should be applied at the boundary rather than trusted to each caller."
       ],
-      "timestamp_ms": 1793987922624
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793987922624,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "DEPENDENCY DECISION needed before the sawhorse span lands (2026-11-06). sawhorse-core has no uuid dependency at all (grep of Cargo.toml and src both empty)",
         " and TelemetrySpan requires span_id and trace_id as Uuid. Three options",
@@ -589,29 +399,29 @@
         " tokio and rustls is not the trade that matters",
         " and (b) would make the Law 12 percentile tables empty for exactly the ad-hoc calls worth measuring. Not taken unilaterally because it is the first new runtime dependency sawhorse would gain for observability."
       ],
-      "timestamp_ms": 1793988005370
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793988005370,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "AC3 DONE 2026-11-06 (outfeed c24b-era commit): gate env propagation. outfeed_core::trace mints one trace id per gate process via OnceLock - an ambient GAUGEBLOCK_TRACE_ID wins",
         " so a gate started by an instrumented parent extends that trace instead of starting a second unrelated one - and gate::execute passes it to every spawned child as GAUGEBLOCK_TRACE_ID. No parent span id: a gate step is the root of its own sub-tree. Two tests: every step of a run shares one trace",
         " and the trace is a usable v4 when nothing ambient was set."
       ],
-      "timestamp_ms": 1793989260984
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793989260984,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "AC4a DONE 2026-11-06 (benchwork 33d-era commit): TelemetryTail in benchwork-core reads events.jsonl incrementally. Two rules so a live writer never looks corrupt - an incomplete trailing line is held for a later poll (test writes half a line",
         " asserts nothing",
@@ -626,15 +436,15 @@
         " so test modules need an explicit #![allow(clippy::unwrap_used",
         " clippy::expect_used)] under the law-5 allowance."
       ],
-      "timestamp_ms": 1793989715147
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793989715147,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "TRACE-ID CONSOLIDATION DONE 2026-11-06 (common e3a79e5",
         " sawhorse f69cd70",
@@ -653,15 +463,15 @@
         " release notes in outfeed",
         " DPO pairs in joiner."
       ],
-      "timestamp_ms": 1793991011791
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793991011791,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "AC4b DONE 2026-11-06 (benchwork commit): TelemetryIndex in benchwork-core",
         " sqlite. Log remains source of truth; the db is a cache that rebuilds by re-tailing from offset zero",
@@ -670,15 +480,15 @@
         " started_at_ms) for the waterfall plus started_at_ms for rollups; WAL + 5s busy_timeout so tailer writes while a viewer reads. u64 stored as i64 at the boundary - SQLite has no unsigned type. Module-local thiserror enum so BenchworkError gains no variant for a cache most callers never touch. 9/9 tests. AC4 remaining: SSE stream",
         " in benchwork-cli per the agreed split."
       ],
-      "timestamp_ms": 1793992078138
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793992078138,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "AC4c DONE 2026-11-06 (benchwork commit): SSE stream at GET /api/v1/telemetry/stream. Deliberately NOT built on the existing in-process broadcast behind /api/v1/events - those events are produced by the daemon",
         " spans are produced by every other process",
@@ -686,15 +496,15 @@
         " because the log may be mid-rotation. Path resolved through GaugeblockPaths so a worktree streams the same file. axum with ws was already a dependency and SSE is in axum core",
         " so no web stack was added - only the two crate edges. AC4 COMPLETE."
       ],
-      "timestamp_ms": 1793992663639
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793992663639,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "AC5 SURVEYED 2026-11-06 - ready to implement",
         " shape confirmed. The workbench UI is a Vite app at benchwork/web (React + TS",
@@ -711,15 +521,15 @@
         " no benchwork types - because the promotion criterion recorded on this ticket is 'a second consumer appears'",
         " and a pure function is what makes that a two-file move into a gaugeblock-telemetry crate rather than a redesign. Percentiles must be computed over completed spans only (duration_ms IS NULL means still running) or every open span skews the table low."
       ],
-      "timestamp_ms": 1793992706144
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793992706144,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "AC5 DONE 2026-11-06 (benchwork fb9bee8 + dist rebuild): Flight Recorder panel",
         " Panel 5",
@@ -734,15 +544,15 @@
         " so the panel is genuinely served rather than merely present in source - the failure mode I recorded in the AC5 survey. Tracked web/dist artifacts were rebuilt in a separate commit so they cannot go stale against source. MainPanelTab extended in one place; BenjiSidebar takes activePanel: string so no cascade. 115 lines panel",
         " 94 lines hook."
       ],
-      "timestamp_ms": 1793992921829
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793992921829,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "AC6 DONE 2026-11-06 (benchwork commit): Law 12 rollups. telemetry_stats provides latency_stats (nearest-rank P50/P95",
         " no interpolation so every reported figure is a duration that actually happened)",
@@ -761,15 +571,15 @@
         " clippy -D warnings clean",
         " 14/14."
       ],
-      "timestamp_ms": 1793993131172
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793993131172,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "TIER 3 RUN 2026-11-06 - NOT VERIFIED YET",
         " two blockers.\\n\\nPASSING: miter contracts (36 entities",
@@ -786,15 +596,15 @@
         " 4/4+90/90",
         " 14/14+9/9+5/5) and the web build passed tsc -b and vite."
       ],
-      "timestamp_ms": 1793993602726
-    },
-    {
-      "event": "task_updated",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
-      "title": null,
       "description": null,
+      "event": "task_updated",
       "priority": null,
       "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793993602726,
+      "title": null
+    },
+    {
       "acceptance_criteria": [
         "TIER 3 STATUS: all cross-repo gates now pass. miter contracts 36 entities 0 drift; outfeed lockfiles all 11 fresh; chalkline docs check 9 present 0 missing 0 drifted on common",
         " sawhorse",
@@ -809,73 +619,263 @@
         " and expecting is not verifying.\\n\\nLesson worth keeping: Tier 3 caught what Tier 2 structurally cannot - seven stale lockfiles in repositories I never edited",
         " and two doc drifts from types I added. Neither would ever have appeared in the crate-level runs."
       ],
-      "timestamp_ms": 1793993865045
+      "description": null,
+      "event": "task_updated",
+      "priority": null,
+      "scope": null,
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+      "timestamp_ms": 1793993865045,
+      "title": null
     },
     {
       "event": "task_verified",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "receipt": {
-        "verifier": "manual",
-        "command": "n/a",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Manual verification confirmed",
-        "verified_at_epoch_ms": 1793994577937,
-        "git_branch": "main",
         "base_commit_sha": "3dabc906bdd261178e9d6cc771d60571ad194c42",
-        "head_commit_sha": "3dabc906bdd261178e9d6cc771d60571ad194c42",
+        "chain_key": null,
+        "command": "n/a",
         "commit_shas": [
           "3dabc906bdd261178e9d6cc771d60571ad194c42"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "3dabc906bdd261178e9d6cc771d60571ad194c42",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793994577937,
+        "verifier": "manual"
+      },
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c"
     },
     {
       "event": "task_verified",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "receipt": {
-        "verifier": "manual",
+        "base_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
+        "chain_key": null,
         "command": "n/a",
-        "exit_code": 0,
+        "commit_shas": [
+          "0b29da396a72080975591037539439b60bed6d9f"
+        ],
         "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
+        "repo": null,
         "summary": "Manual verification confirmed",
         "verified_at_epoch_ms": 1794000797690,
-        "git_branch": "main",
-        "base_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
-        "head_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
-        "commit_shas": [
-          "0b29da396a72080975591037539439b60bed6d9f"
-        ],
-        "repo": null,
-        "chain_key": null
-      }
+        "verifier": "manual"
+      },
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c"
     },
     {
       "event": "task_verified",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "receipt": {
-        "verifier": "storypole-verify",
-        "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
-        "exit_code": 0,
-        "diagnostic_count": null,
-        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 36\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-        "verified_at_epoch_ms": 1794001639380,
-        "git_branch": "main",
         "base_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
-        "head_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
+        "chain_key": null,
+        "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
         "commit_shas": [
           "0b29da396a72080975591037539439b60bed6d9f"
         ],
+        "diagnostic_count": null,
+        "exit_code": 0,
+        "git_branch": "main",
+        "head_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
         "repo": null,
-        "chain_key": null
-      }
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 36\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794001639380,
+        "verifier": "storypole-verify"
+      },
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c"
     },
     {
       "event": "task_archived",
-      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "status": "verified",
+      "task_id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
       "timestamp_ms": 1794037984741
     }
-  ]
+  ],
+  "ticket": {
+    "acceptance_criteria": [
+      "TIER 3 STATUS: all cross-repo gates now pass. miter contracts 36 entities 0 drift; outfeed lockfiles all 11 fresh; chalkline docs check 9 present 0 missing 0 drifted on common",
+      " sawhorse",
+      " outfeed and benchwork (the two drifts are fixed - SpanStatus and TelemetrySpan added to the common boundary table",
+      " TelemetryIndexError specified in benchwork's with the reason it is module-local rather than a BenchworkError variant).\\n\\nNOT YET RUN",
+      " and the only reason this is not Verified: cargo fmt --all -- --check",
+      " cargo clippy --workspace --all-targets and cargo nextest run --workspace on those four repos. Per-crate Tier 2 is green across the board (gaugeblock-workspace 22/22",
+      " sawhorse-core 33/33",
+      " outfeed-core 90/90",
+      " benchwork-core 14/14+9/9+5/5) and the web build passed tsc -b and vite build",
+      " so these are expected to pass - but running them is the gate",
+      " and expecting is not verifying.\\n\\nLesson worth keeping: Tier 3 caught what Tier 2 structurally cannot - seven stale lockfiles in repositories I never edited",
+      " and two doc drifts from types I added. Neither would ever have appeared in the crate-level runs."
+    ],
+    "active_claim": null,
+    "archived_at_epoch_ms": 1794037984741,
+    "created_at_epoch_ms": 1793939851002,
+    "decisions": [
+      {
+        "category": "transport",
+        "chosen_option": "POSIX O_APPEND file-backed flight recorder at <canonical .gaugeblock>/telemetry/events.jsonl with zero network coupling",
+        "decision_id": "796fde17-2171-4291-a1db-3fef5c4da9e7",
+        "parent_decision_id": null,
+        "proposed_options": [
+          "POSIX O_APPEND file-backed flight recorder at <canonical .gaugeblock>/telemetry/events.jsonl with zero network coupling",
+          "Blocking HTTP POST to the benchwork daemon on :4242",
+          "Unix domain socket owned by the benchwork daemon"
+        ],
+        "question": "D1 Transport: how must CLI binaries and *-mcp stdio servers emit telemetry spans?",
+        "rationale": "CLI binaries and *-mcp stdio servers MUST NOT make blocking HTTP/IPC calls to benchwork (:4242) to emit telemetry. Every process appends single-line TelemetrySpan JSON records directly to <canonical_gaugeblock>/telemetry/events.jsonl using OpenOptions::new().create(true).append(true) (< 100 us, fails silently if the disk is read-only). A blocking POST inside the MCP request path would add daemon latency to every tool call and turn a benchwork outage into an MCP outage for Cline and Antigravity; a detached thread to hide that latency adds teardown risk on SIGKILL. O_APPEND is atomic for a single line under POSIX, needs no daemon, no discovery and no port, and behaves identically for a CLI run nobody is watching. Add .gaugeblock/telemetry/ to root .gitignore alongside .gaugeblock/spool/.",
+        "resolved_by": "cline",
+        "status": "resolved",
+        "updated_at_epoch_ms": 1793939896613
+      },
+      {
+        "category": "architecture",
+        "chosen_option": "Three shared choke points only: the gaugeblock-mcp JSON-RPC dispatcher, the gaugeblock-workspace SpanGuard used by CLI entry points (plus the outfeed gate step runner), and the sawhorse-core provider completion boundary",
+        "decision_id": "d74b27b0-2cc6-495c-bb35-c5dad1ea9dd6",
+        "parent_decision_id": null,
+        "proposed_options": [
+          "Three shared choke points only: the gaugeblock-mcp JSON-RPC dispatcher, the gaugeblock-workspace SpanGuard used by CLI entry points (plus the outfeed gate step runner), and the sawhorse-core provider completion boundary",
+          "Instrument individual domain functions across all 10 repositories",
+          "Attach a tracing-subscriber layer to every binary"
+        ],
+        "question": "D2 Instrumentation strategy: which call sites emit spans?",
+        "rationale": "Rather than instrumenting individual domain functions across 10 repositories, instrument strictly at three shared choke points: (1) the gaugeblock-mcp JSON-RPC request dispatcher (SpanKind::McpTool) - measured: common/crates/gaugeblock-mcp/src/stdio.rs holds dispatch() and dispatch_async(), the single routing pair all seven MCP servers share, so one wrap covers every tool call; (2) a CLI top-level SpanGuard RAII drop helper in gaugeblock-workspace (SpanKind::CliCommand), plus SpanKind::GateStep inside outfeed gate where execute() already spawns each step; (3) the sawhorse-core provider completion boundary in RoleRouter::complete and complete_stream (SpanKind::LlmInference), where InferenceResponse already carries prompt_tokens, completion_tokens, latency_ms and model_used, so no provider plumbing changes. A tracing layer was rejected: it needs every one of the eleven binaries to adopt a subscriber and a shared registry, and it cannot express a completed span with a duration and an exit code as one appendable line.",
+        "resolved_by": "cline",
+        "status": "resolved",
+        "updated_at_epoch_ms": 1793939896810
+      },
+      {
+        "category": "correlation",
+        "chosen_option": "GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY, the active git branch or the worktree path",
+        "decision_id": "14704c55-be22-4140-8a1c-353da717ccad",
+        "parent_decision_id": null,
+        "proposed_options": [
+          "GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY, the active git branch or the worktree path",
+          "W3C traceparent header injection only",
+          "No correlation: a flat, unordered span log"
+        ],
+        "question": "D3 Correlation: how are parent-child span relationships propagated across process boundaries?",
+        "rationale": "Propagate parent-child causality across subprocess boundaries (outfeed gate spawning cargo clippy, miter and chalkline; joiner fill invoking sawhorse) via GAUGEBLOCK_TRACE_ID and GAUGEBLOCK_PARENT_SPAN_ID environment variables, inherited by every child because they are set on the Command. Environment is the only channel a stdio MCP server and a spawned cargo process both see; W3C traceparent needs an HTTP hop the gate does not have. Automatically enrich every span with task_key and worktree inferred from GAUGEBLOCK_TASK_KEY or the active git branch / worktree path (feat/gb-...), so a span from a linked worktree attributes to the right task without the caller passing anything.",
+        "resolved_by": "cline",
+        "status": "resolved",
+        "updated_at_epoch_ms": 1793939897080
+      },
+      {
+        "category": "ingestion",
+        "chosen_option": "notify file watcher tracking the byte offset, SQLite index in WAL mode for history, and an immediate broadcast to SSE and REST",
+        "decision_id": "031b3ce4-ffdb-435c-aa96-ae2007bef688",
+        "parent_decision_id": null,
+        "proposed_options": [
+          "notify file watcher tracking the byte offset, SQLite index in WAL mode for history, and an immediate broadcast to SSE and REST",
+          "Poll events.jsonl on a 1 s tokio interval and re-read the whole file",
+          "Query the JSONL file directly on every HTTP request with no index"
+        ],
+        "question": "D4 Benchwork ingestion: how does the daemon consume and serve the flight recorder?",
+        "rationale": "benchwork-core watches .gaugeblock/telemetry/events.jsonl via the notify crate (tracking the byte offset so a restart resumes instead of replaying), indexes spans into .gaugeblock/telemetry/index.sqlite (WAL mode) for historical Law 12 P50/P95 duration and token queries, and broadcasts new spans immediately over GET /api/v1/telemetry/stream (SSE). Polling re-reads data that has not changed and still adds up to a second of latency to a pulse the header is meant to animate; reading JSONL per request makes P50/P95 a full scan of a file that grows for the life of the checkout. The index is derived state, so it is gitignored and can be deleted and rebuilt from the JSONL at any time (rusqlite 0.40 bundled already matches storypole-core and rabbet-core).",
+        "resolved_by": "cline",
+        "status": "resolved",
+        "updated_at_epoch_ms": 1793939897318
+      }
+    ],
+    "description": "Enables zero-configuration, cross-process observability across VS Code MCP servers (`*-mcp`), standalone CLI invocations, `outfeed gate` sub-steps, and `sawhorse` LLM calls. All processes append `TelemetrySpan` records via atomic `O_APPEND` to the worktree-safe canonical `.gaugeblock/telemetry/events.jsonl` resolved by `gaugeblock-workspace`. `benchwork` tails the file via filesystem notifications (`notify`), indexes spans into `.gaugeblock/telemetry/index.sqlite`, and streams live execution activity to the global header pulse, Panel 3 (`AST & Synthesis X-Ray`) waterfall, and Panel 4 (`Model Router & Telemetry Spool`) Law 12 timing tables.",
+    "edges": [
+      {
+        "kind": "blocked_by",
+        "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
+        "target_ticket_key": "CO-7"
+      },
+      {
+        "kind": "blocked_by",
+        "target_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+        "target_repo": "workspace",
+        "target_ticket_key": "GB-130"
+      }
+    ],
+    "id": "f2452f48-c4dc-4246-a11c-2d0b407ae26c",
+    "kind": "feature",
+    "latest_handoff": null,
+    "plan": {
+      "design_markdown": "# Task Plan: GB-243 — End-to-end flight recorder telemetry and live SSE execution waterfall\n\n> **Key:** `GB-243` · **Kind:** Feature · **Priority:** P1 · **Repo:** `gaugeblock`\n> **Scope:** `gaugeblock-contracts`, `gaugeblock-workspace`, `gaugeblock-mcp`, `sawhorse-core`,\n> `outfeed-core`, `benchwork-core`, `benchwork-cli`, `web`\n> **Depends on:** `CO-7` (`gaugeblock-workspace`, Phase A foundation of `GB-200`) and `GB-130`\n> (`gaugeblock-mcp`, verified). The path resolver and the shared JSON-RPC dispatcher are the two\n> surfaces this ticket instruments, so it cannot start before both exist.\n> **Status:** Planned — blocked on `CO-7`.\n> **Companion:** `RB-4` (`rabbet distill-telemetry`) consumes the records produced here. This\n> ticket ships the schema and the transport; it does not mine them.\n\n---\n\n## 1. Why this exists — four blind spots, each visible in the tree today\n\n| Blind spot | What the tree shows |\n|:--|:--|\n| No cross-process record of anything | `outfeed gate` prints one line per step (`GateStepResult { name, passed, skipped, detail }`) and discards the duration it could have measured. A 40 s `clippy` and a 0.4 s `docs` look identical afterwards. |\n| `benchwork` sees only itself | `BenchworkState.event_tx: broadcast::Sender<LiveEvent>` carries six variants, all produced *inside the daemon*. An MCP tool call from Cline, or a `cargo clippy` spawned by the gate, is invisible. |\n| MCP tool usage is unmeasured | `common/crates/gaugeblock-mcp/src/stdio.rs` (139 LOC) routes every one of the seven servers through `dispatch`/`dispatch_async`. Nothing records which tool ran, for how long, or whether it errored. |\n| LLM cost is not attributable | `InferenceResponse` already carries `prompt_tokens`, `completion_tokens`, `latency_ms`, `model_used` and `reasoning_tokens` — and every consumer drops them at the return statement. |\n\nThe result is that law 12 (\"a figure that lives only in chat has not been recorded\") is currently\nunenforceable at the process level: there is nowhere to read a number from.\n\n## 2. Decisions (resolved on the ticket)\n\n| # | Decision | Chosen | Category |\n|:--|:--|:--|:--|\n| D1 | Transport for span emission | POSIX `O_APPEND` file-backed flight recorder, zero network coupling | `transport` |\n| D2 | Where instrumentation lives | Three shared choke points only | `architecture` |\n| D3 | Parent-child correlation across processes | `GAUGEBLOCK_TRACE_ID` / `GAUGEBLOCK_PARENT_SPAN_ID` env vars | `correlation` |\n| D4 | How `benchwork` ingests and serves | `notify` watcher + byte offset + SQLite (WAL) index + SSE/REST | `ingestion` |\n\n\n### D1 — POSIX `O_APPEND` file-backed flight recorder, zero network coupling\n\nCLI binaries and `*-mcp` stdio servers MUST NOT make blocking HTTP/IPC calls to `benchwork`\n(`:4242`) to emit telemetry. Every process appends single-line `TelemetrySpan` JSON records\ndirectly to `<canonical_gaugeblock>/telemetry/events.jsonl` using\n`OpenOptions::new().create(true).append(true)` (target `< 100 µs`, fails silently if the disk is\nread-only).\n\n*Why not HTTP:* a blocking POST inside the MCP request path adds daemon latency to every tool call\nand converts a `benchwork` outage into an MCP outage for Cline and Antigravity. Hiding that latency\non a detached thread adds teardown risk on `SIGKILL` — the process that loses the span is exactly\nthe one that died, which is the case the recorder exists for.\n\n*Why `O_APPEND` is sufficient:* a single `write` of a line at or below `PIPE_BUF` is atomic under\nPOSIX and lands at the end of the file without a lock, so N concurrent processes append without\ninterleaving. It needs no daemon, no discovery, no port, no authentication, and it behaves\nidentically for a CI run nobody is watching.\n\n`.gaugeblock/telemetry/` is added to the root `.gitignore` alongside `.gaugeblock/spool/` and\n`.gaugeblock/datasets/`. Note that the existing `.gaugeblock/**/*.sqlite` rule already covers\n`telemetry/index.sqlite`; `events.jsonl` and `snapshots/*.diff` are the two paths that need the new\ndirectory rule.\n\n### D2 — Three choke-point instrumentation strategy\n\nRather than instrumenting individual domain functions across ten repositories, instrument strictly\nat three shared choke points:\n\n1. **`gaugeblock-mcp` JSON-RPC request dispatcher** (`SpanKind::McpTool`). Measured: `stdio.rs`\n   holds `dispatch()` and `dispatch_async()`, the single routing pair all seven servers share, so\n   one wrap covers every VS Code tool call from Cline and Antigravity.\n2. **A CLI top-level `SpanGuard` RAII drop helper in `gaugeblock-workspace`**\n   (`SpanKind::CliCommand`), plus `SpanKind::GateStep` inside `outfeed gate`'s step runner, which\n   already owns the spawn.\n3. **`sawhorse-core` provider completion boundary** (`SpanKind::LlmInference`) —\n   `RoleRouter::complete` and `complete_stream`, where `InferenceResponse` is in hand.\n\nA `tracing-subscriber` layer was rejected: it would require all eleven binaries to adopt a\nsubscriber and a shared registry, and it cannot express \"one completed span with a duration and an\nexit code\" as a single appendable line.\n\n### D3 — 3-tier context and parent-child span correlation\n\nPropagate parent-child causality across subprocess boundaries (`outfeed gate` spawning\n`cargo clippy`, `miter` and `chalkline`; `joiner fill` invoking `sawhorse`) via\n`GAUGEBLOCK_TRACE_ID` and `GAUGEBLOCK_PARENT_SPAN_ID` environment variables, set on the `Command`\nand therefore inherited by every child. Environment is the only channel a stdio MCP server and a\nspawned `cargo` process both see; W3C `traceparent` needs an HTTP hop the gate does not have.\n\nAutomatically enrich every span with `task_key` and `worktree` inferred from `GAUGEBLOCK_TASK_KEY`\nor the active git branch / worktree path (`feat/gb-...`), so a span from a linked worktree\nattributes to the right task without the caller passing anything.\n\n### D4 — Live tailer and derived SQLite index in `benchwork`\n\n`benchwork-core` watches `.gaugeblock/telemetry/events.jsonl` via the `notify` crate (tracking the\nbyte offset so a restart resumes instead of replaying), indexes spans into\n`.gaugeblock/telemetry/index.sqlite` (WAL mode) for historical law 12 P50/P95 duration and token\nqueries, and broadcasts new spans immediately over `GET /api/v1/telemetry/stream` (SSE).\n\nPolling re-reads data that has not changed and still adds up to a second of latency to a pulse the\nheader is meant to animate. Reading the JSONL per request makes P50/P95 a full scan of a file that\ngrows for the life of the checkout. The index is derived state: gitignored, deletable, and\nrebuildable from the JSONL at any time (`rusqlite 0.40 bundled` already matches `storypole-core`\nand `rabbet-core`).\n\n---\n\n## 3. Wire contract — `common/crates/gaugeblock-contracts/src/telemetry/`\n\n> **Path correction (measured, not assumed).** The mission brief names\n> `gaugeblock-contracts/src/telemetry.rs` at ≤ 140 LOC. That file already exists at **146 LOC** and\n> already owns `TelemetryTier`, `AnonymizedSynthesisTrace`, `SyncStatus`, `SpoolEntry` and\n> `SpoolEntry::hash_trace` — the CO-6 spool envelope. Adding the span types inside it would put it\n> over 200 and one deserialisation test away from the hard 250 ceiling. **So the module becomes a\n> directory**, exactly as `storypole-core/src/telemetry/mod.rs` already does: `telemetry/mod.rs`\n> re-exports, `telemetry/spool.rs` carries today's 146 lines unchanged, `telemetry/spans.rs` holds\n> the new span wire contract. `pub use telemetry::*;` in `lib.rs` keeps every existing import path\n> working, so this is a move, not a breaking change.\n\n```rust\n// telemetry/spans.rs — new file, ≤ 140 LOC\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\npub enum SpanKind {\n    CliCommand,\n    McpTool,\n    GateStep,\n    LlmInference,\n    AstPass,\n}\n\n#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]\n#[serde(rename_all = \"snake_case\")]\npub enum SpanStatus {\n    Running,\n    Ok,\n    Error,\n    Skipped,\n}\n\n#[derive(Debug, Clone, Serialize, Deserialize)]\npub struct TokenUsageSummary {\n    pub model: String,\n    pub prompt_tokens: u32,\n    pub completion_tokens: u32,\n}\n\n#[derive(Debug, Clone, Serialize, Deserialize)]\npub struct TelemetrySpan {\n    pub trace_id: String,\n    pub span_id: String,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub parent_span_id: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub session_id: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub task_key: Option<String>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub worktree: Option<String>,\n    pub binary: String,\n    pub kind: SpanKind,\n    pub name: String,\n    pub started_at_ms: u64,\n    pub duration_ms: u64,\n    pub status: SpanStatus,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub exit_code: Option<i32>,\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub token_usage: Option<TokenUsageSummary>,\n    /// Scrubbed, compact JSON summary of MCP tool arguments or CLI flags (≤ 512 bytes).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub input_summary: Option<String>,\n    /// Populated on `SpanKind::GateStep` when `status == Error`: first compiler/clippy/doc diagnostic.\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub first_diagnostic: Option<String>,\n    /// Populated on `SpanKind::GateStep`: content-addressed hash of `git diff HEAD`\n    /// (or a spool snapshot key).\n    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n    pub worktree_diff_hash: Option<String>,\n    #[serde(default, skip_serializing_if = \"BTreeMap::is_empty\")]\n    pub attributes: BTreeMap<String, String>,\n}\n```\n\nContract invariants:\n\n1. `SpanKind` and `SpanStatus` are `Copy` and `snake_case` on the wire, so a TS discriminant in\n   `benchwork/web` is a literal union (`'cli_command' | 'mcp_tool' | ...`) and not a stringly check.\n2. Every optional field is `skip_serializing_if`, so a successful span writes ~14 fields. A\n   successful `cargo fmt` step must not carry a `first_diagnostic` key at all — `null` and \"absent\"\n   are different things to a dataset builder.\n3. **The envelope stays flat and appendable.** No nested span trees: tree shape is reconstructed by\n   `parent_span_id` at read time (D4's index, `RB-4`'s miner). A writer must never need to read\n   the file back.\n4. `started_at_ms` is epoch milliseconds and `duration_ms` is elapsed, not `ended_at`. A reader that\n   computes `started_at + duration` gets the end; a clock that jumps backwards cannot make an\n   interval negative.\n5. `TelemetrySpan` is *not* `PartialEq`: `attributes` ordering is `BTreeMap` so it could be, but\n   equality on a struct with a populated token block invites tests that assert on token counts the\n   provider never guaranteed. Tests assert field by field.\n\n\n---\n\n## 4. File layout and module budget (every file strictly ≤ 250 LOC)\n\n\"Today\" is `wc -l` on this checkout. Where a file is tight, the plan says what to extract instead of\npretending there is room.\n\n| # | File | Action | Budget | Today | Note |\n|:--|:--|:--|:--|:--|:--|\n| 1 | `common/crates/gaugeblock-contracts/src/telemetry/mod.rs` | new (split) | ≤ 60 | — | `pub mod spool; pub mod spans;` + re-exports + module doc |\n| 1b | `.../telemetry/spool.rs` | moved | ≤ 150 | 146 | today's content verbatim, path only |\n| 1c | `.../telemetry/spans.rs` | new | ≤ 140 | — | §3 wire contract + round-trip tests |\n| 2 | `common/crates/gaugeblock-workspace/src/paths.rs` | update | ≤ 150 | 125 | `telemetry_dir()`, `telemetry_events()`, `telemetry_index()`, `telemetry_snapshots()` — the same shape as the existing `spool_dir()`/`outbox()`/`index_db()` |\n| 3 | `common/crates/gaugeblock-workspace/src/telemetry.rs` | new | ≤ 190 | — | `emit_span`, `SpanGuard`, `SpanContext`, lazy trace-identity |\n\n\n| 4 | `common/crates/gaugeblock-mcp/src/telemetry_middleware.rs` | new | ≤ 130 | — | wraps `Route::CallTool`; `session_id` = MCP process PID + process start epoch; tool name, duration, error state, `input_summary` |\n| 4b | `common/crates/gaugeblock-mcp/src/stdio.rs` | update | ≤ 165 | 139 | two call sites (one per dispatcher) — the wrap must stay ~10 lines each or it does not belong here |\n| 5 | `sawhorse/crates/sawhorse-core/src/telemetry.rs` | new | ≤ 120 | — | `SpanKind::LlmInference` from `InferenceResponse`; `reasoning_tokens` goes to `attributes` |\n| 5b | `sawhorse/crates/sawhorse-core/src/router.rs` | update | ≤ 215 | 192 | one guard in `complete`, one in `complete_stream` (23 lines of headroom) |\n| 6 | `outfeed/crates/outfeed-core/src/gate/execute.rs` | update | ≤ 200 | 140 | step span start/finish + `GAUGEBLOCK_*` on the `Command` + `worktree_diff_hash` |\n| 6b | `outfeed/crates/outfeed-core/src/gate/mod.rs` | update | **≤ 250** | 224 | **only 26 lines of headroom.** If passing step context through `run_gate_steps` costs more than ~15, extract `gate/steps.rs` first and keep `mod.rs` as types + `gate_steps()` |\n| 7 | `benchwork/crates/benchwork-core/src/telemetry_tailer.rs` | new | ≤ 210 | — | `notify` watcher, byte-offset resume, `broadcast` publish |\n| 7b | `benchwork/crates/benchwork-core/src/telemetry_index.rs` | new (contingent) | ≤ 190 | — | split out of the tailer **if** the SQLite schema + queries do not fit; the 210 budget is realistic only for watch + read + publish |\n| 8 | `benchwork/crates/benchwork-cli/src/daemon/routes_telemetry.rs` | new | ≤ 170 | — | `stream` (SSE), `spans`, `law12-stats` |\n| 8b | `benchwork/crates/benchwork-cli/src/daemon/mod.rs` | update | ≤ 210 | 188 | three route registrations only |\n| 9 | `benchwork/web/src/panels/SynthesisXray/ExecutionWaterfallView.tsx` | new | ≤ 210 | — | hierarchical waterfall, interleaved MCP / CLI / LLM / gate-step rows |\n| 9b | `benchwork/web/src/panels/SynthesisXray/SynthesisXrayPanel.tsx` | update | ≤ 220 | 164 | mount the view |\n| 10 | `benchwork/web/src/components/LiveAggregatorPill.tsx` | new | ≤ 90 | — | the header pill. **`App.tsx` is 199 LOC — 51 lines of headroom — so nothing goes inline there; `App.tsx` swaps four lines for one component** |\n| 11 | `benchwork/web/src/api/useTelemetryStream.ts` | new | ≤ 120 | — | `EventSource` over `/api/v1/telemetry/stream`, modelled on the existing `useLiveStream.ts` (50 LOC) |\n\n> **Section B path correction.** Two paths in the brief do not exist and one is misnamed:\n> there is no `benchwork/web/src/panels/SynthesisXray/ExecutionWaterfallView.tsx` *parent* yet (the\n> panel is `SynthesisXrayPanel.tsx`, 164 LOC), `benchwork-core` has **no** `notify` and **no**\n> `rusqlite` dependency today (it must gain `notify` 8.x and `rusqlite 0.40, bundled` to match\n> `storypole-core`/`rabbet-core`), and the gate step named `nextest` in the brief is really `tests`\n> (`gate_steps()` emits `fmt`, `clippy`, `tests`, `contracts`, `layers`, `lockfiles`, `docs` — seven\n> steps, not six). A span whose `name` does not match `gate_steps()` cannot be joined to a\n> `GateStepResult` later, so the name is taken from `GateStep.name`, never a literal.\n\n\n---\n\n## 5. Choke points in detail\n\n### 5.1 `SpanGuard` — the only writer\n\n```rust\n// gaugeblock-workspace/src/telemetry.rs\npub struct SpanGuard { /* trace_id, span_id, kind, name, binary, started: Instant, ctx, status */ }\n\nimpl SpanGuard {\n    /// Opens a span. Never fails: an unusable telemetry path yields a guard that writes nothing.\n    pub fn start(kind: SpanKind, name: impl Into<String>) -> Self;\n    /// Emits children with this span as parent (used by the gate step runner).\n    pub fn child(&self, kind: SpanKind, name: impl Into<String>) -> Self;\n    /// Records the terminal status/code; `Drop` writes the line.\n    pub fn finish_with_status(self, status: SpanStatus, exit_code: Option<i32>) -> Self;\n    /// The environment a child process must inherit (D3).\n    pub fn export_env(&self) -> [(String, String); 2];\n}\n\nimpl Drop for SpanGuard { /* one append, fail-open, never panics */ }\n```\n\nRules the guard must hold, each a test:\n\n1. **Fail-open.** A read-only or missing directory produces a no-op guard. Telemetry must never\n   change an exit code — the first time a flight recorder breaks a gate is the last time it is\n   trusted.\n2. **No panic in `Drop`.** A panic during unwinding is an abort; every fallible step is `if let Ok`.\n3. **One line per span.** The buffer is built with `serde_json::to_vec` and written with a single\n   `write_all` of `json + b\"\\n\"` — never two writes, or two processes can interleave mid-line.\n4. **`finish_with_status` before `Drop` wins.** Explicit finish sets the status; `Drop` only writes\n   if it has not already, or a `?`-early-return path would write `Running` for a failed command.\n5. **Lazy identity.** `trace_id` is inherited from `GAUGEBLOCK_TRACE_ID` when present, otherwise\n   generated once per process — so two `miter` calls in one session share a trace but two CLI runs\n   do not.\n\n### 5.2 `gaugeblock-mcp` dispatcher (`SpanKind::McpTool`)\n\n`stdio.rs::dispatch` / `dispatch_async` are wrapped on the `Route::CallTool` arm only: `initialize`,\n`tools/list` and `ping` are protocol housekeeping, and recording them would triple the event volume\nfor zero information. Each call emits `binary` (the server's own name), `name` (the tool),\n`session_id` (`<binary>-<pid>-<process_start_ms>`), `status` from `ToolOutcome`, `input_summary`\n(scrubbed, ≤ 512 bytes) and, when the tool is `miter` or `storypole`, `attributes`\n`output_symbols_touched` / `files_referenced` taken from the response envelope it already builds.\n\n### 5.3 CLI entry points (`SpanKind::CliCommand`)\n\nOne guard per process, opened in the binary's `main` after argument parsing (so the span name is the\nsubcommand, e.g. `miter.lookup`, not `miter`) and finished at the top-level `anyhow::Result`\nboundary. Eight of eleven binaries already return a single `Result` from `main`, so this is one\nbinding and one `.finish_with_status(...)` per binary.\n\n### 5.4 `outfeed gate` (`SpanKind::GateStep`)\n\n`run_gate_steps` already loops over `Vec<GateStep>` and calls `execute(dir, &step.command)`. Each\niteration opens a child guard named `GateStep.name`, and `execute` sets on the spawned `Command`:\n\n```rust\ncmd.env(\"GAUGEBLOCK_TRACE_ID\", &guard.trace_id)\n   .env(\"GAUGEBLOCK_PARENT_SPAN_ID\", &guard.span_id)\n   .env(\"GAUGEBLOCK_TASK_KEY\", ...);   // when inferable\n```\n\nso `cargo clippy`'s own nested `miter`/`chalkline` spans, and any MCP call made while the gate runs,\nreparent onto the step. Skipped steps emit `SpanStatus::Skipped` with `duration_ms: 0` — a skip is\nnot a pass, which is the same distinction `GateStepResult::skipped` already makes.\n\n### 5.5 `sawhorse` inference (`SpanKind::LlmInference`)\n\n`RoleRouter::complete` and `complete_stream` emit one span per *attempt* (not per role), so a\nfallback chain shows the failed provider and the provider that answered as siblings. `token_usage`\nis copied from `InferenceResponse.token_usage` semantics already present\n(`prompt_tokens`, `completion_tokens`, `model: model_used`); `reasoning_tokens` and the role go to\n`attributes`. No provider implementation changes.\n\n\n---\n\n## 6. Training-capture enrichment (why three optional fields exist)\n\nThe observability dashboard needs thirteen fields. `rabbet`'s dataset builder needs three more, and\nthey are optional precisely so a successful span stays small:\n\n| Field | Populated by | Purpose |\n|:--|:--|:--|\n| `input_summary` | `gaugeblock-mcp` (`McpTool`), CLI guard | what was asked, so a trajectory can be replayed without the raw arguments |\n| `first_diagnostic` | `outfeed gate` (`GateStep`, `status == Error`) | the rejection reason that a repair must answer |\n| `worktree_diff_hash` | `outfeed gate` (`GateStep`) | content address of the diff the step judged |\n\nCapture rules:\n\n1. **`input_summary` is scrubbed and capped at 512 bytes.** Scrubbing reuses `miter`'s existing\n   literal redaction; the cap is applied to the *serialised compact* JSON, and truncation appends\n   `…` so a downstream parser can tell \"short\" from \"truncated\". Over-long input is dropped rather\n   than truncated mid-token, because half a JSON object trains nothing and confuses a reader.\n2. **`worktree_diff_hash` = `sha256` of `git diff HEAD`** in the gate's working directory, computed\n   once per gate run (not per step) and reused for every step span, so all failures in one run share\n   an address.\n3. **On failure**, the first actionable line of the step's own output (already reduced by\n   `first_meaningful_line`) becomes `first_diagnostic`, and the scrubbed unified diff is written to\n   `.gaugeblock/telemetry/snapshots/<worktree_diff_hash>.diff` — content-addressed, so re-running a\n   failing gate rewrites the same file rather than growing the directory.\n4. **On a later passing run of the same `(task_key, step_name)`**, the passing diff is snapshotted\n   too. `Error(A) → Ok(B)`, `A != B`, is the `(rejected_diff, first_diagnostic) → chosen_diff`\n   repair pair `RB-4` mines. **This ticket only guarantees the pair can be reconstructed**; it\n   never writes a `SpoolEntry`.\n5. A snapshot write is subject to the same fail-open rule as the span write. A missing snapshot\n   degrades `RB-4`'s yield; it must never fail a gate.\n\n\n---\n\n## 7. Ordered plan steps\n\n| # | Step | Files | Verification gate |\n|:--|:--|:--|:--|\n| **T1** | Land the wire contract and the writer. Split `telemetry.rs` into a directory, add `spans.rs`, add `GaugeblockPaths::telemetry_*`, implement `emit_span` + `SpanGuard`, and add `.gaugeblock/telemetry/` to the root `.gitignore`. | `contracts/telemetry/{mod,spool,spans}.rs`, `workspace/src/{paths,telemetry}.rs`, root `.gitignore` | `cargo nextest run -p gaugeblock-contracts -p gaugeblock-workspace` (round-trip, absent-field, fail-open, one-line, concurrent-append and unwinding tests) |\n| **T2** | Wire the choke points: the `gaugeblock-mcp` dispatcher wrap, `outfeed gate` step spans with `GAUGEBLOCK_PARENT_SPAN_ID` child propagation, `sawhorse-core` inference spans, and the top-level CLI guards. | `mcp/src/{telemetry_middleware,stdio}.rs`, `outfeed-core/src/gate/{execute,mod}.rs`, `sawhorse-core/src/{telemetry,router}.rs` | `cargo nextest run -p gaugeblock-mcp -p outfeed-core -p sawhorse-core`; a fixture repo whose `cargo` child inherits the two variables asserts the parent link |\n| **T3** | Implement `telemetry_tailer.rs`, the SQLite index (WAL, byte-offset table), and the SSE + REST endpoints in `benchwork`. | `benchwork-core/src/telemetry_tailer.rs` (+ `telemetry_index.rs` if split), `benchwork-cli/src/daemon/{routes_telemetry,mod}.rs`, `benchwork-core/Cargo.toml` (**add `notify`, `rusqlite`**) | `cargo nextest run -p benchwork-core -p benchwork-cli` — append-then-resume test asserts zero duplicates and zero drops across a restart |\n| **T4** | Build `ExecutionWaterfallView.tsx` in Panel 3, the `LiveAggregatorPill` in the header, the `useTelemetryStream` hook, and surface law 12 rollups in Panel 4 (`ModelTelemetryHub`). | `web/src/panels/SynthesisXray/{ExecutionWaterfallView.tsx,SynthesisXrayPanel.tsx}`, `web/src/components/LiveAggregatorPill.tsx`, `web/src/api/useTelemetryStream.ts`, `web/src/panels/ModelTelemetryHub/SpoolTraceTable.tsx` | `bun run build` (tsc) + a Playwright e2e that renders a seeded two-level tree |\n| **T5** | End-to-end verification under law 12: measure `SpanGuard` overhead, trigger an MCP tool call and an `outfeed gate` run from *outside* `benchwork`, and confirm the parent-child tree renders live over SSE. | — | `miter contracts`, `outfeed gate`, `chalkline docs check` + the recorded numbers in §8 |\n\nSequencing notes:\n\n* T1 and T2 are the only steps that touch shared crates, so they land before T3 — `benchwork` cannot\n  tail a file whose schema is still moving.\n* T3's dependency additions are the only manifest churn in the ticket, and they are additive.\n* T4 can be developed against a seeded fixture (`tests/fixtures/telemetry/events.jsonl`) without a\n  running gate, so the panel is not blocked on T5.\n* T5 is a *measurement* step, not a smoke test: it exists to produce the numbers in §8.\n\n\n---\n\n## 8. Measurements to record (law 12 — no claim without a number)\n\n| What | How | Where it is recorded |\n|:--|:--|:--|\n| `SpanGuard` overhead | 10 000 `start`+`drop` cycles with the telemetry path writable vs. pointed at a read-only directory, same machine, sequential | commit message that lands T1, plus `common/PERF.md` |\n| Emit latency, worst case | times the single `write_all` at the 99th percentile with 4 concurrent writers appending | same commit; target `< 100 µs` from D1 |\n| SSE end-to-end latency | append from a plain `miter` CLI run, measure until the `EventSource` callback fires; target `< 250 ms` (acceptance criterion) | T5, in `benchwork/README.md` perf note |\n| Gate instrumentation cost | `outfeed gate` wall time with telemetry on vs. off, warm cache, same tree | commit message that lands T2 |\n| Index size growth | `index.sqlite`, `events.jsonl` and snapshot bytes after one full Tier 3 gate run | T5 |\n\nIf a number comes back worse than the target, it is recorded as a regression, not omitted.\n\n## 9. Out of scope (deferred deliberately)\n\n* **Retention, rotation, compaction.** `events.jsonl` grows without bound in this ticket. Rotating it\n  is a separate decision (which spans survive?) and belongs in its own ticket, not smuggled into T3.\n* **Mining or dataset emission.** `RB-4` owns `distill-telemetry`; this ticket guarantees the\n  records and the snapshots exist, nothing more.\n* **Typed MCP protocol migration** (`GB-235`) — orthogonal refactor of the same dispatcher.\n* **Span-based alerting or budgets** in `benchwork` (e.g. \"clippy p95 regressed\"). Useful, needs the\n  history first.\n* **`AstPass` kind** is defined in the enum but emitted by nothing in this ticket; it exists so\n  `miter`/`dado`/`batten` passes can be added without a schema bump.\n* **A `benchwork-mcp` tool** exposing spans to an agent. Later.\n\n## 10. Risks and how the plan answers them\n\n| Risk | Answer |\n|:--|:--|\n| A telemetry bug breaks a gate | Fail-open is a test in T1, not a convention. The no-op guard returns the same value the caller had. |\n| Span volume floods the daemon | MCP housekeeping methods are excluded; the broadcast channel for spans is separate from the 256-slot `LiveEvent` channel so a burst cannot evict a task update. |\n| `gate/mod.rs` (224 LOC) crosses 250 | Extract `gate/steps.rs` before adding anything; the plan names the trigger explicitly. |\n| The diff snapshot captures a secret | The snapshot is scrubbed by the same path as `input_summary`, and lives under a gitignored directory with a content-addressed name. |\n| `benchwork-core` grows two dependencies for a feature it may not always ship | Both sit behind the same crate that already depends on eight suite crates; the tailer is one module and can be feature-gated if it ever needs to be. |\n| Two processes write the same `events.jsonl` concurrently | `O_APPEND` plus a single `write_all` per line; a concurrent-append test with 4 writers asserts no interleaved line. |\n\n",
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-243.md",
+      "steps": [
+        {
+          "completed": false,
+          "step_id": "T1",
+          "target_files": [],
+          "title": "Land the wire contract, SpanGuard writer and telemetry path helpers",
+          "verification_gate": "cargo nextest run -p gaugeblock-contracts -p gaugeblock-workspace"
+        },
+        {
+          "completed": false,
+          "step_id": "T2",
+          "target_files": [],
+          "title": "Wire the three choke points: mcp dispatcher, gate steps with parent propagation, sawhorse inference, CLI guards",
+          "verification_gate": "cargo nextest run -p gaugeblock-mcp -p outfeed-core -p sawhorse-core"
+        },
+        {
+          "completed": false,
+          "step_id": "T3",
+          "target_files": [],
+          "title": "Implement the notify tailer, SQLite index and SSE/REST endpoints in benchwork",
+          "verification_gate": "cargo nextest run -p benchwork-core -p benchwork-cli"
+        },
+        {
+          "completed": false,
+          "step_id": "T4",
+          "target_files": [],
+          "title": "Build the Panel 3 execution waterfall, header live pulse and Panel 4 law 12 tables",
+          "verification_gate": "bun run build plus Playwright e2e"
+        },
+        {
+          "completed": false,
+          "step_id": "T5",
+          "target_files": [],
+          "title": "End-to-end verification: measure overhead, trigger external MCP and gate spans, confirm live tree",
+          "verification_gate": "miter contracts plus outfeed gate plus chalkline docs check"
+        }
+      ],
+      "summary": "Flight recorder: one O_APPEND span log, three choke points, notify tailer + SQLite index, live SSE waterfall in Panel 3",
+      "updated_at_epoch_ms": 1793940009724
+    },
+    "priority": 1,
+    "scope": {
+      "crate_name": "gaugeblock-contracts, gaugeblock-workspace, gaugeblock-mcp, sawhorse-core, outfeed-core, benchwork-core, benchwork-cli, web",
+      "labels": [
+        "telemetry",
+        "observability",
+        "flight-recorder",
+        "mcp",
+        "cli",
+        "benchwork",
+        "law-12",
+        "waterfall"
+      ],
+      "module_path": null,
+      "repo": "gaugeblock",
+      "target_files": [],
+      "target_symbols": []
+    },
+    "slug": "end-to-end-flight-recorder-telemetry-gaugeblock-telemetry-events-jsonl-and-live-sse-execution-waterfall-in-benchwork-f2452f",
+    "status": "verified",
+    "ticket_key": "GB-243",
+    "title": "End-to-end flight recorder telemetry (.gaugeblock/telemetry/events.jsonl) and live SSE execution waterfall in benchwork",
+    "updated_at_epoch_ms": 1794037984741,
+    "verification_receipt": {
+      "base_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
+      "chain_key": null,
+      "command": "miter contracts && outfeed lockfiles && chalkline docs check --workspace",
+      "commit_shas": [
+        "0b29da396a72080975591037539439b60bed6d9f"
+      ],
+      "diagnostic_count": null,
+      "exit_code": 0,
+      "git_branch": "main",
+      "head_commit_sha": "0b29da396a72080975591037539439b60bed6d9f",
+      "repo": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 36\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794001639380,
+      "verifier": "storypole-verify"
+    }
+  }
 }
