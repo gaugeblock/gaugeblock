@@ -1,0 +1,77 @@
+{
+  "ticket": {
+    "id": "f091e37a-b3c2-4bf3-8562-5d354857b64a",
+    "ticket_key": "GB-346",
+    "slug": "unified-index-forbids-keys-that-per-repository-numbering-makes-legal-f091e3",
+    "title": "Unified index forbids keys that per-repository numbering makes legal",
+    "description": "",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::index::schema,storypole_core::workspace::store"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794289250283,
+    "updated_at_epoch_ms": 1794289250283
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "f091e37a-b3c2-4bf3-8562-5d354857b64a",
+        "ticket_key": "GB-346",
+        "slug": "unified-index-forbids-keys-that-per-repository-numbering-makes-legal-f091e3",
+        "title": "Unified index forbids keys that per-repository numbering makes legal",
+        "description": "",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::index::schema,storypole_core::workspace::store"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794289250283,
+        "updated_at_epoch_ms": 1794289250283
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "f091e37a-b3c2-4bf3-8562-5d354857b64a",
+      "title": null,
+      "description": "MEASURED 2026-11-08, while fixing GB-345's second half. `storypole ledger-reconcile` fails with\n`UNIQUE constraint failed: tasks.ticket_key_lower`. The data is not at fault: across 355 distinct keys there are no\nduplicates inside any one repository, and the collisions that exist are the legitimate kind:\n\n  gb-342 -> common, .        gb-343 -> common, .\n  gb-344 -> storypole, .     gb-345 -> storypole, .\n\nFour keys owned by two repositories each. Under ADR 0007 and ADR 0010 a ticket key is scoped to its repository, so two\nrepositories owning GB-342 is correct by construction - and the unified index cannot hold both, because it constrains\nticket_key_lower to be unique across the whole suite.\n\nI CAUSED HALF THE COLLISIONS, which is the part worth recording. GB-342, GB-343, GB-344 and GB-345 were all minted into\nthe ROOT store today by me, using `storypole defer` at the suite root, without noticing that per-repository numbering had\nlanded and that common and storypole had already used those numbers. Nothing warned: the root store mints from its own\nsequence and had no reason to look at its members. So the tool behaved as designed and the design is the problem.\n\nWHY IT MATTERS BEYOND ONE FAILING VERB: the unified index is what the workspace rollup and the panel read. If it cannot\nrepresent a legal pair of tickets, then either the rollup has been silently dropping one of each colliding pair (worse\nthan failing loudly) or this is the first time anyone tried. Either way, \"one key names one ticket\" is currently false at\nthe suite level while being true at the repository level, and every surface has to pick which it believes.\n\nTHREE RESOLUTIONS, none chosen:\n  (a) index identity becomes (repo, key) and everything that renders a key names its repository - the only option that\n      keeps ADR 0007 intact; it is also the option GB-332 asked for independently, since a cross-repository edge target\n      already has to render as `KEY (repo)`;\n  (b) the ROOT store stops minting keys that a member owns, i.e. allocation becomes suite-wide - simple, but it makes\n      the root privileged and its numbering unknowable without reading eleven stores;\n  (c) the root mints under a distinct prefix (GBR- vs GB-) - cheap, immediately unambiguous, and it quietly says a root\n      ticket is a different sort of thing.\n\n(a) matches the direction the suite already chose. It is also the most work, which is the honest trade.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794289261491
+    }
+  ]
+}
