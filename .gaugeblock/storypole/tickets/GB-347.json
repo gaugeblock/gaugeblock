@@ -82,6 +82,68 @@
       "scope": null,
       "acceptance_criteria": null,
       "timestamp_ms": 1794291293129
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "5b5d0e7d-103e-4e47-86e2-3ed25ecfdbb7",
+      "plan": {
+        "summary": "Suite-wide remint of 195 off-prefix member keys, with live reference repair and differential-replay verification",
+        "design_markdown": "# GB-347 — Remint legacy `GB-` keys in member stores\n\n## Why this exists\n\nUnder the architect's model (`GB-346`, decided 2026-11-08):\n\n- `GB-*` is the **harness**. Harness-level and multi-repository work only.\n- Every repository mints under **its own** configured prefix: `BA BW CH CO DA JN MTR OF RB SH SP`.\n- A ticket that proves to be single-repository work may be **reminted** into that repository.\n- Harness work stays `GB-*` and is **linked** to the per-repository tickets carrying the work: `GB-NN -> SP-NN & OF-NN`.\n\nThe unified index enforces one key naming one ticket suite-wide, which is correct. It cannot open while six keys are owned twice, and **the collision count grows by roughly one per harness deferral** — the harness keeps minting numbers `storypole` already used. This ticket is the only open item whose defect count increments during normal work.\n\n## Measured state\n\n| repo | prefix | tickets | off-prefix |\n|:--|:--|--:|--:|\n| root | GB | 165 | 0 |\n| storypole | SP | 43 | 42 |\n| outfeed | OF | 42 | 41 |\n| benchwork | BW | 34 | 34 |\n| miter | MTR | 26 | 25 |\n| common | CO | 14 | 14 |\n| chalkline | CH | 11 | 11 |\n| joiner | JN | 9 | 9 |\n| sawhorse | SH | 9 | 9 |\n| rabbet | RB | 4 | 4 |\n| dado | DA | 3 | 3 |\n| batten | BA | 1 | 1 |\n\n**195 of 199 member tickets carry a `GB-` key.** Every member store inherited harness numbering from the single pre-migration ledger, so this is not one repository's wart — it is the same size and kind as the ledger migration that produced it.\n\n## What must be repaired, and what must not\n\nReminting a key without repairing what points at it leaves a live graph with edges to nothing.\n\n**Repair (live pointers):**\n\n1. `task_edges` rows whose `target_ticket_key` no longer exists.\n2. `.storypole/plans/<KEY>.md` filenames, and the `TaskPlan` attachment that names them.\n3. Ticket bodies that name other keys in prose — a reminted ticket quoting a dead key is a broken citation.\n4. benchwork's DAG, which resolves keys to ids; a stale key shows as an edge to nothing.\n\n**Never touch (history):**\n\n5. `CHANGELOG.md` entries and commit messages. A remint changes what a ticket is called now, not what it was called when it shipped.\n\nThat boundary is the design: **history is immutable, live pointers are not.**\n\n## Algorithm\n\n1. **Map.** For each store, for each ticket whose key prefix is not the store's configured prefix, assign `<PREFIX>-<n>` continuing from the store's highest existing number of that prefix. Preserve `uuid`; that is the identity, and every reference by uuid still resolves. Write the mapping to a file and review it before anything moves.\n2. **Dry run.** Report the mapping and the reference rewrite set. Change nothing.\n3. **Rewrite.** Apply key changes and reference rewrites in one pass per store, so no intermediate state has a live pointer to a dead key.\n4. **Verify.** Replay each store before and after; compare every reader-visible field except the key itself; refuse on any divergence. Then prove the graph: every edge target resolves, every plan file matches its ticket.\n5. **Land.** Commit per repository, so a bisect can find the store that went wrong.\n\n## Non-goals\n\n- No renumbering to make keys contiguous. Gaps are harmless; churn is not.\n- No touching the root store's `GB-*` keys. They are correct.\n- No history rewriting of any kind.\n\n## Risk\n\nThis mutates 195 tickets across eleven repositories. It is not a candidate for a hand-run script: it needs a verb (`storypole remint`) that can be tested, dry-run, and refused. The previous migration earned its safety from differential replay; this one earns it the same way.\n",
+        "steps": [
+          {
+            "step_id": "map",
+            "title": "Compute the remint mapping per store from uuid identity",
+            "target_files": [],
+            "verification_gate": "mapping file lists every off-prefix key exactly once and preserves uuid",
+            "completed": false
+          },
+          {
+            "step_id": "dryrun",
+            "title": "Report the mapping and reference rewrite set without changing anything",
+            "target_files": [],
+            "verification_gate": "replay identical before and after a dry run",
+            "completed": false
+          },
+          {
+            "step_id": "edges",
+            "title": "Rewrite edge targets that point at reminted keys",
+            "target_files": [],
+            "verification_gate": "every edge target resolves in every store",
+            "completed": false
+          },
+          {
+            "step_id": "plans",
+            "title": "Rename plan files and their attachments",
+            "target_files": [],
+            "verification_gate": "every plan file matches its ticket key",
+            "completed": false
+          },
+          {
+            "step_id": "prose",
+            "title": "Rewrite live references in ticket bodies, never history",
+            "target_files": [],
+            "verification_gate": "no live body cites a dead key; CHANGELOG and commits untouched",
+            "completed": false
+          },
+          {
+            "step_id": "verify",
+            "title": "Differential replay refuses divergence",
+            "target_files": [],
+            "verification_gate": "replay compares all reader-visible fields except key",
+            "completed": false
+          },
+          {
+            "step_id": "land",
+            "title": "Apply per repository and commit each",
+            "target_files": [],
+            "verification_gate": "collisions zero, ledger-reconcile opens the unified index",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-347.md",
+        "updated_at_epoch_ms": 1794291377196
+      },
+      "timestamp_ms": 1794291377196
     }
   ]
 }
