@@ -1,40 +1,92 @@
 {
+  "ticket": {
+    "id": "07489ed7-1981-4331-8400-be1be4a29fed",
+    "ticket_key": "GB-276",
+    "slug": "9-doc-audit-support-docs-locations-recognise-madr-decision-records-recommend-madr-as-default-07489e",
+    "title": "9-doc audit: support docs/ locations, recognise MADR decision records, recommend MADR as default",
+    "description": "",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "chalkline_core::docs"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "SCAFFOLD DONE 2026-11-06: `chalkline docs scaffold` creates docs/decisions/README.md with the ordering rule and the MADR shape stated inside the file itself, on the reasoning that the next author reads that index rather than a conventions document. Verified on a fresh temporary repository (scaffold exit 0, file created). Scaffolded separately from the nine documents because they are one-per-type and decision records are an unbounded set.\n\nEPIC GB-275/GB-276 STATUS: docs move complete across eleven repositories (108/108 clean); MADR recogniser enforced including chronological ordering; first five ADRs backfilled in decision-date order; scaffolding in place. REMAINING: none required - what is left is optional (member-repo decision directories where a repository has its own cross-cutting decisions, and the question of whether storypole decisions should auto-promote into ADRs, which I would leave as a deliberate manual act so an ADR is always someone's considered statement rather than a mechanical echo)."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794106599378,
+      "git_branch": "main",
+      "base_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+      "head_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+      "commit_shas": [
+        "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1794002593661,
+    "updated_at_epoch_ms": 1794106599378
+  },
   "events": [
     {
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "acceptance_criteria": [],
-        "active_claim": null,
-        "created_at_epoch_ms": 1794002593661,
-        "decisions": [],
-        "description": "",
-        "edges": [],
         "id": "07489ed7-1981-4331-8400-be1be4a29fed",
+        "ticket_key": "GB-276",
+        "slug": "9-doc-audit-support-docs-locations-recognise-madr-decision-records-recommend-madr-as-default-07489e",
+        "title": "9-doc audit: support docs/ locations, recognise MADR decision records, recommend MADR as default",
+        "description": "",
         "kind": "feature",
-        "latest_handoff": null,
-        "plan": null,
+        "status": "deferred",
         "priority": 3,
         "scope": {
-          "crate_name": null,
-          "labels": [],
-          "module_path": null,
           "repo": null,
+          "crate_name": null,
+          "module_path": null,
           "target_files": [],
           "target_symbols": [
             "chalkline_core::docs"
-          ]
+          ],
+          "labels": []
         },
-        "slug": "9-doc-audit-support-docs-locations-recognise-madr-decision-records-recommend-madr-as-default-07489e",
-        "status": "deferred",
-        "ticket_key": "GB-276",
-        "title": "9-doc audit: support docs/ locations, recognise MADR decision records, recommend MADR as default",
-        "updated_at_epoch_ms": 1794002593661,
-        "verification_receipt": null
-      }
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794002593661,
+        "updated_at_epoch_ms": 1794002593661
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
     },
     {
+      "event": "task_updated",
+      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "SCOPE. The audit currently resolves the nine documents by root-relative filename and enforces drift for boundary types in SPEC.md. To let a repository put docs in docs/ it needs: (1) configurable document locations",
         " resolved per repo rather than hardcoded",
@@ -52,154 +104,108 @@
         " so moving ARCHITECTURE.md and friends into docs/ first would turn twelve clean audits into twelve violations",
         " and the temptation would be to silence the gate rather than teach it. Same ordering rule that made GB-267 precede GB-263 and GB-261 Phase 5 follow GB-268: change the instrument before the thing it measures."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
-      "timestamp_ms": 1794002599435,
-      "title": null
+      "timestamp_ms": 1794002599435
     },
     {
+      "event": "task_updated",
+      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "RE-SCOPED 2026-11-06, much smaller than filed. The audit is already config-driven: DocType::default_filename supplies defaults and .gaugeblock/docs.toml overrides a path per document type, which the audit honours. So configurable locations are DONE, and no chalkline change is needed for the docs move - proven on rabbet, which moved six documents and audited 9/0/0 with only a docs.toml and link repairs.\n\nThat leaves exactly one piece of real code in this ticket: MADR recognition for docs/decisions/NNNN-*.md - front matter (status, date, decision-makers), required sections, unique four-digit numbering, and an index that lists every record. Plus scaffolding docs/decisions/ on init so a new repository starts with the convention rather than discovering it later.\n\n'Recommend MADR as default' is a doc-and-audit change, not a code change: the audit should suggest it when architectural decisions live in prose inside ARCHITECTURE.md, which it can already read.\n\nSEQUENCING unchanged and now cheap: the docs move (GB-275) does NOT need to wait for the MADR recogniser, because the move needs no chalkline change at all."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
-      "timestamp_ms": 1794028862289,
-      "title": null
+      "timestamp_ms": 1794028862289
     },
     {
+      "event": "task_updated",
+      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "RECOGNISER DONE 2026-11-06 (chalkline commit). chalkline_core::docs::decisions::audit_decision_records validates docs/decisions/: NNNN-slug.md naming, four-digit unique numbering, --- front matter with status and date, 'Context and Problem Statement' and 'Decision Outcome' sections, and an index (README.md or INDEX.md) that lists every record. Wired into 'chalkline docs check' as its own reported section, and findings fail the audit. Verified: rabbet audits 9/0/0 with no decision section because it has no docs/decisions, which is correct - absence is not a violation. 5 tests, clippy clean, workspace tests green.\n\nKept out of DocType::ALL deliberately: the nine documents are a fixed one-per-type contract, decision records are an unbounded set with different rules, and a tenth variant would distort every count derived from that list.\n\nREMAINING: (1) scaffold docs/decisions/README.md on init so a new repository starts with the convention; (2) the suite root needs its own docs/decisions for cross-repo contract decisions (the JSON envelope decision GB-274, the one-backlog decision D7, and the ledger-location rule are all ready to be written as the first three ADRs); (3) decide whether the 'promote a storypole decision into an ADR' step is worth building or whether decisions stay in the ledger and ADRs are written deliberately."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
-      "timestamp_ms": 1794029345402,
-      "title": null
+      "timestamp_ms": 1794029345402
     },
     {
+      "event": "task_updated",
+      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "SCAFFOLD DONE 2026-11-06: `chalkline docs scaffold` creates docs/decisions/README.md with the ordering rule and the MADR shape stated inside the file itself, on the reasoning that the next author reads that index rather than a conventions document. Verified on a fresh temporary repository (scaffold exit 0, file created). Scaffolded separately from the nine documents because they are one-per-type and decision records are an unbounded set.\n\nEPIC GB-275/GB-276 STATUS: docs move complete across eleven repositories (108/108 clean); MADR recogniser enforced including chronological ordering; first five ADRs backfilled in decision-date order; scaffolding in place. REMAINING: none required - what is left is optional (member-repo decision directories where a repository has its own cross-cutting decisions, and the question of whether storypole decisions should auto-promote into ADRs, which I would leave as a deliberate manual act so an ADR is always someone's considered statement rather than a mechanical echo)."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
-      "timestamp_ms": 1794029694656,
-      "title": null
+      "timestamp_ms": 1794029694656
     },
     {
+      "event": "task_claimed",
+      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
       "claim": {
         "agent_id": "cline-agent",
-        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1794106282165,
+        "lease_expires_at_epoch_ms": 1794109882165,
         "git_branch": null,
-        "lease_expires_at_epoch_ms": 1794109882165
-      },
-      "event": "task_claimed",
-      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed"
+        "base_commit_sha": null
+      }
     },
     {
       "event": "status_changed",
-      "from": "deferred",
-      "reason": "Claimed by cline-agent",
       "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
-      "timestamp_ms": 1794106282165,
-      "to": "in_progress"
+      "from": "deferred",
+      "to": "in_progress",
+      "reason": "Claimed by cline-agent",
+      "timestamp_ms": 1794106282165
     },
     {
       "event": "task_verified",
+      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
       "receipt": {
-        "base_commit_sha": "60e855f32227d06d0ccf5e977b872c97fbb40431",
-        "chain_key": null,
+        "verifier": "storypole-verify",
         "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794106508055,
+        "git_branch": "feat/gb-305-multi-repo-gate",
+        "base_commit_sha": "60e855f32227d06d0ccf5e977b872c97fbb40431",
+        "head_commit_sha": "c123df9d54b50c4046a8327fc5bedd18995a1a52",
         "commit_shas": [
           "c123df9d54b50c4046a8327fc5bedd18995a1a52"
         ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "feat/gb-305-multi-repo-gate",
-        "head_commit_sha": "c123df9d54b50c4046a8327fc5bedd18995a1a52",
         "repo": null,
-        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-        "verified_at_epoch_ms": 1794106508055,
-        "verifier": "storypole-verify"
-      },
-      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed"
+        "chain_key": null
+      }
     },
     {
       "event": "task_verified",
+      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
       "receipt": {
-        "base_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
-        "chain_key": null,
+        "verifier": "storypole-verify",
         "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794106599378,
+        "git_branch": "main",
+        "base_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
+        "head_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
         "commit_shas": [
           "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34"
         ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "main",
-        "head_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
         "repo": null,
-        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-        "verified_at_epoch_ms": 1794106599378,
-        "verifier": "storypole-verify"
-      },
-      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed"
-    }
-  ],
-  "ticket": {
-    "acceptance_criteria": [
-      "SCAFFOLD DONE 2026-11-06: `chalkline docs scaffold` creates docs/decisions/README.md with the ordering rule and the MADR shape stated inside the file itself, on the reasoning that the next author reads that index rather than a conventions document. Verified on a fresh temporary repository (scaffold exit 0, file created). Scaffolded separately from the nine documents because they are one-per-type and decision records are an unbounded set.\n\nEPIC GB-275/GB-276 STATUS: docs move complete across eleven repositories (108/108 clean); MADR recogniser enforced including chronological ordering; first five ADRs backfilled in decision-date order; scaffolding in place. REMAINING: none required - what is left is optional (member-repo decision directories where a repository has its own cross-cutting decisions, and the question of whether storypole decisions should auto-promote into ADRs, which I would leave as a deliberate manual act so an ADR is always someone's considered statement rather than a mechanical echo)."
-    ],
-    "active_claim": null,
-    "created_at_epoch_ms": 1794002593661,
-    "decisions": [],
-    "description": "",
-    "edges": [],
-    "id": "07489ed7-1981-4331-8400-be1be4a29fed",
-    "kind": "feature",
-    "latest_handoff": null,
-    "plan": null,
-    "priority": 3,
-    "scope": {
-      "crate_name": null,
-      "labels": [],
-      "module_path": null,
-      "repo": null,
-      "target_files": [],
-      "target_symbols": [
-        "chalkline_core::docs"
-      ]
+        "chain_key": null
+      }
     },
-    "slug": "9-doc-audit-support-docs-locations-recognise-madr-decision-records-recommend-madr-as-default-07489e",
-    "status": "verified",
-    "ticket_key": "GB-276",
-    "title": "9-doc audit: support docs/ locations, recognise MADR decision records, recommend MADR as default",
-    "updated_at_epoch_ms": 1794106599378,
-    "verification_receipt": {
-      "base_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
-      "chain_key": null,
-      "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
-      "commit_shas": [
-        "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34"
-      ],
-      "diagnostic_count": null,
-      "exit_code": 0,
-      "git_branch": "main",
-      "head_commit_sha": "38ea33ff2ebc54fa2ed1a2e325c99ac19c174e34",
-      "repo": null,
-      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-      "verified_at_epoch_ms": 1794106599378,
-      "verifier": "storypole-verify"
+    {
+      "event": "task_archived",
+      "task_id": "07489ed7-1981-4331-8400-be1be4a29fed",
+      "status": "verified",
+      "timestamp_ms": 1794343382861
     }
-  }
+  ]
 }

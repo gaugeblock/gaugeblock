@@ -1,176 +1,182 @@
 {
-  "events": [
-    {
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null,
-      "event": "deferred_item_captured",
-      "task": {
-        "acceptance_criteria": [],
-        "active_claim": null,
-        "created_at_epoch_ms": 1794087664759,
-        "decisions": [],
-        "description": "",
-        "edges": [],
-        "id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
-        "kind": "epic",
-        "latest_handoff": null,
-        "plan": null,
-        "priority": 3,
-        "scope": {
-          "crate_name": null,
-          "labels": [],
-          "module_path": null,
-          "repo": null,
-          "target_files": [],
-          "target_symbols": [
-            "gaugeblock_workspace"
-          ]
-        },
-        "slug": "suite-wide-audit-every-crate-that-touches-gaugeblock-must-use-gaugeblock-workspace-fully-not-just-depend-on-it-0e4e3f",
-        "status": "deferred",
-        "ticket_key": "GB-304",
-        "title": "Suite-wide audit: every crate that touches .gaugeblock must use gaugeblock-workspace fully, not just depend on it",
-        "updated_at_epoch_ms": 1794087664759,
-        "verification_receipt": null
-      }
-    },
-    {
-      "acceptance_criteria": [
-        "SCOPE + INVENTORY 2026-11-06. 'Depends on gaugeblock-workspace' and 'uses it fully' are different claims, and the gap between them produced the last three multi-repository defects: benchwork's telemetry tailed one repository (GB-293), miter's dirty check could not see a member repository (GB-301), and the index baseline was written by no path that ran (GB-302).\n\nMEASURED INVENTORY, every crate whose source mentions .gaugeblock or .storypole, with whether it declares the canonical dependency:\n\n  refs  crate                                    uses -workspace?\n    67  benchwork/crates/benchwork-core          yes\n    38  storypole/crates/storypole-core          yes\n    22  common/crates/gaugeblock-workspace       yes   (the canonical implementation itself)\n    13  benchwork/crates/benchwork-cli           yes\n     7  storypole/crates/storypole-cli           yes\n     5  sawhorse/crates/sawhorse-core            yes\n     5  miter/crates/storage                     NO\n     5  chalkline/crates/chalkline-core          yes\n     4  joiner/crates/joiner-cli                 yes\n     3  rabbet/crates/rabbet-cli                 NO\n     3  outfeed/crates/outfeed-core              yes\n     3  joiner/crates/joiner-core                NO\n     2  outfeed/crates/outfeed-orchestrator      NO\n     2  miter/crates/engine                      yes\n     2  dado/crates/dado-core                    NO\n     2  dado/crates/dado-cli                     NO\n     2  common/crates/gaugeblock-git             NO\n     2  common/crates/gaugeblock-contracts       NO\n     1  chalkline/crates/chalkline-mcp           NO\n     1  chalkline/crates/chalkline-cli           NO\n\nWHAT 'FULLY' MEANS, as four checkable properties per crate:\n  1. Canonical paths come from GaugeblockPaths, never from a hand-built join or an ancestor walk. The\n     resolver derives the directory from the git common dir, which is what stops a linked worktree from\n     growing a second ledger (CO-7).\n  2. Membership comes from WorkspaceTopology, never from assuming the caller's directory is the workspace.\n  3. Anything that answers a question about 'the suite' uses those two, so a mechanism written for one\n     repository cannot silently compose into a suite that measures nothing.\n  4. There is a test that runs with more than one repository in scope. The defects above all survived because\n     every test had exactly one repository, where per-repo logic and suite logic are indistinguishable.\n\nTHE EIGHT TO AUDIT, in suspicion order. Each needs one of three verdicts: adopt the canonical call, document why it is a legitimate exception, or split the concern. Note that the count is the number of textual references, not the severity - a single wrong default path is enough.\n  1. miter/crates/storage (5) - probably receives a path rather than deriving one, in which case the fix is to make that explicit in the signature. If it defaults anywhere, that is the bug.\n  2. dado/crates/dado-core + dado-cli (4) - neither declares the dependency, so both build a path by hand.\n  3. joiner/crates/joiner-core (3) - same.\n  4. rabbet/crates/rabbet-cli (3) - same.\n  5. outfeed/crates/outfeed-orchestrator (2) - extracted from outfeed-core in this session, so it inherited whichever habit the core had.\n  6. chalkline/crates/chalkline-cli + chalkline-mcp (2) - one reference each, likely a default document path.\n  7. gaugeblock-contracts (2) - a pure types crate must do no IO at all, so either these are doc comments or there is IO in the foundation.\n  8. gaugeblock-git (2) - likely legitimate: resolving the git common dir is its job and the workspace crate depends on it, not the reverse. Document rather than convert.\n\nDURABLE FIX, so this does not need re-auditing in six months: a gate that fails when a crate references .gaugeblock without declaring gaugeblock-workspace, with an explicit allowlist for the foundation crates that legitimately do. That is the same shape as the layers allowlist, and it should be built after the audit rather than instead of it - otherwise the allowlist will simply absorb the eight findings.\n\nMETHOD that works quickly: `miter references GaugeblockPaths` per crate answers property 1 and 2 without reading code, and `miter deps` shows whether the dependency is direct or transitive. Both are already available; this ticket is mostly a matter of running them across twelve repositories and writing the verdicts down."
-      ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
-      "timestamp_ms": 1794087673137,
-      "title": null
-    },
-    {
-      "acceptance_criteria": [
-        "AUDIT VERDICTS 2026-11-07, from inspecting each of the eight suspects' actual lines rather than their counts. Six are real; two were doc comments all along.\n\n1. outfeed/crates/outfeed-orchestrator/src/backlog.rs - REAL, FIXED (behavioural). find_storypole_root walked upwards for the nearest directory holding `.gaugeblock`. In a linked worktree that is the worktree's own copy, so it wrote a second ledger - the precise duplication CO-7 removed by deriving the directory from the git common dir. It now resolves through GaugeblockPaths::discover, with the legacy `.storypole` fallback checked at the caller's own path rather than by walking, because a legacy directory in a parent belongs to someone else's repository.\n\n2. miter/crates/storage/src/workspace.rs - REAL (spelling). Derives `<root>/.gaugeblock/miter/miter.redb` by hand, including a legacy fallback. The behaviour matches the canonical rule today, so the risk is divergence rather than a current bug: a second place that knows the layout will eventually disagree with the first. Verdict: adopt `GaugeblockPaths::at(root).index_db()`, which already exists.\n\n3. dado/crates/dado-core/src/registry/mod.rs - REAL (spelling). Hand-joins `.gaugeblock/dado`, `.dado` and the root itself in a three-way probe. Verdict: adopt, then delete the `.gaugeblock` segment so the layout has one spelling.\n\n4. dado/crates/dado-cli/src/init.rs - REAL (spelling). Same join, in the initialiser that creates the directory. This is the pair-mate of the line above: a tool that creates a path in one place and reads it in another must spell it identically forever, which is exactly what a shared helper is for.\n\n5. joiner/crates/joiner-core/src/model.rs - REAL (spelling). `if gb_spool.is_dir() || root.join('.gaugeblock').is_dir()` prefers `.gaugeblock/spool` and silently falls back to a bare spool. The fallback is the interesting part: it decides what happens in a repository that has a `.gaugeblock` but no spool, and the condition as written treats 'the directory exists' as 'this is the spool'.\n\n6. rabbet/crates/rabbet-cli/src/args.rs - REAL but different in kind. The `.gaugeblock/spool/outbox.jsonl` here is a clap `default_value`, so it is a user-facing default rather than a resolved path. A default is defensible; a default that is the canonical layout restated is not, because the tool ships a path it never validates and a user with a non-standard tree cannot tell whether they overrode it. Verdict: keep the flag, resolve its default at runtime.\n\n7. chalkline/crates/chalkline-cli/src/args_docs.rs and chalkline-mcp - NOT REAL. The single hit in each is a doc comment describing what the command audits. No action.\n\n8. common/crates/gaugeblock-contracts - NOT REAL, and this one mattered: the purity invariant needed checking, not assuming. Both hits are documentation strings; the crate does no IO, reads no clock and generates no randomness. No action.\n\n9. common/crates/gaugeblock-git - LEGITIMATE EXCEPTION, documented in its own module header: it explicitly does not own `.gaugeblock` resolution. Both hits are that documentation. No action.\n\nPATTERN WORTH NAMING: four of the six real findings are the same habit - a crate restates the `.gaugeblock/<tool>` layout instead of asking for it. None of them is wrong today. All four will drift the first time the layout changes, and the drift will be silent because each has its own copy to be wrong about. That is why the durable fix is a gate rather than six careful edits."
-      ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
-      "timestamp_ms": 1794091408261,
-      "title": null
-    },
-    {
-      "acceptance_criteria": [
-        "ADOPTION PROGRESS 2026-11-07. Five of the six real findings are adopted; the sixth is a different kind and remains.\n\nDONE, each building clean on its own:\n  outfeed-orchestrator/backlog.rs   729088b  behavioural: ancestor walk replaced by GaugeblockPaths::discover, so a linked worktree no longer writes a second ledger\n  miter-storage/workspace.rs        52bcc8f  default_db_path asks for index_db()\n  dado-core/registry/mod.rs         898e5d3  member(\"dado\")\n  dado-cli/init.rs                  898e5d3  member(\"dado\") - the creator and the reader now spell it identically\n  joiner-core/model.rs              (this commit)  spool_dir()\n\nREMAINING: rabbet-cli/args.rs holds `.gaugeblock/spool/outbox.jsonl` as a clap default_value, which is a user-facing default rather than a resolved path. It needs a runtime resolution so the flag can be overridden and so an unset flag does not ship a path the tool never validates.\n\nTHEN THE GATE, which is the point of the whole exercise: without it these five adoptions are repairs, and the next crate written will restate the layout again. The gate fails when a crate's source mentions `.gaugeblock` outside a doc comment without depending on gaugeblock-workspace, with an allowlist for gaugeblock-git (owns the git boundary, not path resolution) and gaugeblock-workspace itself.\n\nEach adoption was verified by a build, not by clippy alone, because a wrong dependency is a compile error and a wrong path is not: the whole class of defect here is one that compiles."
-      ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
-      "timestamp_ms": 1794092681787,
-      "title": null
-    },
-    {
-      "acceptance_criteria": [
-        "GATE LANDED 2026-11-07, commit 432f9b4 (miter). `miter audit --paths` fails when a crate's source names `.gaugeblock` without depending on gaugeblock-workspace. It runs inside `miter audit`, which every verification chain already invokes.\n\nFIRST RUN FOUND TWO CRATES, and one of them proves the gate was worth building: miter-cli - the root package at miter/Cargo.toml - has 11 sites. My manual audit never saw it, because the sweep globbed `*/crates/*/Cargo.toml` and the root miter package is not under a crates directory. The hand audit had a blind spot; the automated check does not. That is the entire argument for codifying the rule rather than being careful about it.\n\n  miter-cli    11 sites  (deps_layers.rs:15 DEFAULT_ALLOWLIST, store.rs:54, mod.rs:176, ...)\n  rabbet-cli    1 site   (args.rs:49 clap default_value) - already known\n\nThis also falsifies the earlier claim that five of six findings were 'done': the inventory itself was incomplete, and the gate found the sixth crate before the ticket closed. Recorded because a completion claim that a tool immediately disproves is exactly what the last two days have been about.\n\nDESIGN DECISIONS worth keeping: comments are excluded because three of eight original suspects were documentation and a gate that fires on prose gets ignored; trailing comments are stripped rather than skipping the line; string literals are NOT excluded because a restated default path is the defect. Allowlist is two entries - gaugeblock-workspace owns the layout, gaugeblock-git owns the git boundary.\n\nREMAINING, in order:\n  1. Adopt in miter-cli: depend on gaugeblock-workspace and use GaugeblockPaths for its default db path, allowlist path and config path. Eleven sites, mechanical, and the tool should model what it enforces.\n  2. Rework rabbet-cli's clap default: keep the flag, resolve its default at runtime so an unset flag does not ship a path the tool never validates.\n  3. Only then add `--paths` to the eleven verification_commands entries. A gate added while failing is a gate somebody disables."
-      ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
-      "timestamp_ms": 1794094241091,
-      "title": null
-    },
-    {
-      "acceptance_criteria": [
-        "CLOSED 2026-11-07. Six crates adopted, the gate is in every chain, and the tree passes it.\n\nTHE SIX: outfeed-orchestrator (behavioural - ancestor walk replaced, so a linked worktree no longer writes a second ledger), miter-storage, dado-core, dado-cli, joiner-core, miter-cli, rabbet-cli. Each verified by `cargo build`, not clippy alone, because a wrong dependency is a compile error and a wrong path never is - the whole class compiles.\n\nTHE GATE: `miter audit --paths`, commit 432f9b4, now in all eleven verification chains beside the line audit, emitted by the storypole generator so the next workspace-init cannot undo it, and named in AGENTS.md at all three places the audit appears. Final state on the tree: no file over 250 lines, and every crate naming .gaugeblock depends on gaugeblock-workspace. Exit 0.\n\nWHAT THE GATE FOUND THAT THE HAND AUDIT MISSED: miter-cli, the root package, with 11 sites. The manual sweep globbed `*/crates/*/Cargo.toml` and the root package is not under a crates directory. A completion claim made an hour earlier said five of six findings were done; the gate found the sixth crate before the ticket closed. That is the argument for codifying a rule in one line, and it is now the second time today that automating a check immediately found work nobody had listed.\n\nWHY EACH FIX WAS SHAPED AS IT WAS:\n  miter-cli took the dependency and adopted both allowlist paths - the tool that enforces the rule should not be its main exception - and the layers allowlist became a function, because a constant cannot ask a question.\n  rabbet-cli kept its flag and lost its literal: a default_value is a path the tool never validates, that looks canonical, is not resolved against the repository in use, and leaves the caller unable to tell whether they overrode it.\n  joiner-core, dado-core and dado-cli moved the path and left the discovery policy alone, including the legacy fallbacks, because deleting a fallback is a behaviour change and not this ticket.\n\nCOST, recorded because it is the honest picture: the six fixes are small diffs and the builds took 5m, 7m, 17m, 8m and 18m cold - the shared target directory had been purged to clear a disk failure, and parallel builds in this workspace queue on a single lock. Setup cost, not change cost. That is also GB-236 showing itself again.\n\nSTILL OPEN UNDER THIS EPIC, and it is the higher-value half: the multi-repository test scope (GB-305 item 2). Every defect this week passed its tests because every test had exactly one repository in scope, where per-repository logic and suite logic are indistinguishable."
-      ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
-      "timestamp_ms": 1794096326718,
-      "title": null
-    },
-    {
-      "event": "task_verified",
-      "receipt": {
-        "base_commit_sha": "3c3c15e093492188954a20ea11437327fbf7b0b6",
-        "chain_key": null,
-        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
-        "commit_shas": [
-          "3c3c15e093492188954a20ea11437327fbf7b0b6"
-        ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "main",
-        "head_commit_sha": "3c3c15e093492188954a20ea11437327fbf7b0b6",
-        "repo": null,
-        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-        "verified_at_epoch_ms": 1794096559479,
-        "verifier": "storypole-verify"
-      },
-      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00"
-    },
-    {
-      "acceptance_criteria": [
-        "RECEIPT RECORDED 2026-11-07: 'Verified task GB-304 successfully (verifier: storypole-verify, exit_code: Some(0) on branch main [1 commit(s)])'.\n\nTwo failures preceded it, both instructive and both mine.\n\nFIRST: I reported that verify 'produced no status change' when in fact it had failed on a stale Cargo.lock in benchwork - the lock moved transitively because five crates gained the gaugeblock-workspace dependency. My measurement was `storypole verify GB-304 | tail -1`, which shows nothing on the success path and hides the error line on the failure path. The same mistake as the earlier `cargo nextest | grep` habit: a pipeline whose exit status is the last command's, and whose visible output is the part I asked for. The check worked; my reading of it did not.\n\nSECOND, and worse: after fixing the lockfile, verify failed with exit 2 - `error: unexpected argument '--paths' found`. I had added `--paths` to all eleven verification chains before installing the binary that implements it. The chains invoke the installed miter from PATH (law 9), and the installed one predated the gate. So the ordering error was mine: build the tool, install it, then wire the flag into anything that calls the installed copy. `outfeed install miter --debug` fixed it, and the receipt above is the proof.\n\nThis is worth keeping because it is the suite's own lesson turned inward: a change is not done when the source compiles, it is done when the thing that runs it can run it."
-      ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
-      "timestamp_ms": 1794096593441,
-      "title": null
-    }
-  ],
   "ticket": {
-    "acceptance_criteria": [
-      "RECEIPT RECORDED 2026-11-07: 'Verified task GB-304 successfully (verifier: storypole-verify, exit_code: Some(0) on branch main [1 commit(s)])'.\n\nTwo failures preceded it, both instructive and both mine.\n\nFIRST: I reported that verify 'produced no status change' when in fact it had failed on a stale Cargo.lock in benchwork - the lock moved transitively because five crates gained the gaugeblock-workspace dependency. My measurement was `storypole verify GB-304 | tail -1`, which shows nothing on the success path and hides the error line on the failure path. The same mistake as the earlier `cargo nextest | grep` habit: a pipeline whose exit status is the last command's, and whose visible output is the part I asked for. The check worked; my reading of it did not.\n\nSECOND, and worse: after fixing the lockfile, verify failed with exit 2 - `error: unexpected argument '--paths' found`. I had added `--paths` to all eleven verification chains before installing the binary that implements it. The chains invoke the installed miter from PATH (law 9), and the installed one predated the gate. So the ordering error was mine: build the tool, install it, then wire the flag into anything that calls the installed copy. `outfeed install miter --debug` fixed it, and the receipt above is the proof.\n\nThis is worth keeping because it is the suite's own lesson turned inward: a change is not done when the source compiles, it is done when the thing that runs it can run it."
-    ],
-    "active_claim": null,
-    "created_at_epoch_ms": 1794087664759,
-    "decisions": [],
-    "description": "",
-    "edges": [],
     "id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+    "ticket_key": "GB-304",
+    "slug": "suite-wide-audit-every-crate-that-touches-gaugeblock-must-use-gaugeblock-workspace-fully-not-just-depend-on-it-0e4e3f",
+    "title": "Suite-wide audit: every crate that touches .gaugeblock must use gaugeblock-workspace fully, not just depend on it",
+    "description": "",
     "kind": "epic",
-    "latest_handoff": null,
-    "plan": null,
+    "status": "verified",
     "priority": 3,
     "scope": {
-      "crate_name": null,
-      "labels": [],
-      "module_path": null,
       "repo": null,
+      "crate_name": null,
+      "module_path": null,
       "target_files": [],
       "target_symbols": [
         "gaugeblock_workspace"
-      ]
+      ],
+      "labels": []
     },
-    "slug": "suite-wide-audit-every-crate-that-touches-gaugeblock-must-use-gaugeblock-workspace-fully-not-just-depend-on-it-0e4e3f",
-    "status": "verified",
-    "ticket_key": "GB-304",
-    "title": "Suite-wide audit: every crate that touches .gaugeblock must use gaugeblock-workspace fully, not just depend on it",
-    "updated_at_epoch_ms": 1794096593441,
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "RECEIPT RECORDED 2026-11-07: 'Verified task GB-304 successfully (verifier: storypole-verify, exit_code: Some(0) on branch main [1 commit(s)])'.\n\nTwo failures preceded it, both instructive and both mine.\n\nFIRST: I reported that verify 'produced no status change' when in fact it had failed on a stale Cargo.lock in benchwork - the lock moved transitively because five crates gained the gaugeblock-workspace dependency. My measurement was `storypole verify GB-304 | tail -1`, which shows nothing on the success path and hides the error line on the failure path. The same mistake as the earlier `cargo nextest | grep` habit: a pipeline whose exit status is the last command's, and whose visible output is the part I asked for. The check worked; my reading of it did not.\n\nSECOND, and worse: after fixing the lockfile, verify failed with exit 2 - `error: unexpected argument '--paths' found`. I had added `--paths` to all eleven verification chains before installing the binary that implements it. The chains invoke the installed miter from PATH (law 9), and the installed one predated the gate. So the ordering error was mine: build the tool, install it, then wire the flag into anything that calls the installed copy. `outfeed install miter --debug` fixed it, and the receipt above is the proof.\n\nThis is worth keeping because it is the suite's own lesson turned inward: a change is not done when the source compiles, it is done when the thing that runs it can run it."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
     "verification_receipt": {
-      "base_commit_sha": "3c3c15e093492188954a20ea11437327fbf7b0b6",
-      "chain_key": null,
+      "verifier": "storypole-verify",
       "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794096559479,
+      "git_branch": "main",
+      "base_commit_sha": "3c3c15e093492188954a20ea11437327fbf7b0b6",
+      "head_commit_sha": "3c3c15e093492188954a20ea11437327fbf7b0b6",
       "commit_shas": [
         "3c3c15e093492188954a20ea11437327fbf7b0b6"
       ],
-      "diagnostic_count": null,
-      "exit_code": 0,
-      "git_branch": "main",
-      "head_commit_sha": "3c3c15e093492188954a20ea11437327fbf7b0b6",
       "repo": null,
-      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-      "verified_at_epoch_ms": 1794096559479,
-      "verifier": "storypole-verify"
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1794087664759,
+    "updated_at_epoch_ms": 1794096593441
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+        "ticket_key": "GB-304",
+        "slug": "suite-wide-audit-every-crate-that-touches-gaugeblock-must-use-gaugeblock-workspace-fully-not-just-depend-on-it-0e4e3f",
+        "title": "Suite-wide audit: every crate that touches .gaugeblock must use gaugeblock-workspace fully, not just depend on it",
+        "description": "",
+        "kind": "epic",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "gaugeblock_workspace"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794087664759,
+        "updated_at_epoch_ms": 1794087664759
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "SCOPE + INVENTORY 2026-11-06. 'Depends on gaugeblock-workspace' and 'uses it fully' are different claims, and the gap between them produced the last three multi-repository defects: benchwork's telemetry tailed one repository (GB-293), miter's dirty check could not see a member repository (GB-301), and the index baseline was written by no path that ran (GB-302).\n\nMEASURED INVENTORY, every crate whose source mentions .gaugeblock or .storypole, with whether it declares the canonical dependency:\n\n  refs  crate                                    uses -workspace?\n    67  benchwork/crates/benchwork-core          yes\n    38  storypole/crates/storypole-core          yes\n    22  common/crates/gaugeblock-workspace       yes   (the canonical implementation itself)\n    13  benchwork/crates/benchwork-cli           yes\n     7  storypole/crates/storypole-cli           yes\n     5  sawhorse/crates/sawhorse-core            yes\n     5  miter/crates/storage                     NO\n     5  chalkline/crates/chalkline-core          yes\n     4  joiner/crates/joiner-cli                 yes\n     3  rabbet/crates/rabbet-cli                 NO\n     3  outfeed/crates/outfeed-core              yes\n     3  joiner/crates/joiner-core                NO\n     2  outfeed/crates/outfeed-orchestrator      NO\n     2  miter/crates/engine                      yes\n     2  dado/crates/dado-core                    NO\n     2  dado/crates/dado-cli                     NO\n     2  common/crates/gaugeblock-git             NO\n     2  common/crates/gaugeblock-contracts       NO\n     1  chalkline/crates/chalkline-mcp           NO\n     1  chalkline/crates/chalkline-cli           NO\n\nWHAT 'FULLY' MEANS, as four checkable properties per crate:\n  1. Canonical paths come from GaugeblockPaths, never from a hand-built join or an ancestor walk. The\n     resolver derives the directory from the git common dir, which is what stops a linked worktree from\n     growing a second ledger (CO-7).\n  2. Membership comes from WorkspaceTopology, never from assuming the caller's directory is the workspace.\n  3. Anything that answers a question about 'the suite' uses those two, so a mechanism written for one\n     repository cannot silently compose into a suite that measures nothing.\n  4. There is a test that runs with more than one repository in scope. The defects above all survived because\n     every test had exactly one repository, where per-repo logic and suite logic are indistinguishable.\n\nTHE EIGHT TO AUDIT, in suspicion order. Each needs one of three verdicts: adopt the canonical call, document why it is a legitimate exception, or split the concern. Note that the count is the number of textual references, not the severity - a single wrong default path is enough.\n  1. miter/crates/storage (5) - probably receives a path rather than deriving one, in which case the fix is to make that explicit in the signature. If it defaults anywhere, that is the bug.\n  2. dado/crates/dado-core + dado-cli (4) - neither declares the dependency, so both build a path by hand.\n  3. joiner/crates/joiner-core (3) - same.\n  4. rabbet/crates/rabbet-cli (3) - same.\n  5. outfeed/crates/outfeed-orchestrator (2) - extracted from outfeed-core in this session, so it inherited whichever habit the core had.\n  6. chalkline/crates/chalkline-cli + chalkline-mcp (2) - one reference each, likely a default document path.\n  7. gaugeblock-contracts (2) - a pure types crate must do no IO at all, so either these are doc comments or there is IO in the foundation.\n  8. gaugeblock-git (2) - likely legitimate: resolving the git common dir is its job and the workspace crate depends on it, not the reverse. Document rather than convert.\n\nDURABLE FIX, so this does not need re-auditing in six months: a gate that fails when a crate references .gaugeblock without declaring gaugeblock-workspace, with an explicit allowlist for the foundation crates that legitimately do. That is the same shape as the layers allowlist, and it should be built after the audit rather than instead of it - otherwise the allowlist will simply absorb the eight findings.\n\nMETHOD that works quickly: `miter references GaugeblockPaths` per crate answers property 1 and 2 without reading code, and `miter deps` shows whether the dependency is direct or transitive. Both are already available; this ticket is mostly a matter of running them across twelve repositories and writing the verdicts down."
+      ],
+      "timestamp_ms": 1794087673137
+    },
+    {
+      "event": "task_updated",
+      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "AUDIT VERDICTS 2026-11-07, from inspecting each of the eight suspects' actual lines rather than their counts. Six are real; two were doc comments all along.\n\n1. outfeed/crates/outfeed-orchestrator/src/backlog.rs - REAL, FIXED (behavioural). find_storypole_root walked upwards for the nearest directory holding `.gaugeblock`. In a linked worktree that is the worktree's own copy, so it wrote a second ledger - the precise duplication CO-7 removed by deriving the directory from the git common dir. It now resolves through GaugeblockPaths::discover, with the legacy `.storypole` fallback checked at the caller's own path rather than by walking, because a legacy directory in a parent belongs to someone else's repository.\n\n2. miter/crates/storage/src/workspace.rs - REAL (spelling). Derives `<root>/.gaugeblock/miter/miter.redb` by hand, including a legacy fallback. The behaviour matches the canonical rule today, so the risk is divergence rather than a current bug: a second place that knows the layout will eventually disagree with the first. Verdict: adopt `GaugeblockPaths::at(root).index_db()`, which already exists.\n\n3. dado/crates/dado-core/src/registry/mod.rs - REAL (spelling). Hand-joins `.gaugeblock/dado`, `.dado` and the root itself in a three-way probe. Verdict: adopt, then delete the `.gaugeblock` segment so the layout has one spelling.\n\n4. dado/crates/dado-cli/src/init.rs - REAL (spelling). Same join, in the initialiser that creates the directory. This is the pair-mate of the line above: a tool that creates a path in one place and reads it in another must spell it identically forever, which is exactly what a shared helper is for.\n\n5. joiner/crates/joiner-core/src/model.rs - REAL (spelling). `if gb_spool.is_dir() || root.join('.gaugeblock').is_dir()` prefers `.gaugeblock/spool` and silently falls back to a bare spool. The fallback is the interesting part: it decides what happens in a repository that has a `.gaugeblock` but no spool, and the condition as written treats 'the directory exists' as 'this is the spool'.\n\n6. rabbet/crates/rabbet-cli/src/args.rs - REAL but different in kind. The `.gaugeblock/spool/outbox.jsonl` here is a clap `default_value`, so it is a user-facing default rather than a resolved path. A default is defensible; a default that is the canonical layout restated is not, because the tool ships a path it never validates and a user with a non-standard tree cannot tell whether they overrode it. Verdict: keep the flag, resolve its default at runtime.\n\n7. chalkline/crates/chalkline-cli/src/args_docs.rs and chalkline-mcp - NOT REAL. The single hit in each is a doc comment describing what the command audits. No action.\n\n8. common/crates/gaugeblock-contracts - NOT REAL, and this one mattered: the purity invariant needed checking, not assuming. Both hits are documentation strings; the crate does no IO, reads no clock and generates no randomness. No action.\n\n9. common/crates/gaugeblock-git - LEGITIMATE EXCEPTION, documented in its own module header: it explicitly does not own `.gaugeblock` resolution. Both hits are that documentation. No action.\n\nPATTERN WORTH NAMING: four of the six real findings are the same habit - a crate restates the `.gaugeblock/<tool>` layout instead of asking for it. None of them is wrong today. All four will drift the first time the layout changes, and the drift will be silent because each has its own copy to be wrong about. That is why the durable fix is a gate rather than six careful edits."
+      ],
+      "timestamp_ms": 1794091408261
+    },
+    {
+      "event": "task_updated",
+      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "ADOPTION PROGRESS 2026-11-07. Five of the six real findings are adopted; the sixth is a different kind and remains.\n\nDONE, each building clean on its own:\n  outfeed-orchestrator/backlog.rs   729088b  behavioural: ancestor walk replaced by GaugeblockPaths::discover, so a linked worktree no longer writes a second ledger\n  miter-storage/workspace.rs        52bcc8f  default_db_path asks for index_db()\n  dado-core/registry/mod.rs         898e5d3  member(\"dado\")\n  dado-cli/init.rs                  898e5d3  member(\"dado\") - the creator and the reader now spell it identically\n  joiner-core/model.rs              (this commit)  spool_dir()\n\nREMAINING: rabbet-cli/args.rs holds `.gaugeblock/spool/outbox.jsonl` as a clap default_value, which is a user-facing default rather than a resolved path. It needs a runtime resolution so the flag can be overridden and so an unset flag does not ship a path the tool never validates.\n\nTHEN THE GATE, which is the point of the whole exercise: without it these five adoptions are repairs, and the next crate written will restate the layout again. The gate fails when a crate's source mentions `.gaugeblock` outside a doc comment without depending on gaugeblock-workspace, with an allowlist for gaugeblock-git (owns the git boundary, not path resolution) and gaugeblock-workspace itself.\n\nEach adoption was verified by a build, not by clippy alone, because a wrong dependency is a compile error and a wrong path is not: the whole class of defect here is one that compiles."
+      ],
+      "timestamp_ms": 1794092681787
+    },
+    {
+      "event": "task_updated",
+      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "GATE LANDED 2026-11-07, commit 432f9b4 (miter). `miter audit --paths` fails when a crate's source names `.gaugeblock` without depending on gaugeblock-workspace. It runs inside `miter audit`, which every verification chain already invokes.\n\nFIRST RUN FOUND TWO CRATES, and one of them proves the gate was worth building: miter-cli - the root package at miter/Cargo.toml - has 11 sites. My manual audit never saw it, because the sweep globbed `*/crates/*/Cargo.toml` and the root miter package is not under a crates directory. The hand audit had a blind spot; the automated check does not. That is the entire argument for codifying the rule rather than being careful about it.\n\n  miter-cli    11 sites  (deps_layers.rs:15 DEFAULT_ALLOWLIST, store.rs:54, mod.rs:176, ...)\n  rabbet-cli    1 site   (args.rs:49 clap default_value) - already known\n\nThis also falsifies the earlier claim that five of six findings were 'done': the inventory itself was incomplete, and the gate found the sixth crate before the ticket closed. Recorded because a completion claim that a tool immediately disproves is exactly what the last two days have been about.\n\nDESIGN DECISIONS worth keeping: comments are excluded because three of eight original suspects were documentation and a gate that fires on prose gets ignored; trailing comments are stripped rather than skipping the line; string literals are NOT excluded because a restated default path is the defect. Allowlist is two entries - gaugeblock-workspace owns the layout, gaugeblock-git owns the git boundary.\n\nREMAINING, in order:\n  1. Adopt in miter-cli: depend on gaugeblock-workspace and use GaugeblockPaths for its default db path, allowlist path and config path. Eleven sites, mechanical, and the tool should model what it enforces.\n  2. Rework rabbet-cli's clap default: keep the flag, resolve its default at runtime so an unset flag does not ship a path the tool never validates.\n  3. Only then add `--paths` to the eleven verification_commands entries. A gate added while failing is a gate somebody disables."
+      ],
+      "timestamp_ms": 1794094241091
+    },
+    {
+      "event": "task_updated",
+      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "CLOSED 2026-11-07. Six crates adopted, the gate is in every chain, and the tree passes it.\n\nTHE SIX: outfeed-orchestrator (behavioural - ancestor walk replaced, so a linked worktree no longer writes a second ledger), miter-storage, dado-core, dado-cli, joiner-core, miter-cli, rabbet-cli. Each verified by `cargo build`, not clippy alone, because a wrong dependency is a compile error and a wrong path never is - the whole class compiles.\n\nTHE GATE: `miter audit --paths`, commit 432f9b4, now in all eleven verification chains beside the line audit, emitted by the storypole generator so the next workspace-init cannot undo it, and named in AGENTS.md at all three places the audit appears. Final state on the tree: no file over 250 lines, and every crate naming .gaugeblock depends on gaugeblock-workspace. Exit 0.\n\nWHAT THE GATE FOUND THAT THE HAND AUDIT MISSED: miter-cli, the root package, with 11 sites. The manual sweep globbed `*/crates/*/Cargo.toml` and the root package is not under a crates directory. A completion claim made an hour earlier said five of six findings were done; the gate found the sixth crate before the ticket closed. That is the argument for codifying a rule in one line, and it is now the second time today that automating a check immediately found work nobody had listed.\n\nWHY EACH FIX WAS SHAPED AS IT WAS:\n  miter-cli took the dependency and adopted both allowlist paths - the tool that enforces the rule should not be its main exception - and the layers allowlist became a function, because a constant cannot ask a question.\n  rabbet-cli kept its flag and lost its literal: a default_value is a path the tool never validates, that looks canonical, is not resolved against the repository in use, and leaves the caller unable to tell whether they overrode it.\n  joiner-core, dado-core and dado-cli moved the path and left the discovery policy alone, including the legacy fallbacks, because deleting a fallback is a behaviour change and not this ticket.\n\nCOST, recorded because it is the honest picture: the six fixes are small diffs and the builds took 5m, 7m, 17m, 8m and 18m cold - the shared target directory had been purged to clear a disk failure, and parallel builds in this workspace queue on a single lock. Setup cost, not change cost. That is also GB-236 showing itself again.\n\nSTILL OPEN UNDER THIS EPIC, and it is the higher-value half: the multi-repository test scope (GB-305 item 2). Every defect this week passed its tests because every test had exactly one repository in scope, where per-repository logic and suite logic are indistinguishable."
+      ],
+      "timestamp_ms": 1794096326718
+    },
+    {
+      "event": "task_verified",
+      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794096559479,
+        "git_branch": "main",
+        "base_commit_sha": "3c3c15e093492188954a20ea11437327fbf7b0b6",
+        "head_commit_sha": "3c3c15e093492188954a20ea11437327fbf7b0b6",
+        "commit_shas": [
+          "3c3c15e093492188954a20ea11437327fbf7b0b6"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_updated",
+      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "RECEIPT RECORDED 2026-11-07: 'Verified task GB-304 successfully (verifier: storypole-verify, exit_code: Some(0) on branch main [1 commit(s)])'.\n\nTwo failures preceded it, both instructive and both mine.\n\nFIRST: I reported that verify 'produced no status change' when in fact it had failed on a stale Cargo.lock in benchwork - the lock moved transitively because five crates gained the gaugeblock-workspace dependency. My measurement was `storypole verify GB-304 | tail -1`, which shows nothing on the success path and hides the error line on the failure path. The same mistake as the earlier `cargo nextest | grep` habit: a pipeline whose exit status is the last command's, and whose visible output is the part I asked for. The check worked; my reading of it did not.\n\nSECOND, and worse: after fixing the lockfile, verify failed with exit 2 - `error: unexpected argument '--paths' found`. I had added `--paths` to all eleven verification chains before installing the binary that implements it. The chains invoke the installed miter from PATH (law 9), and the installed one predated the gate. So the ordering error was mine: build the tool, install it, then wire the flag into anything that calls the installed copy. `outfeed install miter --debug` fixed it, and the receipt above is the proof.\n\nThis is worth keeping because it is the suite's own lesson turned inward: a change is not done when the source compiles, it is done when the thing that runs it can run it."
+      ],
+      "timestamp_ms": 1794096593441
+    },
+    {
+      "event": "task_archived",
+      "task_id": "0e4e3fb3-05f2-456f-8128-06bfcbf0ed00",
+      "status": "verified",
+      "timestamp_ms": 1794343383690
     }
-  }
+  ]
 }

@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "b92b783a-ce6c-47a9-8d66-eafb695bf86e",
+    "ticket_key": "GB-354",
+    "slug": "archive-and-unarchive-resolve-a-key-from-the-unified-index-but-record-the-event-in-the-root-store-b92b78",
+    "title": "archive and unarchive resolve a key from the unified index but record the event in the root store",
+    "description": "Found 2026-11-10 when archiving every Verified ticket from the benchwork board: 262 archived, two did not.  GB-320 archived normally. MTR-17 could not, and the error named the wrong place:  Error: Ticket record at .gaugeblock/storypole/tickets/MTR-17.json: no record for MTR-17 and this event does not carry one  MTR-17 belongs to miter. handle_archive resolved the id from the store index - which at a suite root is the UNIFIED index, holding every member ticket - and then recorded the archive event through the root store, which holds no record for it. Every member ticket should have failed the same way; that only one did is why this looked like a UI quirk rather than a routing bug.  This is the same shape as GB-352 (reap), which is what made it recognisable: a root-scoped read of a suite-wide index followed by a root-scoped write.  FIX (storypole 29eb12b). archive and unarchive now ask which repository holds the key and, when it is not this one, open that store and record there, reporting it: \"Archived task MTR-17 in miter\". Refusing with an instruction would have been wrong for these two verbs specifically - a board archives in bulk and knows a key, not an owner - so they route instead.  repo_root_of moved into workspace::lookup so this handler and the reaper undo the dot-directory nesting once rather than twice.  Verified: MTR-17 archived in miter, and ledger-reconcile reports archived 264 with no verified bucket and no delta.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::handlers::archive_cmds::handle_archive"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794345291545,
+    "updated_at_epoch_ms": 1794345291545
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "b92b783a-ce6c-47a9-8d66-eafb695bf86e",
+        "ticket_key": "GB-354",
+        "slug": "archive-and-unarchive-resolve-a-key-from-the-unified-index-but-record-the-event-in-the-root-store-b92b78",
+        "title": "archive and unarchive resolve a key from the unified index but record the event in the root store",
+        "description": "Found 2026-11-10 when archiving every Verified ticket from the benchwork board: 262 archived, two did not.  GB-320 archived normally. MTR-17 could not, and the error named the wrong place:  Error: Ticket record at .gaugeblock/storypole/tickets/MTR-17.json: no record for MTR-17 and this event does not carry one  MTR-17 belongs to miter. handle_archive resolved the id from the store index - which at a suite root is the UNIFIED index, holding every member ticket - and then recorded the archive event through the root store, which holds no record for it. Every member ticket should have failed the same way; that only one did is why this looked like a UI quirk rather than a routing bug.  This is the same shape as GB-352 (reap), which is what made it recognisable: a root-scoped read of a suite-wide index followed by a root-scoped write.  FIX (storypole 29eb12b). archive and unarchive now ask which repository holds the key and, when it is not this one, open that store and record there, reporting it: \"Archived task MTR-17 in miter\". Refusing with an instruction would have been wrong for these two verbs specifically - a board archives in bulk and knows a key, not an owner - so they route instead.  repo_root_of moved into workspace::lookup so this handler and the reaper undo the dot-directory nesting once rather than twice.  Verified: MTR-17 archived in miter, and ledger-reconcile reports archived 264 with no verified bucket and no delta.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_cli::handlers::archive_cmds::handle_archive"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794345291545,
+        "updated_at_epoch_ms": 1794345291545
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

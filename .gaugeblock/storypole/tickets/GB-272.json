@@ -216,6 +216,12 @@
         "repo": null,
         "chain_key": null
       }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "d30dc80b-0c83-4511-ab8d-9c76da0dff47",
+      "status": "verified",
+      "timestamp_ms": 1794343402412
     }
   ]
 }

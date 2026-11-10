@@ -1,290 +1,296 @@
 {
+  "ticket": {
+    "id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+    "ticket_key": "GB-237",
+    "slug": "miter-lookup-silently-answers-from-a-stale-index-no-reindex-on-change-and-one-index-shared-by-every-window-ab2495",
+    "title": "miter lookup silently answers from a stale index: nothing reindexes when the tree changes",
+    "description": "Measured 2026-10-30 on the neurosymbolic-suite workspace. miter lookup GaugeblockPaths returned exit 1, no declaration named GaugeblockPaths, although the symbol exists at common/crates/gaugeblock-workspace/src/paths.rs:16 and had been in the tree for hours. After miter index . (877 files, 5571 symbols, exit 0) the same lookup exited 0 with the right coordinates. So the index was STALE, not locked. It is not a multi-window problem: three miter mcp daemons were live but each serves a different workspace, and lsof confirmed none of them has this suite index open - one window per workspace means one daemon per workspace, and the other two windows are elsewhere. The staleness is simply that nothing refreshes the index when the tree changes; the last write predated the crates added during GB-130/GB-131/CO-7.",
+    "kind": "bug",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_mcp::server,miter_storage::index"
+      ],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
+        "target_ticket_key": "CO-7",
+        "target_repo": "common"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "DONE 2026-11-06, commit 1812496 (miter). Read commands now refresh a stale index instead of warning about it.\n\nThe warning was honest and useless. A lookup for a symbol that exists answered 'no declaration named', which is indistinguishable from the symbol never having existed; the remedy was for the reader to notice a line on stderr and run a different command. That is the same silence-as-success shape this suite has been removing everywhere else - the tool knew and told you anyway instead of acting.\n\nWhere it lives: store::load, because every read command routes through it. The refresh runs before the read handle opens, since redb allows one handle at a time and the refresh needs the write one. It uses the incremental pass, so the cost is a dirty scan rather than a full parse - which only became possible once GB-302 persisted the baseline.\n\nMeasured end to end, suite root, a symbol appended seconds earlier inside miter/ (a separate repository):\n  $ miter lookup auto_index_probe_marker\n  miter: index was 1 minute(s) stale; refreshed in 3210 ms\n  auto_index_probe_marker\n    miter/src/cli/find.rs:180\n    function - level 3\nBefore this session that same edit was invisible: the index had no baseline, so it could not detect it, and the answer would have been 'no declaration named'.\n\nOVER BUDGET, recorded rather than glossed: I set a two-second budget for this refresh and it came in at 3210 ms. The scan is not the cost - the save is, because the dirty pass rewrites the whole 67 MB database to persist a handful of rows. Filed as follow-up work; the correct fix is to save only changed rows, and it should happen before auto-index becomes the default for anyone with a large tree.\n\nPolicies, each chosen because the alternative is a surprise:\n  MITTER_NO_AUTO_INDEX disables it for CI and for gates that must not write.\n  Opting out does not opt out of the warning - the caller said leave the index alone, not tell me nothing.\n  The 60-second tolerance stays: a file touched seconds ago is mid-edit, and re-indexing on each keystroke costs more than it saves.\n  A refresh that cannot take the write lock announces itself on stderr and answers from the existing index. MCP servers hold the index for hours, so contention is the normal case; hanging would be worse than a stale answer that says so.\n  All of it goes to stderr, because stdout belongs to --json and --mcp.\n\nTier 2: fmt clean, clippy --workspace --all-targets -D warnings clean, 280 tests green, audit clean."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 && chalkline docs check --workspace",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794087152937,
+      "git_branch": "main",
+      "base_commit_sha": "4e6638f53d42fc3e36058f42d59161b2918ebb02",
+      "head_commit_sha": "4e6638f53d42fc3e36058f42d59161b2918ebb02",
+      "commit_shas": [
+        "4e6638f53d42fc3e36058f42d59161b2918ebb02"
+      ],
+      "repo": null,
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793427997303,
+    "updated_at_epoch_ms": 1794087152937
+  },
   "events": [
     {
       "event": "handoff_recorded",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
       "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793428013829,
         "completed_items": [
           "Diagnosed and recorded. The index is shared at the suite root and was 3 days stale; three per-window daemons exist but none of them keeps it fresh."
         ],
-        "dirty_files": [],
-        "git_ref": "9ea2f32",
-        "last_error_or_blocker": "None, but note the priority argument: this failure is silent - a missing symbol looks exactly like a symbol that was never written - so an agent reads it as evidence of absence rather than staleness. That is worse than a loud lock error.",
-        "recorded_by_agent": "cline",
         "remaining_items": [
           "The fix is a refresh policy: reindex on daemon start, or on save, or a TTL, with exactly one window owning the write. Needs a decision on which, then implementation in miter-mcp plus a freshness check callable from the CLI."
         ],
-        "timestamp_ms": 1793428013829
+        "last_error_or_blocker": "None, but note the priority argument: this failure is silent - a missing symbol looks exactly like a symbol that was never written - so an agent reads it as evidence of absence rather than staleness. That is worse than a loud lock error.",
+        "git_ref": "9ea2f32",
+        "dirty_files": []
       },
-      "new_status": "ready",
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410"
+      "new_status": "ready"
     },
     {
       "event": "handoff_recorded",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
       "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793465148275,
         "completed_items": [
           "Read commands now warn when the index is older than the code (c611e6f). store::load is the single funnel for every read, so the check lives there: db mtime versus the newest source file under the tree the index sits in, warning on stderr when more than a minute behind. Verified by aging the index 30 minutes: stderr carries the warning and stdout is byte-identical, so --json stays parseable. Fresh index is silent."
         ],
-        "dirty_files": [],
-        "git_ref": "c611e6f",
-        "last_error_or_blocker": "None. Two measurements recorded for the policy work: redb rewrites the file on open, so an index mtime taken after opening always reads now (this cost the first implementation its warning); and the check costs one directory walk, early-exiting at the first newer file.",
-        "recorded_by_agent": "cline",
         "remaining_items": [
           "The refresh POLICY is still open and is a decision, not an edit: reindex on mcp daemon start, on file save, on a TTL, or leave it explicit now that staleness is visible. The warning makes the failure impossible to miss either way, which was the actual defect - a stale answer was indistinguishable from a true absence."
         ],
-        "timestamp_ms": 1793465148275
+        "last_error_or_blocker": "None. Two measurements recorded for the policy work: redb rewrites the file on open, so an index mtime taken after opening always reads now (this cost the first implementation its warning); and the check costs one directory walk, early-exiting at the first newer file.",
+        "git_ref": "c611e6f",
+        "dirty_files": []
       },
-      "new_status": "ready",
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410"
+      "new_status": "ready"
     },
     {
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "acceptance_criteria": [],
-        "active_claim": null,
-        "created_at_epoch_ms": 1793427997303,
-        "decisions": [],
-        "description": "",
-        "edges": [],
         "id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+        "ticket_key": "GB-237",
+        "slug": "miter-lookup-silently-answers-from-a-stale-index-no-reindex-on-change-and-one-index-shared-by-every-window-ab2495",
+        "title": "miter lookup silently answers from a stale index: no reindex on change and one index shared by every window",
+        "description": "",
         "kind": "bug",
-        "latest_handoff": null,
-        "plan": null,
+        "status": "triage",
         "priority": 3,
         "scope": {
-          "crate_name": null,
-          "labels": [],
-          "module_path": null,
           "repo": null,
+          "crate_name": null,
+          "module_path": null,
           "target_files": [],
           "target_symbols": [
             "miter_mcp::server,miter_storage::index"
-          ]
+          ],
+          "labels": []
         },
-        "slug": "miter-lookup-silently-answers-from-a-stale-index-no-reindex-on-change-and-one-index-shared-by-every-window-ab2495",
-        "status": "triage",
-        "ticket_key": "GB-237",
-        "title": "miter lookup silently answers from a stale index: no reindex on change and one index shared by every window",
-        "updated_at_epoch_ms": 1793427997303,
-        "verification_receipt": null
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793427997303,
+        "updated_at_epoch_ms": 1793427997303
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793428005766,
+        "lease_expires_at_epoch_ms": 1793431605766,
+        "git_branch": null,
+        "base_commit_sha": null
       }
     },
     {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793428005766,
-        "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793431605766
-      },
-      "event": "task_claimed",
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410"
-    },
-    {
       "event": "status_changed",
-      "from": "triage",
-      "reason": "Claimed by cline",
       "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-      "timestamp_ms": 1793428005766,
-      "to": "in_progress"
+      "from": "triage",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793428005766
     },
     {
+      "event": "task_updated",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+      "title": null,
+      "description": "Measured 2026-10-30 while the suite had three miter mcp daemons live, one per VS Code window (PIDs 27438 at 10h21m, 36335 at 3d08h, 46165 at 6h40m), each a child of a distinct Code Helper (Plugin) extension host, all sharing <suite>/.gaugeblock/miter/miter.redb because the index sits at the suite root rather than per repository. miter lookup GaugeblockPaths returned exit 1, no declaration named GaugeblockPaths, even though the symbol exists at common/crates/gaugeblock-workspace/src/paths.rs:16 and had been in the tree for hours. After miter index . (877 files, 5571 symbols, exit 0) the same lookup returned exit 0 with the right coordinates. So the index was stale, not locked: the newest index content dated from the oldest window 3 days ago, and nothing reindexed when the foundation crates were added during GB-130/GB-131/CO-7.",
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "A lookup for a symbol that exists in the working tree either returns it or says the index is stale - it must not answer not-found from an index older than the file that defines it",
         "Decide the refresh trigger: reindex on daemon start, on file save, on a TTL, or make miter index explicit and have callers verify freshness",
         "Record which of the three per-window daemons owns the write, since one index is shared by every window and only the first to open it should reindex"
       ],
-      "description": "Measured 2026-10-30 while the suite had three miter mcp daemons live, one per VS Code window (PIDs 27438 at 10h21m, 36335 at 3d08h, 46165 at 6h40m), each a child of a distinct Code Helper (Plugin) extension host, all sharing <suite>/.gaugeblock/miter/miter.redb because the index sits at the suite root rather than per repository. miter lookup GaugeblockPaths returned exit 1, no declaration named GaugeblockPaths, even though the symbol exists at common/crates/gaugeblock-workspace/src/paths.rs:16 and had been in the tree for hours. After miter index . (877 files, 5571 symbols, exit 0) the same lookup returned exit 0 with the right coordinates. So the index was stale, not locked: the newest index content dated from the oldest window 3 days ago, and nothing reindexed when the foundation crates were added during GB-130/GB-131/CO-7.",
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-      "timestamp_ms": 1793428005860,
-      "title": null
+      "timestamp_ms": 1793428005860
     },
     {
+      "event": "task_updated",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+      "title": null,
+      "description": "Measured 2026-10-30 on the neurosymbolic-suite workspace. miter lookup GaugeblockPaths returned exit 1, no declaration named GaugeblockPaths, although the symbol exists at common/crates/gaugeblock-workspace/src/paths.rs:16 and had been in the tree for hours. After miter index . (877 files, 5571 symbols, exit 0) the same lookup exited 0 with the right coordinates. So the index was STALE, not locked. It is not a multi-window problem: three miter mcp daemons were live but each serves a different workspace, and lsof confirmed none of them has this suite index open - one window per workspace means one daemon per workspace, and the other two windows are elsewhere. The staleness is simply that nothing refreshes the index when the tree changes; the last write predated the crates added during GB-130/GB-131/CO-7.",
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "A lookup for a symbol that exists in the working tree either returns it or says the index is stale - it must not answer not-found from an index older than the file that defines it",
         "Decide the refresh trigger: reindex on mcp daemon start, on file save, on a TTL, or make miter index explicit and have callers verify freshness",
         "A freshness check callable from the CLI, so an agent can tell stale from absent"
       ],
-      "description": "Measured 2026-10-30 on the neurosymbolic-suite workspace. miter lookup GaugeblockPaths returned exit 1, no declaration named GaugeblockPaths, although the symbol exists at common/crates/gaugeblock-workspace/src/paths.rs:16 and had been in the tree for hours. After miter index . (877 files, 5571 symbols, exit 0) the same lookup exited 0 with the right coordinates. So the index was STALE, not locked. It is not a multi-window problem: three miter mcp daemons were live but each serves a different workspace, and lsof confirmed none of them has this suite index open - one window per workspace means one daemon per workspace, and the other two windows are elsewhere. The staleness is simply that nothing refreshes the index when the tree changes; the last write predated the crates added during GB-130/GB-131/CO-7.",
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-      "timestamp_ms": 1793428098098,
-      "title": null
+      "timestamp_ms": 1793428098098
     },
     {
-      "acceptance_criteria": null,
+      "event": "task_updated",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+      "title": "miter lookup silently answers from a stale index: nothing reindexes when the tree changes",
       "description": null,
-      "event": "task_updated",
       "priority": null,
       "scope": null,
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-      "timestamp_ms": 1793428104859,
-      "title": "miter lookup silently answers from a stale index: nothing reindexes when the tree changes"
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793428104859
     },
     {
+      "event": "task_claimed",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
       "claim": {
         "agent_id": "cline",
-        "base_commit_sha": null,
         "claimed_at_epoch_ms": 1793465137153,
+        "lease_expires_at_epoch_ms": 1793468737153,
         "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793468737153
-      },
-      "event": "task_claimed",
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410"
+        "base_commit_sha": null
+      }
     },
     {
       "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
       "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-      "timestamp_ms": 1793465137153,
-      "to": "in_progress"
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793465137153
     },
     {
       "event": "task_verified",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
       "receipt": {
-        "base_commit_sha": "ea56fa8fd8e66b6c18c92f1721ae9c2b627e511c",
-        "chain_key": null,
+        "verifier": "manual",
         "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793465137256,
+        "git_branch": "main",
+        "base_commit_sha": "ea56fa8fd8e66b6c18c92f1721ae9c2b627e511c",
+        "head_commit_sha": "ea56fa8fd8e66b6c18c92f1721ae9c2b627e511c",
         "commit_shas": [
           "ea56fa8fd8e66b6c18c92f1721ae9c2b627e511c"
         ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "main",
-        "head_commit_sha": "ea56fa8fd8e66b6c18c92f1721ae9c2b627e511c",
         "repo": null,
-        "summary": "Manual verification confirmed",
-        "verified_at_epoch_ms": 1793465137256,
-        "verifier": "manual"
-      },
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410"
+        "chain_key": null
+      }
     },
     {
+      "event": "task_updated",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "DESIGN ANSWER 2026-11-06 to 'why not just auto-index when stale'. Because it is the right idea and it is currently unaffordable by a factor of fifteen - and because the incremental path it would have to use has a multi-repository blind spot that would make it silently do nothing in exactly the layout this suite has.\n\nMEASURED, suite root, 958 files:\n  miter index .              10.2 s   and it re-parses every file: the run reports 'from 958/958 files' on an unchanged tree\n  miter index . --dirty       0.65 s  clean tree, 0 files\n  miter index . --dirty       1.00 s  after editing one file (5 symbols, 1 file)\n\nSo auto-index costs about a second when it uses the dirty path, and ten when it does not. The question answers itself: auto-index on the dirty path, never on the full path.\n\nTHE BLIND SPOT, which is the part that decides whether this ships. --dirty asks git for the repository containing the path. Run at the suite root after appending a line to miter/src/cli/impact.rs it reported 'dirty-indexed: 0 symbols from 0 files' in 0.60 s - it saw nothing, because miter/ is its own repository and the root .gitignore excludes it. Run inside miter/ the same edit is found immediately (5 symbols, 1 file, 1.00 s).\n\nThat is the same shape as GB-293 (benchwork tails one repository's telemetry in a suite of twelve): a per-repository mechanism used where a suite-wide answer is needed, failing quietly. Wiring auto-index onto today's --dirty would produce a tool that always claims to be current and is not, which is worse than the warning it has now.\n\nWHY THE FULL PATH DOES NOT SKIP. The hash ledger exists and is unused: TABLE_FILE_HASHES is declared, file_hash(), set_file_hash() and file_hashes() all exist, tracked.rs compares a digest and skips on a match - but the polyglot pass that produces the universal symbols, which is half of every index, hardcodes files_skipped: 0 and never consults the ledger. That is why a no-op full index takes ten seconds.\n\nPLAN, in the order that makes each step testable:\n1. Make the polyglot pass consult the hash ledger, so a full index skips unchanged files. This is repository-agnostic by construction (the ledger keys on workspace-relative paths) and fixes the ten seconds without needing git at all.\n2. Make dirty detection repository-aware: either walk the member repositories via WorkspaceTopology, or stop using git for staleness and use the ledger from step 1. Prefer the ledger, because it answers the same question without caring how many repositories there are.\n3. Then auto-index: on any read command, if the ledger says stale, refresh incrementally, print one line to stderr ('index refreshed: N changed files, X ms'), and continue. Budget: under two seconds, or the design is wrong.\n4. Opt-out for determinism: --no-auto-index and an environment variable, because a 'read' command that writes is surprising in a gate and in CI. Gates keep the current explicit behaviour.\n5. Do not block on the lock. redb is single-writer and MCP servers hold the index open for hours; if the refresh cannot take the write lock, answer from the existing index and say so on stderr rather than hanging or failing.\n\nDone when: editing a file in any member repository and immediately running miter lookup shows the new symbol without a manual index, an unchanged tree costs well under a second, and a locked index never hangs a read."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-      "timestamp_ms": 1794079645162,
-      "title": null
+      "timestamp_ms": 1794079645162
     },
     {
+      "event": "task_updated",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "ROOT CAUSE 2026-11-06, and it is one defect behind two tickets. My earlier diagnoses on both were incomplete.\n\nWhat I said first: GB-302 was 'the polyglot pass ignores the hash ledger' and GB-301 was '--dirty asks git and git cannot see member repositories'. Both are true statements about individual mechanisms. Neither is the reason the incremental machinery does nothing.\n\nThe actual defect: `miter index` (the full path) writes symbols and references and NOT the incremental ledgers. set_indexed_file is called from exactly two places in the tree - analysis/dirty/ingest.rs and ingest/tracked.rs - both of which are the incremental paths themselves. A full index therefore produces an index whose per-file baseline is empty, and every incremental mechanism afterwards is inert:\n  - detect_dirty_files iterates indexed_files to compare size and mtime. Empty set, zero comparisons, zero dirty files.\n  - the same emptiness makes --dirty report 'files_scanned: 0, files_skipped: 0', which reads as 'nothing to do' rather than 'nothing can be determined'.\n  - file_hash_count is likewise only ever populated by the incremental paths, so the hash-based skip never has a digest to compare against.\n\nEvidence chain, all measured:\n  miter index .            -> 958/958 files, 10.2 s, then\n  edit miter/src/cli/impact.rs\n  miter index . --dirty    -> 0 files scanned, 0 skipped, 0.60 s   (suite root)\n  same edit, run inside miter/ -> 1 file, 5 symbols, 1.00 s        (git sees it here)\nThe second result is the tell: inside the member repository the git fast path finds the file even though the ledger is empty. At the suite root the git path sees nothing because the root repository excludes the member directories, and the mtime path sees nothing because the ledger is empty. Two independent reasons for the same wrong answer, both silent.\n\nConsequence for GB-237: auto-index cannot be built before this is fixed, and the fix is not 'skip files', it is 'write the baseline'. The order is: full index records hash + size + mtime per file and persists them; then the mtime path works at any repository depth without git; then auto-index is a policy over a working mechanism.\n\nShape of the fix, for whoever takes it:\n  1. Engine holds per-file (relative path, digest, size, mtime) gathered during ingest - it already reads and hashes every file in the tracked pass, so the data is nearly free.\n  2. persist::save_redb writes those rows alongside the symbols, so one full index leaves a complete baseline.\n  3. Then the polyglot skip (GB-302) becomes a one-line lookup, and dirty detection (GB-301) becomes ledger-based, which drops its dependence on git and on the containing repository.\n\nThe lesson, since this is the third multi-repository blind spot this session (GB-293 telemetry, then this): a mechanism that is correct per repository composes into a suite that reports success while measuring nothing. The suite is twelve repositories and almost every one of its instruments is written as if it were one."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-      "timestamp_ms": 1794079927886,
-      "title": null
+      "timestamp_ms": 1794079927886
     },
     {
+      "event": "task_updated",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "DONE 2026-11-06, commit 1812496 (miter). Read commands now refresh a stale index instead of warning about it.\n\nThe warning was honest and useless. A lookup for a symbol that exists answered 'no declaration named', which is indistinguishable from the symbol never having existed; the remedy was for the reader to notice a line on stderr and run a different command. That is the same silence-as-success shape this suite has been removing everywhere else - the tool knew and told you anyway instead of acting.\n\nWhere it lives: store::load, because every read command routes through it. The refresh runs before the read handle opens, since redb allows one handle at a time and the refresh needs the write one. It uses the incremental pass, so the cost is a dirty scan rather than a full parse - which only became possible once GB-302 persisted the baseline.\n\nMeasured end to end, suite root, a symbol appended seconds earlier inside miter/ (a separate repository):\n  $ miter lookup auto_index_probe_marker\n  miter: index was 1 minute(s) stale; refreshed in 3210 ms\n  auto_index_probe_marker\n    miter/src/cli/find.rs:180\n    function - level 3\nBefore this session that same edit was invisible: the index had no baseline, so it could not detect it, and the answer would have been 'no declaration named'.\n\nOVER BUDGET, recorded rather than glossed: I set a two-second budget for this refresh and it came in at 3210 ms. The scan is not the cost - the save is, because the dirty pass rewrites the whole 67 MB database to persist a handful of rows. Filed as follow-up work; the correct fix is to save only changed rows, and it should happen before auto-index becomes the default for anyone with a large tree.\n\nPolicies, each chosen because the alternative is a surprise:\n  MITTER_NO_AUTO_INDEX disables it for CI and for gates that must not write.\n  Opting out does not opt out of the warning - the caller said leave the index alone, not tell me nothing.\n  The 60-second tolerance stays: a file touched seconds ago is mid-edit, and re-indexing on each keystroke costs more than it saves.\n  A refresh that cannot take the write lock announces itself on stderr and answers from the existing index. MCP servers hold the index for hours, so contention is the normal case; hanging would be worse than a stale answer that says so.\n  All of it goes to stderr, because stdout belongs to --json and --mcp.\n\nTier 2: fmt clean, clippy --workspace --all-targets -D warnings clean, 280 tests green, audit clean."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-      "timestamp_ms": 1794087150768,
-      "title": null
+      "timestamp_ms": 1794087150768
     },
     {
       "event": "task_verified",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
       "receipt": {
-        "base_commit_sha": "4e6638f53d42fc3e36058f42d59161b2918ebb02",
-        "chain_key": null,
+        "verifier": "storypole-verify",
         "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794087152937,
+        "git_branch": "main",
+        "base_commit_sha": "4e6638f53d42fc3e36058f42d59161b2918ebb02",
+        "head_commit_sha": "4e6638f53d42fc3e36058f42d59161b2918ebb02",
         "commit_shas": [
           "4e6638f53d42fc3e36058f42d59161b2918ebb02"
         ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "main",
-        "head_commit_sha": "4e6638f53d42fc3e36058f42d59161b2918ebb02",
         "repo": null,
-        "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-        "verified_at_epoch_ms": 1794087152937,
-        "verifier": "storypole-verify"
-      },
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410"
+        "chain_key": null
+      }
     },
     {
+      "event": "edge_added",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
       "edge": {
         "kind": "related_to",
         "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
-        "target_repo": "common",
-        "target_ticket_key": "CO-7"
+        "target_ticket_key": "CO-7",
+        "target_repo": "common"
       },
-      "event": "edge_added",
-      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
       "timestamp_ms": 1794336146492
-    }
-  ],
-  "ticket": {
-    "acceptance_criteria": [
-      "DONE 2026-11-06, commit 1812496 (miter). Read commands now refresh a stale index instead of warning about it.\n\nThe warning was honest and useless. A lookup for a symbol that exists answered 'no declaration named', which is indistinguishable from the symbol never having existed; the remedy was for the reader to notice a line on stderr and run a different command. That is the same silence-as-success shape this suite has been removing everywhere else - the tool knew and told you anyway instead of acting.\n\nWhere it lives: store::load, because every read command routes through it. The refresh runs before the read handle opens, since redb allows one handle at a time and the refresh needs the write one. It uses the incremental pass, so the cost is a dirty scan rather than a full parse - which only became possible once GB-302 persisted the baseline.\n\nMeasured end to end, suite root, a symbol appended seconds earlier inside miter/ (a separate repository):\n  $ miter lookup auto_index_probe_marker\n  miter: index was 1 minute(s) stale; refreshed in 3210 ms\n  auto_index_probe_marker\n    miter/src/cli/find.rs:180\n    function - level 3\nBefore this session that same edit was invisible: the index had no baseline, so it could not detect it, and the answer would have been 'no declaration named'.\n\nOVER BUDGET, recorded rather than glossed: I set a two-second budget for this refresh and it came in at 3210 ms. The scan is not the cost - the save is, because the dirty pass rewrites the whole 67 MB database to persist a handful of rows. Filed as follow-up work; the correct fix is to save only changed rows, and it should happen before auto-index becomes the default for anyone with a large tree.\n\nPolicies, each chosen because the alternative is a surprise:\n  MITTER_NO_AUTO_INDEX disables it for CI and for gates that must not write.\n  Opting out does not opt out of the warning - the caller said leave the index alone, not tell me nothing.\n  The 60-second tolerance stays: a file touched seconds ago is mid-edit, and re-indexing on each keystroke costs more than it saves.\n  A refresh that cannot take the write lock announces itself on stderr and answers from the existing index. MCP servers hold the index for hours, so contention is the normal case; hanging would be worse than a stale answer that says so.\n  All of it goes to stderr, because stdout belongs to --json and --mcp.\n\nTier 2: fmt clean, clippy --workspace --all-targets -D warnings clean, 280 tests green, audit clean."
-    ],
-    "active_claim": null,
-    "created_at_epoch_ms": 1793427997303,
-    "decisions": [],
-    "description": "Measured 2026-10-30 on the neurosymbolic-suite workspace. miter lookup GaugeblockPaths returned exit 1, no declaration named GaugeblockPaths, although the symbol exists at common/crates/gaugeblock-workspace/src/paths.rs:16 and had been in the tree for hours. After miter index . (877 files, 5571 symbols, exit 0) the same lookup exited 0 with the right coordinates. So the index was STALE, not locked. It is not a multi-window problem: three miter mcp daemons were live but each serves a different workspace, and lsof confirmed none of them has this suite index open - one window per workspace means one daemon per workspace, and the other two windows are elsewhere. The staleness is simply that nothing refreshes the index when the tree changes; the last write predated the crates added during GB-130/GB-131/CO-7.",
-    "edges": [
-      {
-        "kind": "related_to",
-        "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
-        "target_repo": "common",
-        "target_ticket_key": "CO-7"
-      }
-    ],
-    "id": "ab2495df-4073-4231-ae7a-80bccfa31410",
-    "kind": "bug",
-    "latest_handoff": null,
-    "plan": null,
-    "priority": 3,
-    "scope": {
-      "crate_name": null,
-      "labels": [],
-      "module_path": null,
-      "repo": null,
-      "target_files": [],
-      "target_symbols": [
-        "miter_mcp::server,miter_storage::index"
-      ]
     },
-    "slug": "miter-lookup-silently-answers-from-a-stale-index-no-reindex-on-change-and-one-index-shared-by-every-window-ab2495",
-    "status": "verified",
-    "ticket_key": "GB-237",
-    "title": "miter lookup silently answers from a stale index: nothing reindexes when the tree changes",
-    "updated_at_epoch_ms": 1794087152937,
-    "verification_receipt": {
-      "base_commit_sha": "4e6638f53d42fc3e36058f42d59161b2918ebb02",
-      "chain_key": null,
-      "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 && chalkline docs check --workspace",
-      "commit_shas": [
-        "4e6638f53d42fc3e36058f42d59161b2918ebb02"
-      ],
-      "diagnostic_count": null,
-      "exit_code": 0,
-      "git_branch": "main",
-      "head_commit_sha": "4e6638f53d42fc3e36058f42d59161b2918ebb02",
-      "repo": null,
-      "summary": "Polyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
-      "verified_at_epoch_ms": 1794087152937,
-      "verifier": "storypole-verify"
+    {
+      "event": "task_archived",
+      "task_id": "ab2495df-4073-4231-ae7a-80bccfa31410",
+      "status": "verified",
+      "timestamp_ms": 1794343400919
     }
-  }
+  ]
 }
