@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "a406062c-f0bb-4a37-929d-7534177732e2",
+    "ticket_key": "GB-353",
+    "slug": "the-unified-workspace-index-and-the-root-store-index-are-the-same-sqlite-file-so-each-command-truncates-the-other-view-a40606",
+    "title": "the unified workspace index and the root store index are the same sqlite file, so each command truncates the other view",
+    "description": "Found 2026-11-10 while chasing why the benchwork panel showed 7 InProgress tickets.  THE SYMPTOM THAT NOTICED IT. The unified index held 7 InProgress rows; after a failed reap it held 169 rows instead of 365 - every member ticket gone from the panel. Nothing was lost on disk, but the view collapsed to one store.  THE CAUSE. StorypoleWorkspaceStore::open uses the ROOT STORE sqlite path for the unified index (workspace/store.rs, `open_and_sync_index(&rs.sqlite_path(), ...)`), while StorypoleStore::open rebuilds that same file from the root store ledger alone. So one file backs two different scopes and the last command to run decides which view it holds:  `storypole list` (root store)        -> 169 rows, harness tickets only  `storypole ledger-reconcile` (workspace) -> 365 rows, every store  Neither is wrong on its own; the file is the thing that cannot hold both. A panel reads whatever the previous command left, so it can show a partial board or a full one depending on unrelated activity, and a crash in the middle of a workspace sync leaves the partial view in place - which is exactly what was observed.  SUGGESTED SHAPE. Give the unified index its own file (e.g. `.gaugeblock/storypole/workspace.sqlite`) so a store-scoped command cannot truncate a suite view, or make the two scopes share one builder that always unions every store. Until then: run a workspace-scoped command (ledger-reconcile) after per-store work, and do not read the row count as evidence about the suite without knowing which command wrote it.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::workspace::store::StorypoleWorkspaceStore"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794342879124,
+    "updated_at_epoch_ms": 1794342879124
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "a406062c-f0bb-4a37-929d-7534177732e2",
+        "ticket_key": "GB-353",
+        "slug": "the-unified-workspace-index-and-the-root-store-index-are-the-same-sqlite-file-so-each-command-truncates-the-other-view-a40606",
+        "title": "the unified workspace index and the root store index are the same sqlite file, so each command truncates the other view",
+        "description": "Found 2026-11-10 while chasing why the benchwork panel showed 7 InProgress tickets.  THE SYMPTOM THAT NOTICED IT. The unified index held 7 InProgress rows; after a failed reap it held 169 rows instead of 365 - every member ticket gone from the panel. Nothing was lost on disk, but the view collapsed to one store.  THE CAUSE. StorypoleWorkspaceStore::open uses the ROOT STORE sqlite path for the unified index (workspace/store.rs, `open_and_sync_index(&rs.sqlite_path(), ...)`), while StorypoleStore::open rebuilds that same file from the root store ledger alone. So one file backs two different scopes and the last command to run decides which view it holds:  `storypole list` (root store)        -> 169 rows, harness tickets only  `storypole ledger-reconcile` (workspace) -> 365 rows, every store  Neither is wrong on its own; the file is the thing that cannot hold both. A panel reads whatever the previous command left, so it can show a partial board or a full one depending on unrelated activity, and a crash in the middle of a workspace sync leaves the partial view in place - which is exactly what was observed.  SUGGESTED SHAPE. Give the unified index its own file (e.g. `.gaugeblock/storypole/workspace.sqlite`) so a store-scoped command cannot truncate a suite view, or make the two scopes share one builder that always unions every store. Until then: run a workspace-scoped command (ledger-reconcile) after per-store work, and do not read the row count as evidence about the suite without knowing which command wrote it.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::workspace::store::StorypoleWorkspaceStore"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794342879124,
+        "updated_at_epoch_ms": 1794342879124
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}

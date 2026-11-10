@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "6f2029ee-2024-4b00-92c7-00f66d79f96a",
+    "ticket_key": "GB-352",
+    "slug": "reap-at-a-suite-root-writes-member-releases-into-the-root-store-and-aborts-half-way-6f2029",
+    "title": "reap at a suite root writes member releases into the root store and aborts half-way",
+    "description": "Found 2026-11-10 when the benchwork panel showed 7 tickets InProgress days after their holders stopped. Those were seven expired claim leases nobody had reaped - accurate state, not a display fault - so the remedy was `storypole reap`. It failed: \"Ticket record at .gaugeblock/storypole/tickets: event targets task <sp-37 id>, which no record holds\".  CAUSE. reap_expired_claims iterates get_all_tasks(store.conn()). At a suite root that connection IS the unified index, so it lists member tickets as well as the harness own. Every release was then recorded through the root store, which holds no record for a member ticket: the first foreign ticket aborted the run AFTER the harness releases had been written - GB-293 was released and GB-305 was not, so the command failed and left a half-done state.  FIX. Reaping now only touches records this store actually holds, asked through lookup::holds so both layouts count (a store still on ledger.jsonl holds its tickets there, which the first attempt at this check missed and an existing test caught). Expired claims this store cannot write are reported instead, with the repository that owns each: \"SP-14 -> storypole reap --dir storypole\". Dry run says the same thing, so the operator sees the whole picture before writing anything.  Regression test: a_claim_whose_record_lives_elsewhere_is_reported_not_reaped - the index keeps the row, the ledger loses it, and reap reports rather than errors.  Measured after the fix: root reaped GB-305, storypole reaped SP-14/36/37/40/45, unified index went from 7 InProgress to 0 with 7 tasks back in ready, and ledger-reconcile still agrees.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::ops::lease::reap_expired_claims"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794342798909,
+    "updated_at_epoch_ms": 1794342798909
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "6f2029ee-2024-4b00-92c7-00f66d79f96a",
+        "ticket_key": "GB-352",
+        "slug": "reap-at-a-suite-root-writes-member-releases-into-the-root-store-and-aborts-half-way-6f2029",
+        "title": "reap at a suite root writes member releases into the root store and aborts half-way",
+        "description": "Found 2026-11-10 when the benchwork panel showed 7 tickets InProgress days after their holders stopped. Those were seven expired claim leases nobody had reaped - accurate state, not a display fault - so the remedy was `storypole reap`. It failed: \"Ticket record at .gaugeblock/storypole/tickets: event targets task <sp-37 id>, which no record holds\".  CAUSE. reap_expired_claims iterates get_all_tasks(store.conn()). At a suite root that connection IS the unified index, so it lists member tickets as well as the harness own. Every release was then recorded through the root store, which holds no record for a member ticket: the first foreign ticket aborted the run AFTER the harness releases had been written - GB-293 was released and GB-305 was not, so the command failed and left a half-done state.  FIX. Reaping now only touches records this store actually holds, asked through lookup::holds so both layouts count (a store still on ledger.jsonl holds its tickets there, which the first attempt at this check missed and an existing test caught). Expired claims this store cannot write are reported instead, with the repository that owns each: \"SP-14 -> storypole reap --dir storypole\". Dry run says the same thing, so the operator sees the whole picture before writing anything.  Regression test: a_claim_whose_record_lives_elsewhere_is_reported_not_reaped - the index keeps the row, the ledger loses it, and reap reports rather than errors.  Measured after the fix: root reaped GB-305, storypole reaped SP-14/36/37/40/45, unified index went from 7 InProgress to 0 with 7 tasks back in ready, and ledger-reconcile still agrees.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::ops::lease::reap_expired_claims"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794342798909,
+        "updated_at_epoch_ms": 1794342798909
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
