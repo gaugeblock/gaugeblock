@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "5b5d0e7d-103e-4e47-86e2-3ed25ecfdbb7",
+    "ticket_key": "GB-347",
+    "slug": "remint-legacy-gb-keys-in-member-stores-to-their-own-prefixes-and-write-the-links-5b5d0e",
+    "title": "Remint legacy GB-keys in member stores to their own prefixes and write the links",
+    "description": "",
+    "kind": "refactor",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::ticket_keys"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794289663264,
+    "updated_at_epoch_ms": 1794289663264
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "5b5d0e7d-103e-4e47-86e2-3ed25ecfdbb7",
+        "ticket_key": "GB-347",
+        "slug": "remint-legacy-gb-keys-in-member-stores-to-their-own-prefixes-and-write-the-links-5b5d0e",
+        "title": "Remint legacy GB-keys in member stores to their own prefixes and write the links",
+        "description": "",
+        "kind": "refactor",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::ticket_keys"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794289663264,
+        "updated_at_epoch_ms": 1794289663264
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
