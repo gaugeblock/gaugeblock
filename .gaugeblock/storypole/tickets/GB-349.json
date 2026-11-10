@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "0bf36d67-e62f-43ee-8ad3-a296332cb1ec",
+    "ticket_key": "GB-349",
+    "slug": "task-updated-writes-the-event-log-but-never-refreshes-the-ticket-projection-so-8-of-166-root-tickets-serve-a-description-their-projection-does-not-hold-0bf36d",
+    "title": "task_updated writes the event log but never refreshes the ticket projection, so 8 of 166 root tickets serve a description their projection does not hold",
+    "description": "A ticket file is a projection plus an event log, and the projection is supposed to be the materialised current state. It is written when the ticket is created and NOT refreshed by task_updated: `storypole update --desc` / `--append-desc` append an event and leave the projection as it was. Measured 2026-11-10 on the root store: 8 of 166 tickets serve a description that differs from their projection, 6 of them with an entirely empty projection because the description arrived after creation (the defer-then-update flow GB-347 itself went through). Readers disagree as a result: `storypole show` replays and shows the real text, while anything that reads the JSON projection - including `remint` dry run citation counts and any script - sees the stale or empty one. `update` should write the projection it just changed, or the store should expose one rebuild that guarantees projection == replay. Found while proving GB-347: it is why remint citation rewrites landed on a field nothing serves.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::ledger::replay"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794333588445,
+    "updated_at_epoch_ms": 1794333588445
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "0bf36d67-e62f-43ee-8ad3-a296332cb1ec",
+        "ticket_key": "GB-349",
+        "slug": "task-updated-writes-the-event-log-but-never-refreshes-the-ticket-projection-so-8-of-166-root-tickets-serve-a-description-their-projection-does-not-hold-0bf36d",
+        "title": "task_updated writes the event log but never refreshes the ticket projection, so 8 of 166 root tickets serve a description their projection does not hold",
+        "description": "A ticket file is a projection plus an event log, and the projection is supposed to be the materialised current state. It is written when the ticket is created and NOT refreshed by task_updated: `storypole update --desc` / `--append-desc` append an event and leave the projection as it was. Measured 2026-11-10 on the root store: 8 of 166 tickets serve a description that differs from their projection, 6 of them with an entirely empty projection because the description arrived after creation (the defer-then-update flow GB-347 itself went through). Readers disagree as a result: `storypole show` replays and shows the real text, while anything that reads the JSON projection - including `remint` dry run citation counts and any script - sees the stale or empty one. `update` should write the projection it just changed, or the store should expose one rebuild that guarantees projection == replay. Found while proving GB-347: it is why remint citation rewrites landed on a field nothing serves.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::ledger::replay"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794333588445,
+        "updated_at_epoch_ms": 1794333588445
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
