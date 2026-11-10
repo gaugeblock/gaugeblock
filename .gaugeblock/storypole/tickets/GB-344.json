@@ -1,0 +1,77 @@
+{
+  "ticket": {
+    "id": "e6c94f22-bf8a-4b1c-b11c-ab1ef3057915",
+    "ticket_key": "GB-344",
+    "slug": "telemetry-log-has-no-retention-rotation-or-aggregates-e6c94f",
+    "title": "Telemetry log has no retention, rotation or aggregates",
+    "description": "",
+    "kind": "feature",
+    "status": "deferred",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "gaugeblock_workspace::telemetry"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794278285896,
+    "updated_at_epoch_ms": 1794278285896
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "e6c94f22-bf8a-4b1c-b11c-ab1ef3057915",
+        "ticket_key": "GB-344",
+        "slug": "telemetry-log-has-no-retention-rotation-or-aggregates-e6c94f",
+        "title": "Telemetry log has no retention, rotation or aggregates",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "gaugeblock_workspace::telemetry"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794278285896,
+        "updated_at_epoch_ms": 1794278285896
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "e6c94f22-bf8a-4b1c-b11c-ab1ef3057915",
+      "title": null,
+      "description": "FILED 2026-11-08, because no retention ticket existed - an earlier handover note in this session named GB-341 as the\nretention ticket, and GB-341 is \"A Verified task cannot be reopened\". That was my error, recorded here so the next\nreader does not go looking for a ticket that was never written.\n\nMEASURED STATE, one session after every tool started emitting: 75 spans, 18,147 bytes, ~242 bytes per span, in a single\nappend-only file at `.gaugeblock/telemetry/events.jsonl`. The directory holds nothing else.\n\nWHAT THAT IMPLIES, and the shape of the problem: at 242 bytes a span, a million spans is ~240 MB in one file that every\ntool appends to and nothing ever reads back selectively. Nothing rotates it, nothing aggregates it, and nothing prunes\nit. The log is the only place a run's history exists, so deleting it loses evidence - which is why this is a design\nticket rather than a cron job.\n\nWHAT RETENTION HAS TO KEEP, which is the hard part and the reason to decide before the file is large:\n  * the panel needs recent spans at full fidelity;\n  * `storypole handoff` wants spans by task key (GB-309), so old spans are not automatically junk;\n  * law 12 wants performance claims to persist, and a rotated-away measurement is a claim with no backing;\n  * a trace that spans a rotation boundary must not be torn in half, or a duration computed across it becomes a lie.\n\nCANDIDATE SHAPES, none chosen: size-based rotation with an aggregate sidecar (counts and duration percentiles per\nbinary/day, kept forever, raw spans aged out); date-partitioned files with a retention window; or keeping raw spans and\nadding an index so the file is cheap to query rather than cheap to store.\n\nThe measurement above is warm and single-machine - the numbers are real, the projection is arithmetic, not a benchmark.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794278290675
+    }
+  ]
+}
