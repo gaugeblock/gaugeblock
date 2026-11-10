@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "39853683-804c-4e6e-aed5-fc21ba54dd54",
+    "ticket_key": "GB-351",
+    "slug": "relink-reads-a-key-inside-a-path-as-a-citation-and-rewrites-superseded-event-payloads-398536",
+    "title": "relink reads a key inside a path as a citation, and rewrites superseded event payloads",
+    "description": "Found 2026-11-10 by writing a ticket note, not by a test. Two ways `relink` mistakes one thing for another.  (1) A DEAD KEY INSIDE A PATH IS NOT A REFERENCE. GB-350 documents orphaned blueprints, so its note quotes a few by filename - the old key with an extension. relink cannot tell that from a citation of a ticket, so it proposed rewriting the ticket description and creating THREE LINKS to member tickets that have nothing to do with GB-350. The links are the serious half: a false edge is worse than a stale citation, because it asserts that one ticket carries anothers work. The same shape appears in any prose that names a file: CHANGELOG entries, README examples, commit-style text.  (2) SUPERSEDED EVENT PAYLOADS ARE REWRITTEN. After the served description was corrected, one repair remained: an older task_updated payload of the same ticket still quoted the old filenames. relink rewrites every event payload, but only the LAST one supplies the served value, so that repair changed a description nobody reads - history edited for no effect on state. The remint has the same behaviour and it is wrong there for the same reason.  Suggested shape: rewrite the payload that wins on replay and leave superseded ones alone; and treat a dead key as a reference only when it is not part of a path (a key followed by an extension or sitting inside a path segment is data, not a pointer). Both are testable against a fixture that carries such prose. Until then the operator has to read the dry run, which is exactly the position this session was in.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_cli::handlers::relink"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794337557909,
+    "updated_at_epoch_ms": 1794337557909
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "39853683-804c-4e6e-aed5-fc21ba54dd54",
+        "ticket_key": "GB-351",
+        "slug": "relink-reads-a-key-inside-a-path-as-a-citation-and-rewrites-superseded-event-payloads-398536",
+        "title": "relink reads a key inside a path as a citation, and rewrites superseded event payloads",
+        "description": "Found 2026-11-10 by writing a ticket note, not by a test. Two ways `relink` mistakes one thing for another.  (1) A DEAD KEY INSIDE A PATH IS NOT A REFERENCE. GB-350 documents orphaned blueprints, so its note quotes a few by filename - the old key with an extension. relink cannot tell that from a citation of a ticket, so it proposed rewriting the ticket description and creating THREE LINKS to member tickets that have nothing to do with GB-350. The links are the serious half: a false edge is worse than a stale citation, because it asserts that one ticket carries anothers work. The same shape appears in any prose that names a file: CHANGELOG entries, README examples, commit-style text.  (2) SUPERSEDED EVENT PAYLOADS ARE REWRITTEN. After the served description was corrected, one repair remained: an older task_updated payload of the same ticket still quoted the old filenames. relink rewrites every event payload, but only the LAST one supplies the served value, so that repair changed a description nobody reads - history edited for no effect on state. The remint has the same behaviour and it is wrong there for the same reason.  Suggested shape: rewrite the payload that wins on replay and leave superseded ones alone; and treat a dead key as a reference only when it is not part of a path (a key followed by an extension or sitting inside a path segment is data, not a pointer). Both are testable against a fixture that carries such prose. Until then the operator has to read the dry run, which is exactly the position this session was in.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_cli::handlers::relink"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794337557909,
+        "updated_at_epoch_ms": 1794337557909
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
