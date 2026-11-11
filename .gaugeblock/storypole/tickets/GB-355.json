@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "6dac7f4c-8ecb-41f2-9714-1259ad386f4e",
+    "ticket_key": "GB-355",
+    "slug": "the-suite-view-is-a-snapshot-rather-than-a-projection-so-root-reads-serve-stale-member-status-and-deleting-the-index-changes-the-answer-6dac7f",
+    "title": "the suite view is a snapshot rather than a projection, so root reads serve stale member status and deleting the index changes the answer",
+    "description": "Measured 2026-11-10 while closing SP-50, and it is why the board numbers in this session flip-flopped between two shapes. The root index (.gaugeblock/storypole/index.sqlite) held 374 task rows - a materialised copy of the whole suite - while storypole own index held 49 and the suite view answered 106 active. SP-50 was verified and archived in the storypole store, storypole show SP-50 in that store said Verified, and the root answered in_progress for the same ticket because its copy predates the verification. SP-47 and SP-49 read correctly in both, so the copy is refreshed by something that did not run after SP-50. Three measurements: (1) deleting workspace.sqlite changed nothing - the list still answered 106 rows with SP-50 in_progress, so the stale row is in index.sqlite; (2) deleting index.sqlite dropped the answer to 65 rows with SP-50 absent entirely, so the suite view is a snapshot rather than a projection rebuilt on read; (3) storypole ledger-reconcile reports index and ledger agree throughout, because it compares the root store own tasks and is blind to copied member rows. That falsifies the invariant SP-36 states - deleting index.sqlite changes no answer - for the suite view specifically. Consequence for the burn-down: every status read from the root may be stale by up to one rollup, so the owning repository is the only trustworthy reader, which is the opposite of what a meta-harness is for. Wanted: the suite view rebuilds from member records on read or on demand, a refresh verb that can be shown to converge, and reconcile extended to copied rows so a stale one is reported rather than agreed with. Acceptance: verifying a member ticket is visible from the root immediately, deleting either index file changes no answer, and reconcile names any row whose copy disagrees with its owner.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "storypole-core",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::index::query::get_all_tasks,storypole_core::workspace::rollup"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794425395437,
+    "updated_at_epoch_ms": 1794425395437
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "6dac7f4c-8ecb-41f2-9714-1259ad386f4e",
+        "ticket_key": "GB-355",
+        "slug": "the-suite-view-is-a-snapshot-rather-than-a-projection-so-root-reads-serve-stale-member-status-and-deleting-the-index-changes-the-answer-6dac7f",
+        "title": "the suite view is a snapshot rather than a projection, so root reads serve stale member status and deleting the index changes the answer",
+        "description": "Measured 2026-11-10 while closing SP-50, and it is why the board numbers in this session flip-flopped between two shapes. The root index (.gaugeblock/storypole/index.sqlite) held 374 task rows - a materialised copy of the whole suite - while storypole own index held 49 and the suite view answered 106 active. SP-50 was verified and archived in the storypole store, storypole show SP-50 in that store said Verified, and the root answered in_progress for the same ticket because its copy predates the verification. SP-47 and SP-49 read correctly in both, so the copy is refreshed by something that did not run after SP-50. Three measurements: (1) deleting workspace.sqlite changed nothing - the list still answered 106 rows with SP-50 in_progress, so the stale row is in index.sqlite; (2) deleting index.sqlite dropped the answer to 65 rows with SP-50 absent entirely, so the suite view is a snapshot rather than a projection rebuilt on read; (3) storypole ledger-reconcile reports index and ledger agree throughout, because it compares the root store own tasks and is blind to copied member rows. That falsifies the invariant SP-36 states - deleting index.sqlite changes no answer - for the suite view specifically. Consequence for the burn-down: every status read from the root may be stale by up to one rollup, so the owning repository is the only trustworthy reader, which is the opposite of what a meta-harness is for. Wanted: the suite view rebuilds from member records on read or on demand, a refresh verb that can be shown to converge, and reconcile extended to copied rows so a stale one is reported rather than agreed with. Acceptance: verifying a member ticket is visible from the root immediately, deleting either index file changes no answer, and reconcile names any row whose copy disagrees with its owner.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "storypole-core",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::index::query::get_all_tasks,storypole_core::workspace::rollup"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794425395437,
+        "updated_at_epoch_ms": 1794425395437
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
