@@ -288,6 +288,15 @@ pub struct VerificationReceipt {
     /// A harness chain and a member chain are different commands, and receipts that ran different
     /// commands must not read the same (`GB-316`).
     pub chain_key: Option<String>,
+    /// Content hash of the change the receipt verified (`SP-41`). Content, not position, so a rebase or
+    /// force-push cannot orphan it the way a window of SHAs can.
+    pub diff_hash: Option<String>,
+    /// The diff itself, capped. A receipt is replayed from a ledger, so an unbounded diff would make
+    /// every read pay for one large change; truncation is marked in the text (`SP-41`).
+    pub diff: Option<String>,
+    /// Whether both ends of the recorded window still exist in the repository (`SP-41`).
+    /// `Some(false)` means the window was orphaned and the receipt is now the only record of it.
+    pub window_intact: Option<bool>,
 }
 
 /// Multi-dimensional scope coordinates for filtering across repos, crates, and AST symbols.
