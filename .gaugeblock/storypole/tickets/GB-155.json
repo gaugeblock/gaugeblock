@@ -317,6 +317,14 @@
       "scope": null,
       "acceptance_criteria": null,
       "timestamp_ms": 1794351570241
+    },
+    {
+      "event": "status_changed",
+      "task_id": "51a9ba29-9ab8-4d06-aa87-484f831aaa43",
+      "from": "ready",
+      "to": "deferred",
+      "reason": "Parked: owner directive 2026-11-10: no release until the backlog is done and verified",
+      "timestamp_ms": 1794380760041
     }
   ]
 }
