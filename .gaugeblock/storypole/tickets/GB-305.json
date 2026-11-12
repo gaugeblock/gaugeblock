@@ -4,7 +4,7 @@
     "ticket_key": "GB-305",
     "slug": "foundation-audit-two-documented-invariants-are-broken-suite-wide-and-no-crate-but-workspace-has-a-multi-repo-test-deca30",
     "title": "Foundation audit: two documented invariants are broken suite-wide, and no crate but workspace has a multi-repo test",
-    "description": "",
+    "description": "PROGRESS 2026-11-10, two of the four owed tests paid and the register halved 4 -> 2 (miter a89a5a4, 36871f7).\n\nPAID - storypole-cli (storypole ed38beb). The debt was real and the code was wrong: `config check --workspace` discovered members of the directory it was launched in, so inside a member it answered repositories: 1 and called that a workspace audit. A pass covering nothing is indistinguishable from a pass covering everything, and every existing test ran from a suite root. Two changes: `main` opened a store at the launch directory before dispatching any command, so config refused to run in a member at all - --workspace now runs before that and the local audit opens its own; and the resolution now walks up with Membership::containing to the declared suite, falling back to the launch directory when there is none so a lone repository still audits itself. Three tests run the built binary: from a member the answer is 2, from the root still 2, and alone still 1. The member test fails with repositories: 1 before the fix, which is the evidence.\n\nNOT A FINDING - sawhorse-core. The register entry described a call that no longer exists: telemetry writes through gaugeblock_workspace::sink_path, which resolves the suite on the caller behalf, and the crate calls no discovery function at all. Removed rather than paid, because a register listing work nobody owes is read as permanent scenery. The behavioural test the entry wanted is filed as SH-10 (write from a member, assert the span lands in the SUITE outbox).\n\nSTILL OWED - two.\n* benchwork-cli, GB-293: handlers.rs:187 and daemon/routes_telemetry.rs:57.\n* rabbet-cli, GB-304: commands/ingest.rs:29. Investigated while doing the above, and there is a specific defect rather than a missing test: GaugeblockPaths::discover resolves through the GIT COMMON DIR, so from a member checkout it returns that member .gaugeblock and paths.outbox() is the member spool - empty, because telemetry centralises at the suite root (GB-338). sawhorse answers the same question with sink_path and gets the suite. Two resolutions of one question, disagreeing, is the class this epic is about; rabbet should use sink_path and the test should assert the suite outbox is the one read when the command runs in a member.",
     "kind": "epic",
     "status": "ready",
     "priority": 3,
@@ -28,7 +28,7 @@
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1794088988038,
-    "updated_at_epoch_ms": 1794342719522
+    "updated_at_epoch_ms": 1794513258608
   },
   "events": [
     {
@@ -181,6 +181,16 @@
       "to": "ready",
       "reason": "claim lease expired at 1794109596662 (agent cline-agent); returned to the backlog",
       "timestamp_ms": 1794342719522
+    },
+    {
+      "event": "task_updated",
+      "task_id": "deca30bb-d4b0-438c-9209-38fb52123071",
+      "title": null,
+      "description": "PROGRESS 2026-11-10, two of the four owed tests paid and the register halved 4 -> 2 (miter a89a5a4, 36871f7).\n\nPAID - storypole-cli (storypole ed38beb). The debt was real and the code was wrong: `config check --workspace` discovered members of the directory it was launched in, so inside a member it answered repositories: 1 and called that a workspace audit. A pass covering nothing is indistinguishable from a pass covering everything, and every existing test ran from a suite root. Two changes: `main` opened a store at the launch directory before dispatching any command, so config refused to run in a member at all - --workspace now runs before that and the local audit opens its own; and the resolution now walks up with Membership::containing to the declared suite, falling back to the launch directory when there is none so a lone repository still audits itself. Three tests run the built binary: from a member the answer is 2, from the root still 2, and alone still 1. The member test fails with repositories: 1 before the fix, which is the evidence.\n\nNOT A FINDING - sawhorse-core. The register entry described a call that no longer exists: telemetry writes through gaugeblock_workspace::sink_path, which resolves the suite on the caller behalf, and the crate calls no discovery function at all. Removed rather than paid, because a register listing work nobody owes is read as permanent scenery. The behavioural test the entry wanted is filed as SH-10 (write from a member, assert the span lands in the SUITE outbox).\n\nSTILL OWED - two.\n* benchwork-cli, GB-293: handlers.rs:187 and daemon/routes_telemetry.rs:57.\n* rabbet-cli, GB-304: commands/ingest.rs:29. Investigated while doing the above, and there is a specific defect rather than a missing test: GaugeblockPaths::discover resolves through the GIT COMMON DIR, so from a member checkout it returns that member .gaugeblock and paths.outbox() is the member spool - empty, because telemetry centralises at the suite root (GB-338). sawhorse answers the same question with sink_path and gets the suite. Two resolutions of one question, disagreeing, is the class this epic is about; rabbet should use sink_path and the test should assert the suite outbox is the one read when the command runs in a member.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794513258608
     }
   ]
 }
