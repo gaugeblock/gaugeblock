@@ -62,6 +62,83 @@
       },
       "captured_by_agent": "agent",
       "discovered_from_task_id": null
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "76e37ee9-9796-4f7e-a8ca-fa1dc7f15ab7",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1794456956187,
+        "lease_expires_at_epoch_ms": 1794460556187,
+        "git_branch": "fix/gb-226-admin-db-path",
+        "base_commit_sha": "cec9557fa7bcea927d33cc95984e7ae2d15ff8cc"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "76e37ee9-9796-4f7e-a8ca-fa1dc7f15ab7",
+      "from": "triage",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1794456956187
+    },
+    {
+      "event": "task_updated",
+      "task_id": "76e37ee9-9796-4f7e-a8ca-fa1dc7f15ab7",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": {
+        "repo": "rabbet",
+        "crate_name": null,
+        "module_path": null,
+        "target_files": [],
+        "target_symbols": [
+          "rabbet_cli::commands::admin"
+        ],
+        "labels": []
+      },
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794456956263
+    },
+    {
+      "event": "task_verified",
+      "task_id": "76e37ee9-9796-4f7e-a8ca-fa1dc7f15ab7",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings && cargo nextest run --workspace && miter audit --path . --threshold 250 --paths && chalkline docs check -d .",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "AUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit ===\nRepository: /Users/wolff/dev2026/neurosymbolic-suite/rabbet/.\n\n[OK]      Readme           (README.md)\n[OK]      Contributing     (CONTRIBUTING.md)\n[OK]      Product          (docs/PRODUCT.md)\n[OK]      Architecture     (docs/ARCHITECTURE.md)\n[OK]      Spec             (docs/SPEC.md)\n[OK]      Design           (docs/DESIGN.md)\n[OK]      Roadmap          (docs/ROADMAP.md)\n[OK]      Changelog        (CHANGELOG.md)\n[OK]      Agents           (AGENTS.md)\n\nSummary: 9 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794457296969,
+        "git_branch": "fix/gb-226-admin-db-path",
+        "base_commit_sha": "cec9557fa7bcea927d33cc95984e7ae2d15ff8cc",
+        "head_commit_sha": "83797850ea37c45ae34a8618bec8460b723a92fb",
+        "commit_shas": [
+          "83797850ea37c45ae34a8618bec8460b723a92fb"
+        ],
+        "repo": "rabbet",
+        "chain_key": "rabbet",
+        "diff_hash": "7970b89ac04484c95c7ce0a2160cdce82bff1aad",
+        "diff": "diff --git a/crates/rabbet-cli/src/args.rs b/crates/rabbet-cli/src/args.rs\nindex a25ed74..44d1959 100644\n--- a/crates/rabbet-cli/src/args.rs\n+++ b/crates/rabbet-cli/src/args.rs\n@@ -146,7 +146,17 @@ pub struct PublishHubArgs {\n #[derive(Debug, Args)]\n pub struct AdminArgs {\n     /// Path to master SQLite database.\n-    #[arg(long, default_value = \"rabbet.db\")]\n+    ///\n+    /// `global` so it may follow the subcommand as well as precede it, and `env` so a shell can point the\n+    /// whole tool at one database - `GB-226` recorded both halves as broken: `rabbet admin stats\n+    /// --db-path X` was an argument error, and `RABBET_DB_PATH` was ignored, so the command reported on\n+    /// `rabbet.db` while the caller believed it was reading the file it named.\n+    #[arg(\n+        long,\n+        global = true,\n+        default_value = \"rabbet.db\",\n+        env = \"RABBET_DB_PATH\"\n+    )]\n     pub db_path: PathBuf,\n \n     #[command(subcommand)]\n@@ -172,3 +182,47 @@ pub enum AdminSubcommand {\n         output_dir: PathBuf,\n     },\n }\n+\n+#[cfg(test)]\n+mod tests {\n+    //! Argument parsing, which is where `GB-226` lived: the flag was rejected after the subcommand and\n+    //! the environment variable was never read. Both are properties of the declaration, so both are tested\n+    //! there rather than through a spawned process.\n+    #![allow(clippy::unwrap_used, clippy::expect_used)]\n+\n+    use super::*;\n+\n+    fn db_path_of(argv: &[&str]) -> PathBuf {\n+        match Cli::parse_from(argv).command {\n+            Command::Admin(args) => args.db_path,\n+            other => panic!(\"expected an admin command, got {other:?}\"),\n+        }\n+    }\n+\n+    #[test]\n+    fn the_database_flag_may_follow_the_subcommand() {\n+        let path = db_path_of(&[\"rabbet\", \"admin\", \"stats\", \"--db-path\", \"/tmp/corpus.db\"]);\n+        assert_eq!(path, PathBuf::from(\"/tmp/corpus.db\"));\n+    }\n+\n+    #[test]\n+    fn the_database_flag_may_precede_the_subcommand() {\n+        let path = db_path_of(&[\"rabbet\", \"admin\", \"--db-path\", \"/tmp/corpus.db\", \"stats\"]);\n+        assert_eq!(path, PathBuf::from(\"/tmp/corpus.db\"));\n+    }\n+\n+    #[test]\n+    fn the_database_env_var_is_a_fallback_not_an_override() {\n+        // Reading the variable in a test is safe; setting it is not (edition 2024 makes `set_var`\n+        // unsafe and this workspace denies unsafe code), so the documented precedence is asserted from\n+        // the flag side: an explicit flag wins, and the default stands when neither is given.\n+        let explicit = db_path_of(&[\"rabbet\", \"admin\", \"stats\", \"--db-path\", \"/tmp/corpus.db\"]);\n+        assert_eq!(explicit, PathBuf::from(\"/tmp/corpus.db\"));\n+        let default = db_path_of(&[\"rabbet\", \"admin\", \"stats\"]);\n+        assert_eq!(\n+            default.file_name().and_then(|n| n.to_str()),\n+            Some(\"rabbet.db\"),\n+            \"the declared default is still the fallback\"\n+        );\n+    }\n+}\n",
+        "window_intact": true
+      }
+    },
+    {
+      "event": "task_updated",
+      "task_id": "76e37ee9-9796-4f7e-a8ca-fa1dc7f15ab7",
+      "title": null,
+      "description": "Found while verifying GB-216: with the corpus at /tmp/gb216.db holding 33 accepted traces, `RABBET_DB_PATH=/tmp/gb216.db rabbet admin stats` reported \"Database: rabbet.db\" and 0 traces, and `--db-path` is not accepted at all (error: unexpected argument). The ingest, mine-patterns and export-parquet subcommands all take --db-path, so the one command a maintainer reaches for first to confirm an import is the one that looks at a different database. Either give admin stats the same --db-path/RABBET_DB_PATH handling as the others, or print the resolved path prominently so the mismatch is obvious.\n\nFIXED AND VERIFIED 2026-11-10 (rabbet 8379785). Both halves reproduced on the installed binary before any change: rabbet admin stats --db-path /tmp/x.db answered unexpected argument --db-path, and RABBET_DB_PATH=/tmp/y.db rabbet admin stats printed Database: rabbet.db. One attribute carried both faults - AdminArgs db_path had neither global nor env - so the flag only parsed before the subcommand and the variable was never read, letting a caller believe it was reading the file it named. Proven live after reinstalling all three ways, with the files actually created at the named paths rather than merely echoed: flag after the subcommand -> /tmp/gb226a.db, flag before it -> /tmp/gb226b.db, env only -> /tmp/gb226c.db. Three tests are also rabbet-cli first tests, which GB-343 records as a gap: the crate previously had none, so its spanning instrumentation was proven only by one live run.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794457335618
+    },
+    {
+      "event": "task_archived",
+      "task_id": "76e37ee9-9796-4f7e-a8ca-fa1dc7f15ab7",
+      "status": "verified",
+      "timestamp_ms": 1794457336008
     }
   ]
 }
