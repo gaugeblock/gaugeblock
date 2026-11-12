@@ -62,6 +62,83 @@
       },
       "captured_by_agent": "user",
       "discovered_from_task_id": null
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "3779f45e-f040-4279-92b2-b9a3e10f6e57",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1794457739993,
+        "lease_expires_at_epoch_ms": 1794461339993,
+        "git_branch": "fix/gb-242-plan-step-errors",
+        "base_commit_sha": "56f69653f4cef0f64b9a231b0f6b817324a14cae"
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "3779f45e-f040-4279-92b2-b9a3e10f6e57",
+      "from": "triage",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1794457739993
+    },
+    {
+      "event": "task_updated",
+      "task_id": "3779f45e-f040-4279-92b2-b9a3e10f6e57",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": {
+        "repo": "benchwork",
+        "crate_name": null,
+        "module_path": null,
+        "target_files": [],
+        "target_symbols": [
+          "benchwork_core::dag_service::query::load_tasks"
+        ],
+        "labels": []
+      },
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794457740060
+    },
+    {
+      "event": "task_verified",
+      "task_id": "3779f45e-f040-4279-92b2-b9a3e10f6e57",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings && cargo nextest run --workspace && miter audit --path . --threshold 250 --paths && chalkline docs check -d .",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "AUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit ===\nRepository: /Users/wolff/dev2026/neurosymbolic-suite/benchwork/.\n\n[OK]      Readme           (README.md)\n[OK]      Contributing     (CONTRIBUTING.md)\n[OK]      Product          (docs/PRODUCT.md)\n[OK]      Architecture     (docs/ARCHITECTURE.md)\n[OK]      Spec             (docs/SPEC.md)\n[OK]      Design           (docs/DESIGN.md)\n[OK]      Roadmap          (docs/ROADMAP.md)\n[OK]      Changelog        (CHANGELOG.md)\n[OK]      Agents           (AGENTS.md)\n\nSummary: 9 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794458154894,
+        "git_branch": "main",
+        "base_commit_sha": "56f69653f4cef0f64b9a231b0f6b817324a14cae",
+        "head_commit_sha": "de8ad04610e68338f0f951fddc1056c43ec62c7b",
+        "commit_shas": [
+          "de8ad04610e68338f0f951fddc1056c43ec62c7b"
+        ],
+        "repo": "benchwork",
+        "chain_key": "benchwork",
+        "diff_hash": "06bf73016080e0e6fe5c3615979f33642c8805f1",
+        "diff": "diff --git a/crates/benchwork-core/tests/archive_service_tests.rs b/crates/benchwork-core/tests/archive_service_tests.rs\nindex 4b0ffaa..db0526e 100644\n--- a/crates/benchwork-core/tests/archive_service_tests.rs\n+++ b/crates/benchwork-core/tests/archive_service_tests.rs\n@@ -59,6 +59,11 @@ fn test_task_archive_and_filtering() -> std::result::Result<(), Box<dyn std::err\n             commit_shas: vec![],\n             repo: None,\n             chain_key: None,\n+            // The contract's optional change fields (`SP-41`): a fixture that predates them says so\n+            // explicitly, because the literal is what the compiler checks at every constructor.\n+            diff_hash: None,\n+            diff: None,\n+            window_intact: None,\n         }),\n         created_at_epoch_ms: 0,\n         updated_at_epoch_ms: 0,\n",
+        "window_intact": true
+      }
+    },
+    {
+      "event": "task_updated",
+      "task_id": "3779f45e-f040-4279-92b2-b9a3e10f6e57",
+      "title": null,
+      "description": "DELIVERED AND VERIFIED 2026-11-10 (storypole 5e95032). The fixture builds a suite with a declared member, gives each store its own ticket under its own prefix, and opens from inside the member: the member key must resolve and the suite key must not, while opening from the root must resolve the suite key. A workspace-first read fails the second assertion while still succeeding, which is the silent half the ticket records. PROVENANCE, stated because it is wrong and GB-313 exists for exactly this: the receipt below says repo benchwork and chain benchwork, because this ticket scope resolves to a benchwork crate, while the test it asked for landed in storypole. The storypole chain that actually compiled and ran the new test is the one from GB-242 in the same batch, not this receipt. That mismatch is now visible in the coverage line `storypole show` prints rather than silent, which is the improvement GB-313 bought.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794458336896
+    },
+    {
+      "event": "task_archived",
+      "task_id": "3779f45e-f040-4279-92b2-b9a3e10f6e57",
+      "status": "verified",
+      "timestamp_ms": 1794458337296
     }
   ]
 }
