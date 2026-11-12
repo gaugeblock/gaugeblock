@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "6d7051e2-875e-4d7a-881b-b4188fd52aa3",
+    "ticket_key": "GB-356",
+    "slug": "invocation-spans-never-record-task-key-so-a-task-cost-cannot-be-answered-from-spans-alone-6d7051",
+    "title": "invocation spans never record task_key, so a task cost cannot be answered from spans alone",
+    "description": "Measured 2026-11-10 in the live suite log: 898 spans, zero of them carry task_key, and the fields present are binary, branch, command, duration_ms, repo, span_id, started_at_ms, status, trace_id. Nothing is wrong with the writing path - the field exists on TelemetrySpan and InvocationSpan simply never sets it, so no producer anywhere in the tree populates it. GB-339 acceptance says a task cost is answerable from spans alone, and today it is not: a span says which binary ran in which repository on which branch, and nothing joins it to the ticket whose work it was. The join key exists and is cheap - storypole already knows the active claim at process start, and claim carries the task key - so this is a producer change rather than a schema one. Wanted: InvocationSpan resolves the claimed task key for the current repository at start, records it, and stays absent when no claim is held (absent is honest: an unclaimed run is not attributable). Acceptance: a span emitted while a task is claimed carries its key, a span emitted with no claim carries none, and a query over the log can total duration per task_key.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "gaugeblock-workspace",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "gaugeblock_workspace::invocation::InvocationSpan,gaugeblock_contracts::TelemetrySpan"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794449076006,
+    "updated_at_epoch_ms": 1794449076006
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "6d7051e2-875e-4d7a-881b-b4188fd52aa3",
+        "ticket_key": "GB-356",
+        "slug": "invocation-spans-never-record-task-key-so-a-task-cost-cannot-be-answered-from-spans-alone-6d7051",
+        "title": "invocation spans never record task_key, so a task cost cannot be answered from spans alone",
+        "description": "Measured 2026-11-10 in the live suite log: 898 spans, zero of them carry task_key, and the fields present are binary, branch, command, duration_ms, repo, span_id, started_at_ms, status, trace_id. Nothing is wrong with the writing path - the field exists on TelemetrySpan and InvocationSpan simply never sets it, so no producer anywhere in the tree populates it. GB-339 acceptance says a task cost is answerable from spans alone, and today it is not: a span says which binary ran in which repository on which branch, and nothing joins it to the ticket whose work it was. The join key exists and is cheap - storypole already knows the active claim at process start, and claim carries the task key - so this is a producer change rather than a schema one. Wanted: InvocationSpan resolves the claimed task key for the current repository at start, records it, and stays absent when no claim is held (absent is honest: an unclaimed run is not attributable). Acceptance: a span emitted while a task is claimed carries its key, a span emitted with no claim carries none, and a query over the log can total duration per task_key.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "gaugeblock-workspace",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "gaugeblock_workspace::invocation::InvocationSpan,gaugeblock_contracts::TelemetrySpan"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794449076006,
+        "updated_at_epoch_ms": 1794449076006
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
