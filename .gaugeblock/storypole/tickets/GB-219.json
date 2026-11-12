@@ -1,154 +1,154 @@
 {
-  "events": [
-    {
-      "captured_by_agent": "agent",
-      "discovered_from_task_id": null,
-      "event": "deferred_item_captured",
-      "task": {
-        "acceptance_criteria": [],
-        "active_claim": null,
-        "created_at_epoch_ms": 1793368162948,
-        "decisions": [],
-        "description": "MTR-19 built the lateral-edge gate and it works (exit 0 clean, exit 1 naming the edge when an allowlist entry is removed), but nothing calls it yet, so a new cross-product edge can still land silently.\n\nGB-200 phase 1b left this as an open decision with a recommendation: wire it into `outfeed gate` (Tier 3) rather than per-repo CI, because the layer map spans 42 crates across 11 repositories and no single repository can evaluate it. Only outfeed sees the whole suite, and per-repo CI would need the sibling checkouts.\n\nThe wiring is deliberately not done in MTR-19: it lives in outfeed-cli, outside that ticket scope. Measured baseline to assert against: 84 downward, 23 lateral (all allowlisted under GB-204), 0 upward.",
-        "edges": [],
-        "id": "da59c814-eeda-4e48-a117-90b24970a3d2",
-        "kind": "feature",
-        "latest_handoff": null,
-        "plan": null,
-        "priority": 3,
-        "scope": {
-          "crate_name": null,
-          "labels": [],
-          "module_path": null,
-          "repo": null,
-          "target_files": [],
-          "target_symbols": [
-            "outfeed_cli"
-          ]
-        },
-        "slug": "wire-miter-deps-layers-check-into-the-tier-3-outfeed-gate-da59c8",
-        "status": "deferred",
-        "ticket_key": "GB-219",
-        "title": "Wire miter deps --layers --check into the Tier 3 outfeed gate",
-        "updated_at_epoch_ms": 1793368162948,
-        "verification_receipt": null
-      }
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793369698445,
-        "git_branch": "feat/gb-219-layers-gate-step",
-        "lease_expires_at_epoch_ms": 1793373298445
-      },
-      "event": "task_claimed",
-      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2"
-    },
-    {
-      "event": "status_changed",
-      "from": "deferred",
-      "reason": "Claimed by cline",
-      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
-      "timestamp_ms": 1793369698445,
-      "to": "in_progress"
-    },
-    {
-      "event": "task_verified",
-      "receipt": {
-        "base_commit_sha": "ef00a849b977955b78bdf39c97876e2fb663ae06",
-        "chain_key": null,
-        "command": "n/a",
-        "commit_shas": [
-          "ef00a849b977955b78bdf39c97876e2fb663ae06"
-        ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "main",
-        "head_commit_sha": "ef00a849b977955b78bdf39c97876e2fb663ae06",
-        "repo": null,
-        "summary": "outfeed gate now runs the suite layer check as a Tier 3 step between contracts and lockfiles. Because the gate runs per repository and the layer map spans 42 crates across 11 repositories, the step skips with a stated reason wherever .gaugeblock/miter/layers-allowlist.toml is absent, and otherwise delegates to the shared Process path so a non-zero miter deps --layers --check exit fails the gate. 7 gate tests pass, including one pinning the skip and its message; the step count assertion was made structural so adding a step no longer breaks it. Pre-existing release_all failures in this environment are InsufficientDiskSpace (116 MB free), not code.",
-        "verified_at_epoch_ms": 1793369698690,
-        "verifier": "manual"
-      },
-      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2"
-    },
-    {
-      "event": "status_changed",
-      "from": "verified",
-      "reason": "Archived out of active backlog",
-      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
-      "timestamp_ms": 1793953245330,
-      "to": "archived"
-    },
-    {
-      "event": "task_archived",
-      "status": "verified",
-      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
-      "timestamp_ms": 1794038019557
-    },
-    {
-      "edge": {
-        "kind": "related_to",
-        "target_id": "1be1907f-adbe-458a-8c64-9c965144f2e5",
-        "target_repo": "miter",
-        "target_ticket_key": "MTR-19"
-      },
-      "event": "edge_added",
-      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
-      "timestamp_ms": 1794336146489
-    }
-  ],
   "ticket": {
-    "acceptance_criteria": [],
-    "active_claim": null,
-    "archived_at_epoch_ms": 1794038019557,
-    "created_at_epoch_ms": 1793368162948,
-    "decisions": [],
+    "id": "da59c814-eeda-4e48-a117-90b24970a3d2",
+    "ticket_key": "GB-219",
+    "slug": "wire-miter-deps-layers-check-into-the-tier-3-outfeed-gate-da59c8",
+    "title": "Wire miter deps --layers --check into the Tier 3 outfeed gate",
     "description": "MTR-19 built the lateral-edge gate and it works (exit 0 clean, exit 1 naming the edge when an allowlist entry is removed), but nothing calls it yet, so a new cross-product edge can still land silently.\n\nGB-200 phase 1b left this as an open decision with a recommendation: wire it into `outfeed gate` (Tier 3) rather than per-repo CI, because the layer map spans 42 crates across 11 repositories and no single repository can evaluate it. Only outfeed sees the whole suite, and per-repo CI would need the sibling checkouts.\n\nThe wiring is deliberately not done in MTR-19: it lives in outfeed-cli, outside that ticket scope. Measured baseline to assert against: 84 downward, 23 lateral (all allowlisted under GB-204), 0 upward.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "outfeed_cli"
+      ],
+      "labels": []
+    },
     "edges": [
       {
         "kind": "related_to",
         "target_id": "1be1907f-adbe-458a-8c64-9c965144f2e5",
-        "target_repo": "miter",
-        "target_ticket_key": "MTR-19"
+        "target_ticket_key": "MTR-19",
+        "target_repo": "miter"
       }
     ],
-    "id": "da59c814-eeda-4e48-a117-90b24970a3d2",
-    "kind": "feature",
-    "latest_handoff": null,
+    "decisions": [],
+    "acceptance_criteria": [],
     "plan": null,
-    "priority": 3,
-    "scope": {
-      "crate_name": null,
-      "labels": [],
-      "module_path": null,
-      "repo": null,
-      "target_files": [],
-      "target_symbols": [
-        "outfeed_cli"
-      ]
-    },
-    "slug": "wire-miter-deps-layers-check-into-the-tier-3-outfeed-gate-da59c8",
-    "status": "verified",
-    "ticket_key": "GB-219",
-    "title": "Wire miter deps --layers --check into the Tier 3 outfeed gate",
-    "updated_at_epoch_ms": 1794038019557,
+    "active_claim": null,
+    "latest_handoff": null,
     "verification_receipt": {
-      "base_commit_sha": "ef00a849b977955b78bdf39c97876e2fb663ae06",
-      "chain_key": null,
+      "verifier": "manual",
       "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "outfeed gate now runs the suite layer check as a Tier 3 step between contracts and lockfiles. Because the gate runs per repository and the layer map spans 42 crates across 11 repositories, the step skips with a stated reason wherever .gaugeblock/miter/layers-allowlist.toml is absent, and otherwise delegates to the shared Process path so a non-zero miter deps --layers --check exit fails the gate. 7 gate tests pass, including one pinning the skip and its message; the step count assertion was made structural so adding a step no longer breaks it. Pre-existing release_all failures in this environment are InsufficientDiskSpace (116 MB free), not code.",
+      "verified_at_epoch_ms": 1793369698690,
+      "git_branch": "main",
+      "base_commit_sha": "ef00a849b977955b78bdf39c97876e2fb663ae06",
+      "head_commit_sha": "ef00a849b977955b78bdf39c97876e2fb663ae06",
       "commit_shas": [
         "ef00a849b977955b78bdf39c97876e2fb663ae06"
       ],
-      "diagnostic_count": null,
-      "exit_code": 0,
-      "git_branch": "main",
-      "head_commit_sha": "ef00a849b977955b78bdf39c97876e2fb663ae06",
       "repo": null,
-      "summary": "outfeed gate now runs the suite layer check as a Tier 3 step between contracts and lockfiles. Because the gate runs per repository and the layer map spans 42 crates across 11 repositories, the step skips with a stated reason wherever .gaugeblock/miter/layers-allowlist.toml is absent, and otherwise delegates to the shared Process path so a non-zero miter deps --layers --check exit fails the gate. 7 gate tests pass, including one pinning the skip and its message; the step count assertion was made structural so adding a step no longer breaks it. Pre-existing release_all failures in this environment are InsufficientDiskSpace (116 MB free), not code.",
-      "verified_at_epoch_ms": 1793369698690,
-      "verifier": "manual"
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793368162948,
+    "updated_at_epoch_ms": 1794336146489,
+    "archived_at_epoch_ms": 1794038019557
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "da59c814-eeda-4e48-a117-90b24970a3d2",
+        "ticket_key": "GB-219",
+        "slug": "wire-miter-deps-layers-check-into-the-tier-3-outfeed-gate-da59c8",
+        "title": "Wire miter deps --layers --check into the Tier 3 outfeed gate",
+        "description": "MTR-19 built the lateral-edge gate and it works (exit 0 clean, exit 1 naming the edge when an allowlist entry is removed), but nothing calls it yet, so a new cross-product edge can still land silently.\n\nGB-200 phase 1b left this as an open decision with a recommendation: wire it into `outfeed gate` (Tier 3) rather than per-repo CI, because the layer map spans 42 crates across 11 repositories and no single repository can evaluate it. Only outfeed sees the whole suite, and per-repo CI would need the sibling checkouts.\n\nThe wiring is deliberately not done in MTR-19: it lives in outfeed-cli, outside that ticket scope. Measured baseline to assert against: 84 downward, 23 lateral (all allowlisted under GB-204), 0 upward.",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "outfeed_cli"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793368162948,
+        "updated_at_epoch_ms": 1793368162948
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793369698445,
+        "lease_expires_at_epoch_ms": 1793373298445,
+        "git_branch": "feat/gb-219-layers-gate-step",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
+      "from": "deferred",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793369698445
+    },
+    {
+      "event": "task_verified",
+      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "outfeed gate now runs the suite layer check as a Tier 3 step between contracts and lockfiles. Because the gate runs per repository and the layer map spans 42 crates across 11 repositories, the step skips with a stated reason wherever .gaugeblock/miter/layers-allowlist.toml is absent, and otherwise delegates to the shared Process path so a non-zero miter deps --layers --check exit fails the gate. 7 gate tests pass, including one pinning the skip and its message; the step count assertion was made structural so adding a step no longer breaks it. Pre-existing release_all failures in this environment are InsufficientDiskSpace (116 MB free), not code.",
+        "verified_at_epoch_ms": 1793369698690,
+        "git_branch": "main",
+        "base_commit_sha": "ef00a849b977955b78bdf39c97876e2fb663ae06",
+        "head_commit_sha": "ef00a849b977955b78bdf39c97876e2fb663ae06",
+        "commit_shas": [
+          "ef00a849b977955b78bdf39c97876e2fb663ae06"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953245330
+    },
+    {
+      "event": "task_archived",
+      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
+      "status": "verified",
+      "timestamp_ms": 1794038019557
+    },
+    {
+      "event": "edge_added",
+      "task_id": "da59c814-eeda-4e48-a117-90b24970a3d2",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "1be1907f-adbe-458a-8c64-9c965144f2e5",
+        "target_ticket_key": "MTR-19",
+        "target_repo": "miter"
+      },
+      "timestamp_ms": 1794336146489
     }
-  }
+  ]
 }

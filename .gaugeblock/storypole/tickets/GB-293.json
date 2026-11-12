@@ -6,7 +6,7 @@
     "title": "Benchwork flight recorder reads one repository's telemetry, so suite spans never reach the panel",
     "description": "",
     "kind": "bug",
-    "status": "in_progress",
+    "status": "ready",
     "priority": 3,
     "scope": {
       "repo": null,
@@ -24,17 +24,11 @@
       "READ SIDE LANDED 2026-11-07, commit 8cf754e (benchwork-core). The set of telemetry logs is now a property of the workspace instead of the daemon's working directory.\n\nWHAT EXISTS NOW: telemetry_event_paths(suite_root) returns the suite root's own log plus one per member repository, whether or not each file exists. Existing is not required on purpose - a caller must be able to say \"this member has no spans yet\" separately from \"this member is not in the set\", and an empty vector for a missing member is how a twelve-repository suite comes to look like a one-repository suite.\n\nWHAT REMAINS, and it is the half that makes the panel work: routes_telemetry still calls its own events_path() and tails one file. Wiring it to this set means one tailer per path, a repo label on each span so the panel can say where it came from, and a decision about the SSE shape when twelve files are being appended to at once. That is a daemon change and was deliberately not bundled into a contract commit.\n\nHONEST STATUS OF THE TEST: the two new tests pass and are multi-repository, but unlike the other three GB-305 instances they are NOT reversion-proven - the function is new and the defect lives in the daemon, not in it. They pin the contract rather than demonstrate a fixed bug, and calling them a regression test for GB-293 would overstate what they prove.\n\nWHAT STILL BLOCKS A USEFUL PANEL, unchanged and worth restating because it is the reason this stays a contract rather than an urgent fix: only sawhorse emits spans (GB-294), and two spans exist in the whole tree. Aggregation makes the panel honest about twelve repositories; it does not make it interesting. The order that produces a working panel is emission first (GB-297, GB-298), then wiring, then the four surfaces (GB-310)."
     ],
     "plan": null,
-    "active_claim": {
-      "agent_id": "cline-agent",
-      "claimed_at_epoch_ms": 1794106125498,
-      "lease_expires_at_epoch_ms": 1794109725498,
-      "git_branch": "feat/gb-293-telemetry-aggregation",
-      "base_commit_sha": null
-    },
+    "active_claim": null,
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1794038093190,
-    "updated_at_epoch_ms": 1794106125498
+    "updated_at_epoch_ms": 1794341209698
   },
   "events": [
     {

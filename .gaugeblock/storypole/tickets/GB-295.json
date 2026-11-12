@@ -4,12 +4,12 @@
     "ticket_key": "GB-295",
     "slug": "storypole-list-status-x-ignores-the-archived-filter-so-an-archived-backlog-still-lists-as-verified-bccfec",
     "title": "storypole list --status X ignores the archived filter, so an archived backlog still lists as verified",
-    "description": "",
+    "description": "STILL LIVE, reproduced 2026-11-10 three times while reading the board. GB-200 is archived (archived_at_epoch_ms set) and still carries status ready, so: storypole list answers 17 Ready rows while storypole list --status ready answers 18 with GB-200 among them; the same filter reports 42 triage rows and --status triage 49. Six archived-but-live-status tickets exist in the harness store alone: GB-200 (ready), GB-277, GB-281, GB-282, GB-287 and GB-292 (triage). Consequence measured in this session: board counts reported with --status were inflated and disagreed with the unfiltered view, which is the kind of contradiction that makes a burn-down plan untrustworthy. Priority raised: this is the last member of the projection family still open (GB-348 and GB-355 closed), and every count the queue shows passes through it.\n\nFIXED AND VERIFIED 2026-11-10 (storypole f6d93ea). Root cause one line: index/query.rs had the archived exclusion in the ELSE branch of the status filter, so any --status value disabled it. The exclusion is now independent of the status filter; --status archived still asks for the state, and include_archived still opts in for the earned status (GB-179). Proven live with the reinstalled binary rather than in tests only: diff of the ready keys from `storypole list` against `storypole list --status ready` prints nothing and reports SETS IDENTICAL, GB-200 no longer appears under --status ready (0 occurrences), and --status archived still finds 295 rows so the fix did not overshoot into hiding them. Three tests pin the behaviour and nextest -p storypole-core is 190/190. Note on my own earlier report: an 8-versus-9 gap I quoted before the set comparison was my counting artifact - a footer line matched the row grep - not a residual defect, and the set diff is the check that settles it.",
     "kind": "bug",
-    "status": "triage",
-    "priority": 3,
+    "status": "verified",
+    "priority": 2,
     "scope": {
-      "repo": null,
+      "repo": "storypole",
       "crate_name": null,
       "module_path": null,
       "target_files": [],
@@ -26,9 +26,28 @@
     "plan": null,
     "active_claim": null,
     "latest_handoff": null,
-    "verification_receipt": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings && cargo nextest run --workspace && miter audit --path . --threshold 250 --paths && chalkline docs check -d .",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "AUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit ===\nRepository: /Users/wolff/dev2026/neurosymbolic-suite/storypole/.\n\n[OK]      Readme           (README.md)\n[OK]      Contributing     (CONTRIBUTING.md)\n[OK]      Product          (docs/PRODUCT.md)\n[OK]      Architecture     (docs/ARCHITECTURE.md)\n[OK]      Spec             (docs/SPEC.md)\n[OK]      Design           (docs/DESIGN.md)\n[OK]      Roadmap          (docs/ROADMAP.md)\n[OK]      Changelog        (CHANGELOG.md)\n[OK]      Agents           (AGENTS.md)\n\nSummary: 9 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794452238899,
+      "git_branch": "fix/gb-295-status-archive-filter",
+      "base_commit_sha": "bc989f61afad69328803a91a81b2ec3f46e58f8c",
+      "head_commit_sha": "f6d93ea40aa7bc77326ff55aec78c801d41bdb34",
+      "commit_shas": [
+        "f6d93ea40aa7bc77326ff55aec78c801d41bdb34"
+      ],
+      "repo": "storypole",
+      "chain_key": "storypole",
+      "diff_hash": "3cb2974e5d8710dc38747cb2be8204f317ef0a37",
+      "diff": "diff --git a/crates/storypole-core/src/index/query.rs b/crates/storypole-core/src/index/query.rs\nindex 7400c3c..322b0e6 100644\n--- a/crates/storypole-core/src/index/query.rs\n+++ b/crates/storypole-core/src/index/query.rs\n@@ -158,6 +158,12 @@ pub fn query_tasks(\n         } else {\n             conditions.push(\"t.status = ?\".to_string());\n             params_vec.push(s.into());\n+            // The exclusion below is independent of the status filter (`GB-295`). It used to live in the\n+            // `else` branch, so *any* `--status` turned it off - which is how an archived ticket answered\n+            // `--status ready`, and why `list` and `list --status ready` disagreed by one row for months.\n+            if !filter.include_archived {\n+                conditions.push(\"t.archived_at IS NULL\".to_string());\n+            }\n         }\n     } else if !filter.include_archived {\n         // Archived is a state, not a status (GB-179): hide by the timestamp so a task archived\ndiff --git a/crates/storypole-core/tests/status_filter_tests.rs b/crates/storypole-core/tests/status_filter_tests.rs\nnew file mode 100644\nindex 0000000..a7a8e68\n--- /dev/null\n+++ b/crates/storypole-core/tests/status_filter_tests.rs\n@@ -0,0 +1,95 @@\n+//! `--status` honours the archived filter too (`GB-295`).\n+//!\n+//! The defect these pin: the archived exclusion lived in the `else` branch of the status filter, so *any*\n+//! `--status` value turned it off. An archived ticket therefore answered `--status ready`, and `list` and\n+//! `list --status ready` disagreed by one row - which is the kind of contradiction that makes every count a\n+//! queue reports untrustworthy.\n+\n+#![allow(clippy::unwrap_used, clippy::expect_used)]\n+\n+use std::fs;\n+use std::path::Path;\n+\n+use storypole_core::StorypoleConfig;\n+use storypole_core::index::query::{TaskFilter, query_tasks};\n+use storypole_core::model::task::TaskStatus;\n+use storypole_core::ops::archive::archive_task;\n+use storypole_core::ops::mutations::{CreateTaskParams, add_task};\n+use storypole_core::store::StorypoleStore;\n+use tempfile::tempdir;\n+\n+fn store(root: &Path) -> StorypoleStore {\n+    fs::create_dir_all(root.join(\".gaugeblock\").join(\"storypole\").join(\"tickets\")).expect(\"store\");\n+    let store = StorypoleStore::init(root, StorypoleConfig::default()).expect(\"init\");\n+    fs::remove_dir_all(root.join(\".storypole\")).ok();\n+    store\n+}\n+\n+fn add(store: &mut StorypoleStore, title: &str) -> uuid::Uuid {\n+    add_task(\n+        store,\n+        CreateTaskParams {\n+            title: title.to_string(),\n+            ..Default::default()\n+        },\n+    )\n+    .expect(\"add\")\n+    .id\n+}\n+\n+#[test]\n+fn a_status_filter_hides_archived_tickets() {\n+    let tmp = tempdir().expect(\"tempdir\");\n+    let mut store = store(tmp.path());\n+    let kept = add(&mut store, \"Open work\");\n+    let archived = add(&mut store, \"Archived work\");\n+    archive_task(&mut store, archived).expect(\"archive\");\n+\n+    let filter = TaskFilter {\n+        status: Some(TaskStatus::Ready),\n+        ..Default::default()\n+    };\n+    let found = query_tasks(store.conn(), &filter).expect(\"query\");\n+\n+    assert_eq!(\n+        found.len(),\n+        1,\n+        \"the archived ticket is not offered as ready\"\n+    );\n+    assert_eq!(found[0].id, kept);\n+}\n+\n+#[test]\n+fn asking_for_archived_is_a_request_for_the_state() {\n+    let tmp = tempdir().expect(\"tempdir\");\n+    let mut store = store(tmp.path());\n+    add(&mut store, \"Open work\");\n+    let archived = add(&mut store, \"Archived work\");\n+    archive_task(&mut store, archived).expect(\"archive\");\n+\n+    let filter = TaskFilter {\n+        status: Some(TaskStatus::Archived),\n+        ..Default::default()\n+    };\n+    let found = query_tasks(store.conn(), &filter).expect(\"query\");\n+    assert_eq!(found.len(), 1, \"the archived one is what was asked for\");\n+    assert_eq!(found[0].id, archived);\n+}\n+\n+#[test]\n+fn opting_in_shows_the_status_an_archived_ticket_earned() {\n+    // GB-179: archiving is a state, so the status survives it. `include_archived` is how a caller asks to\n+    // see that status rather than the fact it was retired.\n+    let tmp = tempdir().expect(\"tempdir\");\n+    let mut store = store(tmp.path());\n+    let archived = add(&mut store, \"Archived work\");\n+    archive_task(&mut store, archived).expect(\"archive\");\n+\n+    let filter = TaskFilter {\n+        status: Some(TaskStatus::Ready),\n+        include_archived: true,\n+        ..Default::default()\n+    };\n+    let found = query_tasks(store.conn(), &filter).expect(\"query\");\n+    assert_eq!(found.len(), 1, \"an explicit opt-in still finds it\");\n+}\n",
+      "window_intact": true
+    },
     "created_at_epoch_ms": 1794038093573,
-    "updated_at_epoch_ms": 1794038105841
+    "updated_at_epoch_ms": 1794452311509,
+    "archived_at_epoch_ms": 1794452311509
   },
   "events": [
     {

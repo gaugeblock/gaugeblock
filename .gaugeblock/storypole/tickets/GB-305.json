@@ -6,7 +6,7 @@
     "title": "Foundation audit: two documented invariants are broken suite-wide, and no crate but workspace has a multi-repo test",
     "description": "",
     "kind": "epic",
-    "status": "in_progress",
+    "status": "ready",
     "priority": 3,
     "scope": {
       "repo": null,
@@ -24,17 +24,11 @@
       "CLAIMED AND BRANCHED 2026-11-07. Standing correction to how this ticket was worked: the earlier commits went straight to main with no claim and no InProgress transition, so the ledger could not say who was working or when.\n\nBRANCH NOTE, so the claim does not overstate: `feat/gb-305-multi-repo-gate` is created in the meta-harness root, because the gate itself was a miter change that has already landed. The remaining work - four owed multi-repository tests - lands in four different repositories (benchwork-cli, storypole-cli, sawhorse-core, rabbet-cli), so each test gets its own branch in its own repository when it is written. A single branch name for four repositories would be a name that does not exist anywhere, which is precisely the kind of receipt this session has been removing.\n\nREMAINING SCOPE, unchanged: the four owed tests. Everything else in this ticket is landed - the git boundary fix (3053b30), the layout gate's second half (2fabe8f), and the three reversion-proven multi-repository tests."
     ],
     "plan": null,
-    "active_claim": {
-      "agent_id": "cline-agent",
-      "claimed_at_epoch_ms": 1794105996662,
-      "lease_expires_at_epoch_ms": 1794109596662,
-      "git_branch": "feat/gb-305-multi-repo-gate",
-      "base_commit_sha": null
-    },
+    "active_claim": null,
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1794088988038,
-    "updated_at_epoch_ms": 1794106149656
+    "updated_at_epoch_ms": 1794342719522
   },
   "events": [
     {

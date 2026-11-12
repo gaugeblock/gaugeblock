@@ -1,139 +1,17 @@
 {
-  "events": [
-    {
-      "event": "task_created",
-      "task": {
-        "acceptance_criteria": [
-          "No .rs file in any repository exceeds 200 lines in the long run",
-          "Each extraction is guided by miter slice and lands as its own atomic commit"
-        ],
-        "active_claim": null,
-        "created_at_epoch_ms": 1793307235377,
-        "decisions": [],
-        "description": "The hard ceiling is 250 and AGENTS.md says split at about 200, so this is the backlog between the two. Counted with wc -l today: miter 31, storypole 8, benchwork 5, outfeed 4, chalkline 3, joiner 2, common 2, sawhorse 1, rabbet 1, dado and batten 0. Worst offenders: benchwork xray_service 249, miter security/mod 248, benchwork spec_studio 247, storypole core_cmds 246, miter polyglot language 246 and markdown 245. OF-32 already cleared the six outfeed-core modules that used to sit here, so this is the same sweep applied to the rest. Suggested order: miter polyglot modules together (they share context), then benchwork services, then storypole cli handlers. Run miter slice per file for the blueprint.",
-        "edges": [],
-        "id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
-        "kind": "tech_debt",
-        "latest_handoff": null,
-        "plan": null,
-        "priority": 3,
-        "scope": {
-          "crate_name": "workspace",
-          "labels": [],
-          "module_path": null,
-          "repo": null,
-          "target_files": [
-            "miter/crates/engine/src/security/mod.rs",
-            "miter/crates/engine/src/polyglot/language.rs",
-            "benchwork/crates/benchwork-core/src/xray_service.rs",
-            "benchwork/crates/benchwork-core/src/spec_studio.rs",
-            "storypole/crates/storypole-cli/src/handlers/core_cmds.rs"
-          ],
-          "target_symbols": []
-        },
-        "slug": "sweep-the-200-250-loc-band-60-files-31-of-them-in-miter-engine-272e2f",
-        "status": "ready",
-        "ticket_key": "GB-195",
-        "title": "Sweep the 200-250 LOC band: 60 files, 31 of them in miter-engine",
-        "updated_at_epoch_ms": 1793307235377,
-        "verification_receipt": null
-      }
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793476334641,
-        "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793479934641
-      },
-      "event": "task_claimed",
-      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
-      "timestamp_ms": 1793476334641,
-      "to": "in_progress"
-    },
-    {
-      "acceptance_criteria": [
-        "Every file in the 200-250 band is either split or carries a written reason it is the right size",
-        "Re-measure before starting and record the number; the filed count of 60 is stale"
-      ],
-      "description": "RE-MEASURED 2026-10-31 after MTR-20 split miter-engine into four crates. The class has grown from the 60 files this was filed against to 85 files in the 200-250 band (miter audit --threshold 200, all under the hard 250 ceiling, so nothing is illegal yet).\n\nDistribution: miter 37, benchwork/web 9, storypole 8, common 8, sawhorse 5, benchwork 5, outfeed 4, joiner 4, plus a tail.\n\nThe filing assumption that 31 of the 60 were in miter-engine no longer holds - those files are now spread across miter-polyglot, miter-analysis, miter-inventory and miter-engine, and the count in miter as a whole went up rather than down, because the split moved files without shrinking them. That is the argument for doing this sweep now rather than after more extraction: the band is where the next 250-line breach will come from, and every extraction so far has pushed a file into it.",
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
-      "timestamp_ms": 1793476335022,
-      "title": null
-    },
-    {
-      "acceptance_criteria": null,
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
-      "timestamp_ms": 1793476346616,
-      "title": "Sweep the 200-250 LOC band: 85 files measured, 37 in miter"
-    },
-    {
-      "agent_id": "cline",
-      "event": "task_released",
-      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
-      "timestamp_ms": 1793952513969
-    },
-    {
-      "event": "status_changed",
-      "from": "in_progress",
-      "reason": "claim lease expired at 1793479934641 (agent cline); returned to the backlog",
-      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
-      "timestamp_ms": 1793952513969,
-      "to": "ready"
-    },
-    {
-      "edge": {
-        "kind": "related_to",
-        "target_id": "9296fdfe-1e9a-4190-a6a2-642e7fd212c6",
-        "target_repo": "miter",
-        "target_ticket_key": "MTR-20"
-      },
-      "event": "edge_added",
-      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
-      "timestamp_ms": 1794336146476
-    }
-  ],
   "ticket": {
-    "acceptance_criteria": [
-      "Every file in the 200-250 band is either split or carries a written reason it is the right size",
-      "Re-measure before starting and record the number; the filed count of 60 is stale"
-    ],
-    "active_claim": null,
-    "created_at_epoch_ms": 1793307235377,
-    "decisions": [],
-    "description": "RE-MEASURED 2026-10-31 after MTR-20 split miter-engine into four crates. The class has grown from the 60 files this was filed against to 85 files in the 200-250 band (miter audit --threshold 200, all under the hard 250 ceiling, so nothing is illegal yet).\n\nDistribution: miter 37, benchwork/web 9, storypole 8, common 8, sawhorse 5, benchwork 5, outfeed 4, joiner 4, plus a tail.\n\nThe filing assumption that 31 of the 60 were in miter-engine no longer holds - those files are now spread across miter-polyglot, miter-analysis, miter-inventory and miter-engine, and the count in miter as a whole went up rather than down, because the split moved files without shrinking them. That is the argument for doing this sweep now rather than after more extraction: the band is where the next 250-line breach will come from, and every extraction so far has pushed a file into it.",
-    "edges": [
-      {
-        "kind": "related_to",
-        "target_id": "9296fdfe-1e9a-4190-a6a2-642e7fd212c6",
-        "target_repo": "miter",
-        "target_ticket_key": "MTR-20"
-      }
-    ],
     "id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+    "ticket_key": "GB-195",
+    "slug": "sweep-the-200-250-loc-band-60-files-31-of-them-in-miter-engine-272e2f",
+    "title": "Sweep the 200-250 LOC band: 85 files measured, 37 in miter",
+    "description": "RE-MEASURED 2026-10-31 after MTR-20 split miter-engine into four crates. The class has grown from the 60 files this was filed against to 85 files in the 200-250 band (miter audit --threshold 200, all under the hard 250 ceiling, so nothing is illegal yet).\n\nDistribution: miter 37, benchwork/web 9, storypole 8, common 8, sawhorse 5, benchwork 5, outfeed 4, joiner 4, plus a tail.\n\nThe filing assumption that 31 of the 60 were in miter-engine no longer holds - those files are now spread across miter-polyglot, miter-analysis, miter-inventory and miter-engine, and the count in miter as a whole went up rather than down, because the split moved files without shrinking them. That is the argument for doing this sweep now rather than after more extraction: the band is where the next 250-line breach will come from, and every extraction so far has pushed a file into it.",
     "kind": "tech_debt",
-    "latest_handoff": null,
-    "plan": null,
+    "status": "ready",
     "priority": 3,
     "scope": {
-      "crate_name": "workspace",
-      "labels": [],
-      "module_path": null,
       "repo": null,
+      "crate_name": "workspace",
+      "module_path": null,
       "target_files": [
         "miter/crates/engine/src/security/mod.rs",
         "miter/crates/engine/src/polyglot/language.rs",
@@ -141,13 +19,135 @@
         "benchwork/crates/benchwork-core/src/spec_studio.rs",
         "storypole/crates/storypole-cli/src/handlers/core_cmds.rs"
       ],
-      "target_symbols": []
+      "target_symbols": [],
+      "labels": []
     },
-    "slug": "sweep-the-200-250-loc-band-60-files-31-of-them-in-miter-engine-272e2f",
-    "status": "ready",
-    "ticket_key": "GB-195",
-    "title": "Sweep the 200-250 LOC band: 85 files measured, 37 in miter",
-    "updated_at_epoch_ms": 1793952513969,
-    "verification_receipt": null
-  }
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "9296fdfe-1e9a-4190-a6a2-642e7fd212c6",
+        "target_ticket_key": "MTR-20",
+        "target_repo": "miter"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "Every file in the 200-250 band is either split or carries a written reason it is the right size",
+      "Re-measure before starting and record the number; the filed count of 60 is stale"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793307235377,
+    "updated_at_epoch_ms": 1794336146476
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+        "ticket_key": "GB-195",
+        "slug": "sweep-the-200-250-loc-band-60-files-31-of-them-in-miter-engine-272e2f",
+        "title": "Sweep the 200-250 LOC band: 60 files, 31 of them in miter-engine",
+        "description": "The hard ceiling is 250 and AGENTS.md says split at about 200, so this is the backlog between the two. Counted with wc -l today: miter 31, storypole 8, benchwork 5, outfeed 4, chalkline 3, joiner 2, common 2, sawhorse 1, rabbet 1, dado and batten 0. Worst offenders: benchwork xray_service 249, miter security/mod 248, benchwork spec_studio 247, storypole core_cmds 246, miter polyglot language 246 and markdown 245. OF-32 already cleared the six outfeed-core modules that used to sit here, so this is the same sweep applied to the rest. Suggested order: miter polyglot modules together (they share context), then benchwork services, then storypole cli handlers. Run miter slice per file for the blueprint.",
+        "kind": "tech_debt",
+        "status": "ready",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "workspace",
+          "module_path": null,
+          "target_files": [
+            "miter/crates/engine/src/security/mod.rs",
+            "miter/crates/engine/src/polyglot/language.rs",
+            "benchwork/crates/benchwork-core/src/xray_service.rs",
+            "benchwork/crates/benchwork-core/src/spec_studio.rs",
+            "storypole/crates/storypole-cli/src/handlers/core_cmds.rs"
+          ],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "No .rs file in any repository exceeds 200 lines in the long run",
+          "Each extraction is guided by miter slice and lands as its own atomic commit"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793307235377,
+        "updated_at_epoch_ms": 1793307235377
+      }
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793476334641,
+        "lease_expires_at_epoch_ms": 1793479934641,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793476334641
+    },
+    {
+      "event": "task_updated",
+      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+      "title": null,
+      "description": "RE-MEASURED 2026-10-31 after MTR-20 split miter-engine into four crates. The class has grown from the 60 files this was filed against to 85 files in the 200-250 band (miter audit --threshold 200, all under the hard 250 ceiling, so nothing is illegal yet).\n\nDistribution: miter 37, benchwork/web 9, storypole 8, common 8, sawhorse 5, benchwork 5, outfeed 4, joiner 4, plus a tail.\n\nThe filing assumption that 31 of the 60 were in miter-engine no longer holds - those files are now spread across miter-polyglot, miter-analysis, miter-inventory and miter-engine, and the count in miter as a whole went up rather than down, because the split moved files without shrinking them. That is the argument for doing this sweep now rather than after more extraction: the band is where the next 250-line breach will come from, and every extraction so far has pushed a file into it.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Every file in the 200-250 band is either split or carries a written reason it is the right size",
+        "Re-measure before starting and record the number; the filed count of 60 is stale"
+      ],
+      "timestamp_ms": 1793476335022
+    },
+    {
+      "event": "task_updated",
+      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+      "title": "Sweep the 200-250 LOC band: 85 files measured, 37 in miter",
+      "description": null,
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793476346616
+    },
+    {
+      "event": "task_released",
+      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+      "agent_id": "cline",
+      "timestamp_ms": 1793952513969
+    },
+    {
+      "event": "status_changed",
+      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+      "from": "in_progress",
+      "to": "ready",
+      "reason": "claim lease expired at 1793479934641 (agent cline); returned to the backlog",
+      "timestamp_ms": 1793952513969
+    },
+    {
+      "event": "edge_added",
+      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "9296fdfe-1e9a-4190-a6a2-642e7fd212c6",
+        "target_ticket_key": "MTR-20",
+        "target_repo": "miter"
+      },
+      "timestamp_ms": 1794336146476
+    }
+  ]
 }

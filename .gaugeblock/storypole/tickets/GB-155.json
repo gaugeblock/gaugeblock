@@ -4,9 +4,9 @@
     "ticket_key": "GB-155",
     "slug": "cut-the-meta-harness-suite-release-pre-release-checklist-suite-lock-root-changelog-and-certified-snapshot-tag-51a9ba",
     "title": "Cut the meta-harness suite release: pre-release checklist, suite.lock, root changelog and certified snapshot tag",
-    "description": "OWNER DECISION 2026-10-30: the suite release is deliberately held. Do not start this epic - publishing, tagging and pushing are irreversible in the way that matters, and the architecture is still moving (MTR-20, then GB-204, then GB-195). Resume only on an explicit go-ahead.",
+    "description": "OWNER DECISION 2026-10-30: the suite release is deliberately held. Do not start this epic - publishing, tagging and pushing are irreversible in the way that matters, and the architecture is still moving (MTR-20, then GB-204, then GB-195). Resume only on an explicit go-ahead.\n\nOWNER DIRECTIVE 2026-11-10, superseding the 2026-10-30 hold in scope only: the suite release stays on hold until the owner explicitly lifts it. The condition is now wider than architecture movement. Nothing here is to be claimed, started, partially executed, tagged or published until the whole backlog has been taken as far as it can go - every item that can be closed is closed and verified, and no known issue or outstanding improvement remains. The burn-down order is owned by the 2026-11-10 review: board integrity first, then the storypole and telemetry epics, then the gate work, then debt, with this epic last. This directive is recorded as prose because storypole has no transition into Deferred for an existing ticket (SP-47), so it is the enforcement until that verb exists.",
     "kind": "epic",
-    "status": "ready",
+    "status": "deferred",
     "priority": 1,
     "scope": {
       "repo": "workspace",
@@ -82,7 +82,7 @@
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1793235911866,
-    "updated_at_epoch_ms": 1794004680748
+    "updated_at_epoch_ms": 1794380760041
   },
   "events": [
     {

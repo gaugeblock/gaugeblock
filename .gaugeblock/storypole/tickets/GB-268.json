@@ -4,7 +4,7 @@
     "ticket_key": "GB-268",
     "slug": "every-repo-has-empty-verification-commands-so-storypole-verify-runs-nothing-and-records-a-manual-receipt-191bbd",
     "title": "Every repo has empty verification_commands, so storypole verify runs nothing and records a manual receipt",
-    "description": "",
+    "description": "ALREADY DONE, verified 2026-11-10: the harness config carries a populated verification_commands table (eleven repository chains plus gaugeblock and default entries), and every member either declares its own chain or inherits the suite roster - SP-24 and SP-49 receipts name chain storypole, CO-11 and CO-2 name chain common, all executed rather than attested. storypole config check reports zero findings and zero errors.",
     "kind": "bug",
     "status": "triage",
     "priority": 3,
@@ -45,7 +45,8 @@
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1793999768853,
-    "updated_at_epoch_ms": 1793999769031
+    "updated_at_epoch_ms": 1794451882246,
+    "archived_at_epoch_ms": 1794451882246
   },
   "events": [
     {

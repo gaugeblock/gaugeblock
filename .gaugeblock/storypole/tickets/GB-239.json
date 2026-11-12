@@ -1,227 +1,227 @@
 {
-  "events": [
-    {
-      "event": "handoff_recorded",
-      "handoff": {
-        "completed_items": [
-          "Nesting half done in two commits: 2a87646 walks fields under a dotted path, resolving a named Rust type by name and descending into it (and reading the type from the property signature when the record carries no annotation); 296e3df adds the two comparison rules - depth tolerance (a path is not missing when the other side has something beneath it, or this path sits beneath something the other side has) and subsumption (a missing parent already reports its children). Measured on the suite index: 33 lines before, 21 after, and 21 is exactly the GB-238 total for stale-mirror plus diverged fields, so the 11 nesting lines went and no real one did."
-        ],
-        "dirty_files": [],
-        "git_ref": "296e3df",
-        "last_error_or_blocker": "None. Two measurement notes for whoever continues: the first dotted-walk attempt made things worse (39 lines) because the prefix relation was inverted, and the fix was visible only by re-running against the real index - three lines existed in the report of a run that compiled cleanly.",
-        "recorded_by_agent": "cline",
-        "remaining_items": [
-          "The declared-non-mirror half is not built. role_override_config.api_key still appears, correctly, because nothing can yet say \"this field must not be mirrored\". The shape should follow .gaugeblock/miter/layers-allowlist.toml from MTR-19: an entry carries entity, field and a reason, and is reviewed rather than blanket - so a contracts-allowlist.toml with a required reason, surfaced in the report as an exception count rather than silently dropped."
-        ],
-        "timestamp_ms": 1793460287809
-      },
-      "new_status": "ready",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c"
-    },
-    {
-      "event": "handoff_recorded",
-      "handoff": {
-        "completed_items": [
-          "Both halves done and measured. Nesting: 33 -> 21 lines via dotted paths plus depth tolerance and parent subsumption. Declared non-mirrors: contracts-allowlist.toml with a schema-required reason, surfaced as a counted line in the report. End to end on the suite index: 20 real drift lines plus 1 declared exception, and api_key no longer appears among the drift."
-        ],
-        "dirty_files": [],
-        "git_ref": "72175b5",
-        "last_error_or_blocker": "None.",
-        "recorded_by_agent": "cline",
-        "remaining_items": [
-          "Nothing in this ticket. The 20 remaining lines are GB-238 work: 5 stale-mirror fields to add to the TypeScript mirror and 15 diverged fields needing a canonical spelling per entity."
-        ],
-        "timestamp_ms": 1793461391944
-      },
-      "new_status": "ready",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c"
-    },
-    {
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null,
-      "event": "deferred_item_captured",
-      "task": {
-        "acceptance_criteria": [],
-        "active_claim": null,
-        "created_at_epoch_ms": 1793457227410,
-        "decisions": [],
-        "description": "",
-        "edges": [],
-        "id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
-        "kind": "feature",
-        "latest_handoff": null,
-        "plan": null,
-        "priority": 3,
-        "scope": {
-          "crate_name": null,
-          "labels": [],
-          "module_path": null,
-          "repo": null,
-          "target_files": [],
-          "target_symbols": [
-            "miter_engine::analysis::contracts"
-          ]
-        },
-        "slug": "miter-contracts-cannot-tell-nesting-from-drift-or-a-secret-from-a-stale-mirror-12-of-33-lines-are-false-obligations-89304d",
-        "status": "deferred",
-        "ticket_key": "GB-239",
-        "title": "miter contracts cannot tell nesting from drift or a secret from a stale mirror: 12 of 33 lines are false obligations",
-        "updated_at_epoch_ms": 1793457227410,
-        "verification_receipt": null
-      }
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793457235947,
-        "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793460835947
-      },
-      "event": "task_claimed",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c"
-    },
-    {
-      "event": "status_changed",
-      "from": "deferred",
-      "reason": "Claimed by cline",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
-      "timestamp_ms": 1793457235947,
-      "to": "in_progress"
-    },
-    {
-      "acceptance_criteria": [
-        "Compare at equal depth: an inlined nested object and a nested struct must compare as the same shape, so the 11 nesting lines disappear",
-        "A declared way to mark a field as deliberately not mirrored, carrying a reason - not a blanket entity exclusion",
-        "The 33 lines reduce to the 21 that are real drift (5 stale mirror + 16 diverged), matching the GB-238 classification"
+  "ticket": {
+    "id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+    "ticket_key": "GB-239",
+    "slug": "miter-contracts-cannot-tell-nesting-from-drift-or-a-secret-from-a-stale-mirror-12-of-33-lines-are-false-obligations-89304d",
+    "title": "miter contracts cannot tell nesting from drift or a secret from a stale mirror: 12 of 33 lines are false obligations",
+    "description": "Found while classifying GB-238. The contract comparator matches entities by name and compares their top-level fields, which produces two kinds of line that no code change should ever satisfy:\n\n1. Nesting (11 of 33). docs_config: Rust has `docs: DocumentEntries` holding the nine doc entries; TypeScript inlines the same nine inside `DocsConfig.docs`. Every field exists on both sides at different depths, and all nine are reported missing in rust. workspace_capabilities: TypeScript nests `spec_docs: { primary_spec_present, detected_files }`, Rust mirrors that nesting, and both fields are still reported missing - so the comparator is comparing a parent against a child.\n\n2. Intentional omission (1 of 33). role_override_config.api_key exists in Rust and must not exist in TypeScript: it is a secret, and the browser must never receive it. Satisfying the checker would be a security regression.\n\nWithout both, --check can never be green honestly, so it will be either ignored or permanently allowlisted - the two outcomes the layers allowlist was built to avoid (MTR-19 decision: allowlist entries carry a reason and are reviewed, not blanket).",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "miter_engine::analysis::contracts"
       ],
-      "description": "Found while classifying GB-238. The contract comparator matches entities by name and compares their top-level fields, which produces two kinds of line that no code change should ever satisfy:\n\n1. Nesting (11 of 33). docs_config: Rust has `docs: DocumentEntries` holding the nine doc entries; TypeScript inlines the same nine inside `DocsConfig.docs`. Every field exists on both sides at different depths, and all nine are reported missing in rust. workspace_capabilities: TypeScript nests `spec_docs: { primary_spec_present, detected_files }`, Rust mirrors that nesting, and both fields are still reported missing - so the comparator is comparing a parent against a child.\n\n2. Intentional omission (1 of 33). role_override_config.api_key exists in Rust and must not exist in TypeScript: it is a secret, and the browser must never receive it. Satisfying the checker would be a security regression.\n\nWithout both, --check can never be green honestly, so it will be either ignored or permanently allowlisted - the two outcomes the layers allowlist was built to avoid (MTR-19 decision: allowlist entries carry a reason and are reviewed, not blanket).",
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
-      "timestamp_ms": 1793457236095,
-      "title": null
+      "labels": []
     },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793461430176,
-        "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793465030176
-      },
-      "event": "task_claimed",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
-      "timestamp_ms": 1793461430176,
-      "to": "in_progress"
-    },
-    {
-      "event": "task_verified",
-      "receipt": {
-        "base_commit_sha": "560e0ffb0147e6384881ea10949e6932009d89c3",
-        "chain_key": null,
-        "command": "n/a",
-        "commit_shas": [
-          "560e0ffb0147e6384881ea10949e6932009d89c3"
-        ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "main",
-        "head_commit_sha": "560e0ffb0147e6384881ea10949e6932009d89c3",
-        "repo": null,
-        "summary": "Manual verification confirmed",
-        "verified_at_epoch_ms": 1793461430258,
-        "verifier": "manual"
-      },
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c"
-    },
-    {
-      "event": "status_changed",
-      "from": "verified",
-      "reason": "Archived out of active backlog",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
-      "timestamp_ms": 1793953204528,
-      "to": "archived"
-    },
-    {
-      "event": "task_archived",
-      "status": "verified",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
-      "timestamp_ms": 1794038023377
-    },
-    {
-      "edge": {
+    "edges": [
+      {
         "kind": "related_to",
         "target_id": "1be1907f-adbe-458a-8c64-9c965144f2e5",
-        "target_repo": "miter",
-        "target_ticket_key": "MTR-19"
-      },
-      "event": "edge_added",
-      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
-      "timestamp_ms": 1794336146493
-    }
-  ],
-  "ticket": {
+        "target_ticket_key": "MTR-19",
+        "target_repo": "miter"
+      }
+    ],
+    "decisions": [],
     "acceptance_criteria": [
       "Compare at equal depth: an inlined nested object and a nested struct must compare as the same shape, so the 11 nesting lines disappear",
       "A declared way to mark a field as deliberately not mirrored, carrying a reason - not a blanket entity exclusion",
       "The 33 lines reduce to the 21 that are real drift (5 stale mirror + 16 diverged), matching the GB-238 classification"
     ],
-    "active_claim": null,
-    "archived_at_epoch_ms": 1794038023377,
-    "created_at_epoch_ms": 1793457227410,
-    "decisions": [],
-    "description": "Found while classifying GB-238. The contract comparator matches entities by name and compares their top-level fields, which produces two kinds of line that no code change should ever satisfy:\n\n1. Nesting (11 of 33). docs_config: Rust has `docs: DocumentEntries` holding the nine doc entries; TypeScript inlines the same nine inside `DocsConfig.docs`. Every field exists on both sides at different depths, and all nine are reported missing in rust. workspace_capabilities: TypeScript nests `spec_docs: { primary_spec_present, detected_files }`, Rust mirrors that nesting, and both fields are still reported missing - so the comparator is comparing a parent against a child.\n\n2. Intentional omission (1 of 33). role_override_config.api_key exists in Rust and must not exist in TypeScript: it is a secret, and the browser must never receive it. Satisfying the checker would be a security regression.\n\nWithout both, --check can never be green honestly, so it will be either ignored or permanently allowlisted - the two outcomes the layers allowlist was built to avoid (MTR-19 decision: allowlist entries carry a reason and are reviewed, not blanket).",
-    "edges": [
-      {
-        "kind": "related_to",
-        "target_id": "1be1907f-adbe-458a-8c64-9c965144f2e5",
-        "target_repo": "miter",
-        "target_ticket_key": "MTR-19"
-      }
-    ],
-    "id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
-    "kind": "feature",
-    "latest_handoff": null,
     "plan": null,
-    "priority": 3,
-    "scope": {
-      "crate_name": null,
-      "labels": [],
-      "module_path": null,
-      "repo": null,
-      "target_files": [],
-      "target_symbols": [
-        "miter_engine::analysis::contracts"
-      ]
-    },
-    "slug": "miter-contracts-cannot-tell-nesting-from-drift-or-a-secret-from-a-stale-mirror-12-of-33-lines-are-false-obligations-89304d",
-    "status": "verified",
-    "ticket_key": "GB-239",
-    "title": "miter contracts cannot tell nesting from drift or a secret from a stale mirror: 12 of 33 lines are false obligations",
-    "updated_at_epoch_ms": 1794038023377,
+    "active_claim": null,
+    "latest_handoff": null,
     "verification_receipt": {
-      "base_commit_sha": "560e0ffb0147e6384881ea10949e6932009d89c3",
-      "chain_key": null,
+      "verifier": "manual",
       "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1793461430258,
+      "git_branch": "main",
+      "base_commit_sha": "560e0ffb0147e6384881ea10949e6932009d89c3",
+      "head_commit_sha": "560e0ffb0147e6384881ea10949e6932009d89c3",
       "commit_shas": [
         "560e0ffb0147e6384881ea10949e6932009d89c3"
       ],
-      "diagnostic_count": null,
-      "exit_code": 0,
-      "git_branch": "main",
-      "head_commit_sha": "560e0ffb0147e6384881ea10949e6932009d89c3",
       "repo": null,
-      "summary": "Manual verification confirmed",
-      "verified_at_epoch_ms": 1793461430258,
-      "verifier": "manual"
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793457227410,
+    "updated_at_epoch_ms": 1794336146493,
+    "archived_at_epoch_ms": 1794038023377
+  },
+  "events": [
+    {
+      "event": "handoff_recorded",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793460287809,
+        "completed_items": [
+          "Nesting half done in two commits: 2a87646 walks fields under a dotted path, resolving a named Rust type by name and descending into it (and reading the type from the property signature when the record carries no annotation); 296e3df adds the two comparison rules - depth tolerance (a path is not missing when the other side has something beneath it, or this path sits beneath something the other side has) and subsumption (a missing parent already reports its children). Measured on the suite index: 33 lines before, 21 after, and 21 is exactly the GB-238 total for stale-mirror plus diverged fields, so the 11 nesting lines went and no real one did."
+        ],
+        "remaining_items": [
+          "The declared-non-mirror half is not built. role_override_config.api_key still appears, correctly, because nothing can yet say \"this field must not be mirrored\". The shape should follow .gaugeblock/miter/layers-allowlist.toml from MTR-19: an entry carries entity, field and a reason, and is reviewed rather than blanket - so a contracts-allowlist.toml with a required reason, surfaced in the report as an exception count rather than silently dropped."
+        ],
+        "last_error_or_blocker": "None. Two measurement notes for whoever continues: the first dotted-walk attempt made things worse (39 lines) because the prefix relation was inverted, and the fix was visible only by re-running against the real index - three lines existed in the report of a run that compiled cleanly.",
+        "git_ref": "296e3df",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "handoff_recorded",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793461391944,
+        "completed_items": [
+          "Both halves done and measured. Nesting: 33 -> 21 lines via dotted paths plus depth tolerance and parent subsumption. Declared non-mirrors: contracts-allowlist.toml with a schema-required reason, surfaced as a counted line in the report. End to end on the suite index: 20 real drift lines plus 1 declared exception, and api_key no longer appears among the drift."
+        ],
+        "remaining_items": [
+          "Nothing in this ticket. The 20 remaining lines are GB-238 work: 5 stale-mirror fields to add to the TypeScript mirror and 15 diverged fields needing a canonical spelling per entity."
+        ],
+        "last_error_or_blocker": "None.",
+        "git_ref": "72175b5",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+        "ticket_key": "GB-239",
+        "slug": "miter-contracts-cannot-tell-nesting-from-drift-or-a-secret-from-a-stale-mirror-12-of-33-lines-are-false-obligations-89304d",
+        "title": "miter contracts cannot tell nesting from drift or a secret from a stale mirror: 12 of 33 lines are false obligations",
+        "description": "",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "miter_engine::analysis::contracts"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793457227410,
+        "updated_at_epoch_ms": 1793457227410
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793457235947,
+        "lease_expires_at_epoch_ms": 1793460835947,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "from": "deferred",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793457235947
+    },
+    {
+      "event": "task_updated",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "title": null,
+      "description": "Found while classifying GB-238. The contract comparator matches entities by name and compares their top-level fields, which produces two kinds of line that no code change should ever satisfy:\n\n1. Nesting (11 of 33). docs_config: Rust has `docs: DocumentEntries` holding the nine doc entries; TypeScript inlines the same nine inside `DocsConfig.docs`. Every field exists on both sides at different depths, and all nine are reported missing in rust. workspace_capabilities: TypeScript nests `spec_docs: { primary_spec_present, detected_files }`, Rust mirrors that nesting, and both fields are still reported missing - so the comparator is comparing a parent against a child.\n\n2. Intentional omission (1 of 33). role_override_config.api_key exists in Rust and must not exist in TypeScript: it is a secret, and the browser must never receive it. Satisfying the checker would be a security regression.\n\nWithout both, --check can never be green honestly, so it will be either ignored or permanently allowlisted - the two outcomes the layers allowlist was built to avoid (MTR-19 decision: allowlist entries carry a reason and are reviewed, not blanket).",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "Compare at equal depth: an inlined nested object and a nested struct must compare as the same shape, so the 11 nesting lines disappear",
+        "A declared way to mark a field as deliberately not mirrored, carrying a reason - not a blanket entity exclusion",
+        "The 33 lines reduce to the 21 that are real drift (5 stale mirror + 16 diverged), matching the GB-238 classification"
+      ],
+      "timestamp_ms": 1793457236095
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793461430176,
+        "lease_expires_at_epoch_ms": 1793465030176,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793461430176
+    },
+    {
+      "event": "task_verified",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793461430258,
+        "git_branch": "main",
+        "base_commit_sha": "560e0ffb0147e6384881ea10949e6932009d89c3",
+        "head_commit_sha": "560e0ffb0147e6384881ea10949e6932009d89c3",
+        "commit_shas": [
+          "560e0ffb0147e6384881ea10949e6932009d89c3"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953204528
+    },
+    {
+      "event": "task_archived",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "status": "verified",
+      "timestamp_ms": 1794038023377
+    },
+    {
+      "event": "edge_added",
+      "task_id": "89304dba-a2c0-4cc1-9ab6-c90b60760a8c",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "1be1907f-adbe-458a-8c64-9c965144f2e5",
+        "target_ticket_key": "MTR-19",
+        "target_repo": "miter"
+      },
+      "timestamp_ms": 1794336146493
     }
-  }
+  ]
 }

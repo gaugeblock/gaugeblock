@@ -1,40 +1,90 @@
 {
+  "ticket": {
+    "id": "3891c0d4-546e-499c-a271-1dac48770095",
+    "ticket_key": "GB-262",
+    "slug": "benchwork-migrate-sees-neither-storypole-nor-miter-and-treats-live-gaugeblock-docs-toml-as-legacy-3891c0",
+    "title": "benchwork migrate must discard derived caches rather than move them, and must describe docs.toml consolidation",
+    "description": "Retitled 2026-11-06: the original claim that migrate 'sees neither .storypole nor .miter' was my misreading (I ran it at the suite root, the one repo with no legacy dirs). Per repo it detects both correctly. What remains: (1) it proposes moving the whole .storypole directory, which contains index.sqlite, -shm and -wal - a derived cache must be discarded rather than migrated or a stale index will be opened and lie; (2) at the root it would ARCHIVE .gaugeblock/docs.toml with no merge described, which needs confirming as consolidation rather than discard; (3) the dry-run names source and destination but not per-item classification or conflict handling (BW-31), which is what makes a nine-repo run reviewable.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "benchwork_core::migration"
+      ],
+      "labels": []
+    },
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "56be844a-bfbe-4965-b1c5-3cd0e54203d7",
+        "target_ticket_key": "BW-31",
+        "target_repo": "benchwork"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "CODE DONE 2026-11-06 (benchwork commit): engine.rs now discards index.sqlite/-shm/-wal after a DirectoryMove via discard_caches()",
+      " and both the dry-run line and the applied receipt report the count ('would discard 2 derived cache files' / 'discarded 2')",
+      " so a fleet review cannot mistake a discard for a move. The copy fallback path is covered because discarding happens at the destination after the rename-or-copy.\\n\\nVerification: clippy --all-targets -D warnings clean",
+      " fmt clean",
+      " migration test green. NOT verified end-to-end on a real repo",
+      " because outfeed install said '(up-to-date)' - it compares the crate version",
+      " which did not change - so the installed binary is still the old one (mtime Nov 6 00:10 against a 12:30 source file). GB-264 filed for that. Phase 1 on rabbet is therefore blocked until either install can be forced or the version changes."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793995275072,
+    "updated_at_epoch_ms": 1794336146495
+  },
   "events": [
     {
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "acceptance_criteria": [],
-        "active_claim": null,
-        "created_at_epoch_ms": 1793995275072,
-        "decisions": [],
-        "description": "",
-        "edges": [],
         "id": "3891c0d4-546e-499c-a271-1dac48770095",
+        "ticket_key": "GB-262",
+        "slug": "benchwork-migrate-sees-neither-storypole-nor-miter-and-treats-live-gaugeblock-docs-toml-as-legacy-3891c0",
+        "title": "benchwork migrate sees neither .storypole nor .miter, and treats live .gaugeblock/docs.toml as legacy",
+        "description": "",
         "kind": "bug",
-        "latest_handoff": null,
-        "plan": null,
+        "status": "triage",
         "priority": 3,
         "scope": {
-          "crate_name": null,
-          "labels": [],
-          "module_path": null,
           "repo": null,
+          "crate_name": null,
+          "module_path": null,
           "target_files": [],
           "target_symbols": [
             "benchwork_core::migration"
-          ]
+          ],
+          "labels": []
         },
-        "slug": "benchwork-migrate-sees-neither-storypole-nor-miter-and-treats-live-gaugeblock-docs-toml-as-legacy-3891c0",
-        "status": "triage",
-        "ticket_key": "GB-262",
-        "title": "benchwork migrate sees neither .storypole nor .miter, and treats live .gaugeblock/docs.toml as legacy",
-        "updated_at_epoch_ms": 1793995275072,
-        "verification_receipt": null
-      }
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793995275072,
+        "updated_at_epoch_ms": 1793995275072
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
     },
     {
+      "event": "task_updated",
+      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "CORRECTION 2026-11-06: the 'sees neither .storypole nor .miter' half of this report was WRONG and was my misreading. Run at the suite root it reports only docs.toml",
         " because the root is the one repository with no legacy directories; run inside rabbet",
@@ -49,25 +99,25 @@
         " which is BW-31 and is what makes a nine-repo run reviewable.\\n\\nDowngrading in effect: not a detection bug",
         " a cache-handling and reporting gap."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
-      "timestamp_ms": 1793996766794,
-      "title": null
+      "timestamp_ms": 1793996766794
     },
     {
-      "acceptance_criteria": null,
+      "event": "task_updated",
+      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
+      "title": "benchwork migrate must discard derived caches rather than move them, and must describe docs.toml consolidation",
       "description": "Retitled 2026-11-06: the original claim that migrate 'sees neither .storypole nor .miter' was my misreading (I ran it at the suite root, the one repo with no legacy dirs). Per repo it detects both correctly. What remains: (1) it proposes moving the whole .storypole directory, which contains index.sqlite, -shm and -wal - a derived cache must be discarded rather than migrated or a stale index will be opened and lie; (2) at the root it would ARCHIVE .gaugeblock/docs.toml with no merge described, which needs confirming as consolidation rather than discard; (3) the dry-run names source and destination but not per-item classification or conflict handling (BW-31), which is what makes a nine-repo run reviewable.",
-      "event": "task_updated",
       "priority": null,
       "scope": null,
-      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
-      "timestamp_ms": 1793996944858,
-      "title": "benchwork migrate must discard derived caches rather than move them, and must describe docs.toml consolidation"
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793996944858
     },
     {
+      "event": "task_updated",
+      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "CODE DONE 2026-11-06 (benchwork commit): engine.rs now discards index.sqlite/-shm/-wal after a DirectoryMove via discard_caches()",
         " and both the dry-run line and the applied receipt report the count ('would discard 2 derived cache files' / 'discarded 2')",
@@ -77,68 +127,18 @@
         " because outfeed install said '(up-to-date)' - it compares the crate version",
         " which did not change - so the installed binary is still the old one (mtime Nov 6 00:10 against a 12:30 source file). GB-264 filed for that. Phase 1 on rabbet is therefore blocked until either install can be forced or the version changes."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
-      "timestamp_ms": 1793997199294,
-      "title": null
+      "timestamp_ms": 1793997199294
     },
     {
+      "event": "edge_added",
+      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
       "edge": {
         "kind": "related_to",
         "target_id": "56be844a-bfbe-4965-b1c5-3cd0e54203d7",
-        "target_repo": "benchwork",
-        "target_ticket_key": "BW-31"
+        "target_ticket_key": "BW-31",
+        "target_repo": "benchwork"
       },
-      "event": "edge_added",
-      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
       "timestamp_ms": 1794336146495
     }
-  ],
-  "ticket": {
-    "acceptance_criteria": [
-      "CODE DONE 2026-11-06 (benchwork commit): engine.rs now discards index.sqlite/-shm/-wal after a DirectoryMove via discard_caches()",
-      " and both the dry-run line and the applied receipt report the count ('would discard 2 derived cache files' / 'discarded 2')",
-      " so a fleet review cannot mistake a discard for a move. The copy fallback path is covered because discarding happens at the destination after the rename-or-copy.\\n\\nVerification: clippy --all-targets -D warnings clean",
-      " fmt clean",
-      " migration test green. NOT verified end-to-end on a real repo",
-      " because outfeed install said '(up-to-date)' - it compares the crate version",
-      " which did not change - so the installed binary is still the old one (mtime Nov 6 00:10 against a 12:30 source file). GB-264 filed for that. Phase 1 on rabbet is therefore blocked until either install can be forced or the version changes."
-    ],
-    "active_claim": null,
-    "created_at_epoch_ms": 1793995275072,
-    "decisions": [],
-    "description": "Retitled 2026-11-06: the original claim that migrate 'sees neither .storypole nor .miter' was my misreading (I ran it at the suite root, the one repo with no legacy dirs). Per repo it detects both correctly. What remains: (1) it proposes moving the whole .storypole directory, which contains index.sqlite, -shm and -wal - a derived cache must be discarded rather than migrated or a stale index will be opened and lie; (2) at the root it would ARCHIVE .gaugeblock/docs.toml with no merge described, which needs confirming as consolidation rather than discard; (3) the dry-run names source and destination but not per-item classification or conflict handling (BW-31), which is what makes a nine-repo run reviewable.",
-    "edges": [
-      {
-        "kind": "related_to",
-        "target_id": "56be844a-bfbe-4965-b1c5-3cd0e54203d7",
-        "target_repo": "benchwork",
-        "target_ticket_key": "BW-31"
-      }
-    ],
-    "id": "3891c0d4-546e-499c-a271-1dac48770095",
-    "kind": "bug",
-    "latest_handoff": null,
-    "plan": null,
-    "priority": 3,
-    "scope": {
-      "crate_name": null,
-      "labels": [],
-      "module_path": null,
-      "repo": null,
-      "target_files": [],
-      "target_symbols": [
-        "benchwork_core::migration"
-      ]
-    },
-    "slug": "benchwork-migrate-sees-neither-storypole-nor-miter-and-treats-live-gaugeblock-docs-toml-as-legacy-3891c0",
-    "status": "triage",
-    "ticket_key": "GB-262",
-    "title": "benchwork migrate must discard derived caches rather than move them, and must describe docs.toml consolidation",
-    "updated_at_epoch_ms": 1793997199294,
-    "verification_receipt": null
-  }
+  ]
 }

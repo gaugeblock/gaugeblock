@@ -43,7 +43,8 @@
       "chain_key": null
     },
     "created_at_epoch_ms": 1794002495404,
-    "updated_at_epoch_ms": 1794106559391
+    "updated_at_epoch_ms": 1794343398353,
+    "archived_at_epoch_ms": 1794343398353
   },
   "events": [
     {

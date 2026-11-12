@@ -4,12 +4,12 @@
     "ticket_key": "GB-355",
     "slug": "the-suite-view-is-a-snapshot-rather-than-a-projection-so-root-reads-serve-stale-member-status-and-deleting-the-index-changes-the-answer-6dac7f",
     "title": "the suite view is a snapshot rather than a projection, so root reads serve stale member status and deleting the index changes the answer",
-    "description": "Measured 2026-11-10 while closing SP-50, and it is why the board numbers in this session flip-flopped between two shapes. The root index (.gaugeblock/storypole/index.sqlite) held 374 task rows - a materialised copy of the whole suite - while storypole own index held 49 and the suite view answered 106 active. SP-50 was verified and archived in the storypole store, storypole show SP-50 in that store said Verified, and the root answered in_progress for the same ticket because its copy predates the verification. SP-47 and SP-49 read correctly in both, so the copy is refreshed by something that did not run after SP-50. Three measurements: (1) deleting workspace.sqlite changed nothing - the list still answered 106 rows with SP-50 in_progress, so the stale row is in index.sqlite; (2) deleting index.sqlite dropped the answer to 65 rows with SP-50 absent entirely, so the suite view is a snapshot rather than a projection rebuilt on read; (3) storypole ledger-reconcile reports index and ledger agree throughout, because it compares the root store own tasks and is blind to copied member rows. That falsifies the invariant SP-36 states - deleting index.sqlite changes no answer - for the suite view specifically. Consequence for the burn-down: every status read from the root may be stale by up to one rollup, so the owning repository is the only trustworthy reader, which is the opposite of what a meta-harness is for. Wanted: the suite view rebuilds from member records on read or on demand, a refresh verb that can be shown to converge, and reconcile extended to copied rows so a stale one is reported rather than agreed with. Acceptance: verifying a member ticket is visible from the root immediately, deleting either index file changes no answer, and reconcile names any row whose copy disagrees with its owner.",
+    "description": "Measured 2026-11-10 while closing SP-50, and it is why the board numbers in this session flip-flopped between two shapes. The root index (.gaugeblock/storypole/index.sqlite) held 374 task rows - a materialised copy of the whole suite - while storypole own index held 49 and the suite view answered 106 active. SP-50 was verified and archived in the storypole store, storypole show SP-50 in that store said Verified, and the root answered in_progress for the same ticket because its copy predates the verification. SP-47 and SP-49 read correctly in both, so the copy is refreshed by something that did not run after SP-50. Three measurements: (1) deleting workspace.sqlite changed nothing - the list still answered 106 rows with SP-50 in_progress, so the stale row is in index.sqlite; (2) deleting index.sqlite dropped the answer to 65 rows with SP-50 absent entirely, so the suite view is a snapshot rather than a projection rebuilt on read; (3) storypole ledger-reconcile reports index and ledger agree throughout, because it compares the root store own tasks and is blind to copied member rows. That falsifies the invariant SP-36 states - deleting index.sqlite changes no answer - for the suite view specifically. Consequence for the burn-down: every status read from the root may be stale by up to one rollup, so the owning repository is the only trustworthy reader, which is the opposite of what a meta-harness is for. Wanted: the suite view rebuilds from member records on read or on demand, a refresh verb that can be shown to converge, and reconcile extended to copied rows so a stale one is reported rather than agreed with. Acceptance: verifying a member ticket is visible from the root immediately, deleting either index file changes no answer, and reconcile names any row whose copy disagrees with its owner.\n\nFIXED 2026-11-10 (storypole 2219cd6), in two halves, because either alone was wrong. Purge: a rebuild records how many tasks it produced and opening compares that with the live row count, so foreign or missing rows force a rebuild - the marker is the rebuild task count, not the record-file count, because a record file can carry events without naming a task and the file count would rebuild on every command. Route: list at a suite root reads the workspace rollup, which replays every member records on open, instead of that store own index. Measured after installing the fixed binary: the root index fell from 374 rows to 65 (its own), the suite view answered 106 rows with SP-50 absent and no in_progress row, and list at the root costs 1.8 s wall (0.29 user, 0.34 sys) against an instant stale cache - that is the price of replaying twelve stores and it is stated rather than assumed. Records mode only: all twelve stores are records mode (common carries a legacy ledger beside its tickets directory and records win), so the legacy ledger index keeps its old behaviour deliberately. Tests: index_ownership_tests pins that a foreign row is purged on reopen and that deleting the index changes no answer; nextest -p storypole-core 180 passed.\n\nCORRECTION to the numbers in the paragraph above, measured rather than restated: the root index now holds 173 rows, and 65 is what list reports after excluding archived tickets - the pre-fix file held 374, so 201 member rows were purged, not 309. What stands is the composition: zero rows with a member prefix (SP-, MTR-, BW-, OF-, RB-, CO-, CH-, JN-, SH-) remain in the root index, list answers 106 rows with SP-50 absent, and the same command from inside storypole still answers for that repository alone. The 1.8 s figure is unchanged and is the cost of the routing half.",
     "kind": "bug",
-    "status": "triage",
+    "status": "verified",
     "priority": 3,
     "scope": {
-      "repo": null,
+      "repo": "storypole",
       "crate_name": "storypole-core",
       "module_path": null,
       "target_files": [],
@@ -24,9 +24,25 @@
     "plan": null,
     "active_claim": null,
     "latest_handoff": null,
-    "verification_receipt": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings && cargo nextest run --workspace && miter audit --path . --threshold 250 --paths && chalkline docs check -d .",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "AUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit ===\nRepository: /Users/wolff/dev2026/neurosymbolic-suite/storypole/.\n\n[OK]      Readme           (README.md)\n[OK]      Contributing     (CONTRIBUTING.md)\n[OK]      Product          (docs/PRODUCT.md)\n[OK]      Architecture     (docs/ARCHITECTURE.md)\n[OK]      Spec             (docs/SPEC.md)\n[OK]      Design           (docs/DESIGN.md)\n[OK]      Roadmap          (docs/ROADMAP.md)\n[OK]      Changelog        (CHANGELOG.md)\n[OK]      Agents           (AGENTS.md)\n\nSummary: 9 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794427298601,
+      "git_branch": "fix/gb-355-index-ownership",
+      "base_commit_sha": "7cd21c00795bd7bb9b01fb79f87fe5099ec6833e",
+      "head_commit_sha": "2219cd64683b75f21eeda5aecd8a3f8c611b0bc2",
+      "commit_shas": [
+        "2219cd64683b75f21eeda5aecd8a3f8c611b0bc2"
+      ],
+      "repo": "storypole",
+      "chain_key": "storypole"
+    },
     "created_at_epoch_ms": 1794425395437,
-    "updated_at_epoch_ms": 1794425395437
+    "updated_at_epoch_ms": 1794427374998,
+    "archived_at_epoch_ms": 1794427374998
   },
   "events": [
     {

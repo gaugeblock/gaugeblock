@@ -1,288 +1,288 @@
 {
-  "events": [
-    {
-      "event": "handoff_recorded",
-      "handoff": {
-        "completed_items": [
-          "All seven stdio servers migrated and the JSON-RPC literals are gone: 49 occurrences across 10 files down to 2, both inside gaugeblock-mcp. Crate: 11 tests. Per repo: batten 14, dado 14, chalkline 23, outfeed 80, storypole 44, joiner 37, benchwork 35 - all green, clippy -D warnings and docs clean. Two defects fixed by construction: outfeed and storypole answered a tools/call with no params.name with nothing at all (silence indistinguishable from a hang) - now -32602; and all seven logged a malformed line and dropped it - now -32700 with id null."
-        ],
-        "dirty_files": [],
-        "git_ref": "70df238",
-        "last_error_or_blocker": "None. Correction recorded: my first commit message claimed three servers returned raw JSON where the spec requires a content array. That was wrong - their dispatchers build the envelope - and the message and crate docs were amended to say what was actually wrong: the envelope lives in the tool layer for three servers and in the loop for four, so a wire type sat where it did not belong.",
-        "recorded_by_agent": "cline",
-        "remaining_items": [
-          "Two follow-ups filed and not done inline. GB-234: batten, joiner and benchwork still build the MCP content envelope inside dispatch_tool, so ToolOutcome::Raw exists for them; moving it up is a change to every return site in three dispatchers. GB-235: miter keeps a typed JsonRpcRequest/JsonRpcResponse pair and is the remaining copy - it is literal-free because it uses struct fields, and migrating it is a design change to a typed protocol rather than a loop replacement."
-        ],
-        "timestamp_ms": 1793422773679
-      },
-      "new_status": "ready",
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae"
-    },
-    {
-      "event": "task_created",
-      "task": {
-        "acceptance_criteria": [
-          "McpToolHandler trait defines list_tools and call_tool,Generic run_mcp_stdio_server loop replaces duplicate implementations,Reduces over 1200 lines of duplicate boilerplate across 7 repositories"
-        ],
-        "active_claim": null,
-        "created_at_epoch_ms": 1793170389031,
-        "decisions": [],
-        "description": "Extract generic JSON-RPC 2.0 stdio loop, McpToolHandler trait, and standard error mapper into gaugeblock-mcp. Replace duplicate boilerplate across all 7 MCP servers in the suite.",
-        "edges": [],
-        "id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-        "kind": "refactor",
-        "latest_handoff": null,
-        "plan": null,
-        "priority": 2,
-        "scope": {
-          "crate_name": null,
-          "labels": [
-            "mcp,boilerplate,refactor,gaugeblock-common"
-          ],
-          "module_path": null,
-          "repo": "workspace",
-          "target_files": [],
-          "target_symbols": []
-        },
-        "slug": "extract-gaugeblock-mcp-to-eliminate-duplicate-json-rpc-boilerplate-across-7-mcp-servers-b8dc86",
-        "status": "ready",
-        "ticket_key": "GB-130",
-        "title": "Extract gaugeblock-mcp to eliminate duplicate JSON-RPC boilerplate across 7 MCP servers",
-        "updated_at_epoch_ms": 1793170389031,
-        "verification_receipt": null
-      }
-    },
-    {
-      "edge": {
-        "kind": "parent_epic",
-        "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
-        "target_repo": "workspace",
-        "target_ticket_key": "GB-128"
-      },
-      "event": "edge_added",
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-      "timestamp_ms": 1793170394939
-    },
-    {
-      "event": "plan_updated",
-      "plan": {
-        "design_markdown": "# Task Plan: GB-130 — Extract gaugeblock-mcp to Eliminate Duplicate JSON-RPC Boilerplate Across 7 MCP Servers\n\n> **Task Key:** `GB-130`  \n> **Parent Epic:** `GB-128`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Problem Statement\n`miter clones` detected 100% structural clones across all 7 MCP servers in the suite (`benchwork-mcp`, `outfeed-mcp`, `batten-mcp`, `joiner-mcp`, `miter-mcp`, `storypole-mcp`, `chalkline-mcp`). Each independently re-implements `run_stdio_server`, JSON-RPC 2.0 dispatch, and schema registration (`list_tools`), duplicating over 1,200 lines of boilerplate.\n\n---\n\n## 2. Technical Blueprint\n1. In `gaugeblock/common/crates/gaugeblock-mcp`:\n   * Define the `McpToolHandler` trait (`list_tools(&self) -> Vec<Value>`, `call_tool(&self, name: &str, args: Value) -> Result<Value, McpError>`).\n   * Implement `run_mcp_stdio_server<H: McpToolHandler>(handler: H, name: &str, version: &str) -> Result<(), McpError>`.\n   * Implement standard JSON-RPC 2.0 error mapping and tracing instrumentation.\n2. Refactor member MCP servers to implement `McpToolHandler` and delegate the event loop to `gaugeblock-mcp`.\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Implement `McpToolHandler` trait and generic stdio loop in `gaugeblock-mcp`.\n* **Step 2:** Refactor `outfeed-mcp` and `storypole-mcp` to consume `gaugeblock-mcp`.\n* **Step 3:** Refactor remaining 5 MCP servers.\n* **Step 4:** Tier 3 workspace verification (`cargo nextest run --workspace`).\n",
-        "plan_file_path": ".gaugeblock/storypole/plans/GB-130.md",
-        "steps": [
-          {
-            "completed": false,
-            "step_id": "1",
-            "target_files": [],
-            "title": "Implement McpToolHandler trait and generic stdio loop in gaugeblock-mcp",
-            "verification_gate": "cargo check -p gaugeblock-mcp"
-          },
-          {
-            "completed": false,
-            "step_id": "2",
-            "target_files": [],
-            "title": "Refactor outfeed-mcp and storypole-mcp to consume gaugeblock-mcp",
-            "verification_gate": "cargo check --workspace"
-          },
-          {
-            "completed": false,
-            "step_id": "3",
-            "target_files": [],
-            "title": "Refactor remaining 5 MCP servers",
-            "verification_gate": "cargo check --workspace"
-          },
-          {
-            "completed": false,
-            "step_id": "4",
-            "target_files": [],
-            "title": "Tier 3 workspace verification",
-            "verification_gate": "cargo nextest run --workspace"
-          }
-        ],
-        "summary": "Extract gaugeblock-mcp to eliminate duplicate JSON-RPC boilerplate",
-        "updated_at_epoch_ms": 1793170551095
-      },
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-      "timestamp_ms": 1793170551095
-    },
-    {
-      "acceptance_criteria": null,
-      "description": "EVALUATED, per the ticket instruction to measure before assuming a crate is justified. Measured on 2026-10-30: 49 occurrences of \"jsonrpc\" across about 10 files - one per MCP server crate (miter, storypole, outfeed, joiner, dado, chalkline, benchwork, batten, rabbet, sawhorse) plus their protocol tests.\n\nWHAT THAT MEANS: the duplication is real but shallow - roughly one dispatch loop and one response envelope per crate, not a shared protocol engine. A thin gaugeblock-mcp crate holding the JSON-RPC framing, request/response structs and the stdio loop would remove about ten copies of maybe 100-150 lines each, and would give the suite one place to fix framing bugs. It would NOT own tool schemas, which belong to each server.\n\nRECOMMENDATION: proceed with a thin shim, but after GB-131 and CO-7 - it is independent of both, yet it touches every repository, and doing it while the other two are mid-flight would mean three overlapping suite-wide edits. A prototype over one server first, to measure how much code actually disappears before creating a crate for it.",
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-      "timestamp_ms": 1793412428591,
-      "title": null
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793421072327,
-        "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793424672327
-      },
-      "event": "task_claimed",
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-      "timestamp_ms": 1793421072327,
-      "to": "in_progress"
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793423368250,
-        "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793426968250
-      },
-      "event": "task_claimed",
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-      "timestamp_ms": 1793423368250,
-      "to": "in_progress"
-    },
-    {
-      "event": "task_verified",
-      "receipt": {
-        "base_commit_sha": "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb",
-        "chain_key": null,
-        "command": "n/a",
-        "commit_shas": [
-          "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb"
-        ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "main",
-        "head_commit_sha": "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb",
-        "repo": null,
-        "summary": "Manual verification confirmed",
-        "verified_at_epoch_ms": 1793423368341,
-        "verifier": "manual"
-      },
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae"
-    },
-    {
-      "event": "task_archived",
-      "status": "verified",
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-      "timestamp_ms": 1794037999535
-    },
-    {
-      "edge": {
-        "kind": "related_to",
-        "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
-        "target_repo": "common",
-        "target_ticket_key": "CO-7"
-      },
-      "event": "edge_added",
-      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-      "timestamp_ms": 1794336146473
-    }
-  ],
   "ticket": {
-    "acceptance_criteria": [
-      "McpToolHandler trait defines list_tools and call_tool,Generic run_mcp_stdio_server loop replaces duplicate implementations,Reduces over 1200 lines of duplicate boilerplate across 7 repositories"
-    ],
-    "active_claim": null,
-    "archived_at_epoch_ms": 1794037999535,
-    "created_at_epoch_ms": 1793170389031,
-    "decisions": [],
+    "id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+    "ticket_key": "GB-130",
+    "slug": "extract-gaugeblock-mcp-to-eliminate-duplicate-json-rpc-boilerplate-across-7-mcp-servers-b8dc86",
+    "title": "Extract gaugeblock-mcp to eliminate duplicate JSON-RPC boilerplate across 7 MCP servers",
     "description": "EVALUATED, per the ticket instruction to measure before assuming a crate is justified. Measured on 2026-10-30: 49 occurrences of \"jsonrpc\" across about 10 files - one per MCP server crate (miter, storypole, outfeed, joiner, dado, chalkline, benchwork, batten, rabbet, sawhorse) plus their protocol tests.\n\nWHAT THAT MEANS: the duplication is real but shallow - roughly one dispatch loop and one response envelope per crate, not a shared protocol engine. A thin gaugeblock-mcp crate holding the JSON-RPC framing, request/response structs and the stdio loop would remove about ten copies of maybe 100-150 lines each, and would give the suite one place to fix framing bugs. It would NOT own tool schemas, which belong to each server.\n\nRECOMMENDATION: proceed with a thin shim, but after GB-131 and CO-7 - it is independent of both, yet it touches every repository, and doing it while the other two are mid-flight would mean three overlapping suite-wide edits. A prototype over one server first, to measure how much code actually disappears before creating a crate for it.",
+    "kind": "refactor",
+    "status": "verified",
+    "priority": 2,
+    "scope": {
+      "repo": "workspace",
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": [
+        "mcp,boilerplate,refactor,gaugeblock-common"
+      ]
+    },
     "edges": [
       {
         "kind": "parent_epic",
         "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
-        "target_repo": "workspace",
-        "target_ticket_key": "GB-128"
+        "target_ticket_key": "GB-128",
+        "target_repo": "workspace"
       },
       {
         "kind": "related_to",
         "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
-        "target_repo": "common",
-        "target_ticket_key": "CO-7"
+        "target_ticket_key": "CO-7",
+        "target_repo": "common"
       }
     ],
-    "id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
-    "kind": "refactor",
-    "latest_handoff": null,
+    "decisions": [],
+    "acceptance_criteria": [
+      "McpToolHandler trait defines list_tools and call_tool,Generic run_mcp_stdio_server loop replaces duplicate implementations,Reduces over 1200 lines of duplicate boilerplate across 7 repositories"
+    ],
     "plan": {
+      "summary": "Extract gaugeblock-mcp to eliminate duplicate JSON-RPC boilerplate",
       "design_markdown": "# Task Plan: GB-130 — Extract gaugeblock-mcp to Eliminate Duplicate JSON-RPC Boilerplate Across 7 MCP Servers\n\n> **Task Key:** `GB-130`  \n> **Parent Epic:** `GB-128`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Problem Statement\n`miter clones` detected 100% structural clones across all 7 MCP servers in the suite (`benchwork-mcp`, `outfeed-mcp`, `batten-mcp`, `joiner-mcp`, `miter-mcp`, `storypole-mcp`, `chalkline-mcp`). Each independently re-implements `run_stdio_server`, JSON-RPC 2.0 dispatch, and schema registration (`list_tools`), duplicating over 1,200 lines of boilerplate.\n\n---\n\n## 2. Technical Blueprint\n1. In `gaugeblock/common/crates/gaugeblock-mcp`:\n   * Define the `McpToolHandler` trait (`list_tools(&self) -> Vec<Value>`, `call_tool(&self, name: &str, args: Value) -> Result<Value, McpError>`).\n   * Implement `run_mcp_stdio_server<H: McpToolHandler>(handler: H, name: &str, version: &str) -> Result<(), McpError>`.\n   * Implement standard JSON-RPC 2.0 error mapping and tracing instrumentation.\n2. Refactor member MCP servers to implement `McpToolHandler` and delegate the event loop to `gaugeblock-mcp`.\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Implement `McpToolHandler` trait and generic stdio loop in `gaugeblock-mcp`.\n* **Step 2:** Refactor `outfeed-mcp` and `storypole-mcp` to consume `gaugeblock-mcp`.\n* **Step 3:** Refactor remaining 5 MCP servers.\n* **Step 4:** Tier 3 workspace verification (`cargo nextest run --workspace`).\n",
-      "plan_file_path": ".gaugeblock/storypole/plans/GB-130.md",
       "steps": [
         {
-          "completed": false,
           "step_id": "1",
-          "target_files": [],
           "title": "Implement McpToolHandler trait and generic stdio loop in gaugeblock-mcp",
-          "verification_gate": "cargo check -p gaugeblock-mcp"
+          "target_files": [],
+          "verification_gate": "cargo check -p gaugeblock-mcp",
+          "completed": false
         },
         {
-          "completed": false,
           "step_id": "2",
-          "target_files": [],
           "title": "Refactor outfeed-mcp and storypole-mcp to consume gaugeblock-mcp",
-          "verification_gate": "cargo check --workspace"
+          "target_files": [],
+          "verification_gate": "cargo check --workspace",
+          "completed": false
         },
         {
-          "completed": false,
           "step_id": "3",
-          "target_files": [],
           "title": "Refactor remaining 5 MCP servers",
-          "verification_gate": "cargo check --workspace"
+          "target_files": [],
+          "verification_gate": "cargo check --workspace",
+          "completed": false
         },
         {
-          "completed": false,
           "step_id": "4",
-          "target_files": [],
           "title": "Tier 3 workspace verification",
-          "verification_gate": "cargo nextest run --workspace"
+          "target_files": [],
+          "verification_gate": "cargo nextest run --workspace",
+          "completed": false
         }
       ],
-      "summary": "Extract gaugeblock-mcp to eliminate duplicate JSON-RPC boilerplate",
+      "plan_file_path": ".gaugeblock/storypole/plans/GB-130.md",
       "updated_at_epoch_ms": 1793170551095
     },
-    "priority": 2,
-    "scope": {
-      "crate_name": null,
-      "labels": [
-        "mcp,boilerplate,refactor,gaugeblock-common"
-      ],
-      "module_path": null,
-      "repo": "workspace",
-      "target_files": [],
-      "target_symbols": []
-    },
-    "slug": "extract-gaugeblock-mcp-to-eliminate-duplicate-json-rpc-boilerplate-across-7-mcp-servers-b8dc86",
-    "status": "verified",
-    "ticket_key": "GB-130",
-    "title": "Extract gaugeblock-mcp to eliminate duplicate JSON-RPC boilerplate across 7 MCP servers",
-    "updated_at_epoch_ms": 1794037999535,
+    "active_claim": null,
+    "latest_handoff": null,
     "verification_receipt": {
-      "base_commit_sha": "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb",
-      "chain_key": null,
+      "verifier": "manual",
       "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "Manual verification confirmed",
+      "verified_at_epoch_ms": 1793423368341,
+      "git_branch": "main",
+      "base_commit_sha": "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb",
+      "head_commit_sha": "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb",
       "commit_shas": [
         "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb"
       ],
-      "diagnostic_count": null,
-      "exit_code": 0,
-      "git_branch": "main",
-      "head_commit_sha": "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb",
       "repo": null,
-      "summary": "Manual verification confirmed",
-      "verified_at_epoch_ms": 1793423368341,
-      "verifier": "manual"
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793170389031,
+    "updated_at_epoch_ms": 1794336146473,
+    "archived_at_epoch_ms": 1794037999535
+  },
+  "events": [
+    {
+      "event": "handoff_recorded",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793422773679,
+        "completed_items": [
+          "All seven stdio servers migrated and the JSON-RPC literals are gone: 49 occurrences across 10 files down to 2, both inside gaugeblock-mcp. Crate: 11 tests. Per repo: batten 14, dado 14, chalkline 23, outfeed 80, storypole 44, joiner 37, benchwork 35 - all green, clippy -D warnings and docs clean. Two defects fixed by construction: outfeed and storypole answered a tools/call with no params.name with nothing at all (silence indistinguishable from a hang) - now -32602; and all seven logged a malformed line and dropped it - now -32700 with id null."
+        ],
+        "remaining_items": [
+          "Two follow-ups filed and not done inline. GB-234: batten, joiner and benchwork still build the MCP content envelope inside dispatch_tool, so ToolOutcome::Raw exists for them; moving it up is a change to every return site in three dispatchers. GB-235: miter keeps a typed JsonRpcRequest/JsonRpcResponse pair and is the remaining copy - it is literal-free because it uses struct fields, and migrating it is a design change to a typed protocol rather than a loop replacement."
+        ],
+        "last_error_or_blocker": "None. Correction recorded: my first commit message claimed three servers returned raw JSON where the spec requires a content array. That was wrong - their dispatchers build the envelope - and the message and crate docs were amended to say what was actually wrong: the envelope lives in the tool layer for three servers and in the loop for four, so a wire type sat where it did not belong.",
+        "git_ref": "70df238",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "task_created",
+      "task": {
+        "id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+        "ticket_key": "GB-130",
+        "slug": "extract-gaugeblock-mcp-to-eliminate-duplicate-json-rpc-boilerplate-across-7-mcp-servers-b8dc86",
+        "title": "Extract gaugeblock-mcp to eliminate duplicate JSON-RPC boilerplate across 7 MCP servers",
+        "description": "Extract generic JSON-RPC 2.0 stdio loop, McpToolHandler trait, and standard error mapper into gaugeblock-mcp. Replace duplicate boilerplate across all 7 MCP servers in the suite.",
+        "kind": "refactor",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": "workspace",
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": [
+            "mcp,boilerplate,refactor,gaugeblock-common"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "McpToolHandler trait defines list_tools and call_tool,Generic run_mcp_stdio_server loop replaces duplicate implementations,Reduces over 1200 lines of duplicate boilerplate across 7 repositories"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793170389031,
+        "updated_at_epoch_ms": 1793170389031
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "edge": {
+        "kind": "parent_epic",
+        "target_id": "cc76e2e9-add6-4a0d-b2c3-47d1966e8f83",
+        "target_ticket_key": "GB-128",
+        "target_repo": "workspace"
+      },
+      "timestamp_ms": 1793170394939
+    },
+    {
+      "event": "plan_updated",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "plan": {
+        "summary": "Extract gaugeblock-mcp to eliminate duplicate JSON-RPC boilerplate",
+        "design_markdown": "# Task Plan: GB-130 — Extract gaugeblock-mcp to Eliminate Duplicate JSON-RPC Boilerplate Across 7 MCP Servers\n\n> **Task Key:** `GB-130`  \n> **Parent Epic:** `GB-128`  \n> **Scope:** `workspace`  \n> **Status:** Planned\n\n---\n\n## 1. Problem Statement\n`miter clones` detected 100% structural clones across all 7 MCP servers in the suite (`benchwork-mcp`, `outfeed-mcp`, `batten-mcp`, `joiner-mcp`, `miter-mcp`, `storypole-mcp`, `chalkline-mcp`). Each independently re-implements `run_stdio_server`, JSON-RPC 2.0 dispatch, and schema registration (`list_tools`), duplicating over 1,200 lines of boilerplate.\n\n---\n\n## 2. Technical Blueprint\n1. In `gaugeblock/common/crates/gaugeblock-mcp`:\n   * Define the `McpToolHandler` trait (`list_tools(&self) -> Vec<Value>`, `call_tool(&self, name: &str, args: Value) -> Result<Value, McpError>`).\n   * Implement `run_mcp_stdio_server<H: McpToolHandler>(handler: H, name: &str, version: &str) -> Result<(), McpError>`.\n   * Implement standard JSON-RPC 2.0 error mapping and tracing instrumentation.\n2. Refactor member MCP servers to implement `McpToolHandler` and delegate the event loop to `gaugeblock-mcp`.\n\n---\n\n## 3. Execution Steps\n* **Step 1:** Implement `McpToolHandler` trait and generic stdio loop in `gaugeblock-mcp`.\n* **Step 2:** Refactor `outfeed-mcp` and `storypole-mcp` to consume `gaugeblock-mcp`.\n* **Step 3:** Refactor remaining 5 MCP servers.\n* **Step 4:** Tier 3 workspace verification (`cargo nextest run --workspace`).\n",
+        "steps": [
+          {
+            "step_id": "1",
+            "title": "Implement McpToolHandler trait and generic stdio loop in gaugeblock-mcp",
+            "target_files": [],
+            "verification_gate": "cargo check -p gaugeblock-mcp",
+            "completed": false
+          },
+          {
+            "step_id": "2",
+            "title": "Refactor outfeed-mcp and storypole-mcp to consume gaugeblock-mcp",
+            "target_files": [],
+            "verification_gate": "cargo check --workspace",
+            "completed": false
+          },
+          {
+            "step_id": "3",
+            "title": "Refactor remaining 5 MCP servers",
+            "target_files": [],
+            "verification_gate": "cargo check --workspace",
+            "completed": false
+          },
+          {
+            "step_id": "4",
+            "title": "Tier 3 workspace verification",
+            "target_files": [],
+            "verification_gate": "cargo nextest run --workspace",
+            "completed": false
+          }
+        ],
+        "plan_file_path": ".gaugeblock/storypole/plans/GB-130.md",
+        "updated_at_epoch_ms": 1793170551095
+      },
+      "timestamp_ms": 1793170551095
+    },
+    {
+      "event": "task_updated",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "title": null,
+      "description": "EVALUATED, per the ticket instruction to measure before assuming a crate is justified. Measured on 2026-10-30: 49 occurrences of \"jsonrpc\" across about 10 files - one per MCP server crate (miter, storypole, outfeed, joiner, dado, chalkline, benchwork, batten, rabbet, sawhorse) plus their protocol tests.\n\nWHAT THAT MEANS: the duplication is real but shallow - roughly one dispatch loop and one response envelope per crate, not a shared protocol engine. A thin gaugeblock-mcp crate holding the JSON-RPC framing, request/response structs and the stdio loop would remove about ten copies of maybe 100-150 lines each, and would give the suite one place to fix framing bugs. It would NOT own tool schemas, which belong to each server.\n\nRECOMMENDATION: proceed with a thin shim, but after GB-131 and CO-7 - it is independent of both, yet it touches every repository, and doing it while the other two are mid-flight would mean three overlapping suite-wide edits. A prototype over one server first, to measure how much code actually disappears before creating a crate for it.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793412428591
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793421072327,
+        "lease_expires_at_epoch_ms": 1793424672327,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793421072327
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793423368250,
+        "lease_expires_at_epoch_ms": 1793426968250,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793423368250
+    },
+    {
+      "event": "task_verified",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "Manual verification confirmed",
+        "verified_at_epoch_ms": 1793423368341,
+        "git_branch": "main",
+        "base_commit_sha": "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb",
+        "head_commit_sha": "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb",
+        "commit_shas": [
+          "d88d1904f5a7c9f9cf8a962266c3d3c0b40b5bdb"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "status": "verified",
+      "timestamp_ms": 1794037999535
+    },
+    {
+      "event": "edge_added",
+      "task_id": "b8dc864f-d9f3-4d5e-8c8e-e21e55ee11ae",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "0ca27004-0ae7-46be-b4c6-65a32efa3779",
+        "target_ticket_key": "CO-7",
+        "target_repo": "common"
+      },
+      "timestamp_ms": 1794336146473
     }
-  }
+  ]
 }

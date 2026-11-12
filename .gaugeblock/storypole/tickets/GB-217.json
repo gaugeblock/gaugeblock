@@ -1,315 +1,21 @@
 {
-  "events": [
-    {
-      "event": "handoff_recorded",
-      "handoff": {
-        "completed_items": [
-          "Steps 1-2 landed (sawhorse ddca648). catalog::resolve_limits merges config override > catalog > nothing, field by field, behind a catalog feature that is off by default. CatalogSource trait with NullSource (offline/tests) and BundledSource (models-catalog compile-time snapshot, no network/runtime/disk). Dependency pinned default-features = false, features = [cline, bundled] to avoid pulling reqwest 0.13 + tokio + directories alongside sawhorse on 0.12. Measured against the real snapshot: cline-pass/deepseek-v4.1-flash -> context 1,000,000; the -1017 id -> 1,048,576; default_reasoning_effort None so config stays authoritative; output saturates at u16::MAX because InferenceRequest::max_tokens is u16. Gate green both ways: 21 tests feature-off, 26 feature-on, clippy -D warnings clean."
-        ],
-        "dirty_files": [],
-        "git_ref": "ddca648",
-        "last_error_or_blocker": "None. Note for step 3: ModelLimits.max_output_tokens is u16 while the catalog advertises 384k, so the gateway budget must be computed from the catalog u64, not from the clamped ModelLimits value.",
-        "recorded_by_agent": "cline",
-        "remaining_items": [
-          "Steps 3-8: delegate ModelLimits::output_budget to resolve_gateway_max_output_tokens (32k cap, 1024 reserve, reasoning floor) keeping our arithmetic only as the no-catalog fallback; requires_streaming so a flagged model makes zero non-streamed calls; to_wire_reasoning_params replacing the three hand-encoded reasoning keys; sawhorse models reporting real limits/billing tier and fixing configured_is_advertised; delete CLINE_PASS_MODELS + scripts/refresh-cline-pass.sh; update CONTRACTS.md and common/ARCHITECTURE.md section 4."
-        ],
-        "timestamp_ms": 1793376698945
-      },
-      "new_status": "ready",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "handoff_recorded",
-      "handoff": {
-        "completed_items": [
-          "Steps 1-3 landed. ddca648: CatalogSource with NullSource + BundledSource behind an off-by-default catalog feature, config override > catalog > nothing resolved field by field. fa01c42: catalog::output_budget asks the catalog first (32,000 cap, 1,024 reserve, explicit ContextOverflowError reported and logged then delegated to fallback) and keeps GB-215s min(cap, window - prompt - 64) only as the unknown-model fallback; it computes from the crates u64 limit rather than our clamped u16. Verified with exact expectations against the real bundled snapshot: prompt 1000 -> 32000, request 50000 -> 50000, prompt window-2024 -> 1000, prompt == window -> None. Gates: 27 tests feature-off, 29 feature-on, clippy and fmt clean both ways."
-        ],
-        "dirty_files": [],
-        "git_ref": "fa01c42",
-        "last_error_or_blocker": "None.",
-        "recorded_by_agent": "cline",
-        "remaining_items": [
-          "Steps 4-8: requires_streaming so a flagged model makes zero non-streamed calls; to_wire_reasoning_params replacing the three hand-encoded reasoning keys; sawhorse models reporting real limits and billing tier plus fixing configured_is_advertised; delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh; update CONTRACTS.md and common/ARCHITECTURE.md section 4. Also still open: nothing in joiner calls catalog::output_budget yet - fill_options::resolve uses ModelLimits::output_budget directly, so wiring it through (and enabling the catalog feature in joiner-cli, or passing a source into FillOptions) is the follow-up that makes step 3 pay off end to end."
-        ],
-        "timestamp_ms": 1793377068833
-      },
-      "new_status": "ready",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "handoff_recorded",
-      "handoff": {
-        "completed_items": [
-          "Steps 1-4 of 8 landed. ddca648 catalog source + precedence; fa01c42 gateway budget delegated to the crate with exact-expectation tests; 40463bc requires_streaming decision, which measured that EVERY cline-pass model in the bundled snapshot is flagged, including the id the suite calls; 1ef157e provider streams first when flagged, with create_provider_with + router wiring behind the feature; 6985283 joiner-cli enables the catalog so it is live. LIVE OBSERVATION: the same fill that failed all session now returns no transport error and no retry - the 500 empty response content class is gone. It now fails honestly with compile: unresolved import unicode_segmentation, filed as GB-224."
-        ],
-        "dirty_files": [],
-        "git_ref": "6985283",
-        "last_error_or_blocker": "None, but note the causal revision: SH-9 was recorded as an intermittent gateway fault with 3-of-5 failure rates. The catalog says these models require streaming, so the failing request was never going to succeed. SH-9 verification text should be read with that correction.",
-        "recorded_by_agent": "cline",
-        "remaining_items": [
-          "Steps 5-8: to_wire_reasoning_params replacing the three hand-encoded reasoning keys; sawhorse models reporting real limits/billing tier and fixing configured_is_advertised; delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh; CONTRACTS.md + common/ARCHITECTURE.md section 4. Also: nothing in joiner calls catalog::output_budget yet (fill_options::resolve still uses ModelLimits::output_budget), so step 3 is not observable end to end even though the catalog is now loaded."
-        ],
-        "timestamp_ms": 1793377782807
-      },
-      "new_status": "ready",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "handoff_recorded",
-      "handoff": {
-        "completed_items": [
-          "Steps 1-7 done, step 5 in reduced form. ddca648 catalog source + config-override precedence; fa01c42 gateway budget delegated with exact-expectation tests; 40463bc + 1ef157e + 6985283 requires_streaming measured (every cline-pass model is flagged) and enforced so a constrained model streams on the first call; b186f2f wire_token; a3509ae payload emits ONE reasoning field instead of three, verified by live dump (reasoning_effort alone); 2566d7e deletes the hand-maintained ClinePass list and reads eligibility plus model existence from the catalog, which turns configured_is_advertised from false to true for the configured id."
-        ],
-        "dirty_files": [],
-        "git_ref": "2566d7e",
-        "last_error_or_blocker": "None. Two deliberate scope notes: step 5 was done as the canonical single field rather than the full per-protocol form, and CLINE_PASS_DOCS survives as a documentation pointer while CLINE_PASS_MODELS and the capture date are deleted.",
-        "recorded_by_agent": "cline",
-        "remaining_items": [
-          "Step 5b: per-protocol wire reasoning params via to_wire_reasoning_params, which needs the catalog threaded into build_payload (Anthropic budgets, GLM toggles, Gemini budgets cannot be expressed by a single reasoning_effort field). Step 8: CONTRACTS.md and common/ARCHITECTURE.md section 4 need to state that model metadata is owned by models-catalog while the suite keeps policy, and that sawhorse models reports catalog-backed eligibility."
-        ],
-        "timestamp_ms": 1793409758759
-      },
-      "new_status": "ready",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "captured_by_agent": "agent",
-      "discovered_from_task_id": null,
-      "event": "deferred_item_captured",
-      "task": {
-        "acceptance_criteria": [],
-        "active_claim": null,
-        "created_at_epoch_ms": 1793364507855,
-        "decisions": [],
-        "description": "Limits are currently declared by hand (GB-215) because the OpenAI-compatible surface exposes none: /models returns bare ids, /models/{id} is 404, and `usage` reports cost not ceiling.\n\nBut the catalog is discoverable elsewhere, confirmed by measurement:\n- https://models.dev/api.json answers 200 in ~1.1s, 5.9MB, 233 providers, and carries limit.context / limit.input / limit.output plus reasoning_options per model. It includes a `cline-pass` provider with 18 entries (kimi-k3, glm-5.3, deepseek-v4.1-flash, qwen3.8-max, minimax-m3, ...).\n- https://api.cline.bot/api/v1/ai/cline/recommended-models answers 200 with 3.4KB of {recommended, free, clinePass, clineCloud}; clinePass has 15 ids including the exact wire id we use, cline-pass/deepseek-v4.1-flash-1017, which is NOT in /models and is why `sawhorse models` reports configured_is_advertised: false.\n\nSo `sawhorse models` should cross-reference the recommended feed instead of /models alone, and a refresh path should populate context_window / max_output_tokens / reasoning_effort from models.dev, applying Clines own normalisation (max_input = min(limit.context, limit.input) else input or context or 128_000; max_tokens = limit.output or 4096; clamp effort to the advertised reasoning_options). Rust crates that already parse the models.dev schema exist (ai-model-directory-router, models-dev-rs) - evaluate before hand-rolling a parser.\n\nMeasured values to reconcile against the current config: cline-pass/deepseek-v4.1-flash is 1M context / 384k output / efforts [none, low, high, max], so the declared 32k output is a deliberate cap rather than the model limit, and `medium` is not an advertised effort (the gateway clamps rather than rejects - verified, all six values answer 200).",
-        "edges": [],
-        "id": "e202faa6-eb40-429f-a61f-7336c657464c",
-        "kind": "feature",
-        "latest_handoff": null,
-        "plan": null,
-        "priority": 3,
-        "scope": {
-          "crate_name": null,
-          "labels": [],
-          "module_path": null,
-          "repo": null,
-          "target_files": [],
-          "target_symbols": []
-        },
-        "slug": "discover-model-limits-and-the-clinepass-set-from-models-dev-and-the-recommended-feed-e202fa",
-        "status": "deferred",
-        "ticket_key": "GB-217",
-        "title": "Discover model limits and the ClinePass set from models.dev and the recommended feed",
-        "updated_at_epoch_ms": 1793364507855,
-        "verification_receipt": null
-      }
-    },
-    {
-      "edge": {
-        "kind": "blocked_by",
-        "target_id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
-        "target_ticket_key": "GB-218"
-      },
-      "event": "edge_added",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793367161244
-    },
-    {
-      "event": "status_changed",
-      "from": "deferred",
-      "reason": "Blocked by unverified task GB-218",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793367161244,
-      "to": "blocked"
-    },
-    {
-      "acceptance_criteria": null,
-      "description": "BLOCKED ON GB-218 (external crate). Do not hand-roll a models.dev parser in the meantime: that work is being built once, outside the meta-harness, and duplicating it here would create two drifting schemas.\n\nDECISION: adopt a published crate rather than implement discovery in-tree. Placement is OUTSIDE the meta-harness so catalog churn does not tax suite releases and so the 10-repository canon, outfeed install --all and the sibling [patch.crates-io] mapping stay untouched.\n\nWHY IT PAYS: three fragile pieces disappear. cline_pass.rs is a hardcoded const of 15 ids whose own doc admits the set moves, scripts/refresh-cline-pass.sh scrapes a docs page markdown to refresh it, and models.rs parses only GET /models (bare ids) - which is why sawhorse models reported configured_is_advertised false for cline-pass/deepseek-v4.1-flash-1017, a model that is in fact pass-eligible.\n\nINTEGRATION SHAPE when GB-218 lands:\n1. Feature-gated catalog backend in sawhorse-core; ModelLimits resolves as CONFIG OVERRIDE > catalog > default. The declared context_window / max_output_tokens / reasoning_effort stay as the outage path and are not removed - that is what GB-215 bought.\n2. Delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh; is_pass_model delegates to the crate curated lookup.\n3. sawhorse models reports real context_window, max_output_tokens and effort options, and fixes the advertised/pass-eligible false negative by consulting the curated feed as well as /models.\n4. Tests pin a small fixture with no network; one ignored live parity test.\n5. benchwork model panel can reuse the same crate afterwards, which argues for the neutral models-catalog name with Cline specifics as the opt-in part.\n\nMEASURED NUMBERS TO RECONCILE: cline-pass/deepseek-v4.1-flash is 1M context / 384k output / efforts [none, low, high, max]. The declared 32k output is a deliberate cap, not the model limit, and medium is not an advertised effort - the gateway clamps rather than rejects, verified across all six values.",
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793367161618,
-      "title": "Adopt the external models-catalog crate in sawhorse (blocked on GB-218)"
-    },
-    {
-      "event": "status_changed",
-      "from": "blocked",
-      "reason": "Dependency GB-218 verified",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793375373581,
-      "to": "ready"
-    },
-    {
-      "acceptance_criteria": [
-        "sawhorse-core builds with and without the catalog feature; existing tests unchanged",
-        "Output budget delegates to resolve_gateway_max_output_tokens, with tests for known and unknown models",
-        "A model flagged requires_streaming makes zero non-streamed calls",
-        "A fill payload emits exactly one reasoning encoding",
-        "sawhorse models reports the configured cline-pass id as advertised and pass-eligible"
-      ],
-      "description": "UNBLOCKED: models-catalog 0.1.0 is published (GB-218). Full plan in .gaugeblock/storypole/plans/GB-217.md; summary of scope below.\n\nDEPENDENCY LINE, deliberately narrow: models-catalog = { version = \"0.1.0\", default-features = false, features = [\"cline\", \"bundled\"] }. The default feature set pulls reqwest 0.13 + tokio + directories, and sawhorse is on reqwest 0.12 - enabling defaults would compile a second HTTP stack for something sawhorse already has, plus an ambient ~/.cache path and a ~/.cline settings reader. With defaults off the crate is a pure synchronous parser/lookup table, which is what a hermetic gate needs. Freshness comes from running the crate CLI out of band, not from sawhorse doing HTTP.\n\nFIVE BEHAVIOUR CHANGES, in order:\n1. Feature-gated CatalogSource (Bundled + Null impls) so existing tests stay hermetic; precedence config override > catalog > default via ModelOverrides.\n2. Replace my hand-rolled output_budget (window - prompt - 64, no cap) with resolve_gateway_max_output_tokens (32k cap, 1024 reserve, reasoning floor).\n3. requires_streaming: send stream:true on the FIRST call for a flagged model instead of discovering the 500 and retrying - SH-9 retry stays as the net for unflagged models. This directly retires a wasted round-trip we measured.\n4. Reasoning effort via to_wire_reasoning_params instead of the three hand-encoded keys (reasoning, reasoning_effort, thinking) captured in the SH-9 dump - payload goes from 3 encodings to 1.\n5. sawhorse models reports real limits and billing tier from catalog membership, fixing the configured_is_advertised false negative that came from cross-checking GET /models only.\n\nTHEN RETIRE DATA: delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh, delegate is_pass_model to the catalog.\n\nGAP EXPOSED: gaugeblock-contracts ReasoningEffort lacks XHigh and Max, so xhigh cannot be requested until the contract grows - filed as GB-221 because it is a wire-contract change with its own miter contracts gate.",
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793375383815,
-      "title": "Adopt models-catalog 0.1.0 in sawhorse: catalog-backed limits, streaming flag, wire reasoning"
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793376698790,
-        "git_branch": "feat/gb-217-catalog-source",
-        "lease_expires_at_epoch_ms": 1793380298790
-      },
-      "event": "task_claimed",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793376698790,
-      "to": "in_progress"
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793377068396,
-        "git_branch": "feat/gb-217-gateway-budget",
-        "lease_expires_at_epoch_ms": 1793380668396
-      },
-      "event": "task_claimed",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793377068396,
-      "to": "in_progress"
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793377782668,
-        "git_branch": "feat/gb-217-stream-first",
-        "lease_expires_at_epoch_ms": 1793381382668
-      },
-      "event": "task_claimed",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793377782668,
-      "to": "in_progress"
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793409758557,
-        "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793413358557
-      },
-      "event": "task_claimed",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793409758557,
-      "to": "in_progress"
-    },
-    {
-      "claim": {
-        "agent_id": "cline",
-        "base_commit_sha": null,
-        "claimed_at_epoch_ms": 1793411433126,
-        "git_branch": null,
-        "lease_expires_at_epoch_ms": 1793415033126
-      },
-      "event": "task_claimed",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "status_changed",
-      "from": "ready",
-      "reason": "Claimed by cline",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793411433126,
-      "to": "in_progress"
-    },
-    {
-      "event": "task_verified",
-      "receipt": {
-        "base_commit_sha": "5c146a91d34ac96b0a369ad564308041d3bd7d17",
-        "chain_key": null,
-        "command": "n/a",
-        "commit_shas": [
-          "5c146a91d34ac96b0a369ad564308041d3bd7d17"
-        ],
-        "diagnostic_count": null,
-        "exit_code": 0,
-        "git_branch": "main",
-        "head_commit_sha": "5c146a91d34ac96b0a369ad564308041d3bd7d17",
-        "repo": null,
-        "summary": "All eight steps done. 1-2 ddca648 catalog source with config-override precedence behind an off-by-default feature; 3 fa01c42 gateway budget delegated to resolve_gateway_max_output_tokens with exact-expectation tests; 4 40463bc/1ef157e/6985283 requires_streaming - measured that every cline-pass model is flagged, enforced so a constrained model never sends the doomed non-streamed request (the live fill lost its transport failure the same hour); 5 b186f2f/a3509ae one canonical reasoning field instead of three, verified by request dump; 5b 6589cec per-protocol wire shapes via to_wire_reasoning_params, measured changing reasoning_effort=medium into the DeepSeek thinking toggle; 6+7 2566d7e reads eligibility and existence from the catalog, deleting the hand-maintained fifteen-id list and turning configured_is_advertised from false to true for the configured id; 8 d43044e/5c146a9 document that metadata belongs to the crate and policy to the suite. One guard added where the crate is wrong for us: effort None short-circuits to Disabled because the clamp turns it into thinking enabled, which is what JN-7/JN-8 disabled to protect the budget. Gates: clippy -D warnings, fmt and tests green with the catalog feature on and off throughout.",
-        "verified_at_epoch_ms": 1793411433319,
-        "verifier": "manual"
-      },
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c"
-    },
-    {
-      "event": "status_changed",
-      "from": "verified",
-      "reason": "Archived out of active backlog",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1793953246458,
-      "to": "archived"
-    },
-    {
-      "event": "task_archived",
-      "status": "verified",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1794038019043
-    },
-    {
-      "edge": {
-        "kind": "related_to",
-        "target_id": "9a301cae-b72e-4ea9-83cb-c1437e07dced",
-        "target_repo": "sawhorse",
-        "target_ticket_key": "SH-9"
-      },
-      "event": "edge_added",
-      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
-      "timestamp_ms": 1794336146484
-    }
-  ],
   "ticket": {
-    "acceptance_criteria": [
-      "sawhorse-core builds with and without the catalog feature; existing tests unchanged",
-      "Output budget delegates to resolve_gateway_max_output_tokens, with tests for known and unknown models",
-      "A model flagged requires_streaming makes zero non-streamed calls",
-      "A fill payload emits exactly one reasoning encoding",
-      "sawhorse models reports the configured cline-pass id as advertised and pass-eligible"
-    ],
-    "active_claim": null,
-    "archived_at_epoch_ms": 1794038019043,
-    "created_at_epoch_ms": 1793364507855,
-    "decisions": [],
+    "id": "e202faa6-eb40-429f-a61f-7336c657464c",
+    "ticket_key": "GB-217",
+    "slug": "discover-model-limits-and-the-clinepass-set-from-models-dev-and-the-recommended-feed-e202fa",
+    "title": "Adopt models-catalog 0.1.0 in sawhorse: catalog-backed limits, streaming flag, wire reasoning",
     "description": "UNBLOCKED: models-catalog 0.1.0 is published (GB-218). Full plan in .gaugeblock/storypole/plans/GB-217.md; summary of scope below.\n\nDEPENDENCY LINE, deliberately narrow: models-catalog = { version = \"0.1.0\", default-features = false, features = [\"cline\", \"bundled\"] }. The default feature set pulls reqwest 0.13 + tokio + directories, and sawhorse is on reqwest 0.12 - enabling defaults would compile a second HTTP stack for something sawhorse already has, plus an ambient ~/.cache path and a ~/.cline settings reader. With defaults off the crate is a pure synchronous parser/lookup table, which is what a hermetic gate needs. Freshness comes from running the crate CLI out of band, not from sawhorse doing HTTP.\n\nFIVE BEHAVIOUR CHANGES, in order:\n1. Feature-gated CatalogSource (Bundled + Null impls) so existing tests stay hermetic; precedence config override > catalog > default via ModelOverrides.\n2. Replace my hand-rolled output_budget (window - prompt - 64, no cap) with resolve_gateway_max_output_tokens (32k cap, 1024 reserve, reasoning floor).\n3. requires_streaming: send stream:true on the FIRST call for a flagged model instead of discovering the 500 and retrying - SH-9 retry stays as the net for unflagged models. This directly retires a wasted round-trip we measured.\n4. Reasoning effort via to_wire_reasoning_params instead of the three hand-encoded keys (reasoning, reasoning_effort, thinking) captured in the SH-9 dump - payload goes from 3 encodings to 1.\n5. sawhorse models reports real limits and billing tier from catalog membership, fixing the configured_is_advertised false negative that came from cross-checking GET /models only.\n\nTHEN RETIRE DATA: delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh, delegate is_pass_model to the catalog.\n\nGAP EXPOSED: gaugeblock-contracts ReasoningEffort lacks XHigh and Max, so xhigh cannot be requested until the contract grows - filed as GB-221 because it is a wire-contract change with its own miter contracts gate.",
+    "kind": "feature",
+    "status": "verified",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [],
+      "labels": []
+    },
     "edges": [
       {
         "kind": "blocked_by",
@@ -319,43 +25,337 @@
       {
         "kind": "related_to",
         "target_id": "9a301cae-b72e-4ea9-83cb-c1437e07dced",
-        "target_repo": "sawhorse",
-        "target_ticket_key": "SH-9"
+        "target_ticket_key": "SH-9",
+        "target_repo": "sawhorse"
       }
     ],
-    "id": "e202faa6-eb40-429f-a61f-7336c657464c",
-    "kind": "feature",
-    "latest_handoff": null,
+    "decisions": [],
+    "acceptance_criteria": [
+      "sawhorse-core builds with and without the catalog feature; existing tests unchanged",
+      "Output budget delegates to resolve_gateway_max_output_tokens, with tests for known and unknown models",
+      "A model flagged requires_streaming makes zero non-streamed calls",
+      "A fill payload emits exactly one reasoning encoding",
+      "sawhorse models reports the configured cline-pass id as advertised and pass-eligible"
+    ],
     "plan": null,
-    "priority": 3,
-    "scope": {
-      "crate_name": null,
-      "labels": [],
-      "module_path": null,
-      "repo": null,
-      "target_files": [],
-      "target_symbols": []
-    },
-    "slug": "discover-model-limits-and-the-clinepass-set-from-models-dev-and-the-recommended-feed-e202fa",
-    "status": "verified",
-    "ticket_key": "GB-217",
-    "title": "Adopt models-catalog 0.1.0 in sawhorse: catalog-backed limits, streaming flag, wire reasoning",
-    "updated_at_epoch_ms": 1794038019043,
+    "active_claim": null,
+    "latest_handoff": null,
     "verification_receipt": {
-      "base_commit_sha": "5c146a91d34ac96b0a369ad564308041d3bd7d17",
-      "chain_key": null,
+      "verifier": "manual",
       "command": "n/a",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "All eight steps done. 1-2 ddca648 catalog source with config-override precedence behind an off-by-default feature; 3 fa01c42 gateway budget delegated to resolve_gateway_max_output_tokens with exact-expectation tests; 4 40463bc/1ef157e/6985283 requires_streaming - measured that every cline-pass model is flagged, enforced so a constrained model never sends the doomed non-streamed request (the live fill lost its transport failure the same hour); 5 b186f2f/a3509ae one canonical reasoning field instead of three, verified by request dump; 5b 6589cec per-protocol wire shapes via to_wire_reasoning_params, measured changing reasoning_effort=medium into the DeepSeek thinking toggle; 6+7 2566d7e reads eligibility and existence from the catalog, deleting the hand-maintained fifteen-id list and turning configured_is_advertised from false to true for the configured id; 8 d43044e/5c146a9 document that metadata belongs to the crate and policy to the suite. One guard added where the crate is wrong for us: effort None short-circuits to Disabled because the clamp turns it into thinking enabled, which is what JN-7/JN-8 disabled to protect the budget. Gates: clippy -D warnings, fmt and tests green with the catalog feature on and off throughout.",
+      "verified_at_epoch_ms": 1793411433319,
+      "git_branch": "main",
+      "base_commit_sha": "5c146a91d34ac96b0a369ad564308041d3bd7d17",
+      "head_commit_sha": "5c146a91d34ac96b0a369ad564308041d3bd7d17",
       "commit_shas": [
         "5c146a91d34ac96b0a369ad564308041d3bd7d17"
       ],
-      "diagnostic_count": null,
-      "exit_code": 0,
-      "git_branch": "main",
-      "head_commit_sha": "5c146a91d34ac96b0a369ad564308041d3bd7d17",
       "repo": null,
-      "summary": "All eight steps done. 1-2 ddca648 catalog source with config-override precedence behind an off-by-default feature; 3 fa01c42 gateway budget delegated to resolve_gateway_max_output_tokens with exact-expectation tests; 4 40463bc/1ef157e/6985283 requires_streaming - measured that every cline-pass model is flagged, enforced so a constrained model never sends the doomed non-streamed request (the live fill lost its transport failure the same hour); 5 b186f2f/a3509ae one canonical reasoning field instead of three, verified by request dump; 5b 6589cec per-protocol wire shapes via to_wire_reasoning_params, measured changing reasoning_effort=medium into the DeepSeek thinking toggle; 6+7 2566d7e reads eligibility and existence from the catalog, deleting the hand-maintained fifteen-id list and turning configured_is_advertised from false to true for the configured id; 8 d43044e/5c146a9 document that metadata belongs to the crate and policy to the suite. One guard added where the crate is wrong for us: effort None short-circuits to Disabled because the clamp turns it into thinking enabled, which is what JN-7/JN-8 disabled to protect the budget. Gates: clippy -D warnings, fmt and tests green with the catalog feature on and off throughout.",
-      "verified_at_epoch_ms": 1793411433319,
-      "verifier": "manual"
+      "chain_key": null
+    },
+    "created_at_epoch_ms": 1793364507855,
+    "updated_at_epoch_ms": 1794336146484,
+    "archived_at_epoch_ms": 1794038019043
+  },
+  "events": [
+    {
+      "event": "handoff_recorded",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793376698945,
+        "completed_items": [
+          "Steps 1-2 landed (sawhorse ddca648). catalog::resolve_limits merges config override > catalog > nothing, field by field, behind a catalog feature that is off by default. CatalogSource trait with NullSource (offline/tests) and BundledSource (models-catalog compile-time snapshot, no network/runtime/disk). Dependency pinned default-features = false, features = [cline, bundled] to avoid pulling reqwest 0.13 + tokio + directories alongside sawhorse on 0.12. Measured against the real snapshot: cline-pass/deepseek-v4.1-flash -> context 1,000,000; the -1017 id -> 1,048,576; default_reasoning_effort None so config stays authoritative; output saturates at u16::MAX because InferenceRequest::max_tokens is u16. Gate green both ways: 21 tests feature-off, 26 feature-on, clippy -D warnings clean."
+        ],
+        "remaining_items": [
+          "Steps 3-8: delegate ModelLimits::output_budget to resolve_gateway_max_output_tokens (32k cap, 1024 reserve, reasoning floor) keeping our arithmetic only as the no-catalog fallback; requires_streaming so a flagged model makes zero non-streamed calls; to_wire_reasoning_params replacing the three hand-encoded reasoning keys; sawhorse models reporting real limits/billing tier and fixing configured_is_advertised; delete CLINE_PASS_MODELS + scripts/refresh-cline-pass.sh; update CONTRACTS.md and common/ARCHITECTURE.md section 4."
+        ],
+        "last_error_or_blocker": "None. Note for step 3: ModelLimits.max_output_tokens is u16 while the catalog advertises 384k, so the gateway budget must be computed from the catalog u64, not from the clamped ModelLimits value.",
+        "git_ref": "ddca648",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "handoff_recorded",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793377068833,
+        "completed_items": [
+          "Steps 1-3 landed. ddca648: CatalogSource with NullSource + BundledSource behind an off-by-default catalog feature, config override > catalog > nothing resolved field by field. fa01c42: catalog::output_budget asks the catalog first (32,000 cap, 1,024 reserve, explicit ContextOverflowError reported and logged then delegated to fallback) and keeps GB-215s min(cap, window - prompt - 64) only as the unknown-model fallback; it computes from the crates u64 limit rather than our clamped u16. Verified with exact expectations against the real bundled snapshot: prompt 1000 -> 32000, request 50000 -> 50000, prompt window-2024 -> 1000, prompt == window -> None. Gates: 27 tests feature-off, 29 feature-on, clippy and fmt clean both ways."
+        ],
+        "remaining_items": [
+          "Steps 4-8: requires_streaming so a flagged model makes zero non-streamed calls; to_wire_reasoning_params replacing the three hand-encoded reasoning keys; sawhorse models reporting real limits and billing tier plus fixing configured_is_advertised; delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh; update CONTRACTS.md and common/ARCHITECTURE.md section 4. Also still open: nothing in joiner calls catalog::output_budget yet - fill_options::resolve uses ModelLimits::output_budget directly, so wiring it through (and enabling the catalog feature in joiner-cli, or passing a source into FillOptions) is the follow-up that makes step 3 pay off end to end."
+        ],
+        "last_error_or_blocker": "None.",
+        "git_ref": "fa01c42",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "handoff_recorded",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793377782807,
+        "completed_items": [
+          "Steps 1-4 of 8 landed. ddca648 catalog source + precedence; fa01c42 gateway budget delegated to the crate with exact-expectation tests; 40463bc requires_streaming decision, which measured that EVERY cline-pass model in the bundled snapshot is flagged, including the id the suite calls; 1ef157e provider streams first when flagged, with create_provider_with + router wiring behind the feature; 6985283 joiner-cli enables the catalog so it is live. LIVE OBSERVATION: the same fill that failed all session now returns no transport error and no retry - the 500 empty response content class is gone. It now fails honestly with compile: unresolved import unicode_segmentation, filed as GB-224."
+        ],
+        "remaining_items": [
+          "Steps 5-8: to_wire_reasoning_params replacing the three hand-encoded reasoning keys; sawhorse models reporting real limits/billing tier and fixing configured_is_advertised; delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh; CONTRACTS.md + common/ARCHITECTURE.md section 4. Also: nothing in joiner calls catalog::output_budget yet (fill_options::resolve still uses ModelLimits::output_budget), so step 3 is not observable end to end even though the catalog is now loaded."
+        ],
+        "last_error_or_blocker": "None, but note the causal revision: SH-9 was recorded as an intermittent gateway fault with 3-of-5 failure rates. The catalog says these models require streaming, so the failing request was never going to succeed. SH-9 verification text should be read with that correction.",
+        "git_ref": "6985283",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "handoff_recorded",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "handoff": {
+        "recorded_by_agent": "cline",
+        "timestamp_ms": 1793409758759,
+        "completed_items": [
+          "Steps 1-7 done, step 5 in reduced form. ddca648 catalog source + config-override precedence; fa01c42 gateway budget delegated with exact-expectation tests; 40463bc + 1ef157e + 6985283 requires_streaming measured (every cline-pass model is flagged) and enforced so a constrained model streams on the first call; b186f2f wire_token; a3509ae payload emits ONE reasoning field instead of three, verified by live dump (reasoning_effort alone); 2566d7e deletes the hand-maintained ClinePass list and reads eligibility plus model existence from the catalog, which turns configured_is_advertised from false to true for the configured id."
+        ],
+        "remaining_items": [
+          "Step 5b: per-protocol wire reasoning params via to_wire_reasoning_params, which needs the catalog threaded into build_payload (Anthropic budgets, GLM toggles, Gemini budgets cannot be expressed by a single reasoning_effort field). Step 8: CONTRACTS.md and common/ARCHITECTURE.md section 4 need to state that model metadata is owned by models-catalog while the suite keeps policy, and that sawhorse models reports catalog-backed eligibility."
+        ],
+        "last_error_or_blocker": "None. Two deliberate scope notes: step 5 was done as the canonical single field rather than the full per-protocol form, and CLINE_PASS_DOCS survives as a documentation pointer while CLINE_PASS_MODELS and the capture date are deleted.",
+        "git_ref": "2566d7e",
+        "dirty_files": []
+      },
+      "new_status": "ready"
+    },
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "e202faa6-eb40-429f-a61f-7336c657464c",
+        "ticket_key": "GB-217",
+        "slug": "discover-model-limits-and-the-clinepass-set-from-models-dev-and-the-recommended-feed-e202fa",
+        "title": "Discover model limits and the ClinePass set from models.dev and the recommended feed",
+        "description": "Limits are currently declared by hand (GB-215) because the OpenAI-compatible surface exposes none: /models returns bare ids, /models/{id} is 404, and `usage` reports cost not ceiling.\n\nBut the catalog is discoverable elsewhere, confirmed by measurement:\n- https://models.dev/api.json answers 200 in ~1.1s, 5.9MB, 233 providers, and carries limit.context / limit.input / limit.output plus reasoning_options per model. It includes a `cline-pass` provider with 18 entries (kimi-k3, glm-5.3, deepseek-v4.1-flash, qwen3.8-max, minimax-m3, ...).\n- https://api.cline.bot/api/v1/ai/cline/recommended-models answers 200 with 3.4KB of {recommended, free, clinePass, clineCloud}; clinePass has 15 ids including the exact wire id we use, cline-pass/deepseek-v4.1-flash-1017, which is NOT in /models and is why `sawhorse models` reports configured_is_advertised: false.\n\nSo `sawhorse models` should cross-reference the recommended feed instead of /models alone, and a refresh path should populate context_window / max_output_tokens / reasoning_effort from models.dev, applying Clines own normalisation (max_input = min(limit.context, limit.input) else input or context or 128_000; max_tokens = limit.output or 4096; clamp effort to the advertised reasoning_options). Rust crates that already parse the models.dev schema exist (ai-model-directory-router, models-dev-rs) - evaluate before hand-rolling a parser.\n\nMeasured values to reconcile against the current config: cline-pass/deepseek-v4.1-flash is 1M context / 384k output / efforts [none, low, high, max], so the declared 32k output is a deliberate cap rather than the model limit, and `medium` is not an advertised effort (the gateway clamps rather than rejects - verified, all six values answer 200).",
+        "kind": "feature",
+        "status": "deferred",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": null,
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793364507855,
+        "updated_at_epoch_ms": 1793364507855
+      },
+      "captured_by_agent": "agent",
+      "discovered_from_task_id": null
+    },
+    {
+      "event": "edge_added",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "edge": {
+        "kind": "blocked_by",
+        "target_id": "3f27e5ba-8e4a-4e60-84f5-002b54424014",
+        "target_ticket_key": "GB-218"
+      },
+      "timestamp_ms": 1793367161244
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "from": "deferred",
+      "to": "blocked",
+      "reason": "Blocked by unverified task GB-218",
+      "timestamp_ms": 1793367161244
+    },
+    {
+      "event": "task_updated",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "title": "Adopt the external models-catalog crate in sawhorse (blocked on GB-218)",
+      "description": "BLOCKED ON GB-218 (external crate). Do not hand-roll a models.dev parser in the meantime: that work is being built once, outside the meta-harness, and duplicating it here would create two drifting schemas.\n\nDECISION: adopt a published crate rather than implement discovery in-tree. Placement is OUTSIDE the meta-harness so catalog churn does not tax suite releases and so the 10-repository canon, outfeed install --all and the sibling [patch.crates-io] mapping stay untouched.\n\nWHY IT PAYS: three fragile pieces disappear. cline_pass.rs is a hardcoded const of 15 ids whose own doc admits the set moves, scripts/refresh-cline-pass.sh scrapes a docs page markdown to refresh it, and models.rs parses only GET /models (bare ids) - which is why sawhorse models reported configured_is_advertised false for cline-pass/deepseek-v4.1-flash-1017, a model that is in fact pass-eligible.\n\nINTEGRATION SHAPE when GB-218 lands:\n1. Feature-gated catalog backend in sawhorse-core; ModelLimits resolves as CONFIG OVERRIDE > catalog > default. The declared context_window / max_output_tokens / reasoning_effort stay as the outage path and are not removed - that is what GB-215 bought.\n2. Delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh; is_pass_model delegates to the crate curated lookup.\n3. sawhorse models reports real context_window, max_output_tokens and effort options, and fixes the advertised/pass-eligible false negative by consulting the curated feed as well as /models.\n4. Tests pin a small fixture with no network; one ignored live parity test.\n5. benchwork model panel can reuse the same crate afterwards, which argues for the neutral models-catalog name with Cline specifics as the opt-in part.\n\nMEASURED NUMBERS TO RECONCILE: cline-pass/deepseek-v4.1-flash is 1M context / 384k output / efforts [none, low, high, max]. The declared 32k output is a deliberate cap, not the model limit, and medium is not an advertised effort - the gateway clamps rather than rejects, verified across all six values.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1793367161618
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "from": "blocked",
+      "to": "ready",
+      "reason": "Dependency GB-218 verified",
+      "timestamp_ms": 1793375373581
+    },
+    {
+      "event": "task_updated",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "title": "Adopt models-catalog 0.1.0 in sawhorse: catalog-backed limits, streaming flag, wire reasoning",
+      "description": "UNBLOCKED: models-catalog 0.1.0 is published (GB-218). Full plan in .gaugeblock/storypole/plans/GB-217.md; summary of scope below.\n\nDEPENDENCY LINE, deliberately narrow: models-catalog = { version = \"0.1.0\", default-features = false, features = [\"cline\", \"bundled\"] }. The default feature set pulls reqwest 0.13 + tokio + directories, and sawhorse is on reqwest 0.12 - enabling defaults would compile a second HTTP stack for something sawhorse already has, plus an ambient ~/.cache path and a ~/.cline settings reader. With defaults off the crate is a pure synchronous parser/lookup table, which is what a hermetic gate needs. Freshness comes from running the crate CLI out of band, not from sawhorse doing HTTP.\n\nFIVE BEHAVIOUR CHANGES, in order:\n1. Feature-gated CatalogSource (Bundled + Null impls) so existing tests stay hermetic; precedence config override > catalog > default via ModelOverrides.\n2. Replace my hand-rolled output_budget (window - prompt - 64, no cap) with resolve_gateway_max_output_tokens (32k cap, 1024 reserve, reasoning floor).\n3. requires_streaming: send stream:true on the FIRST call for a flagged model instead of discovering the 500 and retrying - SH-9 retry stays as the net for unflagged models. This directly retires a wasted round-trip we measured.\n4. Reasoning effort via to_wire_reasoning_params instead of the three hand-encoded keys (reasoning, reasoning_effort, thinking) captured in the SH-9 dump - payload goes from 3 encodings to 1.\n5. sawhorse models reports real limits and billing tier from catalog membership, fixing the configured_is_advertised false negative that came from cross-checking GET /models only.\n\nTHEN RETIRE DATA: delete CLINE_PASS_MODELS and scripts/refresh-cline-pass.sh, delegate is_pass_model to the catalog.\n\nGAP EXPOSED: gaugeblock-contracts ReasoningEffort lacks XHigh and Max, so xhigh cannot be requested until the contract grows - filed as GB-221 because it is a wire-contract change with its own miter contracts gate.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": [
+        "sawhorse-core builds with and without the catalog feature; existing tests unchanged",
+        "Output budget delegates to resolve_gateway_max_output_tokens, with tests for known and unknown models",
+        "A model flagged requires_streaming makes zero non-streamed calls",
+        "A fill payload emits exactly one reasoning encoding",
+        "sawhorse models reports the configured cline-pass id as advertised and pass-eligible"
+      ],
+      "timestamp_ms": 1793375383815
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793376698790,
+        "lease_expires_at_epoch_ms": 1793380298790,
+        "git_branch": "feat/gb-217-catalog-source",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793376698790
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793377068396,
+        "lease_expires_at_epoch_ms": 1793380668396,
+        "git_branch": "feat/gb-217-gateway-budget",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793377068396
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793377782668,
+        "lease_expires_at_epoch_ms": 1793381382668,
+        "git_branch": "feat/gb-217-stream-first",
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793377782668
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793409758557,
+        "lease_expires_at_epoch_ms": 1793413358557,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793409758557
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1793411433126,
+        "lease_expires_at_epoch_ms": 1793415033126,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "from": "ready",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1793411433126
+    },
+    {
+      "event": "task_verified",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "receipt": {
+        "verifier": "manual",
+        "command": "n/a",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "All eight steps done. 1-2 ddca648 catalog source with config-override precedence behind an off-by-default feature; 3 fa01c42 gateway budget delegated to resolve_gateway_max_output_tokens with exact-expectation tests; 4 40463bc/1ef157e/6985283 requires_streaming - measured that every cline-pass model is flagged, enforced so a constrained model never sends the doomed non-streamed request (the live fill lost its transport failure the same hour); 5 b186f2f/a3509ae one canonical reasoning field instead of three, verified by request dump; 5b 6589cec per-protocol wire shapes via to_wire_reasoning_params, measured changing reasoning_effort=medium into the DeepSeek thinking toggle; 6+7 2566d7e reads eligibility and existence from the catalog, deleting the hand-maintained fifteen-id list and turning configured_is_advertised from false to true for the configured id; 8 d43044e/5c146a9 document that metadata belongs to the crate and policy to the suite. One guard added where the crate is wrong for us: effort None short-circuits to Disabled because the clamp turns it into thinking enabled, which is what JN-7/JN-8 disabled to protect the budget. Gates: clippy -D warnings, fmt and tests green with the catalog feature on and off throughout.",
+        "verified_at_epoch_ms": 1793411433319,
+        "git_branch": "main",
+        "base_commit_sha": "5c146a91d34ac96b0a369ad564308041d3bd7d17",
+        "head_commit_sha": "5c146a91d34ac96b0a369ad564308041d3bd7d17",
+        "commit_shas": [
+          "5c146a91d34ac96b0a369ad564308041d3bd7d17"
+        ],
+        "repo": null,
+        "chain_key": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "from": "verified",
+      "to": "archived",
+      "reason": "Archived out of active backlog",
+      "timestamp_ms": 1793953246458
+    },
+    {
+      "event": "task_archived",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "status": "verified",
+      "timestamp_ms": 1794038019043
+    },
+    {
+      "event": "edge_added",
+      "task_id": "e202faa6-eb40-429f-a61f-7336c657464c",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "9a301cae-b72e-4ea9-83cb-c1437e07dced",
+        "target_ticket_key": "SH-9",
+        "target_repo": "sawhorse"
+      },
+      "timestamp_ms": 1794336146484
     }
-  }
+  ]
 }

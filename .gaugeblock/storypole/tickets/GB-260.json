@@ -4,7 +4,7 @@
     "ticket_key": "GB-260",
     "slug": "retire-the-ten-legacy-storypole-ledger-jsonl-files-left-behind-by-the-gb-189-unification-d16adf",
     "title": "Retire the ten legacy .storypole/ledger.jsonl files left behind by the CO-7 unification",
-    "description": "",
+    "description": "ALREADY DONE, verified 2026-11-10: no .storypole directory and no ledger.jsonl exists at any depth under the suite (find over all twelve repositories, excluding .git). The ten legacy ledgers were retired by the CO-7 unification and the records migration, and nothing references them.",
     "kind": "tech_debt",
     "status": "triage",
     "priority": 3,
@@ -31,7 +31,8 @@
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1793994942305,
-    "updated_at_epoch_ms": 1793995082753
+    "updated_at_epoch_ms": 1794451864996,
+    "archived_at_epoch_ms": 1794451864996
   },
   "events": [
     {
