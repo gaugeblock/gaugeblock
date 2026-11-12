@@ -65,6 +65,9 @@ reserve-staging/
 # inputs - an exception that lives only on one machine is a gate nobody else can reproduce.
 .gaugeblock/miter/*
 !.gaugeblock/miter/*.toml
+# The size ratchet's baseline is a gate input for the same reason: a recorded size that lives only on one
+# machine is a gate that passes on one machine (`GB-195`).
+!.gaugeblock/miter/size-ratchet.txt
 
 # rabbet local corpus database (created when the CLI runs from the repo root)
 /rabbet.db*
