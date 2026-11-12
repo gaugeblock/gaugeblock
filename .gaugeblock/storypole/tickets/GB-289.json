@@ -62,6 +62,22 @@
       },
       "captured_by_agent": "user",
       "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "c8866a8c-2bef-4338-876a-fa86f903be41",
+      "title": null,
+      "description": "ALREADY DONE, verified 2026-11-10: outfeed/crates/outfeed-core/src/install/mod.rs is 203 lines, so the 253-line breach the ticket records was cleared during the GB-195 band sweep. miter audit --path outfeed --threshold 250 passes.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794451865898
+    },
+    {
+      "event": "task_archived",
+      "task_id": "c8866a8c-2bef-4338-876a-fa86f903be41",
+      "status": "triage",
+      "timestamp_ms": 1794451866760
     }
   ]
 }

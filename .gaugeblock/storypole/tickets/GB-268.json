@@ -110,6 +110,22 @@
         " so the writer is the right place to emit accurate values. Eleven hand-edits would drift again on the next scaffold."
       ],
       "timestamp_ms": 1793999769031
+    },
+    {
+      "event": "task_updated",
+      "task_id": "191bbd67-fd6c-4379-a6da-28679704eb74",
+      "title": null,
+      "description": "ALREADY DONE, verified 2026-11-10: the harness config carries a populated verification_commands table (eleven repository chains plus gaugeblock and default entries), and every member either declares its own chain or inherits the suite roster - SP-24 and SP-49 receipts name chain storypole, CO-11 and CO-2 name chain common, all executed rather than attested. storypole config check reports zero findings and zero errors.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794451881477
+    },
+    {
+      "event": "task_archived",
+      "task_id": "191bbd67-fd6c-4379-a6da-28679704eb74",
+      "status": "triage",
+      "timestamp_ms": 1794451882246
     }
   ]
 }

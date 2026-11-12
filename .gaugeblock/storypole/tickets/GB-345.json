@@ -72,6 +72,22 @@
       "scope": null,
       "acceptance_criteria": null,
       "timestamp_ms": 1794280780955
+    },
+    {
+      "event": "task_updated",
+      "task_id": "b49b50e0-8661-4454-a637-cbf1e3ec5a9e",
+      "title": null,
+      "description": "MEASURED 2026-11-08 in the suite root, after the migration moved every ticket to a file per ticket (ADR 0010):\n\n  ticket files in .gaugeblock/storypole/tickets/   162\n  duplicate keys among them                         0\n  case-colliding keys among them                    0   (checked lower-cased, since the constraint is on\n                                                         ticket_key_lower)\n\n  storypole ledger-verify      exit 0   \"0 events across 0 files: 0 unparsable, 0 duplicate / replay: 0 tasks\"\n  storypole ledger-reconcile   exit 1   \"UNIQUE constraint failed: tasks.ticket_key_lower\"\n\nTWO SEPARATE FAULTS, same cause. Both verbs read the append-only `ledger.jsonl` that no longer exists as a source -\n`ls .gaugeblock/storypole/` shows index.sqlite, ledger-archive, plans and tickets, and no ledger.jsonl. So:\n\n  * `ledger-verify` finds nothing, replays nothing, and reports success. A green result is exactly wrong here: it is the\n    command whose job is to detect a corrupt ledger, and it currently certifies an absent one. Anyone running it after\n    the migration gets assurance about zero tickets while 162 exist.\n  * `ledger-reconcile` fails on a UNIQUE constraint with no duplicate or case-colliding key in the data, so the fault is\n    in the tool rather than the store - most likely replaying nothing and then inserting rows that are already present,\n    without an upsert.\n\nWHY THIS MATTERS MORE THAN ITS P3 SHAPE: these two commands are the integrity story for the ledger. `ledger-verify`\nreporting zero is not a small inaccuracy - it is the specifically dangerous kind, because absence reads as health. It is\nthe same failure this session found four times elsewhere: a reader looking somewhere the truth no longer lives, and\nreporting the resulting silence as a pass.\n\nWHAT THE FIX MUST DECIDE: after ADR 0010 the source of truth is one file per ticket, so either these verbs read the\nticket files (and the archive for pre-migration history), or they are retired in favour of a verb that does. Keeping a\nverb that replays a ledger nobody writes is how a suite ends up with a green check that proves nothing.\n\nALREADY DONE, verified 2026-11-10: storypole ledger-verify replays 377 tasks across the suite and reports 0 unparsable and 0 duplicate records, and ledger-reconcile answers index and ledger agree. Both failed against the pre-migration ledger, which is now archived rather than read.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794451893687
+    },
+    {
+      "event": "task_archived",
+      "task_id": "b49b50e0-8661-4454-a637-cbf1e3ec5a9e",
+      "status": "triage",
+      "timestamp_ms": 1794451894250
     }
   ]
 }

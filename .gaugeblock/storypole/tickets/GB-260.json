@@ -1,40 +1,80 @@
 {
+  "ticket": {
+    "id": "d16adfdc-2adf-409f-8681-d239b9605c52",
+    "ticket_key": "GB-260",
+    "slug": "retire-the-ten-legacy-storypole-ledger-jsonl-files-left-behind-by-the-gb-189-unification-d16adf",
+    "title": "Retire the ten legacy .storypole/ledger.jsonl files left behind by the CO-7 unification",
+    "description": "",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": null,
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole::ledger"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "DONE 2026-11-06. Executed the archive: each of the ten legacy .storypole/ledger.jsonl files copied to .gaugeblock/storypole/ledger-archive/<repo>.jsonl in the meta-harness root",
+      " line count verified against the source before removal",
+      " then git rm'd in its own repo with its own commit. Verified after: zero legacy ledgers anywhere (find returns 0)",
+      " archive holds 10 files / 128 events total - exactly the 128 member events the audit counted - and all 10 .storypole/plans/*.md design documents survived untouched (law 11). Every repo clean. SP-4 was already recovered separately and is in the backlog as P2 Bug."
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1793994942305,
+    "updated_at_epoch_ms": 1793995082753
+  },
   "events": [
     {
-      "captured_by_agent": "user",
-      "discovered_from_task_id": null,
       "event": "deferred_item_captured",
       "task": {
-        "acceptance_criteria": [],
-        "active_claim": null,
-        "created_at_epoch_ms": 1793994942305,
-        "decisions": [],
-        "description": "",
-        "edges": [],
         "id": "d16adfdc-2adf-409f-8681-d239b9605c52",
+        "ticket_key": "GB-260",
+        "slug": "retire-the-ten-legacy-storypole-ledger-jsonl-files-left-behind-by-the-gb-189-unification-d16adf",
+        "title": "Retire the ten legacy .storypole/ledger.jsonl files left behind by the CO-7 unification",
+        "description": "",
         "kind": "tech_debt",
-        "latest_handoff": null,
-        "plan": null,
+        "status": "triage",
         "priority": 3,
         "scope": {
-          "crate_name": null,
-          "labels": [],
-          "module_path": null,
           "repo": null,
+          "crate_name": null,
+          "module_path": null,
           "target_files": [],
           "target_symbols": [
             "storypole::ledger"
-          ]
+          ],
+          "labels": []
         },
-        "slug": "retire-the-ten-legacy-storypole-ledger-jsonl-files-left-behind-by-the-gb-189-unification-d16adf",
-        "status": "triage",
-        "ticket_key": "GB-260",
-        "title": "Retire the ten legacy .storypole/ledger.jsonl files left behind by the CO-7 unification",
-        "updated_at_epoch_ms": 1793994942305,
-        "verification_receipt": null
-      }
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1793994942305,
+        "updated_at_epoch_ms": 1793994942305
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
     },
     {
+      "event": "task_updated",
+      "task_id": "d16adfdc-2adf-409f-8681-d239b9605c52",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "AUDIT 2026-11-06. Ten member repos still carry .storypole/ledger.jsonl (dado 6",
         " chalkline 9",
@@ -55,62 +95,38 @@
         " do not delete. Copy each to .gaugeblock/storypole/ledger-archive/<repo>.jsonl so the bytes survive in one canonical place",
         " then remove the legacy file. Do NOT touch .storypole/plans/ - law 11 makes those first-class tracked assets; only the ledger is superseded. Deletion not done because it is ten repos of committed history and the release tickets are the only audit trail of which tasks each beta shipped."
       ],
-      "description": null,
-      "event": "task_updated",
-      "priority": null,
-      "scope": null,
-      "task_id": "d16adfdc-2adf-409f-8681-d239b9605c52",
-      "timestamp_ms": 1793994946349,
-      "title": null
+      "timestamp_ms": 1793994946349
     },
     {
+      "event": "task_updated",
+      "task_id": "d16adfdc-2adf-409f-8681-d239b9605c52",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": null,
       "acceptance_criteria": [
         "DONE 2026-11-06. Executed the archive: each of the ten legacy .storypole/ledger.jsonl files copied to .gaugeblock/storypole/ledger-archive/<repo>.jsonl in the meta-harness root",
         " line count verified against the source before removal",
         " then git rm'd in its own repo with its own commit. Verified after: zero legacy ledgers anywhere (find returns 0)",
         " archive holds 10 files / 128 events total - exactly the 128 member events the audit counted - and all 10 .storypole/plans/*.md design documents survived untouched (law 11). Every repo clean. SP-4 was already recovered separately and is in the backlog as P2 Bug."
       ],
-      "description": null,
+      "timestamp_ms": 1793995082753
+    },
+    {
       "event": "task_updated",
+      "task_id": "d16adfdc-2adf-409f-8681-d239b9605c52",
+      "title": null,
+      "description": "ALREADY DONE, verified 2026-11-10: no .storypole directory and no ledger.jsonl exists at any depth under the suite (find over all twelve repositories, excluding .git). The ten legacy ledgers were retired by the CO-7 unification and the records migration, and nothing references them.",
       "priority": null,
       "scope": null,
-      "task_id": "d16adfdc-2adf-409f-8681-d239b9605c52",
-      "timestamp_ms": 1793995082753,
-      "title": null
-    }
-  ],
-  "ticket": {
-    "acceptance_criteria": [
-      "DONE 2026-11-06. Executed the archive: each of the ten legacy .storypole/ledger.jsonl files copied to .gaugeblock/storypole/ledger-archive/<repo>.jsonl in the meta-harness root",
-      " line count verified against the source before removal",
-      " then git rm'd in its own repo with its own commit. Verified after: zero legacy ledgers anywhere (find returns 0)",
-      " archive holds 10 files / 128 events total - exactly the 128 member events the audit counted - and all 10 .storypole/plans/*.md design documents survived untouched (law 11). Every repo clean. SP-4 was already recovered separately and is in the backlog as P2 Bug."
-    ],
-    "active_claim": null,
-    "created_at_epoch_ms": 1793994942305,
-    "decisions": [],
-    "description": "",
-    "edges": [],
-    "id": "d16adfdc-2adf-409f-8681-d239b9605c52",
-    "kind": "tech_debt",
-    "latest_handoff": null,
-    "plan": null,
-    "priority": 3,
-    "scope": {
-      "crate_name": null,
-      "labels": [],
-      "module_path": null,
-      "repo": null,
-      "target_files": [],
-      "target_symbols": [
-        "storypole::ledger"
-      ]
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794451864108
     },
-    "slug": "retire-the-ten-legacy-storypole-ledger-jsonl-files-left-behind-by-the-gb-189-unification-d16adf",
-    "status": "triage",
-    "ticket_key": "GB-260",
-    "title": "Retire the ten legacy .storypole/ledger.jsonl files left behind by the CO-7 unification",
-    "updated_at_epoch_ms": 1793995082753,
-    "verification_receipt": null
-  }
+    {
+      "event": "task_archived",
+      "task_id": "d16adfdc-2adf-409f-8681-d239b9605c52",
+      "status": "triage",
+      "timestamp_ms": 1794451864996
+    }
+  ]
 }

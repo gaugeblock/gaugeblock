@@ -112,6 +112,22 @@
         " so the fallback path needs an unscoped or unconfigured task to exercise."
       ],
       "timestamp_ms": 1794000691180
+    },
+    {
+      "event": "task_updated",
+      "task_id": "a7150097-ec17-4722-ac8c-0e23f5bae9c9",
+      "title": null,
+      "description": "ALREADY DONE, verified 2026-11-10: the cargo-test fallback is no longer silent. receipts::build prefixes the receipt summary with [fallback: no verification command configured; ran cargo test], appends :cargo-test-fallback to the verifier name, and prints a warning to stderr. Measured live earlier today: SP-49 receipt before its scope was corrected read verifier storypole-verify:cargo-test-fallback with that prefix, and a reader could tell it from a configured run.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794451883139
+    },
+    {
+      "event": "task_archived",
+      "task_id": "a7150097-ec17-4722-ac8c-0e23f5bae9c9",
+      "status": "triage",
+      "timestamp_ms": 1794451883711
     }
   ]
 }
