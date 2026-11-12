@@ -72,6 +72,64 @@
       "scope": null,
       "acceptance_criteria": null,
       "timestamp_ms": 1794278290675
+    },
+    {
+      "event": "task_claimed",
+      "task_id": "e6c94f22-bf8a-4b1c-b11c-ab1ef3057915",
+      "claim": {
+        "agent_id": "cline",
+        "claimed_at_epoch_ms": 1794448493938,
+        "lease_expires_at_epoch_ms": 1794452093938,
+        "git_branch": null,
+        "base_commit_sha": null
+      }
+    },
+    {
+      "event": "status_changed",
+      "task_id": "e6c94f22-bf8a-4b1c-b11c-ab1ef3057915",
+      "from": "deferred",
+      "to": "in_progress",
+      "reason": "Claimed by cline",
+      "timestamp_ms": 1794448493938
+    },
+    {
+      "event": "task_verified",
+      "task_id": "e6c94f22-bf8a-4b1c-b11c-ab1ef3057915",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "miter contracts && outfeed lockfiles && miter audit --path . --threshold 250 --paths && chalkline docs check --workspace",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "[window: no base commit could be named, so this receipt covers HEAD only]\nPolyglot Contract Verification across SQL, Rust, and TypeScript\n================================================================================\nVerified Multi-Language Entities: 37\nEntities with Contract Drift:     0\nDeclared non-mirrors (allowed):   1\n\nALL CONTRACTS CONSISTENT: No cross-language schema drifts detected.\nREPOSITORY     LOCKFILE     FRESH   \n------------------------------------\nbatten         tracked      yes     \nbenchwork      tracked      yes     \nchalkline      tracked      yes     \ncommon         tracked      yes     \ndado           tracked      yes     \njoiner         tracked      yes     \nmiter          tracked      yes     \noutfeed        tracked      yes     \nrabbet         tracked      yes     \nsawhorse       tracked      yes     \nstorypole      tracked      yes     \n\nAll 11 repositories track a fresh Cargo.lock.\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\n\n=== Gaugeblock 9-Document Architecture Audit (Workspace) ===\nWorkspace Root: /Users/wolff/dev2026/neurosymbolic-suite\n\nRepo           README CONTRIB PROD   ARCH   SPEC   DESIGN   ROADMAP   CHANGELOG   AGENTS   Status    \n-----------------------------------------------------------------------------------------------\nworkspace      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbatten         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nbenchwork      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nchalkline      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ncommon         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \ndado           [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \njoiner         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nmiter          [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \noutfeed        [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nrabbet         [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nsawhorse       [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \nstorypole      [OK]   [OK]    [OK]   [OK]   [OK]   [OK]     [OK]      [OK]        [OK]     CLEAN     \n\nSummary: 12 targets audited, 108 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794449008000,
+        "git_branch": "main",
+        "base_commit_sha": null,
+        "head_commit_sha": "3dfe9422d29c59fb3bf0ee9c83d5f6649fdbf64b",
+        "commit_shas": [
+          "3dfe9422d29c59fb3bf0ee9c83d5f6649fdbf64b"
+        ],
+        "repo": null,
+        "chain_key": "default",
+        "diff_hash": "4aea2318842285c4824cd305c297b08aadcad8d4",
+        "diff": "diff --git a/docs/CONTRACTS.md b/docs/CONTRACTS.md\nindex 365678c..79cb802 100644\n--- a/docs/CONTRACTS.md\n+++ b/docs/CONTRACTS.md\n@@ -288,6 +288,15 @@ pub struct VerificationReceipt {\n     /// A harness chain and a member chain are different commands, and receipts that ran different\n     /// commands must not read the same (`GB-316`).\n     pub chain_key: Option<String>,\n+    /// Content hash of the change the receipt verified (`SP-41`). Content, not position, so a rebase or\n+    /// force-push cannot orphan it the way a window of SHAs can.\n+    pub diff_hash: Option<String>,\n+    /// The diff itself, capped. A receipt is replayed from a ledger, so an unbounded diff would make\n+    /// every read pay for one large change; truncation is marked in the text (`SP-41`).\n+    pub diff: Option<String>,\n+    /// Whether both ends of the recorded window still exist in the repository (`SP-41`).\n+    /// `Some(false)` means the window was orphaned and the receipt is now the only record of it.\n+    pub window_intact: Option<bool>,\n }\n \n /// Multi-dimensional scope coordinates for filtering across repos, crates, and AST symbols.\n",
+        "window_intact": true
+      }
+    },
+    {
+      "event": "task_updated",
+      "task_id": "e6c94f22-bf8a-4b1c-b11c-ab1ef3057915",
+      "title": null,
+      "description": "FILED 2026-11-08, because no retention ticket existed - an earlier handover note in this session named GB-341 as the\nretention ticket, and GB-341 is \"A Verified task cannot be reopened\". That was my error, recorded here so the next\nreader does not go looking for a ticket that was never written.\n\nMEASURED STATE, one session after every tool started emitting: 75 spans, 18,147 bytes, ~242 bytes per span, in a single\nappend-only file at `.gaugeblock/telemetry/events.jsonl`. The directory holds nothing else.\n\nWHAT THAT IMPLIES, and the shape of the problem: at 242 bytes a span, a million spans is ~240 MB in one file that every\ntool appends to and nothing ever reads back selectively. Nothing rotates it, nothing aggregates it, and nothing prunes\nit. The log is the only place a run's history exists, so deleting it loses evidence - which is why this is a design\nticket rather than a cron job.\n\nWHAT RETENTION HAS TO KEEP, which is the hard part and the reason to decide before the file is large:\n  * the panel needs recent spans at full fidelity;\n  * `storypole handoff` wants spans by task key (GB-309), so old spans are not automatically junk;\n  * law 12 wants performance claims to persist, and a rotated-away measurement is a claim with no backing;\n  * a trace that spans a rotation boundary must not be torn in half, or a duration computed across it becomes a lie.\n\nCANDIDATE SHAPES, none chosen: size-based rotation with an aggregate sidecar (counts and duration percentiles per\nbinary/day, kept forever, raw spans aged out); date-partitioned files with a retention window; or keeping raw spans and\nadding an index so the file is cheap to query rather than cheap to store.\n\nThe measurement above is warm and single-machine - the numbers are real, the projection is arithmetic, not a benchmark.\n\nDELIVERED AND VERIFIED 2026-11-10 (common a992803). Retention lives in gaugeblock-workspace telemetry/retention.rs: [telemetry] max_bytes (default 8 MiB) and keep_rotations (default 3), consulted before every append, with one aggregate line written per rotation - spans, bytes, and per-binary counts with duration totals. Live proof through the real writer rather than only the unit tests: with max_bytes temporarily set to 1, one storypole list rotated the suite log (884 spans, 218008 bytes) to events.1.jsonl, left the new span in events.jsonl, and wrote an aggregate naming ten binaries. The log was merged back (885 lines) and the config restored before this receipt. Two numbers from that aggregate worth keeping: storypole 691 spans totalling 78245585 ms, outfeed 39 totalling 3307621 ms - the suite has been running storypole commands for about 21.7 hours of wall-clock span time. Provenance, and it is the same caveat as BW-33 and SP-38: the receipt below says chain default and names no repository, because this ticket scope crate workspace is not a crate any member declares, so SP-50 resolution finds no owner and the suite chain runs. The change is in common, verified by common own fmt, clippy, telemetry_retention_tests 5/5.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794449054812
+    },
+    {
+      "event": "task_archived",
+      "task_id": "e6c94f22-bf8a-4b1c-b11c-ab1ef3057915",
+      "status": "verified",
+      "timestamp_ms": 1794449055379
     }
   ]
 }
