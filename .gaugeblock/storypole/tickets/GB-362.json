@@ -1,0 +1,85 @@
+{
+  "ticket": {
+    "id": "bd7fd322-45b6-41b6-923a-14789238ec2e",
+    "ticket_key": "GB-362",
+    "slug": "outfeed-reserve-exists-in-no-tag-so-no-downstream-project-can-install-the-command-that-is-meant-to-replace-its-own-script-bd7fd3",
+    "title": "outfeed reserve exists in no tag, so no downstream project can install the command that is meant to replace its own script",
+    "description": "MEASURED 2026-11-12 from a downstream consumer (aerofoil), while deciding whether to replace its hand-written namespace-reservation script with `outfeed reserve` (their AF-22).\n\nTHE VERSION LAG\n  `outfeed reserve` was added in d2f4df9 \"feat(outfeed-core): add reserve check, scaffold and publish\n  for namespace claims\", committed 2026-11-05 22:16.\n  `git tag --contains d2f4df9` returns nothing: the command is in no tag at all.\n  crates.io `outfeed-cli` max_version is 0.1.0-beta.7, and that tree carries no reserve command -\n  `git grep -i reserve v0.1.0-beta.7 -- '*.rs'` matches only unrelated code in clone.rs.\n  The local checkout (HEAD 82e09fc) is 98 commits past its v0.1.0-beta.7 tag, which is why the verb\n  works on a developer machine and nowhere else.\n\nWHY IT BLOCKS A CONSUMER\naerofoil's scripts/reserve-namespaces.sh implements check/scaffold/publish in about 200 lines of\nshell, including the crates.io 429 handling. AF-22 wants it reduced to a wrapper around this command,\nand cannot: no installable outfeed has it. Unlike miter (GB-361), outfeed has no cross-repo path\ndependency, so `cargo install --git https://github.com/gaugeblock/outfeed --rev <sha> outfeed-cli`\ndoes work - the missing piece is purely a release, not a structural fix. AF-22 is parked on this.\n\nTWO THINGS TO WEIGH WHILE CUTTING IT\n  1. `reserve scaffold` takes names positionally and its `--repository` default is\n     https://github.com/gaugeblock/{name} - the suite's own org. A consumer needs to pass a template\n     for its own repository, and per-name overrides are already supported (`--repo-override NAME=URL`).\n     Worth deciding whether a template alone is enough, or whether the default should be an error\n     when it would point a placeholder at an org the caller does not own.\n  2. There is no way to supply a description, so scaffolded placeholders carry a generic one.\n     aerofoil's script carries a per-crate description for each name, and losing them is a (small)\n     content regression that a wrapper would need to accept or the tool would need to support.\n\nACCEPTANCE\n  * a published `outfeed-cli` version answers `outfeed reserve --help` with check, scaffold and publish;\n  * `cargo install outfeed-cli --version <new> --locked` on a clean machine provides all three verbs;\n  * the release's tag contains d2f4df9, so a consumer pinning the tag gets the verb.\n\nNOT IN SCOPE\nChanging what reservation does. This is about the same code being obtainable at the version a\nconsumer is told to run.",
+    "kind": "tech_debt",
+    "status": "ready",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "outfeed",
+      "module_path": null,
+      "target_files": [
+        "crates/outfeed-cli/src/args/reserve.rs",
+        "crates/outfeed-cli/src/commands/reserve.rs",
+        "crates/outfeed-core/src/reserve/mod.rs"
+      ],
+      "target_symbols": [],
+      "labels": [
+        "outfeed",
+        "packaging",
+        "release"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "a published outfeed-cli answers outfeed reserve --help with check, scaffold and publish",
+      "cargo install outfeed-cli --version <new> --locked on a clean machine provides all three verbs",
+      "the release tag contains d2f4df9, so a consumer pinning the tag gets the verb"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794557928137,
+    "updated_at_epoch_ms": 1794557928137
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "bd7fd322-45b6-41b6-923a-14789238ec2e",
+        "ticket_key": "GB-362",
+        "slug": "outfeed-reserve-exists-in-no-tag-so-no-downstream-project-can-install-the-command-that-is-meant-to-replace-its-own-script-bd7fd3",
+        "title": "outfeed reserve exists in no tag, so no downstream project can install the command that is meant to replace its own script",
+        "description": "MEASURED 2026-11-12 from a downstream consumer (aerofoil), while deciding whether to replace its hand-written namespace-reservation script with `outfeed reserve` (their AF-22).\n\nTHE VERSION LAG\n  `outfeed reserve` was added in d2f4df9 \"feat(outfeed-core): add reserve check, scaffold and publish\n  for namespace claims\", committed 2026-11-05 22:16.\n  `git tag --contains d2f4df9` returns nothing: the command is in no tag at all.\n  crates.io `outfeed-cli` max_version is 0.1.0-beta.7, and that tree carries no reserve command -\n  `git grep -i reserve v0.1.0-beta.7 -- '*.rs'` matches only unrelated code in clone.rs.\n  The local checkout (HEAD 82e09fc) is 98 commits past its v0.1.0-beta.7 tag, which is why the verb\n  works on a developer machine and nowhere else.\n\nWHY IT BLOCKS A CONSUMER\naerofoil's scripts/reserve-namespaces.sh implements check/scaffold/publish in about 200 lines of\nshell, including the crates.io 429 handling. AF-22 wants it reduced to a wrapper around this command,\nand cannot: no installable outfeed has it. Unlike miter (GB-361), outfeed has no cross-repo path\ndependency, so `cargo install --git https://github.com/gaugeblock/outfeed --rev <sha> outfeed-cli`\ndoes work - the missing piece is purely a release, not a structural fix. AF-22 is parked on this.\n\nTWO THINGS TO WEIGH WHILE CUTTING IT\n  1. `reserve scaffold` takes names positionally and its `--repository` default is\n     https://github.com/gaugeblock/{name} - the suite's own org. A consumer needs to pass a template\n     for its own repository, and per-name overrides are already supported (`--repo-override NAME=URL`).\n     Worth deciding whether a template alone is enough, or whether the default should be an error\n     when it would point a placeholder at an org the caller does not own.\n  2. There is no way to supply a description, so scaffolded placeholders carry a generic one.\n     aerofoil's script carries a per-crate description for each name, and losing them is a (small)\n     content regression that a wrapper would need to accept or the tool would need to support.\n\nACCEPTANCE\n  * a published `outfeed-cli` version answers `outfeed reserve --help` with check, scaffold and publish;\n  * `cargo install outfeed-cli --version <new> --locked` on a clean machine provides all three verbs;\n  * the release's tag contains d2f4df9, so a consumer pinning the tag gets the verb.\n\nNOT IN SCOPE\nChanging what reservation does. This is about the same code being obtainable at the version a\nconsumer is told to run.",
+        "kind": "tech_debt",
+        "status": "ready",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "outfeed",
+          "module_path": null,
+          "target_files": [
+            "crates/outfeed-cli/src/args/reserve.rs",
+            "crates/outfeed-cli/src/commands/reserve.rs",
+            "crates/outfeed-core/src/reserve/mod.rs"
+          ],
+          "target_symbols": [],
+          "labels": [
+            "outfeed",
+            "packaging",
+            "release"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "a published outfeed-cli answers outfeed reserve --help with check, scaffold and publish",
+          "cargo install outfeed-cli --version <new> --locked on a clean machine provides all three verbs",
+          "the release tag contains d2f4df9, so a consumer pinning the tag gets the verb"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794557928137,
+        "updated_at_epoch_ms": 1794557928137
+      }
+    }
+  ]
+}

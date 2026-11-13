@@ -1,0 +1,85 @@
+{
+  "ticket": {
+    "id": "507c31db-6c61-4bab-893a-49f3f0b69051",
+    "ticket_key": "GB-361",
+    "slug": "downstream-projects-cannot-install-the-miter-whose-gates-they-document-published-crates-lag-their-tags-and-a-git-install-cannot-resolve-a-cross-repo-path-dependency-507c31",
+    "title": "Downstream projects cannot install the miter whose gates they document: published crates lag their tags, and a git install cannot resolve a cross-repo path dependency",
+    "description": "MEASURED 2026-11-12 from a downstream consumer (aerofoil), while making the suite gates run in CI (their AF-19).\n\nTHE VERSION LAG\n  miter-cli 0.1.0-beta.4 on crates.io, published 2026-10-14\n  miter checkout: HEAD 2c6f9b0, tag v0.1.0-beta.4 at 17f9515, 87 commits ahead of the tag\n  `miter deps` is absent from the tag and therefore absent from the published crate:\n    git cat-file -e v0.1.0-beta.4:src/cli/args_deps.rs  ->  ABSENT in tag\n  chalkline-cli 0.1.0-beta.4, published 2026-10-22; checkout HEAD 3b5253f, 52 commits ahead of its tag\n\nTHE STRUCTURAL PART, WHICH MATTERS MORE\nA pinned git install is the obvious fallback and it does not work. miter's workspace resolves\n`gaugeblock-security` by relative path into the *sibling* `common` repository, so a clone of miter\nalone cannot load its own manifests:\n\n  cargo install --git https://github.com/gaugeblock/miter --rev 2c6f9b0586d971ce9f825fa048f14d8f5746f996 \\\n    --locked miter-cli\n  error: failed to load manifest for workspace member .../crates/engine\n  Caused by: failed to read /Users/.../git/checkouts/miter-.../2c6f9b0/common/crates/gaugeblock-security/Cargo.toml\n  Caused by: No such file or directory (os error 2)\n\nSo each tool is self-contained only as a published package: publishing flattens the path dependency\ninto a registry version, and cloning does not. Note the grep that misses this: neither miter/Cargo.toml\nnor the member manifests show a `../` path at the site of use, because it is declared once in\n[workspace.dependencies] and consumed with `workspace = true`.\n\nWHY IT COSTS A CONSUMER\nThe suite documents gates (AGENTS.md §3.6 in a consumer: `miter audit`, `miter deps --unused`,\n`chalkline docs check`) and cannot supply the tool that implements one of them. The consumer's choice\nis: pin an older registry release and drop `miter deps` from CI, or build from a local checkout that\nCI does not have. aerofoil pinned 0.1.0-beta.4, runs audit and docs check, and left `miter deps` as a\nlocal-only gate — with the omission named in its workflow and its AGENTS.md §7 so it cannot read as\ncoverage.\n\nWHAT CLOSES THIS\nEither or both:\n  * cut a release containing every command the documented tiers name, and keep the tag, the published\n    crate and the checkout in step (the tag is what `git cat-file` and `cargo install --git --rev`\n    would be pinned to, so a stale tag is itself a defect);\n  * make the repositories installable from a clone, by publishing gaugeblock-security (and any other\n    cross-repo path dependency) and depending on it by version, so `cargo install --git ... --rev`\n    resolves without the sibling checkouts.\n\nAcceptance for this ticket is the second one proven from a clean machine: the command above, verbatim,\ncompletes and leaves a `miter` that answers `miter deps --unused`.\n\nNOT IN SCOPE\nChanging what any gate checks. This is about the same code being obtainable at the version a consumer\nis told to run.",
+    "kind": "tech_debt",
+    "status": "ready",
+    "priority": 2,
+    "scope": {
+      "repo": null,
+      "crate_name": "miter",
+      "module_path": null,
+      "target_files": [
+        "miter/Cargo.toml",
+        "miter/crates/engine/Cargo.toml",
+        "common/crates/gaugeblock-security/Cargo.toml"
+      ],
+      "target_symbols": [],
+      "labels": [
+        "miter",
+        "packaging",
+        "release"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "cargo install --git https://github.com/gaugeblock/miter --rev <sha> --locked miter-cli succeeds from a clean machine with no sibling checkouts",
+      "the installed binary answers miter deps --unused",
+      "the tag, the published crate and the checkout carry the same commands, so a consumer pinning the tag gets the gate the documentation names"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794555676732,
+    "updated_at_epoch_ms": 1794555676732
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "507c31db-6c61-4bab-893a-49f3f0b69051",
+        "ticket_key": "GB-361",
+        "slug": "downstream-projects-cannot-install-the-miter-whose-gates-they-document-published-crates-lag-their-tags-and-a-git-install-cannot-resolve-a-cross-repo-path-dependency-507c31",
+        "title": "Downstream projects cannot install the miter whose gates they document: published crates lag their tags, and a git install cannot resolve a cross-repo path dependency",
+        "description": "MEASURED 2026-11-12 from a downstream consumer (aerofoil), while making the suite gates run in CI (their AF-19).\n\nTHE VERSION LAG\n  miter-cli 0.1.0-beta.4 on crates.io, published 2026-10-14\n  miter checkout: HEAD 2c6f9b0, tag v0.1.0-beta.4 at 17f9515, 87 commits ahead of the tag\n  `miter deps` is absent from the tag and therefore absent from the published crate:\n    git cat-file -e v0.1.0-beta.4:src/cli/args_deps.rs  ->  ABSENT in tag\n  chalkline-cli 0.1.0-beta.4, published 2026-10-22; checkout HEAD 3b5253f, 52 commits ahead of its tag\n\nTHE STRUCTURAL PART, WHICH MATTERS MORE\nA pinned git install is the obvious fallback and it does not work. miter's workspace resolves\n`gaugeblock-security` by relative path into the *sibling* `common` repository, so a clone of miter\nalone cannot load its own manifests:\n\n  cargo install --git https://github.com/gaugeblock/miter --rev 2c6f9b0586d971ce9f825fa048f14d8f5746f996 \\\n    --locked miter-cli\n  error: failed to load manifest for workspace member .../crates/engine\n  Caused by: failed to read /Users/.../git/checkouts/miter-.../2c6f9b0/common/crates/gaugeblock-security/Cargo.toml\n  Caused by: No such file or directory (os error 2)\n\nSo each tool is self-contained only as a published package: publishing flattens the path dependency\ninto a registry version, and cloning does not. Note the grep that misses this: neither miter/Cargo.toml\nnor the member manifests show a `../` path at the site of use, because it is declared once in\n[workspace.dependencies] and consumed with `workspace = true`.\n\nWHY IT COSTS A CONSUMER\nThe suite documents gates (AGENTS.md §3.6 in a consumer: `miter audit`, `miter deps --unused`,\n`chalkline docs check`) and cannot supply the tool that implements one of them. The consumer's choice\nis: pin an older registry release and drop `miter deps` from CI, or build from a local checkout that\nCI does not have. aerofoil pinned 0.1.0-beta.4, runs audit and docs check, and left `miter deps` as a\nlocal-only gate — with the omission named in its workflow and its AGENTS.md §7 so it cannot read as\ncoverage.\n\nWHAT CLOSES THIS\nEither or both:\n  * cut a release containing every command the documented tiers name, and keep the tag, the published\n    crate and the checkout in step (the tag is what `git cat-file` and `cargo install --git --rev`\n    would be pinned to, so a stale tag is itself a defect);\n  * make the repositories installable from a clone, by publishing gaugeblock-security (and any other\n    cross-repo path dependency) and depending on it by version, so `cargo install --git ... --rev`\n    resolves without the sibling checkouts.\n\nAcceptance for this ticket is the second one proven from a clean machine: the command above, verbatim,\ncompletes and leaves a `miter` that answers `miter deps --unused`.\n\nNOT IN SCOPE\nChanging what any gate checks. This is about the same code being obtainable at the version a consumer\nis told to run.",
+        "kind": "tech_debt",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": null,
+          "crate_name": "miter",
+          "module_path": null,
+          "target_files": [
+            "miter/Cargo.toml",
+            "miter/crates/engine/Cargo.toml",
+            "common/crates/gaugeblock-security/Cargo.toml"
+          ],
+          "target_symbols": [],
+          "labels": [
+            "miter",
+            "packaging",
+            "release"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "cargo install --git https://github.com/gaugeblock/miter --rev <sha> --locked miter-cli succeeds from a clean machine with no sibling checkouts",
+          "the installed binary answers miter deps --unused",
+          "the tag, the published crate and the checkout carry the same commands, so a consumer pinning the tag gets the gate the documentation names"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794555676732,
+        "updated_at_epoch_ms": 1794555676732
+      }
+    }
+  ]
+}
