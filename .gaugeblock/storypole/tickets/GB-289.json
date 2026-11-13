@@ -4,7 +4,7 @@
     "ticket_key": "GB-289",
     "slug": "outfeed-core-install-mod-rs-is-253-lines-over-the-250-limit-fold-into-the-gb-195-band-sweep-c8866a",
     "title": "outfeed-core install/mod.rs is 253 lines, over the 250 limit (fold into the GB-195 band sweep)",
-    "description": "ALREADY DONE, verified 2026-11-10: outfeed/crates/outfeed-core/src/install/mod.rs is 203 lines, so the 253-line breach the ticket records was cleared during the GB-195 band sweep. miter audit --path outfeed --threshold 250 passes.",
+    "description": "ALREADY DONE, verified 2026-11-10: outfeed/crates/outfeed-core/src/install/mod.rs is 203 lines, so the 253-line breach the ticket records was cleared during the GB-195 band sweep. miter audit --path outfeed --threshold 250 passes.\n\nRE-CHECKED 2026-11-12 and the claim still holds: outfeed/crates/outfeed-core/src/install/mod.rs is 203 lines.",
     "kind": "tech_debt",
     "status": "triage",
     "priority": 3,
@@ -26,7 +26,7 @@
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1794034045396,
-    "updated_at_epoch_ms": 1794451866760,
+    "updated_at_epoch_ms": 1794554341690,
     "archived_at_epoch_ms": 1794451866760
   },
   "events": [
@@ -79,6 +79,16 @@
       "task_id": "c8866a8c-2bef-4338-876a-fa86f903be41",
       "status": "triage",
       "timestamp_ms": 1794451866760
+    },
+    {
+      "event": "task_updated",
+      "task_id": "c8866a8c-2bef-4338-876a-fa86f903be41",
+      "title": null,
+      "description": "ALREADY DONE, verified 2026-11-10: outfeed/crates/outfeed-core/src/install/mod.rs is 203 lines, so the 253-line breach the ticket records was cleared during the GB-195 band sweep. miter audit --path outfeed --threshold 250 passes.\n\nRE-CHECKED 2026-11-12 and the claim still holds: outfeed/crates/outfeed-core/src/install/mod.rs is 203 lines.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794554341690
     }
   ]
 }
