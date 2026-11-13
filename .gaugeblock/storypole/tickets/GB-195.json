@@ -4,7 +4,7 @@
     "ticket_key": "GB-195",
     "slug": "sweep-the-200-250-loc-band-60-files-31-of-them-in-miter-engine-272e2f",
     "title": "Sweep the 200-250 LOC band: 85 files measured, 37 in miter",
-    "description": "RE-MEASURED 2026-10-31 after MTR-20 split miter-engine into four crates. The class has grown from the 60 files this was filed against to 85 files in the 200-250 band (miter audit --threshold 200, all under the hard 250 ceiling, so nothing is illegal yet).\n\nDistribution: miter 37, benchwork/web 9, storypole 8, common 8, sawhorse 5, benchwork 5, outfeed 4, joiner 4, plus a tail.\n\nThe filing assumption that 31 of the 60 were in miter-engine no longer holds - those files are now spread across miter-polyglot, miter-analysis, miter-inventory and miter-engine, and the count in miter as a whole went up rather than down, because the split moved files without shrinking them. That is the argument for doing this sweep now rather than after more extraction: the band is where the next 250-line breach will come from, and every extraction so far has pushed a file into it.",
+    "description": "RE-MEASURED 2026-10-31 after MTR-20 split miter-engine into four crates. The class has grown from the 60 files this was filed against to 85 files in the 200-250 band (miter audit --threshold 200, all under the hard 250 ceiling, so nothing is illegal yet).\n\nDistribution: miter 37, benchwork/web 9, storypole 8, common 8, sawhorse 5, benchwork 5, outfeed 4, joiner 4, plus a tail.\n\nThe filing assumption that 31 of the 60 were in miter-engine no longer holds - those files are now spread across miter-polyglot, miter-analysis, miter-inventory and miter-engine, and the count in miter as a whole went up rather than down, because the split moved files without shrinking them. That is the argument for doing this sweep now rather than after more extraction: the band is where the next 250-line breach will come from, and every extraction so far has pushed a file into it.\n\nMEASURED AND MECHANISM LANDED 2026-11-10 (miter 2c6f9b0, root 55619f8). Re-measured before starting per the acceptance: 131 files in the band at threshold 200, up from 85 on 2026-10-31 and 60 at filing. Distribution: miter 43, storypole 36, benchwork 18, common 13, outfeed 7, sawhorse 6, joiner 4, rabbet 2, chalkline 2. The band refills faster than a sweep drains it, and this session proved it before the measurement did: two files crossed 250 by reformat rather than edit, and this change pushed miter cli/mod.rs to 255 the same way, so mod.rs was split (237 + db_path.rs 16) rather than left just under.\n\nWHAT LANDED is a ratchet, not a sweep. miter audit --paths records sizes in .gaugeblock/miter/size-ratchet.txt and fails when a banded file grows or a new file enters without a deliberate entry; shrinking and leaving are free; a missing baseline reports UNRECORDED rather than passing. The band uses the same walker at a lower threshold, not a second walker. PROVEN TO FAIL: five added lines produced receipts.rs grew 202 -> 208 and a non-zero exit, and reverting restored the pass. Six unit tests. The baseline itself was being written into a gitignored directory, so the ignore file now excepts and tracks it - a gate input that lives on one machine is a gate that passes on one machine.\n\nSTILL OPEN: the first criterion - every banded file split or carrying a written reason - is 131 judgements and is not done. The target is now stable, which is what makes the sweep finishable. 28 files are within ten lines of the ceiling and are the natural first pass.",
     "kind": "tech_debt",
     "status": "ready",
     "priority": 3,
@@ -40,7 +40,7 @@
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1793307235377,
-    "updated_at_epoch_ms": 1794336146476
+    "updated_at_epoch_ms": 1794539460498
   },
   "events": [
     {
@@ -148,6 +148,16 @@
         "target_repo": "miter"
       },
       "timestamp_ms": 1794336146476
+    },
+    {
+      "event": "task_updated",
+      "task_id": "272e2f4a-b035-4516-8cb0-096c6c8cf71d",
+      "title": null,
+      "description": "RE-MEASURED 2026-10-31 after MTR-20 split miter-engine into four crates. The class has grown from the 60 files this was filed against to 85 files in the 200-250 band (miter audit --threshold 200, all under the hard 250 ceiling, so nothing is illegal yet).\n\nDistribution: miter 37, benchwork/web 9, storypole 8, common 8, sawhorse 5, benchwork 5, outfeed 4, joiner 4, plus a tail.\n\nThe filing assumption that 31 of the 60 were in miter-engine no longer holds - those files are now spread across miter-polyglot, miter-analysis, miter-inventory and miter-engine, and the count in miter as a whole went up rather than down, because the split moved files without shrinking them. That is the argument for doing this sweep now rather than after more extraction: the band is where the next 250-line breach will come from, and every extraction so far has pushed a file into it.\n\nMEASURED AND MECHANISM LANDED 2026-11-10 (miter 2c6f9b0, root 55619f8). Re-measured before starting per the acceptance: 131 files in the band at threshold 200, up from 85 on 2026-10-31 and 60 at filing. Distribution: miter 43, storypole 36, benchwork 18, common 13, outfeed 7, sawhorse 6, joiner 4, rabbet 2, chalkline 2. The band refills faster than a sweep drains it, and this session proved it before the measurement did: two files crossed 250 by reformat rather than edit, and this change pushed miter cli/mod.rs to 255 the same way, so mod.rs was split (237 + db_path.rs 16) rather than left just under.\n\nWHAT LANDED is a ratchet, not a sweep. miter audit --paths records sizes in .gaugeblock/miter/size-ratchet.txt and fails when a banded file grows or a new file enters without a deliberate entry; shrinking and leaving are free; a missing baseline reports UNRECORDED rather than passing. The band uses the same walker at a lower threshold, not a second walker. PROVEN TO FAIL: five added lines produced receipts.rs grew 202 -> 208 and a non-zero exit, and reverting restored the pass. Six unit tests. The baseline itself was being written into a gitignored directory, so the ignore file now excepts and tracks it - a gate input that lives on one machine is a gate that passes on one machine.\n\nSTILL OPEN: the first criterion - every banded file split or carrying a written reason - is 131 judgements and is not done. The target is now stable, which is what makes the sweep finishable. 28 files are within ten lines of the ceiling and are the natural first pass.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794539460498
     }
   ]
 }
