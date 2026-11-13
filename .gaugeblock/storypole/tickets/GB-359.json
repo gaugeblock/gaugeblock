@@ -1,0 +1,83 @@
+{
+  "ticket": {
+    "id": "c1cd0314-f948-4d67-bceb-5e629f6fe6f3",
+    "ticket_key": "GB-359",
+    "slug": "storypole-add-stores-files-symbols-and-labels-as-one-comma-joined-entry-while-update-splits-them-c1cd03",
+    "title": "storypole add stores --files, --symbols and --labels as one comma-joined entry, while update splits them",
+    "description": "MEASURED 2026-11-12 in the suite store while filing GB-357 and GB-358.\n\nstorypole add accepts --files, --symbols and --labels without a value delimiter, so a comma-separated value becomes ONE scope entry rather than several. storypole update accepts the same three flags with value_delimiter = ',' and splits them. The two verbs disagree, and add is the one a person uses first, so the damage lands in the record and survives until someone runs update.\n\nEvidence, both from this store:\n\n  storypole add ... --files \".gaugeblock/storypole/tickets/GB-268.json,.gaugeblock/storypole/tickets/GB-345.json\" --labels \"storypole,bookkeeping\"\n  stored target_files: [\".gaugeblock/storypole/tickets/GB-268.json,.gaugeblock/storypole/tickets/GB-345.json\"]\n  stored labels:       [\"storypole,bookkeeping\"]\n\n  storypole update GB-358 --file \"...\" --label \"storypole,bookkeeping\"\n  stored target_files: [\".gaugeblock/storypole/tickets/GB-268.json\", \".gaugeblock/storypole/tickets/GB-345.json\"]\n  stored labels:       [\"storypole\", \"bookkeeping\"]\n\nMechanism: crates/storypole-cli/src/args.rs AddArgs has `pub files: Vec<String>` with a bare #[arg(long)] at args.rs:161-167, while UpdateArgs at update_args.rs:38-47 carries value_delimiter = ',' on --file, --symbol and --label. handle_add (handlers/core_cmds/mod.rs:41-50) passes args.files through unchanged, so nothing downstream re-splits.\n\nWhy it matters beyond tidiness: scope is what the tooling reads. A comma-joined label does not match `storypole list --label storypole`, and a comma-joined target_files entry is one path that exists nowhere. The record looks populated and silently is not. The same shape already exists in aerofoil, whose AF-99 carries target_files [\"AGENTS.md,.gaugeblock/config.toml\"] for a ticket that names two files - filed by a previous add, unnoticed until read.\n\nNote the asymmetry is not limited to delimiters: the verbs do not even share flag names. add takes --files / --symbols / --labels (plural) and rejects --file / --symbol / --label outright, while update takes the singular repeatable --file / --symbol / --label. Repeating the plural flag (--files a --files b) does produce two entries, so a workaround exists, but nothing documents it and the plural flag invites the comma form, which is why the comma form keeps being used. `--criteria` is deliberately repeatable-only in both verbs, because criteria are prose (GB-250); that reasoning does not apply to paths, symbols or labels.",
+    "kind": "bug",
+    "status": "ready",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "storypole",
+      "module_path": null,
+      "target_files": [
+        "crates/storypole-cli/src/args.rs",
+        "crates/storypole-cli/src/update_args.rs",
+        "crates/storypole-cli/src/handlers/core_cmds/mod.rs"
+      ],
+      "target_symbols": [],
+      "labels": [
+        "storypole",
+        "cli"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "add splits --files, --symbols and --labels on commas exactly as update does, and still accepts the flag repeated",
+      "a ticket created with a comma-separated --files has usable, separate scope entries without a follow-up update",
+      "a regression test covers both verbs producing identical scope from identical arguments"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794552903524,
+    "updated_at_epoch_ms": 1794552903524
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "c1cd0314-f948-4d67-bceb-5e629f6fe6f3",
+        "ticket_key": "GB-359",
+        "slug": "storypole-add-stores-files-symbols-and-labels-as-one-comma-joined-entry-while-update-splits-them-c1cd03",
+        "title": "storypole add stores --files, --symbols and --labels as one comma-joined entry, while update splits them",
+        "description": "MEASURED 2026-11-12 in the suite store while filing GB-357 and GB-358.\n\nstorypole add accepts --files, --symbols and --labels without a value delimiter, so a comma-separated value becomes ONE scope entry rather than several. storypole update accepts the same three flags with value_delimiter = ',' and splits them. The two verbs disagree, and add is the one a person uses first, so the damage lands in the record and survives until someone runs update.\n\nEvidence, both from this store:\n\n  storypole add ... --files \".gaugeblock/storypole/tickets/GB-268.json,.gaugeblock/storypole/tickets/GB-345.json\" --labels \"storypole,bookkeeping\"\n  stored target_files: [\".gaugeblock/storypole/tickets/GB-268.json,.gaugeblock/storypole/tickets/GB-345.json\"]\n  stored labels:       [\"storypole,bookkeeping\"]\n\n  storypole update GB-358 --file \"...\" --label \"storypole,bookkeeping\"\n  stored target_files: [\".gaugeblock/storypole/tickets/GB-268.json\", \".gaugeblock/storypole/tickets/GB-345.json\"]\n  stored labels:       [\"storypole\", \"bookkeeping\"]\n\nMechanism: crates/storypole-cli/src/args.rs AddArgs has `pub files: Vec<String>` with a bare #[arg(long)] at args.rs:161-167, while UpdateArgs at update_args.rs:38-47 carries value_delimiter = ',' on --file, --symbol and --label. handle_add (handlers/core_cmds/mod.rs:41-50) passes args.files through unchanged, so nothing downstream re-splits.\n\nWhy it matters beyond tidiness: scope is what the tooling reads. A comma-joined label does not match `storypole list --label storypole`, and a comma-joined target_files entry is one path that exists nowhere. The record looks populated and silently is not. The same shape already exists in aerofoil, whose AF-99 carries target_files [\"AGENTS.md,.gaugeblock/config.toml\"] for a ticket that names two files - filed by a previous add, unnoticed until read.\n\nNote the asymmetry is not limited to delimiters: the verbs do not even share flag names. add takes --files / --symbols / --labels (plural) and rejects --file / --symbol / --label outright, while update takes the singular repeatable --file / --symbol / --label. Repeating the plural flag (--files a --files b) does produce two entries, so a workaround exists, but nothing documents it and the plural flag invites the comma form, which is why the comma form keeps being used. `--criteria` is deliberately repeatable-only in both verbs, because criteria are prose (GB-250); that reasoning does not apply to paths, symbols or labels.",
+        "kind": "bug",
+        "status": "ready",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "storypole",
+          "module_path": null,
+          "target_files": [
+            "crates/storypole-cli/src/args.rs",
+            "crates/storypole-cli/src/update_args.rs",
+            "crates/storypole-cli/src/handlers/core_cmds/mod.rs"
+          ],
+          "target_symbols": [],
+          "labels": [
+            "storypole",
+            "cli"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "add splits --files, --symbols and --labels on commas exactly as update does, and still accepts the flag repeated",
+          "a ticket created with a comma-separated --files has usable, separate scope entries without a follow-up update",
+          "a regression test covers both verbs producing identical scope from identical arguments"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794552903524,
+        "updated_at_epoch_ms": 1794552903524
+      }
+    }
+  ]
+}
