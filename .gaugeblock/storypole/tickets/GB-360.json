@@ -6,10 +6,10 @@
     "title": "archived tasks keep their status, so a status filter over ticket files counts closed work as open",
     "description": "Measured 2026-11-12 while sweeping triage for GB-358. An archived task keeps the status it earned (GB-179, GB-258): the block of a ticket archived from triage still reads status triage with archived_at_epoch_ms set. Two consequences, both hit today. (1) Any script that globs tickets/*.json and filters on status counts archived tickets as open work - my sweep reported eight triage rows where the store held two, and that is the same shape as GB-349 (reading a projection instead of replaying) with an extra step, because the projection was accurate and the reader was not. (2) The store offers no supported way for a script to ask the question: `storypole list --json` replays and hides archived by default, which is right, but there is no documented way to get one row per ticket with both status and archived-ness for machine consumption. Wanted: either a `storypole list --json --include-archived` row shape that states archived explicitly per row (it does - verify this and document it), or a short note in the README saying that archived tickets keep their status and that scripts must not filter on status alone. Acceptance: a documented example that returns the open-work count without globbing files, and a README line stating the archive keeps status. Cheap, and it is the trap that made this sweep wrong.",
     "kind": "tech_debt",
-    "status": "triage",
+    "status": "verified",
     "priority": 3,
     "scope": {
-      "repo": null,
+      "repo": "storypole",
       "crate_name": "storypole",
       "module_path": null,
       "target_files": [],
@@ -24,9 +24,26 @@
     "plan": null,
     "active_claim": null,
     "latest_handoff": null,
-    "verification_receipt": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings && cargo nextest run --workspace && miter audit --path . --threshold 250 --paths && chalkline docs check -d .",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "[window: no base commit could be named, so this receipt covers HEAD only]\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\nSIZE RATCHET UNRECORDED: 36 file(s) in the 200-line band and no baseline; run `miter audit --paths --write-size-ratchet` to record them\n\n=== Gaugeblock 9-Document Architecture Audit ===\nRepository: /Users/wolff/dev2026/neurosymbolic-suite/storypole/.\n\n[OK]      Readme           (README.md)\n[OK]      Contributing     (CONTRIBUTING.md)\n[OK]      Product          (docs/PRODUCT.md)\n[OK]      Architecture     (docs/ARCHITECTURE.md)\n[OK]      Spec             (docs/SPEC.md)\n[OK]      Design           (docs/DESIGN.md)\n[OK]      Roadmap          (docs/ROADMAP.md)\n[OK]      Changelog        (CHANGELOG.md)\n[OK]      Agents           (AGENTS.md)\n\nSummary: 9 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794558039973,
+      "git_branch": "main",
+      "base_commit_sha": null,
+      "head_commit_sha": "525e5ca517c2918218d565906f2858d79b3607b0",
+      "commit_shas": [
+        "525e5ca517c2918218d565906f2858d79b3607b0"
+      ],
+      "repo": "storypole",
+      "chain_key": "storypole",
+      "window_intact": true
+    },
     "created_at_epoch_ms": 1794555575929,
-    "updated_at_epoch_ms": 1794555575929
+    "updated_at_epoch_ms": 1794558112600,
+    "archived_at_epoch_ms": 1794558112600
   },
   "events": [
     {
@@ -62,6 +79,52 @@
       },
       "captured_by_agent": "user",
       "discovered_from_task_id": null
+    },
+    {
+      "event": "task_updated",
+      "task_id": "8e3fd3e6-03cd-4eaf-9194-6e0227d839bb",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": {
+        "repo": "storypole",
+        "crate_name": "storypole",
+        "module_path": null,
+        "target_files": [],
+        "target_symbols": [
+          "storypole_core::model::TaskNode,storypole_cli::handlers::core_cmds::handle_list"
+        ],
+        "labels": []
+      },
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794557846936
+    },
+    {
+      "event": "task_verified",
+      "task_id": "8e3fd3e6-03cd-4eaf-9194-6e0227d839bb",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings && cargo nextest run --workspace && miter audit --path . --threshold 250 --paths && chalkline docs check -d .",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "[window: no base commit could be named, so this receipt covers HEAD only]\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\nSIZE RATCHET UNRECORDED: 36 file(s) in the 200-line band and no baseline; run `miter audit --paths --write-size-ratchet` to record them\n\n=== Gaugeblock 9-Document Architecture Audit ===\nRepository: /Users/wolff/dev2026/neurosymbolic-suite/storypole/.\n\n[OK]      Readme           (README.md)\n[OK]      Contributing     (CONTRIBUTING.md)\n[OK]      Product          (docs/PRODUCT.md)\n[OK]      Architecture     (docs/ARCHITECTURE.md)\n[OK]      Spec             (docs/SPEC.md)\n[OK]      Design           (docs/DESIGN.md)\n[OK]      Roadmap          (docs/ROADMAP.md)\n[OK]      Changelog        (CHANGELOG.md)\n[OK]      Agents           (AGENTS.md)\n\nSummary: 9 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794558039973,
+        "git_branch": "main",
+        "base_commit_sha": null,
+        "head_commit_sha": "525e5ca517c2918218d565906f2858d79b3607b0",
+        "commit_shas": [
+          "525e5ca517c2918218d565906f2858d79b3607b0"
+        ],
+        "repo": "storypole",
+        "chain_key": "storypole",
+        "window_intact": true
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "8e3fd3e6-03cd-4eaf-9194-6e0227d839bb",
+      "status": "verified",
+      "timestamp_ms": 1794558112600
     }
   ]
 }
