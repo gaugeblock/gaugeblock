@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "e862e6bb-e195-4d27-a1ba-dc10eac50ccf",
+    "ticket_key": "GB-363",
+    "slug": "outfeed-plan-d-is-the-suite-dir-and-the-clean-check-reports-an-unnamed-dirty-file-at-the-wrong-root-e862e6",
+    "title": "outfeed plan: -d is the suite dir and the clean check reports an unnamed dirty file at the wrong root",
+    "description": "Two traps found while planning the GB-361/GB-362 release, both costing a wrong first answer.\n\n(1) `outfeed plan -d miter` does not plan miter. -d is the SUITE directory, exactly as it already is for `outfeed install` (which I hit earlier the same way), and the repository is the positional argument. The wrong form fails with `Manifest error in ./Cargo.toml: No such file or directory`, which reads as a broken checkout rather than as a misuse of the flag. The correct form is `outfeed plan miter -d /path/to/suite`.\n\n(2) The clean-working-tree check runs at the harness root, not at the repository being released. With one unrelated modified file in the suite root (an editor rewriting gaugeblock.code-workspace), every member plan refuses with \"working tree has uncommitted changes\" while `git -C miter status --porcelain` is empty. Reproduced by restoring that file: plans then run. Whether the harness should gate a member release is a question, but the failure told me nothing about where to look - the error names neither the directory checked nor the file at fault.\n\nWanted: -d documented as the suite directory in `plan --help` (or renamed), and the dirty-tree error naming the repository it actually inspected plus one offending path. Cheap, and both would have saved the twenty minutes this took.",
+    "kind": "bug",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "outfeed",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "outfeed_cli::args::Plan,outfeed_core::git::assert_clean_working_tree"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794606625716,
+    "updated_at_epoch_ms": 1794606625716
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "e862e6bb-e195-4d27-a1ba-dc10eac50ccf",
+        "ticket_key": "GB-363",
+        "slug": "outfeed-plan-d-is-the-suite-dir-and-the-clean-check-reports-an-unnamed-dirty-file-at-the-wrong-root-e862e6",
+        "title": "outfeed plan: -d is the suite dir and the clean check reports an unnamed dirty file at the wrong root",
+        "description": "Two traps found while planning the GB-361/GB-362 release, both costing a wrong first answer.\n\n(1) `outfeed plan -d miter` does not plan miter. -d is the SUITE directory, exactly as it already is for `outfeed install` (which I hit earlier the same way), and the repository is the positional argument. The wrong form fails with `Manifest error in ./Cargo.toml: No such file or directory`, which reads as a broken checkout rather than as a misuse of the flag. The correct form is `outfeed plan miter -d /path/to/suite`.\n\n(2) The clean-working-tree check runs at the harness root, not at the repository being released. With one unrelated modified file in the suite root (an editor rewriting gaugeblock.code-workspace), every member plan refuses with \"working tree has uncommitted changes\" while `git -C miter status --porcelain` is empty. Reproduced by restoring that file: plans then run. Whether the harness should gate a member release is a question, but the failure told me nothing about where to look - the error names neither the directory checked nor the file at fault.\n\nWanted: -d documented as the suite directory in `plan --help` (or renamed), and the dirty-tree error naming the repository it actually inspected plus one offending path. Cheap, and both would have saved the twenty minutes this took.",
+        "kind": "bug",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "outfeed",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "outfeed_cli::args::Plan,outfeed_core::git::assert_clean_working_tree"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794606625716,
+        "updated_at_epoch_ms": 1794606625716
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
