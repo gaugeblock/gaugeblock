@@ -1,0 +1,67 @@
+{
+  "ticket": {
+    "id": "8e3fd3e6-03cd-4eaf-9194-6e0227d839bb",
+    "ticket_key": "GB-360",
+    "slug": "archived-tasks-keep-their-status-so-a-status-filter-over-ticket-files-counts-closed-work-as-open-8e3fd3",
+    "title": "archived tasks keep their status, so a status filter over ticket files counts closed work as open",
+    "description": "Measured 2026-11-12 while sweeping triage for GB-358. An archived task keeps the status it earned (GB-179, GB-258): the block of a ticket archived from triage still reads status triage with archived_at_epoch_ms set. Two consequences, both hit today. (1) Any script that globs tickets/*.json and filters on status counts archived tickets as open work - my sweep reported eight triage rows where the store held two, and that is the same shape as GB-349 (reading a projection instead of replaying) with an extra step, because the projection was accurate and the reader was not. (2) The store offers no supported way for a script to ask the question: `storypole list --json` replays and hides archived by default, which is right, but there is no documented way to get one row per ticket with both status and archived-ness for machine consumption. Wanted: either a `storypole list --json --include-archived` row shape that states archived explicitly per row (it does - verify this and document it), or a short note in the README saying that archived tickets keep their status and that scripts must not filter on status alone. Acceptance: a documented example that returns the open-work count without globbing files, and a README line stating the archive keeps status. Cheap, and it is the trap that made this sweep wrong.",
+    "kind": "tech_debt",
+    "status": "triage",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "storypole",
+      "module_path": null,
+      "target_files": [],
+      "target_symbols": [
+        "storypole_core::model::TaskNode,storypole_cli::handlers::core_cmds::handle_list"
+      ],
+      "labels": []
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794555575929,
+    "updated_at_epoch_ms": 1794555575929
+  },
+  "events": [
+    {
+      "event": "deferred_item_captured",
+      "task": {
+        "id": "8e3fd3e6-03cd-4eaf-9194-6e0227d839bb",
+        "ticket_key": "GB-360",
+        "slug": "archived-tasks-keep-their-status-so-a-status-filter-over-ticket-files-counts-closed-work-as-open-8e3fd3",
+        "title": "archived tasks keep their status, so a status filter over ticket files counts closed work as open",
+        "description": "Measured 2026-11-12 while sweeping triage for GB-358. An archived task keeps the status it earned (GB-179, GB-258): the block of a ticket archived from triage still reads status triage with archived_at_epoch_ms set. Two consequences, both hit today. (1) Any script that globs tickets/*.json and filters on status counts archived tickets as open work - my sweep reported eight triage rows where the store held two, and that is the same shape as GB-349 (reading a projection instead of replaying) with an extra step, because the projection was accurate and the reader was not. (2) The store offers no supported way for a script to ask the question: `storypole list --json` replays and hides archived by default, which is right, but there is no documented way to get one row per ticket with both status and archived-ness for machine consumption. Wanted: either a `storypole list --json --include-archived` row shape that states archived explicitly per row (it does - verify this and document it), or a short note in the README saying that archived tickets keep their status and that scripts must not filter on status alone. Acceptance: a documented example that returns the open-work count without globbing files, and a README line stating the archive keeps status. Cheap, and it is the trap that made this sweep wrong.",
+        "kind": "tech_debt",
+        "status": "triage",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "storypole",
+          "module_path": null,
+          "target_files": [],
+          "target_symbols": [
+            "storypole_core::model::TaskNode,storypole_cli::handlers::core_cmds::handle_list"
+          ],
+          "labels": []
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794555575929,
+        "updated_at_epoch_ms": 1794555575929
+      },
+      "captured_by_agent": "user",
+      "discovered_from_task_id": null
+    }
+  ]
+}
