@@ -4,7 +4,7 @@
     "ticket_key": "GB-262",
     "slug": "benchwork-migrate-sees-neither-storypole-nor-miter-and-treats-live-gaugeblock-docs-toml-as-legacy-3891c0",
     "title": "benchwork migrate must discard derived caches rather than move them, and must describe docs.toml consolidation",
-    "description": "Retitled 2026-11-06: the original claim that migrate 'sees neither .storypole nor .miter' was my misreading (I ran it at the suite root, the one repo with no legacy dirs). Per repo it detects both correctly. What remains: (1) it proposes moving the whole .storypole directory, which contains index.sqlite, -shm and -wal - a derived cache must be discarded rather than migrated or a stale index will be opened and lie; (2) at the root it would ARCHIVE .gaugeblock/docs.toml with no merge described, which needs confirming as consolidation rather than discard; (3) the dry-run names source and destination but not per-item classification or conflict handling (BW-31), which is what makes a nine-repo run reviewable.",
+    "description": "Retitled 2026-11-06: the original claim that migrate 'sees neither .storypole nor .miter' was my misreading (I ran it at the suite root, the one repo with no legacy dirs). Per repo it detects both correctly. What remains: (1) it proposes moving the whole .storypole directory, which contains index.sqlite, -shm and -wal - a derived cache must be discarded rather than migrated or a stale index will be opened and lie; (2) at the root it would ARCHIVE .gaugeblock/docs.toml with no merge described, which needs confirming as consolidation rather than discard; (3) the dry-run names source and destination but not per-item classification or conflict handling (BW-31), which is what makes a nine-repo run reviewable.\n\nREAD DURING THE GB-358 SWEEP 2026-11-12: deliberately left in triage. Its description ends with three open questions rather than a completion - whether the root docs.toml archive is consolidation or discard, and what the dry run should say per item - so this row is a decision ticket wearing a done ticket description.",
     "kind": "bug",
     "status": "triage",
     "priority": 3,
@@ -41,7 +41,7 @@
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1793995275072,
-    "updated_at_epoch_ms": 1794336146495
+    "updated_at_epoch_ms": 1794554386776
   },
   "events": [
     {
@@ -139,6 +139,16 @@
         "target_repo": "benchwork"
       },
       "timestamp_ms": 1794336146495
+    },
+    {
+      "event": "task_updated",
+      "task_id": "3891c0d4-546e-499c-a271-1dac48770095",
+      "title": null,
+      "description": "Retitled 2026-11-06: the original claim that migrate 'sees neither .storypole nor .miter' was my misreading (I ran it at the suite root, the one repo with no legacy dirs). Per repo it detects both correctly. What remains: (1) it proposes moving the whole .storypole directory, which contains index.sqlite, -shm and -wal - a derived cache must be discarded rather than migrated or a stale index will be opened and lie; (2) at the root it would ARCHIVE .gaugeblock/docs.toml with no merge described, which needs confirming as consolidation rather than discard; (3) the dry-run names source and destination but not per-item classification or conflict handling (BW-31), which is what makes a nine-repo run reviewable.\n\nREAD DURING THE GB-358 SWEEP 2026-11-12: deliberately left in triage. Its description ends with three open questions rather than a completion - whether the root docs.toml archive is consolidation or discard, and what the dry run should say per item - so this row is a decision ticket wearing a done ticket description.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794554386776
     }
   ]
 }

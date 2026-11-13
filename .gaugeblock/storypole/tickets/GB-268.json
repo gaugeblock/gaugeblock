@@ -6,10 +6,10 @@
     "title": "Every repo has empty verification_commands, so storypole verify runs nothing and records a manual receipt",
     "description": "ALREADY DONE, verified 2026-11-10: the harness config carries a populated verification_commands table (eleven repository chains plus gaugeblock and default entries), and every member either declares its own chain or inherits the suite roster - SP-24 and SP-49 receipts name chain storypole, CO-11 and CO-2 name chain common, all executed rather than attested. storypole config check reports zero findings and zero errors.",
     "kind": "bug",
-    "status": "triage",
+    "status": "verified",
     "priority": 3,
     "scope": {
-      "repo": null,
+      "repo": "storypole",
       "crate_name": null,
       "module_path": null,
       "target_files": [],
@@ -43,10 +43,26 @@
     "plan": null,
     "active_claim": null,
     "latest_handoff": null,
-    "verification_receipt": null,
+    "verification_receipt": {
+      "verifier": "storypole-verify",
+      "command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings && cargo nextest run --workspace && miter audit --path . --threshold 250 --paths && chalkline docs check -d .",
+      "exit_code": 0,
+      "diagnostic_count": null,
+      "summary": "[window: no base commit could be named, so this receipt covers HEAD only]\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\nSIZE RATCHET UNRECORDED: 36 file(s) in the 200-line band and no baseline; run `miter audit --paths --write-size-ratchet` to record them\n\n=== Gaugeblock 9-Document Architecture Audit ===\nRepository: /Users/wolff/dev2026/neurosymbolic-suite/storypole/.\n\n[OK]      Readme           (README.md)\n[OK]      Contributing     (CONTRIBUTING.md)\n[OK]      Product          (docs/PRODUCT.md)\n[OK]      Architecture     (docs/ARCHITECTURE.md)\n[OK]      Spec             (docs/SPEC.md)\n[OK]      Design           (docs/DESIGN.md)\n[OK]      Roadmap          (docs/ROADMAP.md)\n[OK]      Changelog        (CHANGELOG.md)\n[OK]      Agents           (AGENTS.md)\n\nSummary: 9 present, 0 missing, 0 drifted\n\n",
+      "verified_at_epoch_ms": 1794554247287,
+      "git_branch": "main",
+      "base_commit_sha": null,
+      "head_commit_sha": "03cec0a70ef0955352b8e3e82c2c56f9898532eb",
+      "commit_shas": [
+        "03cec0a70ef0955352b8e3e82c2c56f9898532eb"
+      ],
+      "repo": "storypole",
+      "chain_key": "storypole",
+      "window_intact": true
+    },
     "created_at_epoch_ms": 1793999768853,
-    "updated_at_epoch_ms": 1794451882246,
-    "archived_at_epoch_ms": 1794451882246
+    "updated_at_epoch_ms": 1794554433604,
+    "archived_at_epoch_ms": 1794554433604
   },
   "events": [
     {
@@ -127,6 +143,52 @@
       "task_id": "191bbd67-fd6c-4379-a6da-28679704eb74",
       "status": "triage",
       "timestamp_ms": 1794451882246
+    },
+    {
+      "event": "task_updated",
+      "task_id": "191bbd67-fd6c-4379-a6da-28679704eb74",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": {
+        "repo": "storypole",
+        "crate_name": null,
+        "module_path": null,
+        "target_files": [],
+        "target_symbols": [
+          "storypole_core::config::StorypoleConfig"
+        ],
+        "labels": []
+      },
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794554246063
+    },
+    {
+      "event": "task_verified",
+      "task_id": "191bbd67-fd6c-4379-a6da-28679704eb74",
+      "receipt": {
+        "verifier": "storypole-verify",
+        "command": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings && cargo nextest run --workspace && miter audit --path . --threshold 250 --paths && chalkline docs check -d .",
+        "exit_code": 0,
+        "diagnostic_count": null,
+        "summary": "[window: no base commit could be named, so this receipt covers HEAD only]\nAUDIT PASSED: No files exceed 250 lines in .\nAUDIT PASSED: every crate naming .gaugeblock depends on gaugeblock-workspace\nAUDIT PASSED: every crate resolving the suite has a multi-repository test\nSIZE RATCHET UNRECORDED: 36 file(s) in the 200-line band and no baseline; run `miter audit --paths --write-size-ratchet` to record them\n\n=== Gaugeblock 9-Document Architecture Audit ===\nRepository: /Users/wolff/dev2026/neurosymbolic-suite/storypole/.\n\n[OK]      Readme           (README.md)\n[OK]      Contributing     (CONTRIBUTING.md)\n[OK]      Product          (docs/PRODUCT.md)\n[OK]      Architecture     (docs/ARCHITECTURE.md)\n[OK]      Spec             (docs/SPEC.md)\n[OK]      Design           (docs/DESIGN.md)\n[OK]      Roadmap          (docs/ROADMAP.md)\n[OK]      Changelog        (CHANGELOG.md)\n[OK]      Agents           (AGENTS.md)\n\nSummary: 9 present, 0 missing, 0 drifted\n\n",
+        "verified_at_epoch_ms": 1794554247287,
+        "git_branch": "main",
+        "base_commit_sha": null,
+        "head_commit_sha": "03cec0a70ef0955352b8e3e82c2c56f9898532eb",
+        "commit_shas": [
+          "03cec0a70ef0955352b8e3e82c2c56f9898532eb"
+        ],
+        "repo": "storypole",
+        "chain_key": "storypole",
+        "window_intact": true
+      }
+    },
+    {
+      "event": "task_archived",
+      "task_id": "191bbd67-fd6c-4379-a6da-28679704eb74",
+      "status": "verified",
+      "timestamp_ms": 1794554433604
     }
   ]
 }
