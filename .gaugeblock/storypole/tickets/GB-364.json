@@ -1,0 +1,160 @@
+{
+  "ticket": {
+    "id": "5b71f32c-0277-4edb-844c-091c8b291681",
+    "ticket_key": "GB-364",
+    "slug": "outfeed-reserve-bakes-the-gaugeblock-identity-into-every-placeholder-and-the-homepage-and-license-cannot-be-overridden-at-all-5b71f3",
+    "title": "outfeed reserve bakes the gaugeblock identity into every placeholder, and the homepage and license cannot be overridden at all",
+    "description": "MEASURED 2026-11-12 from a downstream consumer (aerofoil), deciding whether to replace its hand-written namespace script with `outfeed reserve`. It could not: every placeholder this command writes is stamped with the suite's own identity, and for two of the fields a caller has no way to correct it.\n\nWHAT IS BAKED IN\n\n  outfeed-core/src/reserve/scaffold.rs, ScaffoldOpts::default()\n    homepage:            \"https://gaugeblock.dev\"\n    license:             \"Apache-2.0\"\n    repository_template: \"https://github.com/gaugeblock/{name}\"\n\n  scaffold.rs, the placeholder template\n    description: \"Namespace reservation placeholder for `{name}`; superseded by the first real release.\"\n    version:     PLACEHOLDER_VERSION, a const equal to \"0.1.0-alpha.1\"\n\n  outfeed-cli/src/args/reserve.rs, ReserveScaffoldArgs\n    --repository        exposed, default https://github.com/gaugeblock/{name}\n    --repo-override     exposed, NAME=URL\n    --staging           exposed\n    homepage            NOT EXPOSED\n    license             NOT EXPOSED\n\nSo the two fields a consumer most needs to fix - the homepage and the SPDX license - are the two the CLI does not offer. `--repository` is exposed but defaults to the suite's org, which means the default path writes a placeholder pointing at a repository the caller does not own.\n\nWHAT THAT ACTUALLY PRODUCES FOR A CALLER\naerofoil is dual-licensed `Apache-2.0 OR MIT` and lives at github.com/colinwolff/aerofoil. Scaffolding from this command today would publish placeholders that say `license = \"Apache-2.0\"` (dropping MIT), `homepage = \"https://gaugeblock.dev\"` (not ours), and `repository = \"https://github.com/gaugeblock/aerofoil-mlat\"` (a repository that does not exist) unless every single name is passed through `--repo-override`.\n\nThat metadata is not cosmetic and not correctable later: the crates.io page keeps the description, homepage and repository of a published version even after it is yanked, and a version can never be deleted. Claiming a name with the wrong metadata is a permanent, wrong-shaped claim.\n\nDRIFT, NAMED AS SUCH\nNone of this is wrong for the suite - it is exactly right for the suite. It became wrong when the command was written as if the only repository in the world had a `gaugeblock` org and a `gaugeblock.dev` homepage. The tell is that `homepage` and `license` were given defaults rather than flags: a field with a default and no override is a field the author never expected a stranger to set.\n\nWHAT STANDALONE SHOULD MEAN\nIt should serve a repository it has never seen, in either shape:\n  * mono repo - one Cargo workspace, many crates: names and descriptions come from the workspace members, staging sits inside the repo, and the parent manifest gains the staging directory in `exclude` (the tool already hints this via parent_exclude_hint).\n  * multi repo - one crate per repository: names come from each member's package, and per-crate homes come from each repo's own remote rather than a template.\n  * neither - a bare list of names must keep working, with identity supplied explicitly.\n\nConcretely:\n  * repository and homepage resolve from the caller's `git remote` (origin), not from a template naming our org;\n  * license comes from the caller's package/workspace metadata, or a required flag - never a default we chose for ourselves;\n  * homepage and license become flags even when they are derivable, because derivation fails in exactly the cases a caller cares about;\n  * names and descriptions can be read from the workspace, with NAME=TEXT overrides, so no caller hand-maintains a parallel list (aerofoil's script did, and it drifted: see its AF-100);\n  * the placeholder version is a flag whose default is the current constant.\n\nRELATIONSHIP TO GB-362\nGB-362 asks for a release that carries `reserve`. Doing this first is cheaper than doing it second: the first published version of a command is what consumers pin, and shipping the gaugeblock-shaped one invites exactly the workaround aerofoil wrote by hand.\n\nNOT IN SCOPE\nChanging publish semantics (the alpha placeholder, skip-if-exists, permanent-version warning). Those are right.\n\nACCEPTANCE\n  * scaffolding for a caller that is not gaugeblock produces a manifest containing no gaugeblock string at all - no org, no homepage, no suite defaults - which is assertable as a test;\n  * a caller's SPDX license expression is carried verbatim, including an OR-expression;\n  * repository and homepage are either derived from the caller's git remote or supplied by flag, and the command fails loudly rather than guessing when neither is available;\n  * names and descriptions can be derived from a Cargo workspace, so a mono repo needs no parallel list;\n  * the bare-names invocation keeps working, with identity required rather than defaulted.\n\nSAME SHAPE ELSEWHERE\nThe drift is not confined to reserve. GB-363, filed independently and still in triage, reports that\n`outfeed plan` treats -d as the suite directory and reports a dirty file at the wrong root - the same\nassumption one subcommand over: that the repository being operated on is ours. Fixing reserve alone\nleaves the next subcommand to rediscover it, so it is worth deciding whether discovery and identity\nbelong in one shared layer with a test that runs against a repository whose org is foreign and whose\nlayout is not the suite's.\n\nFIXED 2026-11-12 EXCEPT ONE CRITERION (outfeed a1549d1). The permanent-metadata half is closed: Identity is a resolved value with no Default, --homepage and --license are flags (they were defaults with no flag, which is the shape of a field whose author never expected a stranger), --repository loses its gaugeblock default, and all three resolve flag-first then from the caller origin remote with scp-style and .git forms normalised, or fail naming the flag. A mono repo omits {name} and every placeholder links to the single repository. Three tests: a stranger manifest and README contain no gaugeblock string; an SPDX OR-expression survives verbatim; identity derives from a real scp remote; and no-remote-no-flags is refused rather than guessed. 90 outfeed-core tests, clippy clean, docs 9/9.\n\nREMAINING, and it is why this ticket stays open: criterion 4, names and descriptions derived from a Cargo workspace so a mono repo needs no parallel list. The identity bug is what made publishing dangerous and it is fixed; workspace derivation is convenience for exactly the caller who filed this, and it needs a decision about which verb reads the workspace (scaffold taking no names at all, or check validating names against it). Not attempted here because a half-built name-derivation is worse than none: it would scaffold a set nobody asked for.",
+    "kind": "bug",
+    "status": "ready",
+    "priority": 2,
+    "scope": {
+      "repo": "outfeed",
+      "crate_name": "outfeed",
+      "module_path": null,
+      "target_files": [
+        "crates/outfeed-core/src/reserve/scaffold.rs",
+        "crates/outfeed-cli/src/args/reserve.rs",
+        "crates/outfeed-core/src/reserve/publish.rs"
+      ],
+      "target_symbols": [],
+      "labels": [
+        "outfeed",
+        "standalone",
+        "portability"
+      ]
+    },
+    "edges": [
+      {
+        "kind": "related_to",
+        "target_id": "bd7fd322-45b6-41b6-923a-14789238ec2e",
+        "target_ticket_key": "GB-362"
+      }
+    ],
+    "decisions": [],
+    "acceptance_criteria": [
+      "scaffolding for a caller that is not gaugeblock produces a manifest with no gaugeblock string in it, asserted as a test",
+      "a caller's SPDX license expression is carried verbatim, including an OR-expression",
+      "repository and homepage are derived from the caller's git remote or supplied by flag, and the command fails loudly rather than guessing when neither is available",
+      "names and descriptions can be derived from a Cargo workspace, so a mono repo needs no parallel list",
+      "the bare-names invocation keeps working, with identity required rather than defaulted"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794606707387,
+    "updated_at_epoch_ms": 1794608442900
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "5b71f32c-0277-4edb-844c-091c8b291681",
+        "ticket_key": "GB-364",
+        "slug": "outfeed-reserve-bakes-the-gaugeblock-identity-into-every-placeholder-and-the-homepage-and-license-cannot-be-overridden-at-all-5b71f3",
+        "title": "outfeed reserve bakes the gaugeblock identity into every placeholder, and the homepage and license cannot be overridden at all",
+        "description": "MEASURED 2026-11-12 from a downstream consumer (aerofoil), deciding whether to replace its hand-written namespace script with `outfeed reserve`. It could not: every placeholder this command writes is stamped with the suite's own identity, and for two of the fields a caller has no way to correct it.\n\nWHAT IS BAKED IN\n\n  outfeed-core/src/reserve/scaffold.rs, ScaffoldOpts::default()\n    homepage:            \"https://gaugeblock.dev\"\n    license:             \"Apache-2.0\"\n    repository_template: \"https://github.com/gaugeblock/{name}\"\n\n  scaffold.rs, the placeholder template\n    description: \"Namespace reservation placeholder for `{name}`; superseded by the first real release.\"\n    version:     PLACEHOLDER_VERSION, a const equal to \"0.1.0-alpha.1\"\n\n  outfeed-cli/src/args/reserve.rs, ReserveScaffoldArgs\n    --repository        exposed, default https://github.com/gaugeblock/{name}\n    --repo-override     exposed, NAME=URL\n    --staging           exposed\n    homepage            NOT EXPOSED\n    license             NOT EXPOSED\n\nSo the two fields a consumer most needs to fix - the homepage and the SPDX license - are the two the CLI does not offer. `--repository` is exposed but defaults to the suite's org, which means the default path writes a placeholder pointing at a repository the caller does not own.\n\nWHAT THAT ACTUALLY PRODUCES FOR A CALLER\naerofoil is dual-licensed `Apache-2.0 OR MIT` and lives at github.com/colinwolff/aerofoil. Scaffolding from this command today would publish placeholders that say `license = \"Apache-2.0\"` (dropping MIT), `homepage = \"https://gaugeblock.dev\"` (not ours), and `repository = \"https://github.com/gaugeblock/aerofoil-mlat\"` (a repository that does not exist) unless every single name is passed through `--repo-override`.\n\nThat metadata is not cosmetic and not correctable later: the crates.io page keeps the description, homepage and repository of a published version even after it is yanked, and a version can never be deleted. Claiming a name with the wrong metadata is a permanent, wrong-shaped claim.\n\nDRIFT, NAMED AS SUCH\nNone of this is wrong for the suite - it is exactly right for the suite. It became wrong when the command was written as if the only repository in the world had a `gaugeblock` org and a `gaugeblock.dev` homepage. The tell is that `homepage` and `license` were given defaults rather than flags: a field with a default and no override is a field the author never expected a stranger to set.\n\nWHAT STANDALONE SHOULD MEAN\nIt should serve a repository it has never seen, in either shape:\n  * mono repo - one Cargo workspace, many crates: names and descriptions come from the workspace members, staging sits inside the repo, and the parent manifest gains the staging directory in `exclude` (the tool already hints this via parent_exclude_hint).\n  * multi repo - one crate per repository: names come from each member's package, and per-crate homes come from each repo's own remote rather than a template.\n  * neither - a bare list of names must keep working, with identity supplied explicitly.\n\nConcretely:\n  * repository and homepage resolve from the caller's `git remote` (origin), not from a template naming our org;\n  * license comes from the caller's package/workspace metadata, or a required flag - never a default we chose for ourselves;\n  * homepage and license become flags even when they are derivable, because derivation fails in exactly the cases a caller cares about;\n  * names and descriptions can be read from the workspace, with NAME=TEXT overrides, so no caller hand-maintains a parallel list (aerofoil's script did, and it drifted: see its AF-100);\n  * the placeholder version is a flag whose default is the current constant.\n\nRELATIONSHIP TO GB-362\nGB-362 asks for a release that carries `reserve`. Doing this first is cheaper than doing it second: the first published version of a command is what consumers pin, and shipping the gaugeblock-shaped one invites exactly the workaround aerofoil wrote by hand.\n\nNOT IN SCOPE\nChanging publish semantics (the alpha placeholder, skip-if-exists, permanent-version warning). Those are right.\n\nACCEPTANCE\n  * scaffolding for a caller that is not gaugeblock produces a manifest containing no gaugeblock string at all - no org, no homepage, no suite defaults - which is assertable as a test;\n  * a caller's SPDX license expression is carried verbatim, including an OR-expression;\n  * repository and homepage are either derived from the caller's git remote or supplied by flag, and the command fails loudly rather than guessing when neither is available;\n  * names and descriptions can be derived from a Cargo workspace, so a mono repo needs no parallel list;\n  * the bare-names invocation keeps working, with identity required rather than defaulted.",
+        "kind": "bug",
+        "status": "ready",
+        "priority": 2,
+        "scope": {
+          "repo": null,
+          "crate_name": "outfeed",
+          "module_path": null,
+          "target_files": [
+            "crates/outfeed-core/src/reserve/scaffold.rs",
+            "crates/outfeed-cli/src/args/reserve.rs",
+            "crates/outfeed-core/src/reserve/publish.rs"
+          ],
+          "target_symbols": [],
+          "labels": [
+            "outfeed",
+            "standalone",
+            "portability"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "scaffolding for a caller that is not gaugeblock produces a manifest with no gaugeblock string in it, asserted as a test",
+          "a caller's SPDX license expression is carried verbatim, including an OR-expression",
+          "repository and homepage are derived from the caller's git remote or supplied by flag, and the command fails loudly rather than guessing when neither is available",
+          "names and descriptions can be derived from a Cargo workspace, so a mono repo needs no parallel list",
+          "the bare-names invocation keeps working, with identity required rather than defaulted"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794606707387,
+        "updated_at_epoch_ms": 1794606707387
+      }
+    },
+    {
+      "event": "edge_added",
+      "task_id": "5b71f32c-0277-4edb-844c-091c8b291681",
+      "edge": {
+        "kind": "related_to",
+        "target_id": "bd7fd322-45b6-41b6-923a-14789238ec2e",
+        "target_ticket_key": "GB-362"
+      },
+      "timestamp_ms": 1794606710385
+    },
+    {
+      "event": "task_updated",
+      "task_id": "5b71f32c-0277-4edb-844c-091c8b291681",
+      "title": null,
+      "description": "",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794606718649
+    },
+    {
+      "event": "task_updated",
+      "task_id": "5b71f32c-0277-4edb-844c-091c8b291681",
+      "title": null,
+      "description": "MEASURED 2026-11-12 from a downstream consumer (aerofoil), deciding whether to replace its hand-written namespace script with `outfeed reserve`. It could not: every placeholder this command writes is stamped with the suite's own identity, and for two of the fields a caller has no way to correct it.\n\nWHAT IS BAKED IN\n\n  outfeed-core/src/reserve/scaffold.rs, ScaffoldOpts::default()\n    homepage:            \"https://gaugeblock.dev\"\n    license:             \"Apache-2.0\"\n    repository_template: \"https://github.com/gaugeblock/{name}\"\n\n  scaffold.rs, the placeholder template\n    description: \"Namespace reservation placeholder for `{name}`; superseded by the first real release.\"\n    version:     PLACEHOLDER_VERSION, a const equal to \"0.1.0-alpha.1\"\n\n  outfeed-cli/src/args/reserve.rs, ReserveScaffoldArgs\n    --repository        exposed, default https://github.com/gaugeblock/{name}\n    --repo-override     exposed, NAME=URL\n    --staging           exposed\n    homepage            NOT EXPOSED\n    license             NOT EXPOSED\n\nSo the two fields a consumer most needs to fix - the homepage and the SPDX license - are the two the CLI does not offer. `--repository` is exposed but defaults to the suite's org, which means the default path writes a placeholder pointing at a repository the caller does not own.\n\nWHAT THAT ACTUALLY PRODUCES FOR A CALLER\naerofoil is dual-licensed `Apache-2.0 OR MIT` and lives at github.com/colinwolff/aerofoil. Scaffolding from this command today would publish placeholders that say `license = \"Apache-2.0\"` (dropping MIT), `homepage = \"https://gaugeblock.dev\"` (not ours), and `repository = \"https://github.com/gaugeblock/aerofoil-mlat\"` (a repository that does not exist) unless every single name is passed through `--repo-override`.\n\nThat metadata is not cosmetic and not correctable later: the crates.io page keeps the description, homepage and repository of a published version even after it is yanked, and a version can never be deleted. Claiming a name with the wrong metadata is a permanent, wrong-shaped claim.\n\nDRIFT, NAMED AS SUCH\nNone of this is wrong for the suite - it is exactly right for the suite. It became wrong when the command was written as if the only repository in the world had a `gaugeblock` org and a `gaugeblock.dev` homepage. The tell is that `homepage` and `license` were given defaults rather than flags: a field with a default and no override is a field the author never expected a stranger to set.\n\nWHAT STANDALONE SHOULD MEAN\nIt should serve a repository it has never seen, in either shape:\n  * mono repo - one Cargo workspace, many crates: names and descriptions come from the workspace members, staging sits inside the repo, and the parent manifest gains the staging directory in `exclude` (the tool already hints this via parent_exclude_hint).\n  * multi repo - one crate per repository: names come from each member's package, and per-crate homes come from each repo's own remote rather than a template.\n  * neither - a bare list of names must keep working, with identity supplied explicitly.\n\nConcretely:\n  * repository and homepage resolve from the caller's `git remote` (origin), not from a template naming our org;\n  * license comes from the caller's package/workspace metadata, or a required flag - never a default we chose for ourselves;\n  * homepage and license become flags even when they are derivable, because derivation fails in exactly the cases a caller cares about;\n  * names and descriptions can be read from the workspace, with NAME=TEXT overrides, so no caller hand-maintains a parallel list (aerofoil's script did, and it drifted: see its AF-100);\n  * the placeholder version is a flag whose default is the current constant.\n\nRELATIONSHIP TO GB-362\nGB-362 asks for a release that carries `reserve`. Doing this first is cheaper than doing it second: the first published version of a command is what consumers pin, and shipping the gaugeblock-shaped one invites exactly the workaround aerofoil wrote by hand.\n\nNOT IN SCOPE\nChanging publish semantics (the alpha placeholder, skip-if-exists, permanent-version warning). Those are right.\n\nACCEPTANCE\n  * scaffolding for a caller that is not gaugeblock produces a manifest containing no gaugeblock string at all - no org, no homepage, no suite defaults - which is assertable as a test;\n  * a caller's SPDX license expression is carried verbatim, including an OR-expression;\n  * repository and homepage are either derived from the caller's git remote or supplied by flag, and the command fails loudly rather than guessing when neither is available;\n  * names and descriptions can be derived from a Cargo workspace, so a mono repo needs no parallel list;\n  * the bare-names invocation keeps working, with identity required rather than defaulted.\n\nSAME SHAPE ELSEWHERE\nThe drift is not confined to reserve. GB-363, filed independently and still in triage, reports that\n`outfeed plan` treats -d as the suite directory and reports a dirty file at the wrong root - the same\nassumption one subcommand over: that the repository being operated on is ours. Fixing reserve alone\nleaves the next subcommand to rediscover it, so it is worth deciding whether discovery and identity\nbelong in one shared layer with a test that runs against a repository whose org is foreign and whose\nlayout is not the suite's.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794606724029
+    },
+    {
+      "event": "task_updated",
+      "task_id": "5b71f32c-0277-4edb-844c-091c8b291681",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": {
+        "repo": "outfeed",
+        "crate_name": "outfeed",
+        "module_path": null,
+        "target_files": [
+          "crates/outfeed-core/src/reserve/scaffold.rs",
+          "crates/outfeed-cli/src/args/reserve.rs",
+          "crates/outfeed-core/src/reserve/publish.rs"
+        ],
+        "target_symbols": [],
+        "labels": [
+          "outfeed",
+          "standalone",
+          "portability"
+        ]
+      },
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794608442501
+    },
+    {
+      "event": "task_updated",
+      "task_id": "5b71f32c-0277-4edb-844c-091c8b291681",
+      "title": null,
+      "description": "MEASURED 2026-11-12 from a downstream consumer (aerofoil), deciding whether to replace its hand-written namespace script with `outfeed reserve`. It could not: every placeholder this command writes is stamped with the suite's own identity, and for two of the fields a caller has no way to correct it.\n\nWHAT IS BAKED IN\n\n  outfeed-core/src/reserve/scaffold.rs, ScaffoldOpts::default()\n    homepage:            \"https://gaugeblock.dev\"\n    license:             \"Apache-2.0\"\n    repository_template: \"https://github.com/gaugeblock/{name}\"\n\n  scaffold.rs, the placeholder template\n    description: \"Namespace reservation placeholder for `{name}`; superseded by the first real release.\"\n    version:     PLACEHOLDER_VERSION, a const equal to \"0.1.0-alpha.1\"\n\n  outfeed-cli/src/args/reserve.rs, ReserveScaffoldArgs\n    --repository        exposed, default https://github.com/gaugeblock/{name}\n    --repo-override     exposed, NAME=URL\n    --staging           exposed\n    homepage            NOT EXPOSED\n    license             NOT EXPOSED\n\nSo the two fields a consumer most needs to fix - the homepage and the SPDX license - are the two the CLI does not offer. `--repository` is exposed but defaults to the suite's org, which means the default path writes a placeholder pointing at a repository the caller does not own.\n\nWHAT THAT ACTUALLY PRODUCES FOR A CALLER\naerofoil is dual-licensed `Apache-2.0 OR MIT` and lives at github.com/colinwolff/aerofoil. Scaffolding from this command today would publish placeholders that say `license = \"Apache-2.0\"` (dropping MIT), `homepage = \"https://gaugeblock.dev\"` (not ours), and `repository = \"https://github.com/gaugeblock/aerofoil-mlat\"` (a repository that does not exist) unless every single name is passed through `--repo-override`.\n\nThat metadata is not cosmetic and not correctable later: the crates.io page keeps the description, homepage and repository of a published version even after it is yanked, and a version can never be deleted. Claiming a name with the wrong metadata is a permanent, wrong-shaped claim.\n\nDRIFT, NAMED AS SUCH\nNone of this is wrong for the suite - it is exactly right for the suite. It became wrong when the command was written as if the only repository in the world had a `gaugeblock` org and a `gaugeblock.dev` homepage. The tell is that `homepage` and `license` were given defaults rather than flags: a field with a default and no override is a field the author never expected a stranger to set.\n\nWHAT STANDALONE SHOULD MEAN\nIt should serve a repository it has never seen, in either shape:\n  * mono repo - one Cargo workspace, many crates: names and descriptions come from the workspace members, staging sits inside the repo, and the parent manifest gains the staging directory in `exclude` (the tool already hints this via parent_exclude_hint).\n  * multi repo - one crate per repository: names come from each member's package, and per-crate homes come from each repo's own remote rather than a template.\n  * neither - a bare list of names must keep working, with identity supplied explicitly.\n\nConcretely:\n  * repository and homepage resolve from the caller's `git remote` (origin), not from a template naming our org;\n  * license comes from the caller's package/workspace metadata, or a required flag - never a default we chose for ourselves;\n  * homepage and license become flags even when they are derivable, because derivation fails in exactly the cases a caller cares about;\n  * names and descriptions can be read from the workspace, with NAME=TEXT overrides, so no caller hand-maintains a parallel list (aerofoil's script did, and it drifted: see its AF-100);\n  * the placeholder version is a flag whose default is the current constant.\n\nRELATIONSHIP TO GB-362\nGB-362 asks for a release that carries `reserve`. Doing this first is cheaper than doing it second: the first published version of a command is what consumers pin, and shipping the gaugeblock-shaped one invites exactly the workaround aerofoil wrote by hand.\n\nNOT IN SCOPE\nChanging publish semantics (the alpha placeholder, skip-if-exists, permanent-version warning). Those are right.\n\nACCEPTANCE\n  * scaffolding for a caller that is not gaugeblock produces a manifest containing no gaugeblock string at all - no org, no homepage, no suite defaults - which is assertable as a test;\n  * a caller's SPDX license expression is carried verbatim, including an OR-expression;\n  * repository and homepage are either derived from the caller's git remote or supplied by flag, and the command fails loudly rather than guessing when neither is available;\n  * names and descriptions can be derived from a Cargo workspace, so a mono repo needs no parallel list;\n  * the bare-names invocation keeps working, with identity required rather than defaulted.\n\nSAME SHAPE ELSEWHERE\nThe drift is not confined to reserve. GB-363, filed independently and still in triage, reports that\n`outfeed plan` treats -d as the suite directory and reports a dirty file at the wrong root - the same\nassumption one subcommand over: that the repository being operated on is ours. Fixing reserve alone\nleaves the next subcommand to rediscover it, so it is worth deciding whether discovery and identity\nbelong in one shared layer with a test that runs against a repository whose org is foreign and whose\nlayout is not the suite's.\n\nFIXED 2026-11-12 EXCEPT ONE CRITERION (outfeed a1549d1). The permanent-metadata half is closed: Identity is a resolved value with no Default, --homepage and --license are flags (they were defaults with no flag, which is the shape of a field whose author never expected a stranger), --repository loses its gaugeblock default, and all three resolve flag-first then from the caller origin remote with scp-style and .git forms normalised, or fail naming the flag. A mono repo omits {name} and every placeholder links to the single repository. Three tests: a stranger manifest and README contain no gaugeblock string; an SPDX OR-expression survives verbatim; identity derives from a real scp remote; and no-remote-no-flags is refused rather than guessed. 90 outfeed-core tests, clippy clean, docs 9/9.\n\nREMAINING, and it is why this ticket stays open: criterion 4, names and descriptions derived from a Cargo workspace so a mono repo needs no parallel list. The identity bug is what made publishing dangerous and it is fixed; workspace derivation is convenience for exactly the caller who filed this, and it needs a decision about which verb reads the workspace (scaffold taking no names at all, or check validating names against it). Not attempted here because a half-built name-derivation is worse than none: it would scaffold a set nobody asked for.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794608442900
+    }
+  ]
+}
