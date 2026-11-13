@@ -4,7 +4,7 @@
     "ticket_key": "GB-260",
     "slug": "retire-the-ten-legacy-storypole-ledger-jsonl-files-left-behind-by-the-gb-189-unification-d16adf",
     "title": "Retire the ten legacy .storypole/ledger.jsonl files left behind by the CO-7 unification",
-    "description": "ALREADY DONE, verified 2026-11-10: no .storypole directory and no ledger.jsonl exists at any depth under the suite (find over all twelve repositories, excluding .git). The ten legacy ledgers were retired by the CO-7 unification and the records migration, and nothing references them.\n\nRE-CHECKED 2026-11-12 AND DELIBERATELY NOT CLOSED, because the claim as written is broader than its title. The title target is gone: no .storypole directory exists anywhere in the suite. But the description says no ledger.jsonl exists at any depth, and one does: common/.gaugeblock/storypole/ledger.jsonl, in a store whose tickets/ directory makes Records authoritative - so it is a dead file beside a live store rather than a live ledger, and the difference matters to whoever reads this ticket next. Narrow the ticket to retiring that leftover (or confirm migrate should archive it), rather than closing on a sentence that is not true.",
+    "description": "ALREADY DONE, verified 2026-11-10: no .storypole directory and no ledger.jsonl exists at any depth under the suite (find over all twelve repositories, excluding .git). The ten legacy ledgers were retired by the CO-7 unification and the records migration, and nothing references them.\n\nRE-CHECKED 2026-11-12 AND DELIBERATELY NOT CLOSED, because the claim as written is broader than its title. The title target is gone: no .storypole directory exists anywhere in the suite. But the description says no ledger.jsonl exists at any depth, and one does: common/.gaugeblock/storypole/ledger.jsonl, in a store whose tickets/ directory makes Records authoritative - so it is a dead file beside a live store rather than a live ledger, and the difference matters to whoever reads this ticket next. Narrow the ticket to retiring that leftover (or confirm migrate should archive it), rather than closing on a sentence that is not true.\n\nCORRECTION 2026-11-12, superseding the note above it: this ticket is NOT open work. It was archived before today (one task_archived event, nothing since), and archive keeps the status the ticket earned (GB-179, GB-258) - so its block reads triage while the task is archived and hidden from the default list. My sweep filtered on that status and mislabelled it as deliberately-left-open. The substantive point still stands and is the reason to keep this record: the claim as written is not true today - common/.gaugeblock/storypole/ledger.jsonl exists - so the ticket was archived on a sentence that no longer holds, and reopening it or re-filing the leftover is a decision for whoever owns that store.",
     "kind": "tech_debt",
     "status": "triage",
     "priority": 3,
@@ -31,7 +31,7 @@
     "latest_handoff": null,
     "verification_receipt": null,
     "created_at_epoch_ms": 1793994942305,
-    "updated_at_epoch_ms": 1794554363779,
+    "updated_at_epoch_ms": 1794555564844,
     "archived_at_epoch_ms": 1794451864996
   },
   "events": [
@@ -138,6 +138,16 @@
       "scope": null,
       "acceptance_criteria": null,
       "timestamp_ms": 1794554363779
+    },
+    {
+      "event": "task_updated",
+      "task_id": "d16adfdc-2adf-409f-8681-d239b9605c52",
+      "title": null,
+      "description": "ALREADY DONE, verified 2026-11-10: no .storypole directory and no ledger.jsonl exists at any depth under the suite (find over all twelve repositories, excluding .git). The ten legacy ledgers were retired by the CO-7 unification and the records migration, and nothing references them.\n\nRE-CHECKED 2026-11-12 AND DELIBERATELY NOT CLOSED, because the claim as written is broader than its title. The title target is gone: no .storypole directory exists anywhere in the suite. But the description says no ledger.jsonl exists at any depth, and one does: common/.gaugeblock/storypole/ledger.jsonl, in a store whose tickets/ directory makes Records authoritative - so it is a dead file beside a live store rather than a live ledger, and the difference matters to whoever reads this ticket next. Narrow the ticket to retiring that leftover (or confirm migrate should archive it), rather than closing on a sentence that is not true.\n\nCORRECTION 2026-11-12, superseding the note above it: this ticket is NOT open work. It was archived before today (one task_archived event, nothing since), and archive keeps the status the ticket earned (GB-179, GB-258) - so its block reads triage while the task is archived and hidden from the default list. My sweep filtered on that status and mislabelled it as deliberately-left-open. The substantive point still stands and is the reason to keep this record: the claim as written is not true today - common/.gaugeblock/storypole/ledger.jsonl exists - so the ticket was archived on a sentence that no longer holds, and reopening it or re-filing the leftover is a decision for whoever owns that store.",
+      "priority": null,
+      "scope": null,
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794555564844
     }
   ]
 }
