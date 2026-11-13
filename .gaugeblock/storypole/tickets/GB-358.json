@@ -1,0 +1,102 @@
+{
+  "ticket": {
+    "id": "bd89cb9e-cd55-4cc0-8b40-1d59c15b6e93",
+    "ticket_key": "GB-358",
+    "slug": "two-tickets-whose-own-descriptions-say-already-done-still-sit-in-triage-so-the-queue-overstates-the-open-work-bd89cb",
+    "title": "Two tickets whose own descriptions say ALREADY DONE still sit in triage, so the queue overstates the open work",
+    "description": "MEASURED 2026-11-12 in the suite store, 80 listed tickets.\n\nTwo tickets are finished, say so in their own words, and sit in triage rather than closed:\n\n  GB-268  triage  Every repo has empty verification_commands, so storypole verify runs nothing and records a manual receipt\n          description ends: ALREADY DONE, verified 2026-11-10 - the harness config carries a populated\n          verification_commands table (eleven repository chains plus gaugeblock and default entries), every\n          member either declares its own chain or inherits the suite roster, and storypole config check reports\n          zero findings and zero errors.\n\n  GB-345  triage  ledger-verify reports zero and ledger-reconcile fails, both against the pre-migration ledger\n          description ends: ALREADY DONE, verified 2026-11-10 - storypole ledger-verify replays 377 tasks across\n          the suite and reports 0 unparsable and 0 duplicate records, and ledger-reconcile answers index and\n          ledger agree.\n\nBoth claims are checkable today and both hold: the suite config really does carry a default entry alongside the per-crate chains, and ledger-verify / ledger-reconcile both answer correctly against the records layout. Neither ticket carries acceptance criteria, so nothing pins what closure was supposed to mean - which is plausibly why the work finished in the description instead of in the status.\n\nWhy it is not cosmetic: the triage queue is what a person and storypole next reason about when deciding what is owed, and two rows that state their own completion make it overstate the remaining work. This store has just completed the migration whose whole argument (ADR 0010) is that a ticket is a file that tells the truth. status is a task field and is not derived from events, so no projection can find this shape - refresh-projections agrees, ledger-verify agrees, config check agrees. It is only visible by reading descriptions against status.\n\nDefinition of done includes the sweep: if the same shape exists elsewhere, it belongs on this ticket rather than in a follow-up, and GB-350 / GB-351 / GB-352 are the other triage rows worth checking while the sweep is open.\n\nNot in scope: rewriting either description's evidence. The receipts for GB-268 and GB-345 should cite what is already recorded there; if any part no longer holds, that is a new finding, and it gets its own ticket.",
+    "kind": "chore",
+    "status": "ready",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "storypole",
+      "module_path": null,
+      "target_files": [
+        ".gaugeblock/storypole/tickets/GB-268.json",
+        ".gaugeblock/storypole/tickets/GB-345.json"
+      ],
+      "target_symbols": [],
+      "labels": [
+        "storypole",
+        "bookkeeping"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "GB-268 and GB-345 are verified or archived, each with a receipt that names the evidence already recorded in its own description",
+      "storypole list --status triage no longer lists either key",
+      "a sweep of the store for the same shape - triage or ready status while the description claims completion - finds no other instance, or records the others on this ticket"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794552875084,
+    "updated_at_epoch_ms": 1794552885160
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "bd89cb9e-cd55-4cc0-8b40-1d59c15b6e93",
+        "ticket_key": "GB-358",
+        "slug": "two-tickets-whose-own-descriptions-say-already-done-still-sit-in-triage-so-the-queue-overstates-the-open-work-bd89cb",
+        "title": "Two tickets whose own descriptions say ALREADY DONE still sit in triage, so the queue overstates the open work",
+        "description": "MEASURED 2026-11-12 in the suite store, 80 listed tickets.\n\nTwo tickets are finished, say so in their own words, and sit in triage rather than closed:\n\n  GB-268  triage  Every repo has empty verification_commands, so storypole verify runs nothing and records a manual receipt\n          description ends: ALREADY DONE, verified 2026-11-10 - the harness config carries a populated\n          verification_commands table (eleven repository chains plus gaugeblock and default entries), every\n          member either declares its own chain or inherits the suite roster, and storypole config check reports\n          zero findings and zero errors.\n\n  GB-345  triage  ledger-verify reports zero and ledger-reconcile fails, both against the pre-migration ledger\n          description ends: ALREADY DONE, verified 2026-11-10 - storypole ledger-verify replays 377 tasks across\n          the suite and reports 0 unparsable and 0 duplicate records, and ledger-reconcile answers index and\n          ledger agree.\n\nBoth claims are checkable today and both hold: the suite config really does carry a default entry alongside the per-crate chains, and ledger-verify / ledger-reconcile both answer correctly against the records layout. Neither ticket carries acceptance criteria, so nothing pins what closure was supposed to mean - which is plausibly why the work finished in the description instead of in the status.\n\nWhy it is not cosmetic: the triage queue is what a person and storypole next reason about when deciding what is owed, and two rows that state their own completion make it overstate the remaining work. This store has just completed the migration whose whole argument (ADR 0010) is that a ticket is a file that tells the truth. status is a task field and is not derived from events, so no projection can find this shape - refresh-projections agrees, ledger-verify agrees, config check agrees. It is only visible by reading descriptions against status.\n\nDefinition of done includes the sweep: if the same shape exists elsewhere, it belongs on this ticket rather than in a follow-up, and GB-350 / GB-351 / GB-352 are the other triage rows worth checking while the sweep is open.\n\nNot in scope: rewriting either description's evidence. The receipts for GB-268 and GB-345 should cite what is already recorded there; if any part no longer holds, that is a new finding, and it gets its own ticket.",
+        "kind": "chore",
+        "status": "ready",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "storypole",
+          "module_path": null,
+          "target_files": [
+            ".gaugeblock/storypole/tickets/GB-268.json,.gaugeblock/storypole/tickets/GB-345.json"
+          ],
+          "target_symbols": [],
+          "labels": [
+            "storypole,bookkeeping"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "GB-268 and GB-345 are verified or archived, each with a receipt that names the evidence already recorded in its own description",
+          "storypole list --status triage no longer lists either key",
+          "a sweep of the store for the same shape - triage or ready status while the description claims completion - finds no other instance, or records the others on this ticket"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794552875084,
+        "updated_at_epoch_ms": 1794552875084
+      }
+    },
+    {
+      "event": "task_updated",
+      "task_id": "bd89cb9e-cd55-4cc0-8b40-1d59c15b6e93",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": {
+        "repo": null,
+        "crate_name": "storypole",
+        "module_path": null,
+        "target_files": [
+          ".gaugeblock/storypole/tickets/GB-268.json",
+          ".gaugeblock/storypole/tickets/GB-345.json"
+        ],
+        "target_symbols": [],
+        "labels": [
+          "storypole",
+          "bookkeeping"
+        ]
+      },
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794552885160
+    }
+  ]
+}

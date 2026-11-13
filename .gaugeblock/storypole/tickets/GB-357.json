@@ -1,0 +1,114 @@
+{
+  "ticket": {
+    "id": "9032b94f-50ee-45f4-a3cb-894cbfa07141",
+    "ticket_key": "GB-357",
+    "slug": "storypole-migrate-never-says-it-changes-the-store-layout-so-a-single-repo-project-reads-the-dry-run-as-a-no-op-9032b9",
+    "title": "storypole migrate never says it changes the store layout, so a single-repo project reads the dry run as a no-op",
+    "description": "MEASURED 2026-11-12 in aerofoil, a 99-ticket store still on the pre-ADR-0010 layout, and by reading the suite at 6623ebf.\n\nThe verb that performs the layout migration does not say that it does. migrate is the command that converts ledger.jsonl into tickets/<KEY>.json plus ledger-archive/ledger-migrated.jsonl (migrate/apply.rs: write every record, replay-verify each destination, archive the ledger last), which ADR 0010 makes the storage contract. Its only user-visible description, crates/storypole-cli/src/args.rs:134, is a sentence about distributing to repositories:\n\n  Split one store's tickets into the repositories that own them\n\nNothing there says the storage format changes, and nothing in the run says it either.\n\nThe dry run reports the layout it is IN, never the one it will leave. migrate_cmds.rs:44 emits layout Ledger, staying 99, moving 0, adopted 0, and the human table prints only KEY / DESTINATION / EVIDENCE. With zero moves the closing line is \"dry run: nothing was written and the ledger is untouched\", which reads as nothing to do - for exactly the repository that most needs the change. Applying it wrote 99 records and archived a 540-event ledger.\n\nThe blindness is symmetric. A multi-repo store saw 191 moves (ADR 0010 records 191 of 350) and was still never told the format changed underneath; a single-repo store sees 0 moves and is told nothing happened at all. In both cases the only way to learn what the verb does is to read migrate/apply.rs, or to compare a migrated sibling repository afterwards.\n\nRelated drift, same reading: workspace_args.rs:19 describes `workspace distribute` as \"Distribute scoped tasks from root ledger into their respective repository ledgers\". The root-ledger wording predates ADR 0010 and makes a second verb read as though it performs migrate's stated purpose.\n\nCost, named honestly: a reader who trusts --help concludes migrate does not apply to a single-repository project. aerofoil's own migration ticket recorded its plan as 0 moving and had to reconstruct the mechanism from the source and from colinwolff.dev's post-migration store; the ticket text hedged about which effects the command had, because the help text could not answer.\n\nNot in scope: changing what migrate does. The engine's three phases and the archive-last ordering are right; this is about the command telling the truth about itself.",
+    "kind": "bug",
+    "status": "ready",
+    "priority": 3,
+    "scope": {
+      "repo": null,
+      "crate_name": "storypole",
+      "module_path": null,
+      "target_files": [
+        "crates/storypole-cli/src/args.rs",
+        "crates/storypole-cli/src/workspace_args.rs",
+        "crates/storypole-cli/src/handlers/migrate_cmds.rs"
+      ],
+      "target_symbols": [
+        "storypole_cli::handlers::migrate_cmds::handle_migrate"
+      ],
+      "labels": [
+        "storypole",
+        "cli",
+        "docs"
+      ]
+    },
+    "edges": [],
+    "decisions": [],
+    "acceptance_criteria": [
+      "migrate --dry-run names the transition (Ledger -> Records) and the number of records it will write, in both the table and --json",
+      "migrate --help documents both effects: the layout change and the repository split",
+      "a store where every ticket stays at the root no longer closes with output that reads as nothing to do",
+      "workspace distribute --help drops the root-ledger wording that predates ADR 0010"
+    ],
+    "plan": null,
+    "active_claim": null,
+    "latest_handoff": null,
+    "verification_receipt": null,
+    "created_at_epoch_ms": 1794552875084,
+    "updated_at_epoch_ms": 1794552885160
+  },
+  "events": [
+    {
+      "event": "task_created",
+      "task": {
+        "id": "9032b94f-50ee-45f4-a3cb-894cbfa07141",
+        "ticket_key": "GB-357",
+        "slug": "storypole-migrate-never-says-it-changes-the-store-layout-so-a-single-repo-project-reads-the-dry-run-as-a-no-op-9032b9",
+        "title": "storypole migrate never says it changes the store layout, so a single-repo project reads the dry run as a no-op",
+        "description": "MEASURED 2026-11-12 in aerofoil, a 99-ticket store still on the pre-ADR-0010 layout, and by reading the suite at 6623ebf.\n\nThe verb that performs the layout migration does not say that it does. migrate is the command that converts ledger.jsonl into tickets/<KEY>.json plus ledger-archive/ledger-migrated.jsonl (migrate/apply.rs: write every record, replay-verify each destination, archive the ledger last), which ADR 0010 makes the storage contract. Its only user-visible description, crates/storypole-cli/src/args.rs:134, is a sentence about distributing to repositories:\n\n  Split one store's tickets into the repositories that own them\n\nNothing there says the storage format changes, and nothing in the run says it either.\n\nThe dry run reports the layout it is IN, never the one it will leave. migrate_cmds.rs:44 emits layout Ledger, staying 99, moving 0, adopted 0, and the human table prints only KEY / DESTINATION / EVIDENCE. With zero moves the closing line is \"dry run: nothing was written and the ledger is untouched\", which reads as nothing to do - for exactly the repository that most needs the change. Applying it wrote 99 records and archived a 540-event ledger.\n\nThe blindness is symmetric. A multi-repo store saw 191 moves (ADR 0010 records 191 of 350) and was still never told the format changed underneath; a single-repo store sees 0 moves and is told nothing happened at all. In both cases the only way to learn what the verb does is to read migrate/apply.rs, or to compare a migrated sibling repository afterwards.\n\nRelated drift, same reading: workspace_args.rs:19 describes `workspace distribute` as \"Distribute scoped tasks from root ledger into their respective repository ledgers\". The root-ledger wording predates ADR 0010 and makes a second verb read as though it performs migrate's stated purpose.\n\nCost, named honestly: a reader who trusts --help concludes migrate does not apply to a single-repository project. aerofoil's own migration ticket recorded its plan as 0 moving and had to reconstruct the mechanism from the source and from colinwolff.dev's post-migration store; the ticket text hedged about which effects the command had, because the help text could not answer.\n\nNot in scope: changing what migrate does. The engine's three phases and the archive-last ordering are right; this is about the command telling the truth about itself.",
+        "kind": "bug",
+        "status": "ready",
+        "priority": 3,
+        "scope": {
+          "repo": null,
+          "crate_name": "storypole",
+          "module_path": null,
+          "target_files": [
+            "crates/storypole-cli/src/args.rs,crates/storypole-cli/src/workspace_args.rs,crates/storypole-cli/src/handlers/migrate_cmds.rs"
+          ],
+          "target_symbols": [
+            "storypole_cli::handlers::migrate_cmds::handle_migrate"
+          ],
+          "labels": [
+            "storypole,cli,docs"
+          ]
+        },
+        "edges": [],
+        "decisions": [],
+        "acceptance_criteria": [
+          "migrate --dry-run names the transition (Ledger -> Records) and the number of records it will write, in both the table and --json",
+          "migrate --help documents both effects: the layout change and the repository split",
+          "a store where every ticket stays at the root no longer closes with output that reads as nothing to do",
+          "workspace distribute --help drops the root-ledger wording that predates ADR 0010"
+        ],
+        "plan": null,
+        "active_claim": null,
+        "latest_handoff": null,
+        "verification_receipt": null,
+        "created_at_epoch_ms": 1794552875084,
+        "updated_at_epoch_ms": 1794552875084
+      }
+    },
+    {
+      "event": "task_updated",
+      "task_id": "9032b94f-50ee-45f4-a3cb-894cbfa07141",
+      "title": null,
+      "description": null,
+      "priority": null,
+      "scope": {
+        "repo": null,
+        "crate_name": "storypole",
+        "module_path": null,
+        "target_files": [
+          "crates/storypole-cli/src/args.rs",
+          "crates/storypole-cli/src/workspace_args.rs",
+          "crates/storypole-cli/src/handlers/migrate_cmds.rs"
+        ],
+        "target_symbols": [
+          "storypole_cli::handlers::migrate_cmds::handle_migrate"
+        ],
+        "labels": [
+          "storypole",
+          "cli",
+          "docs"
+        ]
+      },
+      "acceptance_criteria": null,
+      "timestamp_ms": 1794552885160
+    }
+  ]
+}
